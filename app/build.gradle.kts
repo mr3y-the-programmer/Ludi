@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.hilt.gradle)
 }
 
@@ -74,6 +75,13 @@ dependencies {
     testImplementation(libs.hilt.android.testing)
     kaptTest(libs.hilt.android.compiler)
 
+    // Network
+    implementation(libs.rss.parser)
+    implementation(libs.retrofit)
+    implementation(libs.kotlinx.serialization)
+    implementation(libs.eithernet)
+    implementation(libs.kotlinx.serialization.converter)
+
     // Arch Components
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
@@ -93,7 +101,13 @@ dependencies {
 
     // Local tests: jUnit, coroutines, Android runner
     testImplementation(libs.junit)
+    testImplementation(libs.strikt)
+    testImplementation(libs.turbine)
+    testImplementation(libs.mockk)
+    testImplementation(libs.test.parameter.injector)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(testFixtures(libs.eithernet))
+    testImplementation(libs.mockwebserver)
 
     // Instrumented tests: jUnit rules and runners
 
