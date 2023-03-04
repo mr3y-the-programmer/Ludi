@@ -1,9 +1,9 @@
 package com.mr3y.ludi.core.network.datasources.internal
 
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.network.datasources.RSSNewReleasesFeedProvider
-import com.mr3y.ludi.core.network.datasources.RSSNewsFeedProvider
-import com.mr3y.ludi.core.network.datasources.RSSReviewsFeedProvider
+import com.mr3y.ludi.core.network.datasources.RSSNewReleasesFeedDataSource
+import com.mr3y.ludi.core.network.datasources.RSSNewsFeedDataSource
+import com.mr3y.ludi.core.network.datasources.RSSReviewsFeedDataSource
 import com.mr3y.ludi.core.network.model.GameSpotArticle
 import com.mr3y.ludi.core.network.model.toGameSpotArticle
 import com.prof.rssparser.Article
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class GameSpotDataSource @Inject constructor(
     private val parser: Parser
-) : RSSNewsFeedProvider<GameSpotArticle>, RSSReviewsFeedProvider<GameSpotArticle>, RSSNewReleasesFeedProvider<GameSpotArticle> {
+) : RSSNewsFeedDataSource<GameSpotArticle>, RSSReviewsFeedDataSource<GameSpotArticle>, RSSNewReleasesFeedDataSource<GameSpotArticle> {
     override suspend fun fetchNewReleasesFeed(): Result<List<GameSpotArticle>, Throwable> {
         return fetchFeedFromUrl(RSSNewReleasesFeedURL)
     }

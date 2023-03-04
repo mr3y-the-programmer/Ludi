@@ -3,13 +3,13 @@ package com.mr3y.ludi.core.network.model
 import com.prof.rssparser.Article
 
 data class IGNArticle(
-    val title: String?,
-    val author: String?,
+    override val title: String?,
+    override val author: String?,
     val description: String?,
     val content: String?,
     val sourceLink: String?,
-    val publicationDate: String?,
-)
+    override val publicationDate: String?,
+): RSSFeedArticle
 
 fun Article.toIGNArticle(): IGNArticle {
     return IGNArticle(

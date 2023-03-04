@@ -1,0 +1,5 @@
+package com.mr3y.ludi.core.network.datasources
+
+import com.mr3y.ludi.core.network.model.RSSFeedArticle
+
+sealed interface RSSFeedDataSource<T: RSSFeedArticle>

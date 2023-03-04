@@ -1,9 +1,9 @@
 package com.mr3y.ludi.core.network.datasources.internal
 
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.network.datasources.RSSNewReleasesFeedProvider
-import com.mr3y.ludi.core.network.datasources.RSSNewsFeedProvider
-import com.mr3y.ludi.core.network.datasources.RSSReviewsFeedProvider
+import com.mr3y.ludi.core.network.datasources.RSSNewReleasesFeedDataSource
+import com.mr3y.ludi.core.network.datasources.RSSNewsFeedDataSource
+import com.mr3y.ludi.core.network.datasources.RSSReviewsFeedDataSource
 import com.mr3y.ludi.core.network.model.GiantBombArticle
 import com.mr3y.ludi.core.network.model.toGiantBombArticle
 import com.prof.rssparser.Article
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class GiantBombDataSource @Inject constructor(
   private val parser: Parser,
-) : RSSNewsFeedProvider<GiantBombArticle>, RSSNewReleasesFeedProvider<GiantBombArticle>, RSSReviewsFeedProvider<GiantBombArticle> {
+) : RSSNewsFeedDataSource<GiantBombArticle>, RSSNewReleasesFeedDataSource<GiantBombArticle>, RSSReviewsFeedDataSource<GiantBombArticle> {
 
     override suspend fun fetchNewsFeed(): Result<List<GiantBombArticle>, Throwable> {
         return fetchFeedFromUrl(RSSNewsFeedURL)
