@@ -6,6 +6,7 @@ data class GameSpotArticle(
     override val title: String?,
     override val author: String?,
     val description: String?,
+    val image: String?,
     val content: String?,
     val sourceLink: String?,
     override val publicationDate: String?,
@@ -16,6 +17,7 @@ fun Article.toGameSpotArticle(): GameSpotArticle {
         title.ignoreIfEmptyOrNull(),
         author.ignoreIfEmptyOrNull(),
         description.ignoreIfEmptyOrNull(),
+        image.ignoreIfEmptyOrNull(),
         content.ignoreIfEmptyOrNull(),
         link.ignoreIfEmptyOrNull(),
         pubDate.ignoreIfEmptyOrNull()
