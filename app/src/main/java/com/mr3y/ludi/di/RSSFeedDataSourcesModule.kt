@@ -1,5 +1,6 @@
 package com.mr3y.ludi.di
 
+import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.network.datasources.RSSFeedDataSource
 import com.mr3y.ludi.core.network.datasources.internal.GameSpotDataSource
 import com.mr3y.ludi.core.network.datasources.internal.GiantBombDataSource
@@ -9,7 +10,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dagger.multibindings.IntoSet
+import dagger.multibindings.IntoMap
 import javax.inject.Singleton
 
 @Module
@@ -18,16 +19,19 @@ abstract class RSSFeedDataSourcesModule {
 
     @Binds
     @Singleton
-    @IntoSet
+    @IntoMap
+    @SourceKey(Source.GiantBomb)
     abstract fun bindGiantBombDataSource(dataSource: GiantBombDataSource): RSSFeedDataSource<RSSFeedArticle>
 
     @Binds
     @Singleton
-    @IntoSet
+    @IntoMap
+    @SourceKey(Source.GameSpot)
     abstract fun bindGameSpotDataSource(dataSource: GameSpotDataSource): RSSFeedDataSource<RSSFeedArticle>
 
     @Binds
     @Singleton
-    @IntoSet
+    @IntoMap
+    @SourceKey(Source.IGN)
     abstract fun bindIGNDataSource(dataSource: IGNDataSource): RSSFeedDataSource<RSSFeedArticle>
 }

@@ -1,5 +1,9 @@
 package com.mr3y.ludi.core.network.model
 
+import com.mr3y.ludi.core.model.MarkupText
+import com.mr3y.ludi.core.model.NewsArticle
+import com.mr3y.ludi.core.model.Source
+import com.mr3y.ludi.core.model.Title
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -17,4 +21,19 @@ data class MMOGamesArticle(
     val content: String,
     @SerialName("article_url")
     val articleUrl: String
-)
+) {
+    fun toNewsArticle(): NewsArticle {
+        return NewsArticle(
+            id = id,
+            title = Title.Plain(title),
+            description = MarkupText(description),
+            thumbnailUrl = thumbnailUrl,
+            source = Source.MMOBomb,
+            sourceLinkUrl = articleUrl,
+            content = MarkupText(content),
+            imageUrl = image,
+            author = null,
+            publicationDate = null
+        )
+    }
+}
