@@ -93,6 +93,13 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.coil)
+    implementation(libs.markwon.core)
+    implementation(libs.markwon.strikethrough)
+    implementation(libs.markwon.ext.table)
+    implementation(libs.markwon.html)
+    implementation(libs.markwon.linkify)
+    implementation(libs.markwon.coil)
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
     // Instrumented tests
