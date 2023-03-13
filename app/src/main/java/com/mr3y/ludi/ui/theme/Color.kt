@@ -2,7 +2,11 @@ package com.mr3y.ludi.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+//val RossoCorsa900 = Color(0xFFD90000)
+//val ElectricRed800 = Color(0xFFE31903)
+val Crimson200 = Color(0xFFF79292)
+val Crimson700 = Color(0xFFD72638)
+val Aero300 = Color(0xFF73B2DF)
+val Aero100 = Color(0xFFBEDDF1)
+// another secondary color to consider
+// val Blue = Color(0xFF12355b)
