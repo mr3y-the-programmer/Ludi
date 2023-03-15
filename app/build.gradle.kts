@@ -84,6 +84,7 @@ dependencies {
 
     // Arch Components
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
 
@@ -94,6 +95,7 @@ dependencies {
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.coil)
+    implementation(libs.accompanist.placeholder)
     implementation(libs.markwon.core)
     implementation(libs.markwon.strikethrough)
     implementation(libs.markwon.ext.table)
