@@ -1,4 +1,5 @@
 [versions]
+buildConfigPlugin = "3.1.0"
 androidGradlePlugin = "7.4.2"
 androidxCore = "1.9.0"
 androidxLifecycle = "2.6.0"
@@ -39,6 +40,7 @@ androidx-compose-material = { module = "androidx.compose.material:material", ver
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidxComposeMaterial3" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidxComposeFoundation" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidxComposeUi" }
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "androidxComposeMaterial" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "androidxComposeUi" }
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidxComposeUi" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidxComposeUi" }
@@ -78,6 +80,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 [plugins]
+gradle-buildconfig-plugin = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfigPlugin" }
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

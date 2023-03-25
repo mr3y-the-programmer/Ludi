@@ -8,6 +8,14 @@ internal fun String?.ignoreIfEmptyOrNull(): String? {
 }
 
 /**
+ * Converts the following date format: "yyyy-mm-dd" to a well-structured ZonedDateTime
+ */
+internal fun String.toZonedDate(): ZonedDateTime {
+    val (year, month, dayOfMonth) = split('-').map { it.toInt() }
+    return ZonedDateTime.of(year, month, dayOfMonth, 0, 0, 0, 0, ZoneId.systemDefault())
+}
+
+/**
  * Converts the following date time format: "Thu, 02 Mar 2023 03:00:00 -0800", "Thu, 2 Mar 2023 01:30:02 +0000"
  * to a valid ZonedDateTime.
  */

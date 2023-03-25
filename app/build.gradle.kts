@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
     alias(libs.plugins.android.application)
@@ -5,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.gradle.buildconfig.plugin)
 }
 
 android {
@@ -59,6 +63,21 @@ android {
     }
 }
 
+kotlin.sourceSets {
+    main {
+        kotlin.srcDirs(
+            file("$buildDir/generated/source/buildConfig/main"),
+        )
+    }
+}
+
+buildConfig {
+    packageName("com.mr3y.ludi")
+    val properties = Properties()
+    properties.load(FileInputStream(rootProject.file("local.properties")))
+    buildConfigField("String", "RAWG_API_KEY", "\"${properties.getProperty("RAWG_API_KEY")}\"")
+}
+
 dependencies {
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
@@ -94,6 +113,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.coil)
     implementation(libs.accompanist.placeholder)
     implementation(libs.markwon.core)

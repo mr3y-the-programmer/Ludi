@@ -2,20 +2,19 @@ package com.mr3y.ludi.di
 
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.mr3y.ludi.core.network.interceptors.RAWGAPIKeyInterceptor
 import com.prof.rssparser.Parser
 import com.slack.eithernet.ApiResultCallAdapterFactory
 import com.slack.eithernet.ApiResultConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -32,15 +31,28 @@ object NetworkModule {
             .build()
     }
 
+    @Provides
+    @Singleton
+    fun provideKotlinxSerializationJsonInstance(): Json {
+        return Json { ignoreUnknownKeys = true }
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkhttpClient(): OkHttpClient {
+        return OkHttpClient.Builder().addInterceptor(RAWGAPIKeyInterceptor()).build()
+    }
+
     @OptIn(ExperimentalSerializationApi::class)
     @Singleton
     @Provides
-    fun provideRetrofitInstance(): Retrofit {
+    fun provideRetrofitInstance(okHttpClient: OkHttpClient, jsonInstance: Json): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://www.mmobomb.com/api1/")
+            .client(okHttpClient)
             .addConverterFactory(ApiResultConverterFactory)
             .addCallAdapterFactory(ApiResultCallAdapterFactory)
-            .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(jsonInstance.asConverterFactory("application/json".toMediaType()))
             .build()
     }
 }
