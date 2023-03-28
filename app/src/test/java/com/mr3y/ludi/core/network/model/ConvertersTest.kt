@@ -3,6 +3,8 @@ package com.mr3y.ludi.core.network.model
 import org.junit.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -19,6 +21,19 @@ class ConvertersTest {
             ZonedDateTime.parse("2023-03-02T01:30:02Z")
         )
         expectThat(dateTimeStringsBeforeParsing.map(String::toZonedDateTime)).isEqualTo(expected)
+    }
+
+    @Test
+    fun whenParsingISOUTCDateTime_TheResultIsValidZonedDateTime() {
+        val dateTimeStringsBeforeParsing = listOf(
+            "2023-03-24 15:16:31",
+            "2021-09-16T15:16:31"
+        )
+        val expected = listOf(
+            ZonedDateTime.of(LocalDate.of(2023, 3, 24), LocalTime.of(15, 16, 31), ZoneId.systemDefault()),
+            ZonedDateTime.of(LocalDate.of(2021, 9, 16), LocalTime.of(15, 16, 31), ZoneId.systemDefault())
+        )
+        expectThat(dateTimeStringsBeforeParsing.map{ it.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME, isLenient = true) }).isEqualTo(expected)
     }
 
     @Test

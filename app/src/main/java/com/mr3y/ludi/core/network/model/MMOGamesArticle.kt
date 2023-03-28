@@ -1,9 +1,6 @@
 package com.mr3y.ludi.core.network.model
 
-import com.mr3y.ludi.core.model.MarkupText
-import com.mr3y.ludi.core.model.NewsArticle
-import com.mr3y.ludi.core.model.Source
-import com.mr3y.ludi.core.model.Title
+import com.mr3y.ludi.core.model.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -36,4 +33,32 @@ data class MMOGamesArticle(
             publicationDate = null
         )
     }
+}
+
+@Serializable
+data class MMOGiveawayEntry(
+    val id: Long,
+    val title: String,
+    @SerialName("keys_left")
+    val keysLeftPercent: String,
+    @SerialName("thumbnail")
+    val thumbnailUrl: String,
+    @SerialName("main_image")
+    val imageUrl: String,
+    @SerialName("short_description")
+    val description: String,
+    @SerialName("giveaway_url")
+    val giveawayUrl: String
+)
+
+fun MMOGiveawayEntry.toCoreGiveawayEntry(): com.mr3y.ludi.core.model.MMOGiveawayEntry {
+    return MMOGiveawayEntry(
+        id = id,
+        title = title,
+        keysLeftPercent = Percent(keysLeftPercent.substringBefore('%').toInt()),
+        thumbnailUrl,
+        imageUrl,
+        description,
+        giveawayUrl
+    )
 }

@@ -2,6 +2,7 @@ package com.mr3y.ludi.core.network.datasources.internal
 
 import com.mr3y.ludi.core.network.fixtures.RetrofitClientForTesting
 import com.mr3y.ludi.core.network.model.MMOGamesArticle
+import com.mr3y.ludi.core.network.model.MMOGiveawayEntry
 import com.slack.eithernet.ApiResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -103,6 +104,83 @@ class MMOGamesDataSourceTest {
         expectThat(result).isA<ApiResult.Success<List<MMOGamesArticle>>>()
         result as ApiResult.Success
         expectThat(result.value).isEqualTo(expectedDeserializedResponse)
+    }
+
+    @Test
+    fun whenGettingLatestGiveawaysFromAPISuccessfully_dataIsDeserializedProperly() = runTest {
+        // given an enqueued mocked sample response
+        val serializedResponse = MockResponse()
+            .setBody(
+                """
+                    [
+                        {
+                            "id": 128061,
+                            "title": "Castle Clash $200 Bundle Key Giveaway (New Players Only)",
+                            "keys_left": "21%",
+                            "thumbnail": "https://www.mmobomb.com/file/2022/3/castle-clash-box-218x150.png",
+                            "main_image": "https://www.mmobomb.com/file/2022/3/castle-clash-box.png",
+                            "short_description": "To unlock your key instantly you just need to log in and click the button on the top.",
+                            "giveaway_url": "https://www.mmobomb.com/giveaway/castle-clash-starter-keys"
+                        },
+                        {
+                            "id": 128077,
+                            "title": "Doomsday: Last Survivors Gift Key Giveaway (New Players)",
+                            "keys_left": "24%",
+                            "thumbnail": "https://www.mmobomb.com/file/2022/8/doomday-box-218x150.png",
+                            "main_image": "https://www.mmobomb.com/file/2022/8/doomday-box.png",
+                            "short_description": "To unlock your key instantly you just need to log in and click the button on the top.",
+                            "giveaway_url": "https://www.mmobomb.com/giveaway/doomsday-last-survivors-gift-key"
+                        },
+                        {
+                            "id": 119744,
+                            "title": "Eudemons Online Gift Pack Key Giveaway",
+                            "keys_left": "89%",
+                            "thumbnail": "https://www.mmobomb.com/file/2023/3/eudemons-online-gift-pack-key-giveaway-218x150.png",
+                            "main_image": "https://www.mmobomb.com/file/2023/3/eudemons-online-gift-pack-key-giveaway.png",
+                            "short_description": "To unlock your key instantly you just need to complete all the steps on the top.",
+                            "giveaway_url": "https://www.mmobomb.com/giveaway/eudemons-online-gift-pack-key-giveaway"
+                        }
+                    ]
+                """.trimIndent()
+            )
+        mockWebServer.enqueue(serializedResponse)
+        val expectedResponse = listOf(
+            MMOGiveawayEntry(
+                128061,
+                "Castle Clash $200 Bundle Key Giveaway (New Players Only)",
+                "21%",
+                "https://www.mmobomb.com/file/2022/3/castle-clash-box-218x150.png",
+                "https://www.mmobomb.com/file/2022/3/castle-clash-box.png",
+                "To unlock your key instantly you just need to log in and click the button on the top.",
+                "https://www.mmobomb.com/giveaway/castle-clash-starter-keys"
+            ),
+            MMOGiveawayEntry(
+                128077,
+                "Doomsday: Last Survivors Gift Key Giveaway (New Players)",
+                "24%",
+                "https://www.mmobomb.com/file/2022/8/doomday-box-218x150.png",
+                "https://www.mmobomb.com/file/2022/8/doomday-box.png",
+                "To unlock your key instantly you just need to log in and click the button on the top.",
+                "https://www.mmobomb.com/giveaway/doomsday-last-survivors-gift-key"
+            ),
+            MMOGiveawayEntry(
+                119744,
+                "Eudemons Online Gift Pack Key Giveaway",
+                "89%",
+                "https://www.mmobomb.com/file/2023/3/eudemons-online-gift-pack-key-giveaway-218x150.png",
+                "https://www.mmobomb.com/file/2023/3/eudemons-online-gift-pack-key-giveaway.png",
+                "To unlock your key instantly you just need to complete all the steps on the top.",
+                "https://www.mmobomb.com/giveaway/eudemons-online-gift-pack-key-giveaway"
+            ),
+        )
+
+        // when trying to get the latest giveaways
+        val result = sut.getLatestGiveaways(mockWebServer.url("/").toString())
+
+        // then expect the result is success & it is transformed to our model
+        expectThat(result).isA<ApiResult.Success<List<MMOGiveawayEntry>>>()
+        result as ApiResult.Success
+        expectThat(result.value).isEqualTo(expectedResponse)
     }
 
     @Test
