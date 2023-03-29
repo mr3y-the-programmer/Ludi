@@ -37,6 +37,7 @@ import com.mr3y.ludi.core.model.FreeGame
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.network.model.*
+import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.components.shortDescription
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
@@ -143,16 +144,7 @@ fun DiscoverScreen(
                     }
                     is Result.Error -> {
                         item {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Unexpected Error happened. try to refresh, and see if the problem persist.",
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onSurface,
-                                )
-                            }
+                            LudiErrorBox(modifier = Modifier.fillMaxWidth())
                         }
                     }
                 }
@@ -186,16 +178,7 @@ fun DiscoverScreen(
                     }
                     is Result.Error -> {
                         item {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Unexpected Error happened. try to refresh, and see if the problem persist.",
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onSurface,
-                                )
-                            }
+                            LudiErrorBox(modifier = Modifier.fillMaxWidth())
                         }
                     }
                 }
@@ -229,16 +212,7 @@ fun DiscoverScreen(
                     }
                     is Result.Error -> {
                         item {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Unexpected Error happened. try to refresh, and see if the problem persist.",
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onSurface,
-                                )
-                            }
+                            LudiErrorBox(modifier = Modifier.fillMaxWidth())
                         }
                     }
                 }

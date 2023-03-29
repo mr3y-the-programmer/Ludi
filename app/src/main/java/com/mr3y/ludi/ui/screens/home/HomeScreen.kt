@@ -71,16 +71,7 @@ fun HomeScreen(
                     }
                     is Result.Error -> {
                         item {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = cardModifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Unexpected Error happened. try to refresh, and see if the problem persist.",
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onSurface,
-                                )
-                            }
+                            LudiErrorBox(modifier = cardModifier.fillMaxWidth())
                         }
                     }
                 }
@@ -118,16 +109,7 @@ fun HomeScreen(
                     }
                     is Result.Error -> {
                         item {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = cardModifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Unexpected Error happened. try to refresh, and see if the problem persist.",
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onSurface,
-                                )
-                            }
+                            LudiErrorBox(modifier = cardModifier.fillMaxWidth())
                         }
                     }
                 }
@@ -165,16 +147,7 @@ fun HomeScreen(
             }
             is Result.Error -> {
                 item {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Unexpected Error happened. try to refresh, and see if the problem persist.",
-                            style = MaterialTheme.typography.h6,
-                            color = MaterialTheme.colors.onSurface,
-                        )
-                    }
+                    LudiErrorBox(modifier = Modifier.fillMaxWidth())
                 }
             }
         }

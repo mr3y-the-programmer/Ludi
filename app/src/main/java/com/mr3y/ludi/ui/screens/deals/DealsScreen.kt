@@ -47,6 +47,7 @@ import com.mr3y.ludi.core.network.model.CheapSharkDeal
 import com.mr3y.ludi.core.network.model.GiveawayEntryStatus
 import com.mr3y.ludi.core.network.model.toCoreGamerPowerGiveawayEntry
 import com.mr3y.ludi.core.network.model.toDeal
+import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.presenter.DealsViewModel
 import com.mr3y.ludi.ui.presenter.model.DealsState
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
@@ -169,18 +170,7 @@ fun DealsScreen(
                     }
                     is Result.Error -> {
                         item {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colors.tabRow)
-                            ) {
-                                Text(
-                                    text = "Unexpected Error happened. try to refresh, and see if the problem persist.",
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onSurface,
-                                )
-                            }
+                            LudiErrorBox(modifier = Modifier.fillMaxWidth())
                         }
                     }
                 }
@@ -201,18 +191,7 @@ fun DealsScreen(
                     }
                     is Result.Error -> {
                         item {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(color = MaterialTheme.colors.tabRow)
-                            ) {
-                                Text(
-                                    text = "Unexpected Error happened. try to refresh, and see if the problem persist.",
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onSurface,
-                                )
-                            }
+                            LudiErrorBox(modifier = Modifier.fillMaxWidth())
                         }
                     }
                 }
@@ -232,18 +211,7 @@ fun DealsScreen(
                     }
                     is Result.Error -> {
                         item {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colors.tabRow)
-                            ) {
-                                Text(
-                                    text = "Unexpected Error happened. try to refresh, and see if the problem persist.",
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onSurface,
-                                )
-                            }
+                            LudiErrorBox(modifier = Modifier.fillMaxWidth())
                         }
                     }
                 }
