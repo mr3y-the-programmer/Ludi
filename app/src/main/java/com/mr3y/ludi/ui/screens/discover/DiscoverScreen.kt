@@ -34,6 +34,7 @@ import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.FreeGame
+import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.network.model.*
 import com.mr3y.ludi.ui.components.LudiSectionHeader
@@ -128,7 +129,7 @@ fun DiscoverScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 when(val trendingGames = discoverState.trendingGames) {
-                    is UiResult.Content -> {
+                    is Result.Success -> {
                         itemsIndexed(trendingGames.data) { index, game ->
                             key(index) {
                                 TrendingGameCard(
@@ -140,7 +141,7 @@ fun DiscoverScreen(
                             }
                         }
                     }
-                    is UiResult.Error -> {
+                    is Result.Error -> {
                         item {
                             Box(
                                 contentAlignment = Alignment.Center,
@@ -171,7 +172,7 @@ fun DiscoverScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 when(val freeGames = discoverState.freeGames) {
-                    is UiResult.Content -> {
+                    is Result.Success -> {
                         itemsIndexed(freeGames.data) { index, game ->
                             key(index) {
                                 FreeGameCard(
@@ -183,7 +184,7 @@ fun DiscoverScreen(
                             }
                         }
                     }
-                    is UiResult.Error -> {
+                    is Result.Error -> {
                         item {
                             Box(
                                 contentAlignment = Alignment.Center,
@@ -214,7 +215,7 @@ fun DiscoverScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 when(val topRatedGames = discoverState.topRatedGames) {
-                    is UiResult.Content -> {
+                    is Result.Success -> {
                         itemsIndexed(topRatedGames.data) { index, game ->
                             key(index) {
                                 TopRatedGameCard(
@@ -226,7 +227,7 @@ fun DiscoverScreen(
                             }
                         }
                     }
-                    is UiResult.Error -> {
+                    is Result.Error -> {
                         item {
                             Box(
                                 contentAlignment = Alignment.Center,
@@ -685,9 +686,9 @@ fun DiscoverScreenPreview() {
     LudiTheme {
         DiscoverScreen(
             discoverState = DiscoverState(
-                freeGames = UiResult.Content(freeGamesSamples),
-                trendingGames = UiResult.Content(richInfoGamesSamples),
-                topRatedGames = UiResult.Content(richInfoGamesSamples)
+                freeGames = Result.Success(freeGamesSamples),
+                trendingGames = Result.Success(richInfoGamesSamples),
+                topRatedGames = Result.Success(richInfoGamesSamples)
             ),
             modifier = Modifier.fillMaxSize()
         )

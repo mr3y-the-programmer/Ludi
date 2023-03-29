@@ -64,11 +64,6 @@ fun HomeScreen(
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .size(width = 248.dp, height = 440.dp)
                 when(homeState.newsFeed) {
-                    is Result.Loading -> {
-                        items(8) {
-                            LudiPlaceholderCard(modifier = cardModifier)
-                        }
-                    }
                     is Result.Success -> {
                         items(homeState.newsFeed.data) { newsArticle ->
                             LudiNewsArticleCard(article = newsArticle, modifier = cardModifier)
@@ -116,11 +111,6 @@ fun HomeScreen(
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .size(width = 248.dp, height = 440.dp)
                 when(homeState.reviewsFeed) {
-                    is Result.Loading -> {
-                        items(8) {
-                            LudiPlaceholderCard(modifier = cardModifier)
-                        }
-                    }
                     is Result.Success -> {
                         items(homeState.reviewsFeed.data) { reviewArticle ->
                             LudiReviewArticleCard(article = reviewArticle, modifier = cardModifier)
@@ -164,11 +154,6 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
         when(homeState.newReleasesFeed) {
-            is Result.Loading -> {
-                items(8) {
-                    LudiNewReleasePlaceholderRow(modifier = newReleaseRowModifier)
-                }
-            }
             is Result.Success -> {
                 items(homeState.newReleasesFeed.data) { newReleaseArticle ->
                     LudiNewReleaseRow(

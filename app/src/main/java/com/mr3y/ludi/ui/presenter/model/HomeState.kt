@@ -11,6 +11,6 @@ data class HomeState(
     val newReleasesFeed: Result<List<NewReleaseArticle>, Throwable>
 ) {
     companion object {
-        val Default = HomeState(Result.Loading, Result.Loading, Result.Loading)
+        val Default = HomeState(Result.Success(emptyList()), Result.Success(emptyList()), Result.Success(emptyList()))
     }
 }

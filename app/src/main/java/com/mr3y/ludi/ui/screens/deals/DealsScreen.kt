@@ -1,7 +1,6 @@
 package com.mr3y.ludi.ui.screens.deals
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,9 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -46,16 +42,14 @@ import com.mr3y.ludi.core.model.Deal
 import com.mr3y.ludi.core.model.GamerPowerGiveawayEntry
 import com.mr3y.ludi.core.model.MMOGiveawayEntry
 import com.mr3y.ludi.core.model.Percent
+import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.network.model.CheapSharkDeal
 import com.mr3y.ludi.core.network.model.GiveawayEntryStatus
 import com.mr3y.ludi.core.network.model.toCoreGamerPowerGiveawayEntry
 import com.mr3y.ludi.core.network.model.toDeal
-import com.mr3y.ludi.ui.components.LudiSectionHeader
-import com.mr3y.ludi.ui.components.shortDescription
 import com.mr3y.ludi.ui.presenter.DealsViewModel
 import com.mr3y.ludi.ui.presenter.model.DealsState
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
-import com.mr3y.ludi.ui.presenter.model.UiResult
 import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.theme.LudiTheme
 
@@ -160,7 +154,7 @@ fun DealsScreen(
             }
             if (selectedTab == 0) {
                 when(val deals = dealsState.deals) {
-                    is UiResult.Content -> {
+                    is Result.Success -> {
                         itemsIndexed(deals.data) { index, deal ->
                             key(index) {
                                 Deal(
@@ -173,7 +167,7 @@ fun DealsScreen(
                             }
                         }
                     }
-                    is UiResult.Error -> {
+                    is Result.Error -> {
                         item {
                             Box(
                                 contentAlignment = Alignment.Center,
@@ -192,7 +186,7 @@ fun DealsScreen(
                 }
             } else {
                 when(val mmoGiveaways = dealsState.mmoGamesGiveaways) {
-                    is UiResult.Content -> {
+                    is Result.Success -> {
                         itemsIndexed(mmoGiveaways.data) { index, mmoGiveaway ->
                             key(index) {
                                 MMOGameGiveaway(
@@ -205,7 +199,7 @@ fun DealsScreen(
                             }
                         }
                     }
-                    is UiResult.Error -> {
+                    is Result.Error -> {
                         item {
                             Box(
                                 contentAlignment = Alignment.Center,
@@ -223,7 +217,7 @@ fun DealsScreen(
                     }
                 }
                 when(val otherGamesGiveaways = dealsState.otherGamesGiveaways) {
-                    is UiResult.Content -> {
+                    is Result.Success -> {
                         itemsIndexed(otherGamesGiveaways.data) { index, gameGiveaway ->
                             key(index) {
                                 GamerPowerGameGiveaway(
@@ -236,7 +230,7 @@ fun DealsScreen(
                             }
                         }
                     }
-                    is UiResult.Error -> {
+                    is Result.Error -> {
                         item {
                             Box(
                                 contentAlignment = Alignment.Center,
@@ -679,7 +673,7 @@ fun DealsScreenPreview() {
     val dealsState = remember {
         mutableStateOf(
             DealsState(
-                deals = UiResult.Content(
+                deals = Result.Success(
                     listOf(
                         ResourceWrapper.ActualResource(            CheapSharkDeal(
                 "DEUSEXHUMANREVOLUTIONDIRECTORSCUT",
@@ -747,7 +741,7 @@ fun DealsScreenPreview() {
 ),
                     )
                 ),
-                mmoGamesGiveaways = UiResult.Content(
+                mmoGamesGiveaways = Result.Success(
                     listOf(
                         ResourceWrapper.ActualResource(
                                         MMOGiveawayEntry(
@@ -784,7 +778,7 @@ fun DealsScreenPreview() {
                         ),
                     )
                 ),
-                otherGamesGiveaways = UiResult.Content(
+                otherGamesGiveaways = Result.Success(
                     listOf(
                         ResourceWrapper.ActualResource(
                                         com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry(

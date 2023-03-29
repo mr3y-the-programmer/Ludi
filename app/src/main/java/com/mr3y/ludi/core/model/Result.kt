@@ -5,7 +5,6 @@ import com.slack.eithernet.ApiResult
 sealed interface Result<out T, out E> {
     data class Success<T>(val data: T) : Result<T, Nothing>
     data class Error(val exception: Throwable? = null) : Result<Nothing, Throwable>
-    object Loading : Result<Nothing, Nothing>
 }
 
 /**
