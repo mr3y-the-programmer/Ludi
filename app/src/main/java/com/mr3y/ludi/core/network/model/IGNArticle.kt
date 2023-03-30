@@ -21,9 +21,9 @@ data class IGNArticle(
             source = Source.IGN,
             sourceLinkUrl = sourceLink!!,
             content = if (content != null) MarkupText(content) else null,
-            imageUrl = image!!,
-            author = author!!,
-            publicationDate = publicationDate!!.toZonedDateTime()
+            imageUrl = image,
+            author = author,
+            publicationDate = publicationDate?.toZonedDateTime()
         )
     }
 

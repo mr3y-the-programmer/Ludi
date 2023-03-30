@@ -16,14 +16,14 @@ data class GameSpotArticle(
         return NewsArticle(
             id = null,
             title = Title.Plain(title!!),
-            description = MarkupText(description!!),
+            description = description?.let { MarkupText(it) },
             thumbnailUrl = null,
             source = Source.GameSpot,
             sourceLinkUrl = sourceLink!!,
             content = null,
-            imageUrl = image!!,
-            author = author!!,
-            publicationDate = publicationDate!!.toZonedDateTime()
+            imageUrl = image,
+            author = author,
+            publicationDate = publicationDate?.toZonedDateTime()
         )
     }
 
@@ -42,7 +42,7 @@ data class GameSpotArticle(
             title = Title.Plain(title!!),
             description = MarkupText(description!!),
             source = Source.GameSpot,
-            imageUrl = image!!,
+            imageUrl = image,
             content = null,
             sourceLinkUrl = sourceLink!!,
             author = author!!,

@@ -16,21 +16,21 @@ data class GiantBombArticle(
         return NewsArticle(
             id = null,
             title = Title.Plain(title!!),
-            description = MarkupText(description!!),
+            description = description?.let { MarkupText(it) },
             thumbnailUrl = null,
             source = Source.GiantBomb,
             sourceLinkUrl = sourceLink!!,
             content = null,
-            imageUrl = image!!,
-            author = author!!,
-            publicationDate = publicationDate!!.toZonedDateTime()
+            imageUrl = image,
+            author = author,
+            publicationDate = publicationDate?.toZonedDateTime()
         )
     }
 
     override fun toNewReleaseArticle(): NewReleaseArticle {
         return NewReleaseArticle(
             title = Title.Plain(title!!),
-            description = MarkupText(description!!),
+            description = description?.let { MarkupText(it) },
             source = Source.GiantBomb,
             sourceLinkUrl = sourceLink!!,
             releaseDate = publicationDate!!.toZonedDateTime(),
@@ -42,7 +42,7 @@ data class GiantBombArticle(
             title = Title.Plain(title!!),
             description = MarkupText(description!!),
             source = Source.GiantBomb,
-            imageUrl = image!!,
+            imageUrl = image,
             content = null,
             sourceLinkUrl = sourceLink!!,
             author = author!!,

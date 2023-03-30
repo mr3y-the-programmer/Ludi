@@ -103,7 +103,7 @@ fun LudiNewReleaseRow(
                 )
         )
         Text(
-            text = newReleaseArticle.releaseDate.toLocalDateTime().format(DateTimeFormatter.RFC_1123_DATE_TIME),
+            text = newReleaseArticle.releaseDate.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE),
             color = MaterialTheme.colors.releaseDate,
             style = MaterialTheme.typography.subtitle1,
             textAlign = TextAlign.Start,
