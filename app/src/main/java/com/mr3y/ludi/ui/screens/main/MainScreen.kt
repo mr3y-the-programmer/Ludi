@@ -2,7 +2,7 @@ package com.mr3y.ludi.ui.screens.main
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.mr3y.ludi.ui.navigation.LudiNavHost
 import com.mr3y.ludi.ui.navigation.Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -29,12 +30,12 @@ fun MainScreen(modifier: Modifier = Modifier) {
             if (showBottomBar) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
-                BottomNavigation(
+                NavigationBar(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     bottomBarTabs.forEach { screen ->
                         val (label, iconVector) = screen.label!! to screen.iconVector!!
-                        BottomNavigationItem(
+                        NavigationBarItem(
                             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                             onClick = {
                                 navController.navigate(screen.route) {

@@ -1,18 +1,15 @@
 package com.mr3y.ludi.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -25,14 +22,13 @@ import com.google.accompanist.placeholder.placeholder
 import com.mr3y.ludi.core.model.*
 import com.mr3y.ludi.ui.components.internal.MarkdownText
 import com.mr3y.ludi.ui.theme.LudiTheme
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun LudiPlaceholderCard(modifier: Modifier = Modifier) {
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier,
-        elevation = 8.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column() {
             Box(
@@ -42,7 +38,7 @@ fun LudiPlaceholderCard(modifier: Modifier = Modifier) {
                     .placeholder(
                         true,
                         color = Color.LightGray,
-                        highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colors.surface)
+                        highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
                     ),
             )
             Column(
@@ -59,7 +55,7 @@ fun LudiPlaceholderCard(modifier: Modifier = Modifier) {
                             true,
                             color = Color.LightGray,
                             shape = RoundedCornerShape(4.dp),
-                            highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colors.surface)
+                            highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
                         )
                 )
 
@@ -71,7 +67,7 @@ fun LudiPlaceholderCard(modifier: Modifier = Modifier) {
                             true,
                             color = Color.LightGray,
                             shape = RoundedCornerShape(4.dp),
-                            highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colors.surface)
+                            highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
                         )
                 )
             }
@@ -115,7 +111,7 @@ private fun LudiContentCard(
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier,
-        elevation = 8.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column() {
             AsyncImage(
@@ -134,8 +130,8 @@ private fun LudiContentCard(
             ) {
                 Text(
                     text = title.text.removePrefix("<![CDATA[ ").removeSuffix(" ]]>"),
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.fillMaxWidth()
@@ -143,9 +139,9 @@ private fun LudiContentCard(
 
                 MarkdownText(
                     markdown = description?.text?.take(250)?.plus("...") ?: "N/A",
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Start,
-                    color = MaterialTheme.colors.shortDescription,
+                    color = MaterialTheme.colorScheme.shortDescription,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -153,8 +149,9 @@ private fun LudiContentCard(
     }
 }
 
-val Colors.shortDescription: Color
-    get() = if (isLight) Color.DarkGray.copy(alpha = 0.75f) else Color(0xFFCECECE).copy(alpha = 0.8f)
+val ColorScheme.shortDescription: Color
+    @Composable
+    get() = if (!isSystemInDarkTheme()) Color.DarkGray.copy(alpha = 0.75f) else Color(0xFFCECECE).copy(alpha = 0.8f)
 
 @Preview
 @Composable
@@ -224,7 +221,7 @@ fun LudiContentCardPreview() {
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {

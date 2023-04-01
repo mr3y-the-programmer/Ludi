@@ -4,14 +4,15 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -61,10 +62,12 @@ fun DealsScreen(
 ) {
     val dealsState by viewModel.dealsState.collectAsStateWithLifecycle()
     DealsScreen(
-        dealsState = dealsState
+        dealsState = dealsState,
+        modifier = modifier
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DealsScreen(
     dealsState: DealsState,
@@ -107,7 +110,7 @@ fun DealsScreen(
                         Card(
                             modifier = Modifier.weight(5f),
                             shape = RoundedCornerShape(50),
-                            elevation = 8.dp
+                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                         ) {
                             TextField(
                                 value = "",
@@ -148,7 +151,7 @@ fun DealsScreen(
                             painter = rememberVectorPainter(image = Icons.Filled.Tune),
                             contentDescription = null,
                             modifier = Modifier.size(36.dp),
-                            tint = MaterialTheme.colors.primary
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -221,6 +224,53 @@ fun DealsScreen(
 }
 
 @Composable
+fun <T> ItemContent(
+    resourceWrapper: ResourceWrapper<T>,
+    thumbnailUrl: String?,
+    title: @Composable ColumnScope.(ResourceWrapper<T>) -> Unit,
+    secondaryText: @Composable ColumnScope.(ResourceWrapper<T>) -> Unit,
+    modifier: Modifier = Modifier,
+    metadata: @Composable (RowScope.(ResourceWrapper<T>) -> Unit)? = null
+) {
+    val resource = resourceWrapper.actualResource
+    Card(
+        shape = MaterialTheme.shapes.medium,
+        modifier = modifier.padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = if (metadata != null) Arrangement.SpaceBetween else Arrangement.spacedBy(8.dp)
+        ) {
+            AsyncImage(
+                model = thumbnailUrl,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1f)
+                    .placeholder(
+                        visible = resourceWrapper is ResourceWrapper.Placeholder,
+                        highlight = PlaceholderHighlight.fade(
+                            highlightColor = MaterialTheme.colorScheme.surface.copy(
+                                alpha = 0.15f
+                            )
+                        )
+                    ),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                title(resourceWrapper)
+                secondaryText(resourceWrapper)
+            }
+            metadata?.invoke(this, resourceWrapper)
+        }
+    }
+}
+@Composable
 fun Deal(
     dealWrapper: ResourceWrapper<Deal>,
     modifier: Modifier = Modifier
@@ -229,7 +279,7 @@ fun Deal(
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier.padding(8.dp),
-        elevation = 8.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row {
             AsyncImage(
@@ -240,7 +290,7 @@ fun Deal(
                     .placeholder(
                         visible = dealWrapper is ResourceWrapper.Placeholder,
                         highlight = PlaceholderHighlight.fade(
-                            highlightColor = MaterialTheme.colors.surface.copy(
+                            highlightColor = MaterialTheme.colorScheme.surface.copy(
                                 alpha = 0.15f
                             )
                         )
@@ -256,8 +306,8 @@ fun Deal(
             ) {
                 Text(
                     text = deal?.name ?: "Deal Name Placeholder",
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
@@ -266,7 +316,7 @@ fun Deal(
                         .placeholder(
                             visible = dealWrapper is ResourceWrapper.Placeholder,
                             highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colors.surface.copy(
+                                highlightColor = MaterialTheme.colorScheme.surface.copy(
                                     alpha = 0.15f
                                 )
                             )
@@ -275,8 +325,8 @@ fun Deal(
 
                 Text(
                     text = deal?.releaseDate?.toLocalDate()?.toString() ?: "Deal Release Date placeholder",
-                    style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -284,7 +334,7 @@ fun Deal(
                         .placeholder(
                             visible = dealWrapper is ResourceWrapper.Placeholder,
                             highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colors.surface.copy(
+                                highlightColor = MaterialTheme.colorScheme.surface.copy(
                                     alpha = 0.15f
                                 )
                             )
@@ -336,7 +386,7 @@ fun MMOGameGiveaway(
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier.padding(8.dp),
-        elevation = 8.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row {
             AsyncImage(
@@ -347,7 +397,7 @@ fun MMOGameGiveaway(
                     .placeholder(
                         visible = giveawayWrapper is ResourceWrapper.Placeholder,
                         highlight = PlaceholderHighlight.fade(
-                            highlightColor = MaterialTheme.colors.surface.copy(
+                            highlightColor = MaterialTheme.colorScheme.surface.copy(
                                 alpha = 0.15f
                             )
                         )
@@ -363,8 +413,8 @@ fun MMOGameGiveaway(
             ) {
                 Text(
                     text = giveaway?.title ?: "Deal Name Placeholder",
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
@@ -373,7 +423,7 @@ fun MMOGameGiveaway(
                         .placeholder(
                             visible = giveawayWrapper is ResourceWrapper.Placeholder,
                             highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colors.surface.copy(
+                                highlightColor = MaterialTheme.colorScheme.surface.copy(
                                     alpha = 0.15f
                                 )
                             )
@@ -381,22 +431,22 @@ fun MMOGameGiveaway(
                 )
 
                 val keysLeft = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontSize = 16.sp, color = MaterialTheme.colors.onSurface)) {
+                    withStyle(style = SpanStyle(fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)) {
                         append("keys Left: ")
                     }
-                    withStyle(style = SpanStyle(fontSize = 20.sp, color = MaterialTheme.colors.onSurface)) {
+                    withStyle(style = SpanStyle(fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)) {
                         append("${giveaway?.keysLeftPercent?.value}%")
                     }
                 }
                 val placeholder = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontSize = 24.sp, color = MaterialTheme.colors.onSurface)) {
+                    withStyle(style = SpanStyle(fontSize = 24.sp, color = MaterialTheme.colorScheme.onSurface)) {
                         append("Deal Release Date placeholder")
                     }
                 }
                 Text(
                     text = if (giveaway != null) keysLeft else placeholder,
-                    style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -404,7 +454,7 @@ fun MMOGameGiveaway(
                         .placeholder(
                             visible = giveawayWrapper is ResourceWrapper.Placeholder,
                             highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colors.surface.copy(
+                                highlightColor = MaterialTheme.colorScheme.surface.copy(
                                     alpha = 0.15f
                                 )
                             )
@@ -424,7 +474,7 @@ fun GamerPowerGameGiveaway(
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier.padding(8.dp),
-        elevation = 8.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row {
             AsyncImage(
@@ -435,7 +485,7 @@ fun GamerPowerGameGiveaway(
                     .placeholder(
                         visible = giveawayWrapper is ResourceWrapper.Placeholder,
                         highlight = PlaceholderHighlight.fade(
-                            highlightColor = MaterialTheme.colors.surface.copy(
+                            highlightColor = MaterialTheme.colorScheme.surface.copy(
                                 alpha = 0.15f
                             )
                         )
@@ -450,8 +500,8 @@ fun GamerPowerGameGiveaway(
             ) {
                 Text(
                     text = giveaway?.title ?: "Deal Name Placeholder",
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -459,7 +509,7 @@ fun GamerPowerGameGiveaway(
                         .placeholder(
                             visible = giveawayWrapper is ResourceWrapper.Placeholder,
                             highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colors.surface.copy(
+                                highlightColor = MaterialTheme.colorScheme.surface.copy(
                                     alpha = 0.15f
                                 )
                             )
@@ -471,7 +521,7 @@ fun GamerPowerGameGiveaway(
                         withStyle(
                             style = SpanStyle(
                                 fontSize = 16.sp,
-                                color = MaterialTheme.colors.onSurface
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         ) {
                             append("Valid until: ")
@@ -479,7 +529,7 @@ fun GamerPowerGameGiveaway(
                         withStyle(
                             style = SpanStyle(
                                 fontSize = 20.sp,
-                                color = MaterialTheme.colors.onSurface
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         ) {
                             append("${giveaway.endDate.toLocalDate()}")
@@ -488,7 +538,7 @@ fun GamerPowerGameGiveaway(
                         withStyle(
                             style = SpanStyle(
                                 fontSize = 16.sp,
-                                color = MaterialTheme.colors.onSurface
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         ) {
                             append("N/A")
@@ -499,7 +549,7 @@ fun GamerPowerGameGiveaway(
                     withStyle(
                         style = SpanStyle(
                             fontSize = 24.sp,
-                            color = MaterialTheme.colors.onSurface
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     ) {
                         append("Deal Release Date placeholder")
@@ -507,8 +557,8 @@ fun GamerPowerGameGiveaway(
                 }
                 Text(
                     text = if (giveaway != null) giveawayEndDate else placeholder,
-                    style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -516,7 +566,7 @@ fun GamerPowerGameGiveaway(
                         .placeholder(
                             visible = giveawayWrapper is ResourceWrapper.Placeholder,
                             highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colors.surface.copy(
+                                highlightColor = MaterialTheme.colorScheme.surface.copy(
                                     alpha = 0.15f
                                 )
                             )
@@ -527,7 +577,7 @@ fun GamerPowerGameGiveaway(
                 val worth = buildAnnotatedString {
                     withStyle(
                         style = SpanStyle(
-                            color = MaterialTheme.colors.onSurface,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 20.sp
                         )
                     ) {
@@ -554,7 +604,7 @@ fun GamerPowerGameGiveaway(
 fun DealsTabRow(
     selectedTabIndex: Int,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colors.tabRow,
+    backgroundColor: Color = MaterialTheme.colorScheme.tabRow,
     shape: Shape = MaterialTheme.shapes.small,
     tabContent: @Composable RowScope.(index: Int) -> Unit,
 ) {
@@ -603,7 +653,7 @@ fun DealsTab(
     label: String,
     modifier: Modifier = Modifier,
     backgroundColor: Color = Color.Transparent,
-    contentColor: Color = MaterialTheme.colors.onTab,
+    contentColor: Color = MaterialTheme.colorScheme.onTab,
     shape: Shape = MaterialTheme.shapes.small,
     onClick: () -> Unit,
 ) {
@@ -619,7 +669,7 @@ fun DealsTab(
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
@@ -629,11 +679,13 @@ fun DealsTab(
     }
 }
 
-val Colors.tabRow: Color
-    get() = if (isLight) Color(0xFFF4F5FA) else Color.DarkGray
+val ColorScheme.tabRow: Color
+    @Composable
+    get() = if (!isSystemInDarkTheme()) Color(0xFFF4F5FA) else Color.DarkGray
 
-val Colors.onTab: Color
-    get() = if (isLight) Color.Black else Color.White
+val ColorScheme.onTab: Color
+    @Composable
+    get() = if (!isSystemInDarkTheme()) Color.Black else Color.White
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF, device = "id:pixel_6")
 @Composable

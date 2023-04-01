@@ -2,9 +2,9 @@ package com.mr3y.ludi.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.Composable
@@ -19,18 +19,18 @@ import com.mr3y.ludi.ui.theme.LudiTheme
 fun LudiErrorBox(modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier.background(color = MaterialTheme.colors.surface)
+        modifier = modifier.background(color = MaterialTheme.colorScheme.surface)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Icon(
                 painter = rememberVectorPainter(image = Icons.Filled.Error),
                 contentDescription = null,
-                tint = MaterialTheme.colors.error
+                tint = MaterialTheme.colorScheme.error
             )
             Text(
                 text = "Unexpected Error happened. try to refresh, and see if the problem persists.",
-                style = MaterialTheme.typography.h6,
-                color = MaterialTheme.colors.onSurface,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }

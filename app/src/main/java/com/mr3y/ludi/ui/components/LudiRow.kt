@@ -6,10 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Colors
-import androidx.compose.material.LocalElevationOverlay
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,13 +42,13 @@ fun LudiNewReleasePlaceholderRow(modifier: Modifier = Modifier) {
         modifier = modifier
             .shadow(8.dp)
             .clip(MaterialTheme.shapes.small)
-            .background(MaterialTheme.colors.backgroundTintShade),
+            .background(MaterialTheme.colorScheme.backgroundTintShade),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             text = "TitleTitleTitleTitleTitleTitleTitleTitle",
-            color = MaterialTheme.colors.onSurface,
-            style = MaterialTheme.typography.h6,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Start,
             modifier = Modifier
                 .weight(1f)
@@ -57,13 +56,13 @@ fun LudiNewReleasePlaceholderRow(modifier: Modifier = Modifier) {
                     true,
                     color = Color.LightGray,
                     shape = RoundedCornerShape(4.dp),
-                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colors.surface)
+                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
                 )
         )
         Text(
             text = "ReleaseDateReleaseDate",
-            color = MaterialTheme.colors.releaseDate,
-            style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colorScheme.releaseDate,
+            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Start,
             modifier = Modifier
                 .weight(1f)
@@ -71,7 +70,7 @@ fun LudiNewReleasePlaceholderRow(modifier: Modifier = Modifier) {
                     true,
                     color = Color.LightGray,
                     shape = RoundedCornerShape(4.dp),
-                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colors.surface)
+                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
                 )
         )
     }
@@ -86,43 +85,47 @@ fun LudiNewReleaseRow(
         modifier = modifier
             .shadow(8.dp)
             .clip(MaterialTheme.shapes.small)
-            .background(MaterialTheme.colors.backgroundTintShade),
+            .background(MaterialTheme.colorScheme.backgroundTintShade),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             text = newReleaseArticle.title.text.removePrefix("<![CDATA[ ").removeSuffix(" ]]>"),
-            color = MaterialTheme.colors.onSurface,
-            style = MaterialTheme.typography.h6,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Start,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
                 .placeholder(
                     false,
                     color = Color.LightGray,
                     shape = RoundedCornerShape(4.dp),
-                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colors.surface)
+                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
                 )
         )
         Text(
             text = newReleaseArticle.releaseDate.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE),
-            color = MaterialTheme.colors.releaseDate,
-            style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colorScheme.releaseDate,
+            style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Start,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
                 .placeholder(
                     false,
                     color = Color.LightGray,
                     shape = RoundedCornerShape(4.dp),
-                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colors.surface)
+                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
                 )
         )
     }
 }
 
-val Colors.backgroundTintShade: Color
-    get() = if (isLight) Color(0xFFF5F5F5) else Color(0xFF2a2a2a)
+val ColorScheme.backgroundTintShade: Color
+    @Composable
+    get() = if (!isSystemInDarkTheme()) Color(0xFFF5F5F5) else Color(0xFF2a2a2a)
 
-val Colors.releaseDate: Color
-    get() = if (isLight) Color.DarkGray.copy(alpha = 0.75f) else Color(0xFFCECECE).copy(alpha = 0.8f)
+val ColorScheme.releaseDate: Color
+    @Composable
+    get() = if (!isSystemInDarkTheme()) Color.DarkGray.copy(alpha = 0.75f) else Color(0xFFCECECE).copy(alpha = 0.8f)
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, uiMode = UI_MODE_NIGHT_NO)
 @Preview(showBackground = true, backgroundColor = 0xFF121212, uiMode = UI_MODE_NIGHT_YES)

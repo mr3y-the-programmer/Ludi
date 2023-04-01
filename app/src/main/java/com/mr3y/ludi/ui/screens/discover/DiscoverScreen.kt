@@ -2,12 +2,13 @@ package com.mr3y.ludi.ui.screens.discover
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
@@ -55,6 +56,7 @@ fun DiscoverScreen(
     DiscoverScreen(discoverState = discoverState, modifier = modifier)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverScreen(
     discoverState: DiscoverState,
@@ -73,7 +75,7 @@ fun DiscoverScreen(
             ) {
                 Card(
                     shape = RoundedCornerShape(50),
-                    elevation = 8.dp
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
                     TextField(
                         value = "",
@@ -109,7 +111,7 @@ fun DiscoverScreen(
                         painter = rememberVectorPainter(image = Icons.Filled.Tune),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -125,7 +127,7 @@ fun DiscoverScreen(
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colors.surface)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -159,7 +161,7 @@ fun DiscoverScreen(
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colors.surface)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -193,7 +195,7 @@ fun DiscoverScreen(
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colors.surface)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -221,7 +223,7 @@ fun DiscoverScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TrendingGameCard(
     richInfoGameWrapper: ResourceWrapper<RichInfoGame>,
@@ -231,7 +233,7 @@ fun TrendingGameCard(
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier,
-        elevation = 8.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column {
             AsyncImage(
@@ -242,7 +244,7 @@ fun TrendingGameCard(
                     .placeholder(
                         visible = richInfoGameWrapper is ResourceWrapper.Placeholder,
                         highlight = PlaceholderHighlight.fade(
-                            highlightColor = MaterialTheme.colors.surface.copy(
+                            highlightColor = MaterialTheme.colorScheme.surface.copy(
                                 alpha = 0.15f
                             )
                         )
@@ -258,8 +260,8 @@ fun TrendingGameCard(
             ) {
                 Text(
                     text = richInfoGame?.name ?: "Title Placeholder",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -267,7 +269,7 @@ fun TrendingGameCard(
                         .placeholder(
                             visible = richInfoGameWrapper is ResourceWrapper.Placeholder,
                             highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colors.surface.copy(
+                                highlightColor = MaterialTheme.colorScheme.surface.copy(
                                     alpha = 0.15f
                                 )
                             )
@@ -277,8 +279,8 @@ fun TrendingGameCard(
                 if (richInfoGame == null) {
                     Text(
                         text = "Platforms placeholder",
-                        style = MaterialTheme.typography.h6,
-                        color = MaterialTheme.colors.onSurface,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Start,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
@@ -287,7 +289,7 @@ fun TrendingGameCard(
                             .placeholder(
                                 visible = richInfoGameWrapper is ResourceWrapper.Placeholder,
                                 highlight = PlaceholderHighlight.fade(
-                                    highlightColor = MaterialTheme.colors.surface.copy(
+                                    highlightColor = MaterialTheme.colorScheme.surface.copy(
                                         alpha = 0.15f
                                     )
                                 )
@@ -309,7 +311,7 @@ fun TrendingGameCard(
                                     Icon(
                                         painter = painterResource(id = drawableId),
                                         contentDescription = null,
-                                        tint = MaterialTheme.colors.onSurface
+                                        tint = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
@@ -343,26 +345,27 @@ fun TrendingGameCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     richInfoGame?.genres?.forEach {
-                        Chip(
+                        SuggestionChip(
                             onClick = { },
                             modifier = Modifier
                                 .padding(vertical = 4.dp)
                                 .size(width = 80.dp, height = 24.dp),
                             shape = RoundedCornerShape(50),
-                            border = BorderStroke(1.dp, MaterialTheme.colors.shortDescription),
-                            colors = ChipDefaults.outlinedChipColors(
-                                contentColor = MaterialTheme.colors.shortDescription,
-                                backgroundColor = Color.Transparent
-                            )
-                        ) {
-                            Text(
-                                text = it.name,
-                                style = MaterialTheme.typography.body1,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colors.shortDescription,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
+                            border = SuggestionChipDefaults.suggestionChipBorder(borderWidth = 1.dp, borderColor = MaterialTheme.colorScheme.shortDescription),
+                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                labelColor = MaterialTheme.colorScheme.shortDescription,
+                                containerColor = Color.Transparent
+                            ),
+                            label = {
+                                Text(
+                                    text = it.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.shortDescription,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        )
                     }
                 }
             }
@@ -370,7 +373,7 @@ fun TrendingGameCard(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FreeGameCard(
     freeGameWrapper: ResourceWrapper<FreeGame>,
@@ -380,7 +383,7 @@ fun FreeGameCard(
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier,
-        elevation = 8.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column {
             AsyncImage(
@@ -391,7 +394,7 @@ fun FreeGameCard(
                     .placeholder(
                         visible = freeGameWrapper is ResourceWrapper.Placeholder,
                         highlight = PlaceholderHighlight.fade(
-                            highlightColor = MaterialTheme.colors.surface.copy(
+                            highlightColor = MaterialTheme.colorScheme.surface.copy(
                                 alpha = 0.15f
                             )
                         )
@@ -407,8 +410,8 @@ fun FreeGameCard(
             ) {
                 Text(
                     text = freeGame?.title ?: "Title Placeholder",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -416,7 +419,7 @@ fun FreeGameCard(
                         .placeholder(
                             visible = freeGameWrapper is ResourceWrapper.Placeholder,
                             highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colors.surface.copy(
+                                highlightColor = MaterialTheme.colorScheme.surface.copy(
                                     alpha = 0.15f
                                 )
                             )
@@ -424,8 +427,8 @@ fun FreeGameCard(
                 )
                 Text(
                     text = freeGame?.publisher ?: "Publisher placeholder",
-                    style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -433,40 +436,41 @@ fun FreeGameCard(
                         .placeholder(
                             visible = freeGameWrapper is ResourceWrapper.Placeholder,
                             highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colors.surface.copy(
+                                highlightColor = MaterialTheme.colorScheme.surface.copy(
                                     alpha = 0.15f
                                 )
                             )
                         )
                 )
                 freeGame?.genre?.let {
-                    Chip(
+                    SuggestionChip(
                         onClick = { },
                         modifier = Modifier
                             .padding(vertical = 4.dp)
                             .size(width = 80.dp, height = 24.dp),
                         shape = RoundedCornerShape(50),
-                        border = BorderStroke(1.dp, MaterialTheme.colors.shortDescription),
-                        colors = ChipDefaults.outlinedChipColors(
-                            contentColor = MaterialTheme.colors.shortDescription,
-                            backgroundColor = Color.Transparent
-                        )
-                    ) {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.body1,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colors.shortDescription,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+                        border = SuggestionChipDefaults.suggestionChipBorder(borderWidth = 1.dp, borderColor = MaterialTheme.colorScheme.shortDescription),
+                        colors = SuggestionChipDefaults.suggestionChipColors(
+                            labelColor = MaterialTheme.colorScheme.shortDescription,
+                            containerColor = Color.Transparent
+                        ),
+                        label = {
+                            Text(
+                                text = it,
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.shortDescription,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    )
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TopRatedGameCard(
     richInfoGameWrapper: ResourceWrapper<RichInfoGame>,
@@ -476,7 +480,7 @@ fun TopRatedGameCard(
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier,
-        elevation = 8.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column {
             AsyncImage(
@@ -487,7 +491,7 @@ fun TopRatedGameCard(
                     .placeholder(
                         visible = richInfoGameWrapper is ResourceWrapper.Placeholder,
                         highlight = PlaceholderHighlight.fade(
-                            highlightColor = MaterialTheme.colors.surface.copy(
+                            highlightColor = MaterialTheme.colorScheme.surface.copy(
                                 alpha = 0.15f
                             )
                         )
@@ -503,8 +507,8 @@ fun TopRatedGameCard(
             ) {
                 Text(
                     text = richInfoGame?.name ?: "Title Placeholder",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -512,7 +516,7 @@ fun TopRatedGameCard(
                         .placeholder(
                             visible = richInfoGameWrapper is ResourceWrapper.Placeholder,
                             highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colors.surface.copy(
+                                highlightColor = MaterialTheme.colorScheme.surface.copy(
                                     alpha = 0.15f
                                 )
                             )
@@ -522,8 +526,8 @@ fun TopRatedGameCard(
                 if (richInfoGame == null) {
                     Text(
                         text = "Platforms placeholder",
-                        style = MaterialTheme.typography.h6,
-                        color = MaterialTheme.colors.onSurface,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Start,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
@@ -532,7 +536,7 @@ fun TopRatedGameCard(
                             .placeholder(
                                 visible = richInfoGameWrapper is ResourceWrapper.Placeholder,
                                 highlight = PlaceholderHighlight.fade(
-                                    highlightColor = MaterialTheme.colors.surface.copy(
+                                    highlightColor = MaterialTheme.colorScheme.surface.copy(
                                         alpha = 0.15f
                                     )
                                 )
@@ -554,7 +558,7 @@ fun TopRatedGameCard(
                                     Icon(
                                         painter = painterResource(id = drawableId),
                                         contentDescription = null,
-                                        tint = MaterialTheme.colors.onSurface
+                                        tint = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
@@ -590,14 +594,14 @@ fun TopRatedGameCard(
                         Icon(
                             painter = rememberVectorPainter(image = Icons.Filled.Star),
                             contentDescription = null,
-                            tint = MaterialTheme.colors.star
+                            tint = MaterialTheme.colorScheme.star
                         )
 
                         Text(
                             text = it.toString(),
-                            style = MaterialTheme.typography.subtitle1,
+                            style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center,
-                            color = MaterialTheme.colors.shortDescription,
+                            color = MaterialTheme.colorScheme.shortDescription,
                         )
                     }
 
@@ -611,26 +615,27 @@ fun TopRatedGameCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     richInfoGame?.genres?.forEach {
-                        Chip(
+                        SuggestionChip(
                             onClick = { },
                             modifier = Modifier
                                 .padding(vertical = 4.dp)
                                 .size(width = 80.dp, height = 24.dp),
                             shape = RoundedCornerShape(50),
-                            border = BorderStroke(1.dp, MaterialTheme.colors.shortDescription),
-                            colors = ChipDefaults.outlinedChipColors(
-                                contentColor = MaterialTheme.colors.shortDescription,
-                                backgroundColor = Color.Transparent
-                            )
-                        ) {
-                            Text(
-                                text = it.name,
-                                style = MaterialTheme.typography.body1,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colors.shortDescription,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
+                            border = SuggestionChipDefaults.suggestionChipBorder(borderWidth = 1.dp, borderColor = MaterialTheme.colorScheme.shortDescription),
+                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                labelColor = MaterialTheme.colorScheme.shortDescription,
+                                containerColor = Color.Transparent
+                            ),
+                            label = {
+                                Text(
+                                    text = it.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.shortDescription,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        )
                     }
                 }
             }
@@ -638,8 +643,9 @@ fun TopRatedGameCard(
     }
 }
 
-val Colors.star: Color
-    get() = if (isLight) Color(0xFFEAC54F) else Color(0xFFE3B341)
+val ColorScheme.star: Color
+    @Composable
+    get() = if (!isSystemInDarkTheme()) Color(0xFFEAC54F) else Color(0xFFE3B341)
 
 private fun String.mapPlatformNameToVectorDrawable(): Int? {
     return when {
