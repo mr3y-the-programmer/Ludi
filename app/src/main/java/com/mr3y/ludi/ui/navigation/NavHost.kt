@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mr3y.ludi.ui.screens.deals.DealsScreen
 import com.mr3y.ludi.ui.screens.discover.DiscoverScreen
-import com.mr3y.ludi.ui.screens.home.HomeScreen
+import com.mr3y.ludi.ui.screens.news.NewsScreen
 
 @Composable
 fun LudiNavHost(
@@ -16,14 +16,14 @@ fun LudiNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Discover.route,
         modifier = modifier
     ) {
-        composable(Screen.Home.route) {
-            HomeScreen()
-        }
         composable(Screen.Discover.route) {
             DiscoverScreen()
+        }
+        composable(Screen.News.route) {
+            NewsScreen()
         }
         composable(Screen.Deals.route) {
             DealsScreen()

@@ -18,8 +18,8 @@ import com.mr3y.ludi.ui.navigation.Screen
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val bottomBarTabs = listOf(
-        Screen.Home,
         Screen.Discover,
+        Screen.News,
         Screen.Deals,
         Screen.Settings,
     )

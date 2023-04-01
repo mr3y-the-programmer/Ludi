@@ -1,4 +1,4 @@
-package com.mr3y.ludi.ui.screens.home
+package com.mr3y.ludi.ui.screens.news
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,22 +18,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mr3y.ludi.core.model.*
 import com.mr3y.ludi.ui.components.*
-import com.mr3y.ludi.ui.presenter.HomeViewModel
-import com.mr3y.ludi.ui.presenter.model.HomeState
+import com.mr3y.ludi.ui.presenter.NewsViewModel
+import com.mr3y.ludi.ui.presenter.model.NewsState
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @Composable
-fun HomeScreen(
+fun NewsScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: NewsViewModel = hiltViewModel()
 ) {
-    val homeState by viewModel.homeState.collectAsStateWithLifecycle()
-    HomeScreen(homeState = homeState, modifier = modifier)
+    val newsState by viewModel.newsState.collectAsStateWithLifecycle()
+    NewsScreen(newsState = newsState, modifier = modifier)
 }
 
 @Composable
-fun HomeScreen(
-    homeState: HomeState,
+fun NewsScreen(
+    newsState: NewsState,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -63,9 +62,9 @@ fun HomeScreen(
                 val cardModifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .size(width = 248.dp, height = 440.dp)
-                when(homeState.newsFeed) {
+                when(newsState.newsFeed) {
                     is Result.Success -> {
-                        items(homeState.newsFeed.data) { newsArticle ->
+                        items(newsState.newsFeed.data) { newsArticle ->
                             LudiNewsArticleCard(article = newsArticle, modifier = cardModifier)
                         }
                     }
@@ -101,9 +100,9 @@ fun HomeScreen(
                 val cardModifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .size(width = 248.dp, height = 440.dp)
-                when(homeState.reviewsFeed) {
+                when(newsState.reviewsFeed) {
                     is Result.Success -> {
-                        items(homeState.reviewsFeed.data) { reviewArticle ->
+                        items(newsState.reviewsFeed.data) { reviewArticle ->
                             LudiReviewArticleCard(article = reviewArticle, modifier = cardModifier)
                         }
                     }
@@ -135,9 +134,9 @@ fun HomeScreen(
         item { 
             Spacer(modifier = Modifier.height(8.dp))
         }
-        when(homeState.newReleasesFeed) {
+        when(newsState.newReleasesFeed) {
             is Result.Success -> {
-                items(homeState.newReleasesFeed.data) { newReleaseArticle ->
+                items(newsState.newReleasesFeed.data) { newReleaseArticle ->
                     LudiNewReleaseRow(
                         newReleaseArticle = newReleaseArticle,
                         modifier = newReleaseRowModifier
@@ -156,7 +155,7 @@ fun HomeScreen(
 
 @Preview(device = "id:pixel_6", showBackground = true)
 @Composable
-fun HomeScreenPreview() {
+fun NewsScreenPreview() {
     val samples = listOf(
         NewsArticle(
             id = null,
@@ -207,10 +206,10 @@ fun HomeScreenPreview() {
             publicationDate = null
         ),
     )
-    val homeState = HomeState.Default.copy(newsFeed = Result.Success(samples))
+    val newsState = NewsState.Default.copy(newsFeed = Result.Success(samples))
     LudiTheme {
-        HomeScreen(
-            homeState = homeState,
+        NewsScreen(
+            newsState = newsState,
             modifier = Modifier.fillMaxSize()
         )
     }

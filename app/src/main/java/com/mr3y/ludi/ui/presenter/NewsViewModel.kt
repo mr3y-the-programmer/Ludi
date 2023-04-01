@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.repository.NewsRepository
-import com.mr3y.ludi.ui.presenter.model.HomeState
+import com.mr3y.ludi.ui.presenter.model.NewsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,13 +14,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class NewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository,
 ) : ViewModel() {
 
-    private val _homeState = MutableStateFlow(HomeState.Default)
-    val homeState: StateFlow<HomeState>
-        get() = _homeState
+    private val _newsState = MutableStateFlow(NewsState.Default)
+    val newsState: StateFlow<NewsState>
+        get() = _newsState
 
     private val sources = setOf(Source.GiantBomb, Source.GameSpot, Source.MMOBomb)
 
@@ -38,7 +38,7 @@ class HomeViewModel @Inject constructor(
             val news = newsResult.await()
             val reviews = reviewsResult.await()
             val newReleases = newReleasesResult.await()
-            _homeState.update {
+            _newsState.update {
                 it.copy(
                     newsFeed = news,
                     reviewsFeed = reviews,
