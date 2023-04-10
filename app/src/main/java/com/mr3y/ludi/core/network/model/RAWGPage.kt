@@ -29,7 +29,7 @@ data class RAWGShallowGame(
     val imageUrl: String,
     val rating: Float,
     @SerialName("metacritic")
-    val metaCriticScore: Int,
+    val metaCriticScore: Int?,
     val playtime: Int,
     @SerialName("suggestions_count")
     val suggestionsCount: Int,
