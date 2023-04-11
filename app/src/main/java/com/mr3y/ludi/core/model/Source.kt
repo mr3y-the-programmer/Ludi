@@ -5,4 +5,5 @@ enum class Source {
     GameSpot,
     IGN,
     MMOBomb,
+    TechRadar
 }

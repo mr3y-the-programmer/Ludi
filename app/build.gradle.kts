@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.gradle.buildconfig.plugin)
+    alias(libs.plugins.protobuf)
 }
 
 android {
@@ -78,6 +79,28 @@ buildConfig {
     buildConfigField("String", "RAWG_API_KEY", "\"${properties.getProperty("RAWG_API_KEY")}\"")
 }
 
+protobuf {
+    protoc {
+        artifact = libs.protobuf.protoc.get().toString()
+    }
+
+    // Generates the java Protobuf-lite code for the Protobufs in this project. See
+    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
+    // for more information.
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                val java by registering {
+                    option("lite")
+                }
+                val kotlin by registering {
+                    option("lite")
+                }
+            }
+        }
+    }
+}
+
 dependencies {
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
@@ -93,6 +116,10 @@ dependencies {
     // Hilt and Robolectric tests.
     testImplementation(libs.hilt.android.testing)
     kaptTest(libs.hilt.android.compiler)
+
+    // Datastore
+    implementation(libs.datastore)
+    implementation(libs.protobuf.kotlinlite)
 
     // Network
     implementation(libs.rss.parser)
@@ -133,6 +160,7 @@ dependencies {
     testImplementation(libs.strikt)
     testImplementation(libs.turbine)
     testImplementation(libs.mockk)
+    testImplementation(libs.robolectric)
     testImplementation(libs.test.parameter.injector)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(testFixtures(libs.eithernet))
@@ -143,4 +171,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.strikt)
+    androidTestImplementation(libs.turbine)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 }

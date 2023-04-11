@@ -1,5 +1,22 @@
 package com.mr3y.ludi.core.repository.query
 
+fun RichInfoGamesQuery(
+    page: Int? = null,
+    pageSize: Int? = null,
+    searchQuery: String? = null,
+    isFuzzinessEnabled: Boolean? = null,
+    matchTermsExactly: Boolean? = null,
+    parentPlatforms: List<Int>? = null,
+    platforms: List<Int>? = null,
+    stores: List<Int>? = null,
+    developers: List<String>? = null,
+    genres: List<Int>? = null,
+    tags: List<Int>? = null,
+    dates: List<String>? = null,
+    metaCriticScores: List<Int>? = null,
+    sortingCriteria: RichInfoGamesSortingCriteria? = null
+) = RichInfoGamesQueryParameters(page, pageSize, searchQuery, isFuzzinessEnabled, matchTermsExactly, parentPlatforms, platforms, stores, developers, genres, tags, dates, metaCriticScores, sortingCriteria)
+
 data class RichInfoGamesQueryParameters(
     val page: Int?,
     val pageSize: Int?,

@@ -35,7 +35,7 @@ data class RichInfoGame(
     val toBeAnnounced: Boolean,
     val imageUrl: String,
     val rating: Float,
-    val metaCriticScore: Int,
+    val metaCriticScore: Int?,
     val playtime: Int,
     val suggestionsCount: Int,
     val platformsInfo: List<PlatformInfo>?,
