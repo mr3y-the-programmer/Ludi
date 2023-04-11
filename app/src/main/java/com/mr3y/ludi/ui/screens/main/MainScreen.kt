@@ -1,5 +1,6 @@
 package com.mr3y.ludi.ui.screens.main
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
@@ -35,8 +36,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 ) {
                     bottomBarTabs.forEach { screen ->
                         val (label, iconVector) = screen.label!! to screen.iconVector!!
+                        val isSelected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                        val tabWeight by animateFloatAsState(targetValue = if (isSelected) 1.5f else 1f)
                         NavigationBarItem(
-                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                            selected = isSelected,
                             onClick = {
                                 navController.navigate(screen.route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
@@ -48,7 +51,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             },
                             label = { Text(text = label) },
                             icon = { Icon(iconVector, null) },
-                            modifier = Modifier.weight(1f),
+                            colors = NavigationBarItemDefaults.colors(
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
+                            ),
+                            modifier = Modifier.weight(tabWeight),
                         )
                     }
                 }
