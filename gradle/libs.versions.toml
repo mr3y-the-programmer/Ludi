@@ -1,6 +1,6 @@
 [versions]
 buildConfigPlugin = "3.1.0"
-androidGradlePlugin = "7.4.2"
+androidGradlePlugin = "8.0.0"
 androidxCore = "1.9.0"
 androidxLifecycle = "2.6.0"
 androidxActivity = "1.6.1"
