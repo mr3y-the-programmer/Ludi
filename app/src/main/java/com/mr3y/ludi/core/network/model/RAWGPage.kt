@@ -22,7 +22,7 @@ data class RAWGShallowGame(
     val slug: String,
     val name: String,
     @SerialName("released")
-    val releaseDate: String,
+    val releaseDate: String?,
     @SerialName("tba")
     val toBeAnnounced: Boolean,
     @SerialName("background_image")
@@ -160,7 +160,7 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame {
         id = id,
         name = name,
         slug = slug,
-        releaseDate = releaseDate.toZonedDate(),
+        releaseDate = releaseDate?.toZonedDate(),
         toBeAnnounced = toBeAnnounced,
         imageUrl = imageUrl,
         rating = rating,

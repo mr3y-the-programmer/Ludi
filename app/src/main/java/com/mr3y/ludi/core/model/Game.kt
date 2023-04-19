@@ -31,7 +31,7 @@ data class RichInfoGame(
     override val id: Long,
     val slug: String,
     val name: String,
-    val releaseDate: ZonedDateTime,
+    val releaseDate: ZonedDateTime?,
     val toBeAnnounced: Boolean,
     val imageUrl: String,
     val rating: Float,
