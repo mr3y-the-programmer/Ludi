@@ -29,14 +29,14 @@ data class RichInfoGamesPage(
 
 data class RichInfoGame(
     override val id: Long,
-    val slug: String,
+    val slug: String?,
     val name: String,
     val releaseDate: ZonedDateTime?,
-    val toBeAnnounced: Boolean,
+    val toBeAnnounced: Boolean?,
     val imageUrl: String,
     val rating: Float,
     val metaCriticScore: Int?,
-    val playtime: Int,
+    val playtime: Int?,
     val suggestionsCount: Int,
     val platformsInfo: List<PlatformInfo>?,
     val storesInfo: List<StoreInfo>?,
@@ -67,7 +67,7 @@ data class StoreInfo(
     val id: Int,
     val gameIdOnStore: Long?,
     val name: String,
-    val slug: String,
+    val slug: String?,
     val domain: String?,
     val gamesCount: Long?,
     val imageUrl: String?
@@ -76,9 +76,9 @@ data class StoreInfo(
 data class GameTag(
     val id: Int,
     val name: String,
-    val slug: String,
+    val slug: String?,
     val language: String,
-    val gamesCount: Long,
+    val gamesCount: Long?,
     val imageUrl: String
 )
 
@@ -87,7 +87,7 @@ data class GameScreenshot(val id: Long, val imageUrl: String)
 data class GameGenre(
     val id: Int,
     val name: String,
-    val slug: String,
+    val slug: String?,
     val gamesCount: Long?,
     val imageUrl: String?
 )

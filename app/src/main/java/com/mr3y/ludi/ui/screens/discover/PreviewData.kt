@@ -1,5 +1,6 @@
 package com.mr3y.ludi.ui.screens.discover
 
+import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.network.model.*
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 
@@ -375,7 +376,7 @@ val richInfoGamesSamples = listOf(
                     imageUrl = "https://media.rawg.io/media/games/995/9951d9d55323d08967640f7b9ab3e342.jpg"
                 )
             )
-        ).toRichInfoGame()
+        ).toRichInfoGame() as RichInfoGame
     ),
     ResourceWrapper.ActualResource(
         RAWGShallowGame(
@@ -699,7 +700,7 @@ val richInfoGamesSamples = listOf(
                     imageUrl = "https://media.rawg.io/media/games/d1a/d1a2e99ade53494c6330a0ed945fe823.jpg"
                 )
             )
-        ).toRichInfoGame()
+        ).toRichInfoGame() as RichInfoGame
     ),
     ResourceWrapper.ActualResource(
         RAWGShallowGame(
@@ -1042,6 +1043,6 @@ val richInfoGamesSamples = listOf(
                     imageUrl = "https://media.rawg.io/media/games/2e1/2e187b31e5cee21c110bd16798d75fab.jpg"
                 )
             )
-        ).toRichInfoGame()
+        ).toRichInfoGame() as RichInfoGame
     )
 )

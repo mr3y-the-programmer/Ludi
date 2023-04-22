@@ -18,21 +18,21 @@ data class RAWGPage(
 
 @Serializable
 data class RAWGShallowGame(
-    val id: Long,
-    val slug: String,
-    val name: String,
+    val id: Long?,
+    val slug: String?,
+    val name: String?,
     @SerialName("released")
     val releaseDate: String?,
     @SerialName("tba")
-    val toBeAnnounced: Boolean,
+    val toBeAnnounced: Boolean?,
     @SerialName("background_image")
-    val imageUrl: String,
+    val imageUrl: String?,
     val rating: Float,
     @SerialName("metacritic")
     val metaCriticScore: Int?,
-    val playtime: Int,
+    val playtime: Int?,
     @SerialName("suggestions_count")
-    val suggestionsCount: Int,
+    val suggestionsCount: Int?,
     val platforms: List<RAWGPlatformInfo>?,
     val stores: List<RAWGStoreInfo>?,
     val tags: List<RAWGGameTag>,
@@ -62,28 +62,28 @@ data class AddedByStatus(
 
 @Serializable
 data class RAWGGameTag(
-    val id: Int,
+    val id: Int?,
     val name: String,
-    val slug: String,
-    val language: String,
+    val slug: String?,
+    val language: String?,
     @SerialName("games_count")
-    val gamesCount: Long,
+    val gamesCount: Long?,
     @SerialName("image_background")
-    val imageUrl: String
+    val imageUrl: String?
 )
 
 @Serializable
 data class RAWGGameScreenshot(
-    val id: Long,
+    val id: Long?,
     @SerialName("image")
-    val imageUrl: String,
+    val imageUrl: String?,
 )
 
 @Serializable
 data class RAWGGameGenre(
-    val id: Int,
+    val id: Int?,
     val name: String,
-    val slug: String,
+    val slug: String?,
     @SerialName("games_count")
     val gamesCount: Long? = null,
     @SerialName("image_background")
@@ -145,9 +145,9 @@ data class ShallowRAWGStoreInfoWithId(val id: Long, override val store: RAWGStor
 
 @Serializable
 data class RAWGStoreProperties(
-    val id: Int,
+    val id: Int?,
     val name: String,
-    val slug: String,
+    val slug: String?,
     val domain: String? = null,
     @SerialName("games_count")
     val gamesCount: Long? = null,
@@ -155,18 +155,18 @@ data class RAWGStoreProperties(
     val imageUrl: String? = null
 )
 
-fun RAWGShallowGame.toRichInfoGame(): RichInfoGame {
+fun RAWGShallowGame.toRichInfoGame(): RichInfoGame? {
     return RichInfoGame(
-        id = id,
-        name = name,
+        id = id ?: return null,
+        name = name ?: return null,
         slug = slug,
         releaseDate = releaseDate?.toZonedDate(),
         toBeAnnounced = toBeAnnounced,
-        imageUrl = imageUrl,
+        imageUrl = imageUrl ?: return null,
         rating = rating,
         metaCriticScore = metaCriticScore,
         playtime = playtime,
-        suggestionsCount = suggestionsCount,
+        suggestionsCount = suggestionsCount ?: return null,
         platformsInfo = platforms?.map { platformInfo ->
             val properties = platformInfo.platform
             when(platformInfo) {
@@ -210,7 +210,7 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame {
             when(storeInfo) {
                 is ShallowRAWGStoreInfo -> {
                     StoreInfo(
-                        id = properties.id,
+                        id = properties.id ?: return@map null,
                         gameIdOnStore = null,
                         name = properties.name,
                         slug = properties.slug,
@@ -221,7 +221,7 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame {
                 }
                 is ShallowRAWGStoreInfoWithId -> {
                     StoreInfo(
-                        id = properties.id,
+                        id = properties.id ?: return@map null,
                         gameIdOnStore = storeInfo.id,
                         name = properties.name,
                         slug = properties.slug,
@@ -231,32 +231,32 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame {
                     )
                 }
             }
-        },
+        }?.filterNotNull(),
         tags = tags.map { gameTag ->
             GameTag(
-                id = gameTag.id,
+                id = gameTag.id ?: return@map null,
                 name = gameTag.name,
                 slug = gameTag.slug,
-                language = gameTag.language,
+                language = gameTag.language ?: return@map null,
                 gamesCount = gameTag.gamesCount,
-                imageUrl = gameTag.imageUrl,
+                imageUrl = gameTag.imageUrl ?: return@map null,
             )
-        },
+        }.filterNotNull(),
         screenshots = screenshots.map { screenshot ->
             GameScreenshot(
-                id = screenshot.id,
-                imageUrl = screenshot.imageUrl
+                id = screenshot.id ?: return@map null,
+                imageUrl = screenshot.imageUrl ?: return@map null
             )
-        },
+        }.filterNotNull(),
         genres = genres.map { genre ->
             GameGenre(
-                id = genre.id,
+                id = genre.id ?: return@map null,
                 name = genre.name,
                 slug = genre.slug,
                 gamesCount = genre.gamesCount,
                 imageUrl = genre.imageUrl,
             )
-        }
+        }.filterNotNull()
     )
 }
 
@@ -265,6 +265,6 @@ fun RAWGPage.toRichInfoGamesPage(): RichInfoGamesPage {
         count = count,
         nextPageUrl = nextPageUrl,
         previousPageUrl = previousPageUrl,
-        games = results.map(RAWGShallowGame::toRichInfoGame)
+        games = results.mapNotNull(RAWGShallowGame::toRichInfoGame)
     )
 }
