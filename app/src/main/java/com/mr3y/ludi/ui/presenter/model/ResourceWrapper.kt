@@ -18,3 +18,10 @@ internal fun <T: Any> Result<Iterable<T>, Throwable>.wrapResultResources(): Resu
         is Result.Error -> this
     }
 }
+
+internal fun <T: Any, R: Any> Result<Iterable<T>, Throwable>.wrapResultResources(transform: (Iterable<T>) -> Iterable<R>): Result<List<ResourceWrapper<R>>, Throwable> {
+    return when(this) {
+        is Result.Success -> Result.Success(transform(data).map { it.wrapResource() })
+        is Result.Error -> this
+    }
+}
