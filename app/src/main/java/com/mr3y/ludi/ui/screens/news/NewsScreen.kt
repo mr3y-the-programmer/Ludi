@@ -3,15 +3,27 @@ package com.mr3y.ludi.ui.screens.news
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,7 +32,9 @@ import com.mr3y.ludi.core.model.*
 import com.mr3y.ludi.ui.components.*
 import com.mr3y.ludi.ui.presenter.NewsViewModel
 import com.mr3y.ludi.ui.presenter.model.NewsState
+import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.theme.LudiTheme
+import java.time.ZonedDateTime
 
 @Composable
 fun NewsScreen(
@@ -31,117 +45,157 @@ fun NewsScreen(
     NewsScreen(newsState = newsState, modifier = modifier)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsScreen(
     newsState: NewsState,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier
-    ) {
-        item {
-            Text(
-                text = ":trending_up: Latest",
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.headlineMedium,
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                title = {},
+                actions = {
+                    IconButton(
+                        onClick = { },
+                        modifier = Modifier.requiredSize(48.dp)
+                    ) {
+                        Icon(
+                            painter = rememberVectorPainter(image = Icons.Filled.Tune),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .fillMaxSize(),
+                            tint = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                textAlign = TextAlign.Start
+                    .padding(horizontal = 16.dp),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
-            Spacer(modifier = Modifier.height(8.dp))
         }
-        item {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val cardModifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
-                    .size(width = 248.dp, height = 440.dp)
-                when(newsState.newsFeed) {
-                    is Result.Success -> {
-                        items(newsState.newsFeed.data) { newsArticle ->
-                            LudiNewsArticleCard(article = newsArticle, modifier = cardModifier)
-                        }
-                    }
-                    is Result.Error -> {
-                        item {
-                            LudiErrorBox(modifier = cardModifier.fillMaxWidth())
-                        }
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        item {
-            Text(
-                text = "Reviews",
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                textAlign = TextAlign.Start
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        item {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val cardModifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
-                    .size(width = 248.dp, height = 440.dp)
-                when(newsState.reviewsFeed) {
-                    is Result.Success -> {
-                        items(newsState.reviewsFeed.data) { reviewArticle ->
-                            LudiReviewArticleCard(article = reviewArticle, modifier = cardModifier)
-                        }
-                    }
-                    is Result.Error -> {
-                        item {
-                            LudiErrorBox(modifier = cardModifier.fillMaxWidth())
-                        }
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        item {
-            Text(
-                text = "Upcoming releases",
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                textAlign = TextAlign.Start
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        val newReleaseRowModifier = Modifier
-            .padding(horizontal = 16.dp)
-            .height(120.dp)
-            .fillMaxWidth()
-        item { 
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        when(newsState.newReleasesFeed) {
-            is Result.Success -> {
-                items(newsState.newReleasesFeed.data) { newReleaseArticle ->
-                    LudiNewReleaseRow(
-                        newReleaseArticle = newReleaseArticle,
-                        modifier = newReleaseRowModifier
+    ) { contentPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(contentPadding)
+                .background(MaterialTheme.colorScheme.background),
+            contentPadding = PaddingValues(start = 16.dp)
+        ) {
+            val headerModifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .padding(bottom = 8.dp)
+
+            val cardModifier = Modifier
+                .width(width = 248.dp)
+                .height(IntrinsicSize.Min)
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = headerModifier
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.TrendingUp,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.size(36.dp)
                     )
-                    Divider(modifier = Modifier.padding(horizontal = 16.dp))
+                    LudiSectionHeader(
+                        text = "Latest",
+                        modifier = Modifier.fillMaxHeight()
+                    )
+                }
+                FeedSectionScaffold(
+                    sectionFeedResult = newsState.newsFeed,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    LudiNewsArticleCard(
+                        articleWrapper = it,
+                        modifier = cardModifier
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+                LudiSectionHeader(
+                    text = "Reviews",
+                    modifier = headerModifier,
+                )
+                FeedSectionScaffold(
+                    sectionFeedResult = newsState.reviewsFeed,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    LudiReviewArticleCard(
+                        articleWrapper = it,
+                        modifier = cardModifier
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+                LudiSectionHeader(
+                    text = "Upcoming releases",
+                    modifier = headerModifier,
+                )
+            }
+            NewReleasesSection(
+                newReleases = newsState.newReleasesFeed,
+            ) {
+                LudiNewRelease(
+                    newReleaseArticleWrapper = it,
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                )
+                Divider(modifier = Modifier.padding(end = 16.dp))
+            }
+        }
+    }
+}
+
+fun LazyListScope.NewReleasesSection(
+    newReleases: Result<List<ResourceWrapper<NewReleaseArticle>>, Throwable>,
+    onSuccessItemContent: @Composable (ResourceWrapper<NewReleaseArticle>) -> Unit
+) {
+    when(newReleases) {
+        is Result.Success -> {
+            items(newReleases.data) { newReleaseArticle ->
+                onSuccessItemContent(newReleaseArticle)
+            }
+        }
+        is Result.Error -> {
+            item {
+                LudiErrorBox(modifier = Modifier.fillMaxWidth())
+            }
+        }
+    }
+}
+
+@Composable
+fun <T> FeedSectionScaffold(
+    sectionFeedResult: Result<List<ResourceWrapper<T>>, Throwable>,
+    modifier: Modifier = Modifier,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(16.dp),
+    itemContent: @Composable (ResourceWrapper<T>) -> Unit,
+) {
+    LazyRow(
+        modifier = modifier,
+        horizontalArrangement = horizontalArrangement
+    ) {
+        when(sectionFeedResult) {
+            is Result.Success -> {
+                itemsIndexed(sectionFeedResult.data) { index, resourceWrapper ->
+                    key(index) {
+                        itemContent(resourceWrapper)
+                    }
                 }
             }
             is Result.Error -> {
@@ -156,7 +210,8 @@ fun NewsScreen(
 @Preview(device = "id:pixel_6", showBackground = true)
 @Composable
 fun NewsScreenPreview() {
-    val samples = listOf(
+    val newsArticleSamples = listOf(
+        ResourceWrapper.ActualResource(
         NewsArticle(
             id = null,
             title = Title.Plain("The Community Spotlight 2023.03.11"),
@@ -168,7 +223,8 @@ fun NewsScreenPreview() {
             sourceLinkUrl = "content",
             author = null,
             publicationDate = null
-        ),
+        )),
+        ResourceWrapper.ActualResource(
         NewsArticle(
             id = null,
             title = Title.Plain("The Community Spotlight 2023.02.25"),
@@ -180,7 +236,8 @@ fun NewsScreenPreview() {
             sourceLinkUrl = "content",
             author = null,
             publicationDate = null
-        ),
+        )),
+        ResourceWrapper.ActualResource(
         NewsArticle(
             id = null,
             title = Title.Plain("What's Happening On Giant Bomb: Week of 2/20/23"),
@@ -192,7 +249,8 @@ fun NewsScreenPreview() {
             sourceLinkUrl = "content",
             author = null,
             publicationDate = null
-        ),
+        )),
+        ResourceWrapper.ActualResource(
         NewsArticle(
             id = null,
             title = Title.Markup("<![CDATA[ Get Dead Space Remake for \$20 Off ]]>"),
@@ -204,9 +262,101 @@ fun NewsScreenPreview() {
             sourceLinkUrl = "content",
             author = null,
             publicationDate = null
+        )),
+    )
+    val reviewsArticleSamples = listOf(
+        ResourceWrapper.ActualResource(
+            ReviewArticle(
+                title = Title.Plain("Mario + Rabbids: Sparks of Hope Review"),
+                sourceLinkUrl = "https://www.giantbomb.com/reviews/mario-rabbids-sparks-of-hope-review/1900-802/",
+                description = MarkupText("<![CDATA[ <p dir=\"ltr\">For the first couple hours of Mario + Rabbids: Sparks of Hope, I anticipated a retread of my experience with the <a href=\"https://www.giantbomb.com/mario-rabbids-kingdom-battle/3030-59637/\">original game</a>. “We gave Mario guns and put him in an<a href=\"https://www.giantbomb.com/x-com/3025-120/\"> XCOM</a>” is a novel enough gimmick, but I found the battles and exploration in the first game too rote to keep my attention to the end.</p><image data-align=\"right\" data-size=\"small\" data-img-src=\"https://www.giantbomb.com/a/uploads/original/21/211414/3417284-1600px-rabbid_edge.jpg\" data-ref-id=\"1300-3417284\" data-ratio=\"0.5625\" data-width=\"1600\" data-resize-url=\"https://www.giantbomb.com/a/uploads/ignore_jpg_scale_small/21/211414/3417284-1600px-rabbid_edge.jpg\" data-resized=\"true\">Look at this dumbass.</image><p dir=\"ltr\">Sparks of Hope doesn’t make a strong first impression, beginning with generic exposition about an alien force named Cursa that uses some goopy stuff called Darkmess to threaten the peace of this weird Mushroom Kingdom/<a href=\"https://www.giantbomb.com/rabbids/3015-4945/\">Rabbid</a> hellhole universe. And it doesn’t take long to introduce Edge, one of the most bafflingly designed characters I’ve seen in a while. This Rabbid is basically a Troll doll with a<a href=\"https://www.giantbomb.com/the-joker/3005-952/\"> Joker</a> color scheme, and she appears to be presented wholly unironically despite being named EDGE THE BLADE MASTER.</p><p dir=\"ltr\">For the first handful of battles, I told myself I’d handle my misgivings about the Rabbids part of the “Mario + Rabbids” equation by only playing as Mario characters. That was until I realized that the real<a href=\"https://www.giantbomb.com/princess-peach/3005-709/\"> Peach</a>’s barrier ability was effective, but the heal ability of the dumbass Rabbid Peach was infinitely more useful. Plus her rocket launcher can shoot up and over cover, allowing me to get easy shots on enemies that no other character could. Okay fine, I’ll betray my loyalty to the ‘real’ Mario characters for the sake of improved tactical options. This process happened again and again until I stopped caring about my distaste for the Rabbid stuff and got increasingly invested in each battle.</p><p dir=\"ltr\">Oh right, in case you aren’t familiar with Kingdom Battle, I should mention that Sparks of Hope is a tactical strategy game in the vein of XCOM. But unlike its predecessor (and most other games in the genre), it doesn’t confine your characters to a grid. Instead, they have a limited range of free motion during each turn. This can be extended via the use of some fun abilities like team jumps, gliding, or power-ups.</p><image data-align=\"left\" data-size=\"small\" data-img-src=\"https://www.giantbomb.com/a/uploads/original/21/211414/3417285-1600px-mario_rabbids_sparks_of_hope_battle.png\" data-ref-id=\"1300-3417285\" data-ratio=\"0.5625\" data-width=\"1600\" data-resize-url=\"https://www.giantbomb.com/a/uploads/ignore_jpg_scale_small/21/211414/3417285-1600px-mario_rabbids_sparks_of_hope_battle.png\" data-resized=\"true\"><a href=\"https://www.giantbomb.com/a/uploads/original/21/211414/3417285-1600px-mario_rabbids_sparks_of_hope_battle.png\"><img alt=\"No Caption Provided\" src=\"https://www.giantbomb.com/a/uploads/scale_small/21/211414/3417285-1600px-mario_rabbids_sparks_of_hope_battle.png\" /></a></image><p dir=\"ltr\">This seemingly small change really added to my enjoyment of every turn. You’re able to quickly swap back and forth between characters without penalty, exploring your movement options before committing to attacks. By default, each character can do one team jump and one dash attack per turn, but this can be increased as you level up.</p><p dir=\"ltr\">It’s really rewarding to explore synergies between character abilities in an effort to maximize your damage output each turn. Let’s say I’m in a battle that puts me up against numerous enemies that are weak against shock damage. I can start by throwing<a href=\"https://www.giantbomb.com/bowser/3005-337/\"> Bowser</a> into the fray and using a spark ability (more on that shortly) to draw the enemies towards him. Then I can put Mario into an overwatch mode, which automatically fires upon enemies that are in motion. Enter Rabbid Peach, who I’ve leveled up so she has three dash attacks per turn and equipped her dash with a shock ability. I then slide into several enemies at once, popping them up into the air and activating Mario’s overwatch ability so he snipes them out of the sky like they’re clay pigeons. It felt great every time.</p><p dir=\"ltr\">So, the sparks! Imagine the Luma from Mario Galaxy, but they have dumb Rabbid ears. And each one of them has an ability–it could add fire damage to your standard weapon blasts, create a shockwave of goo, reflect incoming damage back at your enemies, regenerate your health, or summon the spirit of Donkey Kong for a devastating radial blast.</p><image data-align=\"right\" data-size=\"small\" data-img-src=\"https://www.giantbomb.com/a/uploads/original/21/211414/3417286-1600px-mario_rabbids_sparks_of_hope_plain.jpg\" data-ref-id=\"1300-3417286\" data-ratio=\"0.5625\" data-width=\"1600\" data-resize-url=\"https://www.giantbomb.com/a/uploads/ignore_jpg_scale_small/21/211414/3417286-1600px-mario_rabbids_sparks_of_hope_plain.jpg\" data-resized=\"true\"><a href=\"https://www.giantbomb.com/a/uploads/original/21/211414/3417286-1600px-mario_rabbids_sparks_of_hope_plain.jpg\"><img alt=\"No Caption Provided\" src=\"https://www.giantbomb.com/a/uploads/scale_small/21/211414/3417286-1600px-mario_rabbids_sparks_of_hope_plain.jpg\" /></a></image><p dir=\"ltr\">Each character can have two sparks equipped at a time, and it’s very simple to slot them in and out at the beginning of battles or during exploration. It’s fun to try to optimize your spark loadout in a way that accentuates each character’s innate abilities. Rabbid Peach was my healer, so I gave her sparks that would reflect damage and revive teammates. <a href=\"https://www.giantbomb.com/luigi/3005-370/\">Luigi</a> was my sniper, so he got sparks that added fire and shock damage to his bow and arrow. Bowser was a beast with area damage, so he’d usually get sparks that gathered foes together or rained down destruction in a concentrated area. Sometimes you’ll go into a fight and realize that something’s off, whether it’s the characters you selected or the sparks you sent them into battle with. Thankfully, if you fail, it’s super easy to go back to the drawing board and assemble a new team with new abilities based on the challenges you encountered during your failed attempt.</p><p dir=\"ltr\">I never grew tired of the many battles in Sparks of Hope and, thankfully, the exploration elements of the game have been improved upon as well. In the original, you just controlled the weird Roomba thing while your team followed along. This time around, you actually control Mario and your team…to an extent.</p><p dir=\"ltr\">Here’s the thing. When I’m controlling Mario–the character who defined the platforming genre and who’s so synonymous with jumping that his original name was JUMPMAN–I’m used to a certain level of mobility and platforming ability. There’s something super weird about doing “collect eight red coins” challenges while controlling Mario but being constricted to little more than moving an analog stick. I get it, this isn’t a platforming game. But it still feels weird to be Mario while running around a 3D environment and not even being able to jump.</p><p dir=\"ltr\">The puzzles themselves are fine distractions while you move from battle to battle, but aren’t anything that’ll surprise you if you’ve played a video game in the last 25 years. These <a href=\"https://www.giantbomb.com/resident-evil/3025-397/\">Resident Evil</a> Lite tasks will have you turning cranks, pushing blocks, and assembling missing pieces of paintings. None of them are particularly bad or frustrating, they’re just kind of things to mildly occupy your brain between the much more engaging battles. Still, it’s better than being a Roomba conga line leader like in Kingdom Battle.</p><image data-align=\"left\" data-size=\"small\" data-img-src=\"https://www.giantbomb.com/a/uploads/original/21/211414/3417287-1600px-mario_rabbids_sparks_of_hope_ruins.jpg\" data-ref-id=\"1300-3417287\" data-ratio=\"0.5625\" data-width=\"1600\" data-resize-url=\"https://www.giantbomb.com/a/uploads/ignore_jpg_scale_small/21/211414/3417287-1600px-mario_rabbids_sparks_of_hope_ruins.jpg\" data-resized=\"true\"><a href=\"https://www.giantbomb.com/a/uploads/original/21/211414/3417287-1600px-mario_rabbids_sparks_of_hope_ruins.jpg\"><img alt=\"No Caption Provided\" src=\"https://www.giantbomb.com/a/uploads/scale_small/21/211414/3417287-1600px-mario_rabbids_sparks_of_hope_ruins.jpg\" /></a></image><p dir=\"ltr\">I’ve enjoyed XCOM, <a href=\"https://www.giantbomb.com/fire-emblem/3025-196/\">Fire Emblem</a>, and <a href=\"https://www.giantbomb.com/advance-wars/3025-17/\">Advance Wars</a> in the past but don’t consider myself an expert in tactical games, so I played with everything set to the default options and found the difficulty to be perfectly tuned for me. That said, a variety of accessibility and difficulty options should let you tune Sparks of Hope to your desired level of challenge whether you’re a veteran of the genre or if this is your jumping-on point. Enemy health and damage can be tweaked, as can the level of HP your heroes restore between battles. You can even set your skill tree to be automatically managed as you level up, or turn on full invulnerability if you’re struggling with a particular battle. These options combined with the child-friendly vibes of Mario and the Rabbids should make this an ideal entry point for younger gamers interested in the strategy genre.</p><p dir=\"ltr\">Sparks of Hope wasn’t on my radar after my middling experience with Kingdom Battle, but I love it when a game surprises me like this. It takes just a handful of battles for the hooks to get in, and the tactical options only grow as you unlock new heroes and sparks. I’m not sure if any game could be good enough to make me love the Rabbids, but the fun I was having in my 30+ hours with Sparks of Hope did a great job of distracting me from their dumb, dumb faces.</p> ]]>"),
+                publicationDate = ZonedDateTime.now(),
+                author = "Dan Ryckert",
+                imageUrl = "https://www.giantbomb.com/a/uploads/screen_medium/21/211414/3417263-1600px-mario_rabbids_sparks_of_hope_group_screenshot.png",
+                content = null,
+                source = Source.GiantBomb
+            )
+        ),
+        ResourceWrapper.ActualResource(
+            ReviewArticle(
+                title = Title.Plain("Neon White Review"),
+                sourceLinkUrl = "https://www.giantbomb.com/reviews/neon-white-review/1900-801/",
+                description = MarkupText("<![CDATA[ <p dir=\"ltr\">If you grew up reading gaming magazines in the 90s, you might be familiar with full-page advertisements claiming that a game would cause any variety of extreme maladies. Eyelids being ripped off your face, thumbs and palms becoming bloodied, and, in the most severe cases, full cranial explosions. After one of my many late nights with Neon White, I finally felt like that dream of 90s game ads had become a reality. It actually felt like my eyeballs were vibrating enough to potentially pop and dribble down my face in a radical fashion.</p><p dir=\"ltr\">Designed by <a href=\"https://www.giantbomb.com/ben-esposito/3010-10262/\">Ben Esposito</a> of <a href=\"https://www.giantbomb.com/donut-county/3030-47388/\">Donut County</a>, Neon White takes the bite-sized speedrun approach of <a href=\"https://www.giantbomb.com/astros-playroom/3030-78963/\">Astro’s Playroom</a> and expands on it tenfold. I had to stop playing Astro at times to ice my wrists and forearms; I have to avoid playing Neon White within an hour of sleeping because of a potent mix of adrenaline and a tendency to become preoccupied with pondering the optimal routes through the levels I just played.</p><image data-align=\"right\" data-size=\"medium\" data-img-src=\"https://www.giantbomb.com/a/uploads/scale_super/21/211414/3386569-neon2.jpg\" data-ref-id=\"1300-3386569\" data-ratio=\"0.55884529977794\" data-width=\"1351\" data-resize-url=\"https://www.giantbomb.com/a/uploads/ignore_jpg_scale_medium/21/211414/3386569-neon2.jpg\" data-resized=\"true\"><a href=\"https://www.giantbomb.com/a/uploads/scale_super/21/211414/3386569-neon2.jpg\"><img alt=\"No Caption Provided\" src=\"https://www.giantbomb.com/a/uploads/scale_medium/21/211414/3386569-neon2.jpg\" /></a></image><p dir=\"ltr\">Speedrun-focused games aren’t a new concept, but Neon White takes a decidedly novel approach to its 121 stages. It’s part first-person shooter, part resource management, and part puzzle game. Your resources take the form of various cards, each of which features a firing mode and a discard ability. The yellow card, for example, is a pistol that you can fire at range to kill enemies, but when discarded it functions as a double jump. Similarly, the uzi is also a bomb that can take out multiple enemies at once, but its shockwave can propel you up walls or across gaps if you're positioned correctly. A rocket launcher can take out groups of enemies but can also function as a grappling hook.</p><p dir=\"ltr\">Each level has a finite amount of cards, and there's a great deal of satisfaction that comes from tinkering with them and figuring out the best way to use them. Maybe you can shoot that group of enemies with your uzi in lieu of bombing them – after all, that bomb could launch you over a wall and shave several seconds off your time if you're able to hold onto it a little longer. Instead of discarding your blue rocket launcher card for its grappling hook ability, try crossing that gap by rocket jumping and saving your grappling hook for a bold shortcut opportunity later in the level. Cards are deliberately laid out in a natural path through each level, but the optimal route is rarely the obvious one.</p><p dir=\"ltr\">If you were to watch a solid run of any Neon White stage, you’d be forgiven for thinking it seems overwhelming. But thanks to its straightforward controls, smart card placement, and drip feed of new weapons and concepts, it makes it easy to recognize and remember the tools at your disposal. If you really want to attack your friends leaderboard, however, you’ll want to use keyboard and mouse controls. Using a controller is great if you want to take your time to learn levels or find hidden collectibles, but there’s a pace to the game’s action that begs for more precise control when climbing the competitive ranks.</p><p dir=\"ltr\">Playing on Switch or Steam Deck does offer gyroscope support, which works well and is a major step up from purely analog controls. It’s also way easier to climb the leaderboards on Switch, but I’d only recommend that version if it’s your only option. Its visuals are significantly muddier, though they are high contrast enough that the graphical muddiness won't affect your ability to play the game. The longer load times, however, have more of a pronounced effect on the pace of your experience and how quickly you can repeat attempts. When you’re restarting a level as much as you need to in Neon White, you want a <a href=\"https://www.giantbomb.com/tony-hawk/3025-10/\">Tony Hawk</a>-style rapid restart option. It may only take a couple of seconds (as opposed to the near instantaneous PC restart), but it’s enough to get annoying when you’re biffing the first jump in a level over and over again.</p><image data-align=\"left\" data-size=\"medium\" data-img-src=\"https://www.giantbomb.com/a/uploads/scale_super/21/211414/3386570-neon3.jpg\" data-ref-id=\"1300-3386570\" data-ratio=\"0.56333830104322\" data-width=\"1342\" data-resize-url=\"https://www.giantbomb.com/a/uploads/ignore_jpg_scale_medium/21/211414/3386570-neon3.jpg\" data-resized=\"true\"><a href=\"https://www.giantbomb.com/a/uploads/scale_super/21/211414/3386570-neon3.jpg\"><img alt=\"No Caption Provided\" src=\"https://www.giantbomb.com/a/uploads/scale_medium/21/211414/3386570-neon3.jpg\" /></a></image><p dir=\"ltr\">Neon White is almost always played at a blistering pace, but things frequently come to a screeching halt whenever it’s time for characters to chat. This happens far more often than you might expect, with tons of story-related and optional conversations with your fellow “Neons.” These are presented in the style of a visual novel, with gift-giving and relationship meters straight out of something like Hades. Building your relationship with other characters sometimes leads to a unique sidequest level, but it more frequently involves tons of dialogue featuring humor that will be very hit-or-miss with most players. You can activate a fast forward feature if you’re just looking to get back into the action as soon as possible, but it still disrupts the flow of the level-to-level gameplay.</p><p dir=\"ltr\">Neon White gets its hooks in deep and fast. I knew within 10 minutes that I loved it, but I appreciated and enjoyed it more as I spent more time with it. My first playthrough was a blast as I discovered new weapons, explored levels, and experimented with shortcuts. But the “real game” felt like it started after I saw the credits. That’s when I started going back to each level, playing them over and over until I achieved the Ace rank, and then played them more just to shave hundredths of a second off so I could climb my friends leaderboard. It feels amazing to see “New Best!” on your time after dozens of attempts, and failing never gets frustrating considering how short the levels are and how quickly you can restart them. Whether you’re looking to best your own runs, compete with your friends, or attempt to make a splash on the global leaderboard, Neon White presents a welcoming on-ramp to the world of speedrunning, offers compelling challenges to overcome for those that want to pick up the pace, and delivers a satisfying gameplay loop regardless of the speed you want to tackle it at.</p> ]]>"),
+                publicationDate = ZonedDateTime.now(),
+                author = "Dan Ryckert",
+                imageUrl = "https://www.giantbomb.com/a/uploads/screen_medium/21/211414/3386568-neon1.jpg",
+                content = null,
+                source = Source.GiantBomb
+            )
+        ),
+        ResourceWrapper.ActualResource(
+            ReviewArticle(
+                title = Title.Plain("Wo Long: Fallen Dynasty Review - Souls-Like Of The Three Kingdoms"),
+                sourceLinkUrl = "https://www.gamespot.com/reviews/wo-long-fallen-dynasty-review-souls-like-of-the-three-kingdoms/1900-6418040/?ftag=CAD-01-10abi2f",
+                description = MarkupText("<![CDATA[ <p dir=\"ltr\">The first boss fight in Wo Long: Fallen Dynasty is right up there with the toughest first bosses in video game history. This opening battle pits you against Zhang Liang of the Yellow Turbans, as you clash in a kinetic two-phase fight to the death. It's an intense skill check that challenges your prowess of Wo Long's mechanics almost immediately. In many ways, it feels like a rite of passage for the rest of the game and a bold statement of intent from developer Team Ninja. I initially loved how it forced me to adapt to the demands of the game's particular brand of Souls-like combat, yet the further I progressed, the more this feeling dissipated as I realized that this introductory struggle was little more than an unbalanced outlier, providing a much sterner test than the bosses following it.</p><p dir=\"ltr\">For many, this sudden difficulty spike will be a barrier to entry, halting progress a mere 10 minutes into the game. It's a shame Wo Long begins with such a sturdy roadblock, not least because this initial undertaking isn't indicative of the rest of the game moving forward. In fact, outside of this first boss, Team Ninja has crafted one of the more approachable Souls-likes in what is a traditionally challenging genre.</p><p dir=\"ltr\">I didn't encounter another boss fight on par with Zhang Liang's difficulty until roughly 15 hours into Wo Long's campaign. Most of the bosses in between were a relative cakewalk, to the point where I was able to cut down each one on my first attempt--usually in under a minute. I still had fun dispatching every single one, but the ease with which I was able to do so makes them lose some of their luster and reinforces the notion that the first boss is at odds with the rest of the game. The battle with Zhang Liang sets up expectations that never come to fruition, particularly when other fights allow you to summon help from either AI or human teammates.</p><a href=\"https://www.gamespot.com/reviews/wo-long-fallen-dynasty-review-souls-like-of-the-three-kingdoms/1900-6418040/?ftag=CAD-01-10abi2f/\">Continue Reading at GameSpot</a> ]]>"),
+                publicationDate = ZonedDateTime.now(),
+                author = "Richard Wakeling",
+                imageUrl = "https://www.gamespot.com/a/uploads/screen_medium/43/434805/4106384-wolongthumb.jpg",
+                content = null,
+                source = Source.GameSpot
+            )
+        ),
+        ResourceWrapper.ActualResource(
+            ReviewArticle(
+                title = Title.Plain("Octopath Traveler 2 Review - Go Your Own Way"),
+                sourceLinkUrl = "https://www.gamespot.com/reviews/octopath-traveler-2-review-go-your-own-way/1900-6418036/?ftag=CAD-01-10abi2f",
+                description = MarkupText("<![CDATA[ <p dir=\"ltr\">Octopath Traveler was a pleasant surprise when it debuted a few years back. Its then-new HD-2D engine was a delight to behold, and the gameplay drew inspiration from some of Square Enix's most storied franchises: a deep Final Fantasy-style class and customization system mixed with the non-linear exploration and story of the SaGa series with a dash of combat that took cues from Bravely Default. These are great inspirations to draw from, but it resulted in a game that, while excellent, seemed to be struggling for a distinct identity. Perhaps the developers recognized this as well--with Octopath Traveler II, Square Enix seems to be trying to add new gameplay elements that give the franchise a personality of its own. And, for the most part, it has succeeded admirably.</p><p dir=\"ltr\">The core of Octopath Traveler II is a traditional, turn-based JRPG with many of the usual gameplay elements: towns and dungeons to explore, objectives to complete, etc. Where most JRPGs present a linear method of progression, however, Octopath Traveler takes a very different approach: You begin the game by selecting a \"main\" character from eight candidates. This character has their own unique background, story arc, and goals, and will serve as a constant presence throughout your playtime. After an introductory story chapter, you are then free to explore the world to your liking. Eventually, you'll meet the other seven characters, allowing you to bring them into your party and follow their storylines as well, all culminating in a finale that ties the individual story threads together.</p><p dir=\"ltr\">The focus on individual character arcs rather than a huge, high-stakes threat for most of the game's runtime is refreshing, allowing Octopath Traveler II to tell a variety of intriguing stories that vary wildly in both tone and focus. Some of them are comparatively weaker, but others command and hold your attention and keep you eager for more. Agnea's star-struck search for fame is notably bland, for instance, while Temenos' investigation into a murder plot by a religious cult and Throne's quest to kill the adoptive parents who raised her are excellent stand-outs. My personal favorite questline is the story of Osvald, who I chose as my starting character--a tale of a scholar who plans a Count-of-Monte-Christo-style prison escape and revenge after being framed for the murder of his own family by a scheming colleague.</p><a href=\"https://www.gamespot.com/reviews/octopath-traveler-2-review-go-your-own-way/1900-6418036/?ftag=CAD-01-10abi2f/\">Continue Reading at GameSpot</a> ]]>"),
+                publicationDate = ZonedDateTime.now(),
+                author = "Heidi Kemps",
+                imageUrl = "https://www.gamespot.com/a/uploads/screen_medium/123/1239113/4102547-octopath2.jpg",
+                content = null,
+                source = Source.GameSpot
+            )
         ),
     )
-    val newsState = NewsState.Default.copy(newsFeed = Result.Success(samples))
+    val newReleasesSamples = listOf(
+        ResourceWrapper.ActualResource(
+            NewReleaseArticle(
+                title = Title.Plain("Sky Kid Deluxe"),
+                description = MarkupText("<![CDATA[ Alternatively labeled Sky Kid DX, this is the sequel to Namco's seminal \"birds-in-planes\" shoot-'em-up. ]]>"),
+                sourceLinkUrl = "https://www.giantbomb.com/sky-kid-deluxe/3030-88602/",
+                releaseDate = ZonedDateTime.now(),
+                source = Source.GiantBomb
+            )
+        ),
+        ResourceWrapper.ActualResource(
+            NewReleaseArticle(
+                title = Title.Plain("Fitness Boxing: Fist of the North Star"),
+                description = null,
+                sourceLinkUrl = "https://www.giantbomb.com/fitness-boxing-fist-of-the-north-star/3030-87327/",
+                releaseDate = ZonedDateTime.now(),
+                source = Source.GiantBomb
+            )
+        ),
+        ResourceWrapper.ActualResource(
+            NewReleaseArticle(
+                title = Title.Plain("CAT Interstellar: Episode II"),
+                description = null,
+                sourceLinkUrl = "https://www.gamespot.com/games/cat-interstellar-episode-ii/",
+                releaseDate = ZonedDateTime.now(),
+                source = Source.GameSpot
+            )
+        ),
+        ResourceWrapper.ActualResource(
+            NewReleaseArticle(
+                title = Title.Plain("TIMESTRIDE"),
+                description = null,
+                sourceLinkUrl = "https://www.gamespot.com/games/timestride/",
+                releaseDate = ZonedDateTime.now(),
+                source = Source.GameSpot
+            )
+        ),
+    )
+    val newsState = NewsState(
+        newsFeed = Result.Success(newsArticleSamples),
+        reviewsFeed = Result.Success(reviewsArticleSamples),
+        newReleasesFeed = Result.Success(newReleasesSamples)
+    )
     LudiTheme {
         NewsScreen(
             newsState = newsState,

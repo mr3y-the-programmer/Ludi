@@ -5,149 +5,114 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.fade
-import com.google.accompanist.placeholder.placeholder
 import com.mr3y.ludi.core.model.NewReleaseArticle
+import com.mr3y.ludi.core.model.Source
+import com.mr3y.ludi.core.model.Title
+import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
+import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.theme.LudiTheme
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun LudiNewReleasePlaceholderRow(modifier: Modifier = Modifier) {
-//    val overlaidColor = LocalElevationOverlay.current?.apply(MaterialTheme.colors.surface, 4.dp)
-//    val isDarkTheme = isSystemInDarkTheme()
-
-    /*Layout(
-        modifier = modifier,
-        content = { *//*TODO*//* }
-    ) { measurables, constraints ->
-        layout() {
-
-        }
-    }*/
-    Column(
-        modifier = modifier
-            .shadow(8.dp)
-            .clip(MaterialTheme.shapes.small)
-            .background(MaterialTheme.colorScheme.backgroundTintShade),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text(
-            text = "TitleTitleTitleTitleTitleTitleTitleTitle",
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Start,
-            modifier = Modifier
-                .weight(1f)
-                .placeholder(
-                    true,
-                    color = Color.LightGray,
-                    shape = RoundedCornerShape(4.dp),
-                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
-                )
-        )
-        Text(
-            text = "ReleaseDateReleaseDate",
-            color = MaterialTheme.colorScheme.releaseDate,
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Start,
-            modifier = Modifier
-                .weight(1f)
-                .placeholder(
-                    true,
-                    color = Color.LightGray,
-                    shape = RoundedCornerShape(4.dp),
-                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
-                )
-        )
-    }
-}
-
-@Composable
-fun LudiNewReleaseRow(
-    newReleaseArticle: NewReleaseArticle,
+fun LudiNewRelease(
+    newReleaseArticleWrapper: ResourceWrapper<NewReleaseArticle>,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .shadow(8.dp)
-            .clip(MaterialTheme.shapes.small)
-            .background(MaterialTheme.colorScheme.backgroundTintShade),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    val newReleaseArticle = newReleaseArticleWrapper.actualResource
+    Card(
+        shape = MaterialTheme.shapes.small,
+        modifier = modifier,
     ) {
-        Text(
-            text = newReleaseArticle.title.text.removePrefix("<![CDATA[ ").removeSuffix(" ]]>"),
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Start,
-            modifier = Modifier
-                .weight(1f)
-                .placeholder(
-                    false,
-                    color = Color.LightGray,
-                    shape = RoundedCornerShape(4.dp),
-                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(
+                text = newReleaseArticle?.title?.text?.removePrefix("<![CDATA[ ")?.removeSuffix(" ]]>") ?: "Title placeholder",
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Start,
+                maxLines = 1,
+                modifier = Modifier
+                    .weight(1f)
+                    .defaultPlaceholder(isVisible = newReleaseArticleWrapper is ResourceWrapper.Placeholder)
+            )
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = newReleaseArticle?.releaseDate?.toLocalDate()?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "N/A",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Start,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .weight(1f)
+                        .defaultPlaceholder(isVisible = newReleaseArticleWrapper is ResourceWrapper.Placeholder)
                 )
-        )
-        Text(
-            text = newReleaseArticle.releaseDate.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE),
-            color = MaterialTheme.colorScheme.releaseDate,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Start,
-            modifier = Modifier
-                .weight(1f)
-                .placeholder(
-                    false,
-                    color = Color.LightGray,
-                    shape = RoundedCornerShape(4.dp),
-                    highlight = PlaceholderHighlight.fade(highlightColor = MaterialTheme.colorScheme.surface)
-                )
-        )
+                if (newReleaseArticle != null) {
+                    Text(
+                        text = newReleaseArticle.source.name.let { "Source: $it" },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Start,
+                    )
+                }
+            }
+        }
     }
 }
-
-val ColorScheme.backgroundTintShade: Color
-    @Composable
-    get() = if (!isSystemInDarkTheme()) Color(0xFFF5F5F5) else Color(0xFF2a2a2a)
-
-val ColorScheme.releaseDate: Color
-    @Composable
-    get() = if (!isSystemInDarkTheme()) Color.DarkGray.copy(alpha = 0.75f) else Color(0xFFCECECE).copy(alpha = 0.8f)
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, uiMode = UI_MODE_NIGHT_NO)
 @Preview(showBackground = true, backgroundColor = 0xFF121212, uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun LudiNewReleasePlaceholderRowPreview() {
+fun LudiNewReleasePlaceholderPreview() {
     LudiTheme {
-        LudiNewReleasePlaceholderRow(
+        LudiNewRelease(
+            newReleaseArticleWrapper = ResourceWrapper.Placeholder,
             modifier = Modifier
+                .padding(16.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .height(120.dp)
-                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
         )
     }
 }
 
-@Preview
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, uiMode = UI_MODE_NIGHT_NO)
+@Preview(showBackground = true, backgroundColor = 0xFF121212, uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun LudiNewReleaseRowPreview() {
+fun LudiNewReleasePreview() {
     LudiTheme {
-//        LudiNewReleaseRow(
-//            newReleaseArticle =
-//        )
+        LudiNewRelease(
+            newReleaseArticleWrapper = ResourceWrapper.ActualResource(
+                NewReleaseArticle(
+                    title = Title.Plain("CAT Interstellar: Episode II"),
+                    description = null,
+                    sourceLinkUrl = "https://www.gamespot.com/games/cat-interstellar-episode-ii/",
+                    releaseDate = ZonedDateTime.now(),
+                    source = Source.GameSpot
+                )
+            ),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+        )
     }
 }

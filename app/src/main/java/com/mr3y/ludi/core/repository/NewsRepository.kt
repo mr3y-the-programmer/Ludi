@@ -7,9 +7,9 @@ import com.mr3y.ludi.core.model.NewsArticle
 import com.mr3y.ludi.core.model.ReviewArticle
 
 interface NewsRepository {
-    suspend fun getLatestGamingNews(sources: Set<Source>): Result<List<NewsArticle>, Throwable>
+    suspend fun getLatestGamingNews(sources: Set<Source>): Result<Set<NewsArticle>, Throwable>
 
-    suspend fun getGamesNewReleases(sources: Set<Source>): Result<List<NewReleaseArticle>, Throwable>
+    suspend fun getGamesNewReleases(sources: Set<Source>): Result<Set<NewReleaseArticle>, Throwable>
 
-    suspend fun getGamesReviews(sources: Set<Source>): Result<List<ReviewArticle>, Throwable>
+    suspend fun getGamesReviews(sources: Set<Source>): Result<Set<ReviewArticle>, Throwable>
 }

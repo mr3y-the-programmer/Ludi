@@ -12,7 +12,7 @@ val <T> ResourceWrapper<T>.actualResource: T?
 
 internal fun <T: Any> T.wrapResource() = ResourceWrapper.ActualResource(this)
 
-internal fun <T: Any> Result<List<T>, Throwable>.wrapResultResources(): Result<List<ResourceWrapper<T>>, Throwable> {
+internal fun <T: Any> Result<Iterable<T>, Throwable>.wrapResultResources(): Result<List<ResourceWrapper<T>>, Throwable> {
     return when(this) {
         is Result.Success -> Result.Success(data.map { it.wrapResource() })
         is Result.Error -> this

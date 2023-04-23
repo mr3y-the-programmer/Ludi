@@ -47,6 +47,7 @@ import com.mr3y.ludi.core.model.FreeGame
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.ui.components.SingleRowLayout
 import com.mr3y.ludi.ui.components.LudiSuggestionChip
+import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.theme.LudiTheme
@@ -333,17 +334,6 @@ fun SuggestionGameCardScaffold(
             }
         }
     }
-}
-
-fun Modifier.defaultPlaceholder(isVisible: Boolean): Modifier = composed {
-    placeholder(
-        visible = isVisible,
-        highlight = PlaceholderHighlight.fade(
-            highlightColor = MaterialTheme.colorScheme.onSurface.copy(
-                alpha = 0.15f
-            )
-        )
-    )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)

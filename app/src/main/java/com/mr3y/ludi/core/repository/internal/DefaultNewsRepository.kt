@@ -20,14 +20,14 @@ class DefaultNewsRepository @Inject constructor(
     private val mmoGamesDataSource: MMOGamesDataSource
 ) : NewsRepository {
 
-    override suspend fun getLatestGamingNews(sources: Set<Source>): Result<List<NewsArticle>, Throwable> = coroutineScope {
+    override suspend fun getLatestGamingNews(sources: Set<Source>): Result<Set<NewsArticle>, Throwable> = coroutineScope {
         val aggregatedErrors = mutableListOf<Result.Error>()
         var aggregatedNews = rssDataSources.filter { it.key in sources && it.value is RSSNewsFeedDataSource<*> }.values.map {
             it as RSSNewsFeedDataSource<*>
             async {
                 it.fetchNewsFeed()
             }
-        }.awaitAll().fold(Result.Success<List<NewsArticle>>(emptyList())) { acc, result ->
+        }.awaitAll().fold(Result.Success<Set<NewsArticle>>(emptySet())) { acc, result ->
             when(result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toNewsArticle()!! }) }
                 is Result.Error -> {
@@ -35,7 +35,6 @@ class DefaultNewsRepository @Inject constructor(
                     aggregatedErrors += result
                     return@fold acc
                 }
-                else -> return@fold acc
             }
         }
         if (Source.MMOBomb in sources) {
@@ -60,14 +59,14 @@ class DefaultNewsRepository @Inject constructor(
         }
     }
 
-    override suspend fun getGamesNewReleases(sources: Set<Source>): Result<List<NewReleaseArticle>, Throwable> = coroutineScope {
+    override suspend fun getGamesNewReleases(sources: Set<Source>): Result<Set<NewReleaseArticle>, Throwable> = coroutineScope {
         val aggregatedErrors = mutableListOf<Result.Error>()
         val aggregatedNewReleases = rssDataSources.filter { it.key in sources && it.value is RSSNewReleasesFeedDataSource<*> }.values.map {
             it as RSSNewReleasesFeedDataSource<*>
             async {
                 it.fetchNewReleasesFeed()
             }
-        }.awaitAll().fold(Result.Success<List<NewReleaseArticle>>(emptyList())) { acc, result ->
+        }.awaitAll().fold(Result.Success<Set<NewReleaseArticle>>(emptySet())) { acc, result ->
             when(result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toNewReleaseArticle()!! }) }
                 is Result.Error -> {
@@ -75,7 +74,6 @@ class DefaultNewsRepository @Inject constructor(
                     aggregatedErrors += result
                     return@fold acc
                 }
-                else -> return@fold acc
             }
         }
         when {
@@ -84,14 +82,14 @@ class DefaultNewsRepository @Inject constructor(
         }
     }
 
-    override suspend fun getGamesReviews(sources: Set<Source>): Result<List<ReviewArticle>, Throwable> = coroutineScope {
+    override suspend fun getGamesReviews(sources: Set<Source>): Result<Set<ReviewArticle>, Throwable> = coroutineScope {
         val aggregatedErrors = mutableListOf<Result.Error>()
         val aggregatedReviews = rssDataSources.filter { it.key in sources && it.value is RSSReviewsFeedDataSource<*> }.values.map {
             it as RSSReviewsFeedDataSource<*>
             async {
                 it.fetchReviewsFeed()
             }
-        }.awaitAll().fold(Result.Success<List<ReviewArticle>>(emptyList())) { acc, result ->
+        }.awaitAll().fold(Result.Success<Set<ReviewArticle>>(emptySet())) { acc, result ->
             when(result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toReviewArticle()!! }) }
                 is Result.Error -> {
@@ -99,7 +97,6 @@ class DefaultNewsRepository @Inject constructor(
                     aggregatedErrors += result
                     return@fold acc
                 }
-                else -> return@fold acc
             }
         }
         when {
