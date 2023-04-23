@@ -143,12 +143,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.coil)
     implementation(libs.accompanist.placeholder)
-    implementation(libs.markwon.core)
-    implementation(libs.markwon.strikethrough)
-    implementation(libs.markwon.ext.table)
-    implementation(libs.markwon.html)
-    implementation(libs.markwon.linkify)
-    implementation(libs.markwon.coil)
+    implementation(libs.compose.html)
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
     // Instrumented tests

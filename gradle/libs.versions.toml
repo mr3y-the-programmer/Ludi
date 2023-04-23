@@ -11,7 +11,7 @@ androidxComposeMaterial = "1.4.2"
 androidxComposeFoundation = "1.4.2"
 accompanist = "0.30.0"
 coil = "2.2.2"
-markwon = "4.6.2"
+composeHtml = "1.0.2"
 androidxHilt = "1.0.0"
 androidxNavigation = "2.5.3"
 androidxTest = "1.5.0" # https://github.com/android/android-test/issues/1412
@@ -51,12 +51,7 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", versi
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidxComposeUi" }
 accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
-markwon-strikethrough = { module = "io.noties.markwon:ext-strikethrough", version.ref = "markwon" }
-markwon-ext-table = { module = "io.noties.markwon:ext-tables", version.ref = "markwon" }
-markwon-html = { module = "io.noties.markwon:html", version.ref = "markwon" }
-markwon-linkify = { module = "io.noties.markwon:linkify", version.ref = "markwon" }
-markwon-coil = { module = "io.noties.markwon:image-coil", version.ref = "markwon" }
+compose-html = { module = "com.github.ireward:compose-html", version.ref = "composeHtml" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHilt" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }

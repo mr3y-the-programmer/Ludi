@@ -18,8 +18,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.ireward.htmlcompose.HtmlText
 import com.mr3y.ludi.core.model.*
-import com.mr3y.ludi.ui.components.internal.MarkdownText
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.theme.LudiTheme
@@ -115,12 +115,11 @@ private fun LudiCardScaffold(
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyLarge
                     )
-                    MarkdownText(
-                        markdown = description?.text ?: "No description available",
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Start,
+                    HtmlText(
+                        text = description?.text ?: "No description available",
+                        style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                         maxLines = 6,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.defaultPlaceholder(showPlaceholder)
                     )
                 }
