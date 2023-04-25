@@ -64,14 +64,6 @@ android {
     }
 }
 
-kotlin.sourceSets {
-    main {
-        kotlin.srcDirs(
-            file("$buildDir/generated/source/buildConfig/main"),
-        )
-    }
-}
-
 buildConfig {
     packageName("com.mr3y.ludi")
     val properties = Properties()
