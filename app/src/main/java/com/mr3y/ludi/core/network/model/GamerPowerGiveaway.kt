@@ -44,10 +44,10 @@ fun GamerPowerGiveawayEntry.toCoreGamerPowerGiveawayEntry(): com.mr3y.ludi.core.
         description = description,
         instructions = instructions,
         giveawayUrl = giveawayUrl,
-        publishedDate = publishedDateTime.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME, isLenient = true),
+        publishedDateTime = publishedDateTime.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME, isLenient = true),
         type = type,
         platforms = platforms.split(',').map { it.trim() },
-        endDate = endDateTime?.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME, isLenient = true),
+        endDateTime = endDateTime?.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME, isLenient = true),
         users = users,
         status = GamerPowerGiveawayEntryStatus.Active,
         gamerPowerUrl = gamerPowerUrl

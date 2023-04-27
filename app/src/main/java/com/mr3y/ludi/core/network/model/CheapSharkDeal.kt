@@ -32,7 +32,7 @@ data class CheapSharkDeal(
     @Serializable(with = StringAsLongSerializer::class)
     val steamRatingCount: Long,
     @Serializable(with = StringAsLongSerializer::class)
-    val steamAppID: Long,
+    val steamAppID: Long?,
     @SerialName("releaseDate")
     val releaseDateTimestamp: Long,
     @SerialName("lastChange")

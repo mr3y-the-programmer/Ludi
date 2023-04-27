@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.Encoder
 
 object StringAsIntSerializer : KSerializer<Int> {
     override val descriptor: SerialDescriptor
-        get() = PrimitiveSerialDescriptor(serialName = "Int", kind = PrimitiveKind.STRING)
+        get() = PrimitiveSerialDescriptor(serialName = "StringAsIntSerializer", kind = PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Int {
         return decoder.decodeString().toInt()
@@ -22,7 +22,7 @@ object StringAsIntSerializer : KSerializer<Int> {
 
 object StringAsLongSerializer : KSerializer<Long> {
     override val descriptor: SerialDescriptor
-        get() = PrimitiveSerialDescriptor(serialName = "Long", kind = PrimitiveKind.STRING)
+        get() = PrimitiveSerialDescriptor(serialName = "StringAsLongSerializer", kind = PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Long {
         return decoder.decodeString().toLong()
@@ -35,7 +35,7 @@ object StringAsLongSerializer : KSerializer<Long> {
 
 object StringAsFloatSerializer : KSerializer<Float> {
     override val descriptor: SerialDescriptor
-        get() = PrimitiveSerialDescriptor(serialName = "Float", kind = PrimitiveKind.STRING)
+        get() = PrimitiveSerialDescriptor(serialName = "StringAsFloatSerializer", kind = PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Float {
         return decoder.decodeString().toFloat()
@@ -48,7 +48,7 @@ object StringAsFloatSerializer : KSerializer<Float> {
 
 object StringAsDoubleSerializer : KSerializer<Double> {
     override val descriptor: SerialDescriptor
-        get() = PrimitiveSerialDescriptor(serialName = "Double", kind = PrimitiveKind.STRING)
+        get() = PrimitiveSerialDescriptor(serialName = "StringAsDoubleSerializer", kind = PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Double {
         return decoder.decodeString().toDouble()
@@ -61,7 +61,7 @@ object StringAsDoubleSerializer : KSerializer<Double> {
 
 object StringAsBooleanSerializer : KSerializer<Boolean> {
     override val descriptor: SerialDescriptor
-        get() = PrimitiveSerialDescriptor(serialName = "Boolean", kind = PrimitiveKind.STRING)
+        get() = PrimitiveSerialDescriptor(serialName = "StringAsBooleanSerializer", kind = PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Boolean {
         return decoder.decodeString().let { it == "1" }

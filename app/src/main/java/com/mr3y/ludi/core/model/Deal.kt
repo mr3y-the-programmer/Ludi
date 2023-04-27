@@ -17,7 +17,7 @@ data class Deal(
     val steamRatingText: String?,
     val steamRatingPercent: Int,
     val steamRatingCount: Long,
-    val steamAppID: Long,
+    val steamAppID: Long?,
     val releaseDate: ZonedDateTime,
     val lastUpdate: ZonedDateTime,
     val dealRating: Float,
