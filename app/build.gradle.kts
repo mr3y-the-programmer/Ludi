@@ -111,6 +111,7 @@ dependencies {
 
     // Datastore
     implementation(libs.datastore)
+    implementation(libs.datastore.preferences)
     implementation(libs.protobuf.kotlinlite)
 
     // Network

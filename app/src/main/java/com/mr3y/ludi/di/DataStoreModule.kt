@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.mr3y.ludi.FollowedNewsDataSources
 import com.mr3y.ludi.UserFavouriteGames
 import com.mr3y.ludi.ui.datastore.FavouriteGamesSerializer
@@ -35,5 +38,11 @@ object DataStoreModule {
             serializer = FollowedNewsDataSourceSerializer,
             produceFile = { context.dataStoreFile("followed_news_sources.pb") }
         )
+    }
+
+    @Provides
+    @Singleton
+    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create { context.preferencesDataStoreFile("ludi_user") }
     }
 }

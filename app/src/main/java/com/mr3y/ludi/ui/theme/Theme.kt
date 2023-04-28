@@ -78,10 +78,11 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun LudiTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && dynamicColor -> {
             val context = LocalContext.current
             if (darkTheme) {
                 dynamicDarkColorScheme(context)

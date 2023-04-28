@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.mr3y.ludi.ui.screens.deals.DealsScreen
 import com.mr3y.ludi.ui.screens.discover.DiscoverScreen
 import com.mr3y.ludi.ui.screens.news.NewsScreen
+import com.mr3y.ludi.ui.screens.settings.SettingsScreen
 
 @Composable
 fun LudiNavHost(
@@ -29,7 +30,7 @@ fun LudiNavHost(
             DealsScreen()
         }
         composable(Screen.Settings.route) {
-
+            SettingsScreen()
         }
     }
 }
