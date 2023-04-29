@@ -12,13 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Ludi"
+        android:theme="@style/Theme.Ludi.Splash"
         android:name=".LudiApplication"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Ludi">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

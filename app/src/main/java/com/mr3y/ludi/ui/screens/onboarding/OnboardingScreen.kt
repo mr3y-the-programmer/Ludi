@@ -62,15 +62,13 @@ const val OnboardingPagesCount = 2
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
     viewModel: OnBoardingViewModel = hiltViewModel(),
-    onSkipButtonClicked: () -> Unit,
-    onFinishButtonClicked: () -> Unit,
 ) {
     val onboardingState by viewModel.onboardingState.collectAsStateWithLifecycle()
     OnboardingScreen(
         modifier = modifier,
         onboardingState = onboardingState,
-        onSkipButtonClicked = onSkipButtonClicked,
-        onFinishButtonClicked = onFinishButtonClicked,
+        onSkipButtonClicked = viewModel::completeOnboarding,
+        onFinishButtonClicked = viewModel::completeOnboarding,
         onSelectingNewsDataSource = viewModel::followNewsDataSource,
         onUnselectNewsDataSource = viewModel::unFollowNewsDataSource,
         onUpdatingSearchQueryText = viewModel::updateSearchQuery,

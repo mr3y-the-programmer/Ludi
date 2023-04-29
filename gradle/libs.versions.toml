@@ -9,6 +9,7 @@ androidxComposeCompiler = "1.4.6"
 androidxComposeMaterial3 = "1.1.0-rc01"
 androidxComposeMaterial = "1.4.2"
 androidxComposeFoundation = "1.4.2"
+splashScreen = "1.0.1"
 accompanist = "0.30.0"
 coil = "2.2.2"
 composeHtml = "1.0.2"
@@ -49,6 +50,7 @@ androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidxComposeUi" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidxComposeUi" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidxComposeUi" }
+splash-screen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen" }
 accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 compose-html = { module = "com.github.ireward:compose-html", version.ref = "composeHtml" }

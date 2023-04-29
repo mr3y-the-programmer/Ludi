@@ -98,6 +98,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.splash.screen)
 
     // Hilt Dependency Injection
     implementation(libs.hilt.android)

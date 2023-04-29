@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mr3y.ludi.FollowedNewsDataSource
@@ -21,6 +23,7 @@ import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.RichInfoGamesQuery
 import com.mr3y.ludi.core.repository.query.RichInfoGamesSortingCriteria
+import com.mr3y.ludi.ui.datastore.PreferencesKeys
 import com.mr3y.ludi.ui.presenter.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,7 +40,8 @@ import javax.inject.Inject
 class OnBoardingViewModel @Inject constructor(
     private val gamesRepository: GamesRepository,
     private val favGamesStore: DataStore<UserFavouriteGames>,
-    private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>
+    private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>,
+    private val userPreferences: DataStore<Preferences>,
 ) : ViewModel() {
 
     private val userFollowedNewsSources = followedNewsDataSourcesStore.data
@@ -184,6 +188,14 @@ class OnBoardingViewModel @Inject constructor(
                     it
             }
             Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFavouriteGames = false) }
+        }
+    }
+
+    fun completeOnboarding() {
+        viewModelScope.launch {
+            userPreferences.edit { mutablePreferences ->
+                mutablePreferences[PreferencesKeys.OnBoardingScreenKey] = false
+            }
         }
     }
 

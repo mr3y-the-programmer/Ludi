@@ -27,17 +27,19 @@ class MainActivityViewModel @Inject constructor(
         .map { preferences ->
             val selectedTheme = preferences[PreferencesKeys.SelectedThemeKey] ?: Theme.SystemDefault.name
             val isUsingDynamicColor = preferences[PreferencesKeys.DynamicColorKey] ?: true
-            UserPreferences(Theme.valueOf(selectedTheme), isUsingDynamicColor)
+            val showOnBoardingScreen = preferences[PreferencesKeys.OnBoardingScreenKey] ?: true
+            UserPreferences(Theme.valueOf(selectedTheme), isUsingDynamicColor, showOnBoardingScreen)
         }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            UserPreferences(Theme.SystemDefault, true)
+            null
         )
 
 }
 
 data class UserPreferences(
     val theme: Theme,
-    val useDynamicColor: Boolean
+    val useDynamicColor: Boolean,
+    val showOnBoardingScreen: Boolean
 )
