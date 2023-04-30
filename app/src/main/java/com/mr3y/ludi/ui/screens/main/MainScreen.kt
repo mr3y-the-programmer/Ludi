@@ -1,12 +1,14 @@
 package com.mr3y.ludi.ui.screens.main
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -60,7 +62,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     }
                 }
             }
-        }
+        },
+        contentWindowInsets = WindowInsets(0.dp)
     ) { contentPadding ->
         LudiNavHost(navController = navController, modifier = Modifier.padding(contentPadding))
     }

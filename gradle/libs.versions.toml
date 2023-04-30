@@ -52,6 +52,7 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", versi
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidxComposeUi" }
 splash-screen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen" }
 accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
+accompanist-system-ui-controller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 compose-html = { module = "com.github.ireward:compose-html", version.ref = "composeHtml" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHilt" }

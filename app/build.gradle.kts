@@ -137,6 +137,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.coil)
     implementation(libs.accompanist.placeholder)
+    implementation(libs.accompanist.system.ui.controller)
     implementation(libs.compose.html)
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)

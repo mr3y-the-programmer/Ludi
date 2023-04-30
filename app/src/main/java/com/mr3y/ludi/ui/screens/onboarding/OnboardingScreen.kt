@@ -1,6 +1,5 @@
 package com.mr3y.ludi.ui.screens.onboarding
 
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -14,6 +13,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -21,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.geometry.Offset
@@ -28,9 +30,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -52,7 +56,6 @@ import com.mr3y.ludi.ui.screens.discover.richInfoGamesSamples
 import com.mr3y.ludi.ui.theme.LudiTheme
 import com.mr3y.ludi.ui.theme.dark_star
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -77,9 +80,7 @@ fun OnboardingScreen(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalAnimationApi::class
-)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun OnboardingScreen(
     onboardingState: OnboardingState,
@@ -94,7 +95,9 @@ fun OnboardingScreen(
 ) {
     val pagerState = rememberPagerState()
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .imePadding(),
         bottomBar = {
             val indicatorProgress by remember(pagerState) {
                 derivedStateOf {
@@ -126,10 +129,12 @@ fun OnboardingScreen(
             )
         }
     ) { contentPadding ->
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .padding(contentPadding)
                 .fillMaxWidth()
+                .verticalScroll(scrollState)
         ) {
             Banner(
                 modifier = Modifier.fillMaxWidth(),
@@ -169,6 +174,7 @@ fun OnboardingScreen(
                             onAddingGameToFavourites = onAddingGameToFavourites,
                             onRemovingGameFromFavourites = onRemovingGameFromFavourites,
                             verticalArrangement = Arrangement.spacedBy(16.dp),
+                            scrollState = scrollState
                         )
                     }
                 }
@@ -322,7 +328,9 @@ fun NewsSourcesPage(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    ExperimentalComposeUiApi::class, ExperimentalLayoutApi::class
+)
 @Composable
 fun SelectingFavouriteGamesPage(
     searchQueryText: String,
@@ -331,6 +339,7 @@ fun SelectingFavouriteGamesPage(
     favouriteUserGames: List<FavouriteGame>,
     onAddingGameToFavourites: (FavouriteGame) -> Unit,
     onRemovingGameFromFavourites: (FavouriteGame) -> Unit,
+    scrollState: ScrollState,
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start
@@ -340,6 +349,13 @@ fun SelectingFavouriteGamesPage(
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {
+        val softwareKeyboard = LocalSoftwareKeyboardController.current
+        val imePadding = WindowInsets.ime.getBottom(LocalDensity.current)
+        LaunchedEffect(imePadding) {
+            if (imePadding > 0) {
+                scrollState.animateScrollTo(scrollState.maxValue)
+            }
+        }
         Text(
             text = "Tell us about your favourite games",
             modifier = Modifier.align(Alignment.End),
@@ -357,7 +373,7 @@ fun SelectingFavouriteGamesPage(
         TextField(
             value = searchQueryText,
             onValueChange = onUpdatingSearchQueryText,
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
                 disabledIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -385,6 +401,8 @@ fun SelectingFavouriteGamesPage(
                     )
                 }
             } } else null,
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { softwareKeyboard?.hide() }),
             modifier = Modifier
                 .clip(RoundedCornerShape(50))
                 .align(Alignment.CenterHorizontally)
@@ -398,7 +416,9 @@ fun SelectingFavouriteGamesPage(
         )
         LazyHorizontalStaggeredGrid(
             rows = StaggeredGridCells.Adaptive(minSize = 64.dp),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(236.dp),
             horizontalItemSpacing = 8.dp,
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {

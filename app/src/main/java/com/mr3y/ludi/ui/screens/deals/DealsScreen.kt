@@ -83,7 +83,10 @@ fun DealsScreen(
         }
     }
     val listState = rememberKeyedLazyListState(input = selectedTab)
-    Column {
+    Column(
+        modifier = modifier
+            .padding(WindowInsets.statusBars.asPaddingValues())
+    ) {
         val tabsLabels = listOf("Deals", "Giveaways")
         SegmentedTabRow(
             numOfTabs = tabsLabels.size,
@@ -113,14 +116,13 @@ fun DealsScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             },
-            modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { contentPadding ->
             LazyColumn(
                 state = listState,
                 modifier = Modifier
                     .padding(contentPadding)
                     .fillMaxSize()
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
             ) {
                 if (selectedTab == 0) {
                     SectionScaffold(
@@ -131,7 +133,7 @@ fun DealsScreen(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .fillMaxWidth()
-                                .height(120.dp)
+                                .height(160.dp)
                         )
                     }
                 } else {
@@ -280,7 +282,8 @@ fun SearchFilterBar(
             }
         },
         modifier = modifier,
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
+        windowInsets = WindowInsets(0.dp)
     )
 }
 
