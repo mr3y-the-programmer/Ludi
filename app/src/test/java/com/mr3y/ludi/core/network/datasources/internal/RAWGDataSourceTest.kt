@@ -3,7 +3,7 @@ package com.mr3y.ludi.core.network.datasources.internal
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import com.mr3y.ludi.core.network.fixtures.RetrofitClientForTesting
-import com.mr3y.ludi.core.network.model.*
+import com.mr3y.ludi.core.network.model.RAWGPage
 import com.slack.eithernet.ApiResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

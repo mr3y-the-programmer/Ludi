@@ -2,7 +2,7 @@ package com.mr3y.ludi.core.repository.query
 
 data class GiveawaysQueryParameters(
     val platforms: List<GiveawayPlatform>?,
-    val sorting: GiveawaysSorting?,
+    val sorting: GiveawaysSorting?
 )
 
 enum class GiveawayPlatform(val value: String) {

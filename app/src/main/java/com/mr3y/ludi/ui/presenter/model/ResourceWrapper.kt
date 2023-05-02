@@ -10,17 +10,17 @@ sealed interface ResourceWrapper<out T> {
 val <T> ResourceWrapper<T>.actualResource: T?
     get() = (this as? ResourceWrapper.ActualResource)?.resource
 
-internal fun <T: Any> T.wrapResource() = ResourceWrapper.ActualResource(this)
+internal fun <T : Any> T.wrapResource() = ResourceWrapper.ActualResource(this)
 
-internal fun <T: Any> Result<Iterable<T>, Throwable>.wrapResultResources(): Result<List<ResourceWrapper<T>>, Throwable> {
-    return when(this) {
+internal fun <T : Any> Result<Iterable<T>, Throwable>.wrapResultResources(): Result<List<ResourceWrapper<T>>, Throwable> {
+    return when (this) {
         is Result.Success -> Result.Success(data.map { it.wrapResource() })
         is Result.Error -> this
     }
 }
 
-internal fun <T: Any, R: Any> Result<Iterable<T>, Throwable>.wrapResultResources(transform: (Iterable<T>) -> Iterable<R>): Result<List<ResourceWrapper<R>>, Throwable> {
-    return when(this) {
+internal fun <T : Any, R : Any> Result<Iterable<T>, Throwable>.wrapResultResources(transform: (Iterable<T>) -> Iterable<R>): Result<List<ResourceWrapper<R>>, Throwable> {
+    return when (this) {
         is Result.Success -> Result.Success(transform(data).map { it.wrapResource() })
         is Result.Error -> this
     }

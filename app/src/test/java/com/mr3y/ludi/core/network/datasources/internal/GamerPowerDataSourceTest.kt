@@ -109,7 +109,7 @@ class GamerPowerDataSourceTest {
                 "2023-03-30 23:59:00",
                 930,
                 GiveawayEntryStatus.Active,
-                "https://www.gamerpower.com/world-of-warships-starter-pack-ishizuchi",
+                "https://www.gamerpower.com/world-of-warships-starter-pack-ishizuchi"
             ),
             GamerPowerGiveawayEntry(
                 2300,
@@ -126,7 +126,7 @@ class GamerPowerDataSourceTest {
                 null,
                 1480,
                 GiveawayEntryStatus.Active,
-                "https://www.gamerpower.com/spandex-force-champion-rising",
+                "https://www.gamerpower.com/spandex-force-champion-rising"
             ),
             GamerPowerGiveawayEntry(
                 1178,
@@ -143,8 +143,8 @@ class GamerPowerDataSourceTest {
                 "2023-04-23 23:59:00",
                 3540,
                 GiveawayEntryStatus.Active,
-                "https://www.gamerpower.com/dungeons-and-dragons-online-all-quest-packs",
-            ),
+                "https://www.gamerpower.com/dungeons-and-dragons-online-all-quest-packs"
+            )
         )
 
         // when trying to query latest giveaways

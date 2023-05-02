@@ -1,6 +1,11 @@
 package com.mr3y.ludi.core.network.serialization
 
-import com.mr3y.ludi.core.network.model.*
+import com.mr3y.ludi.core.network.model.DetailedRAWGPlatformInfo
+import com.mr3y.ludi.core.network.model.RAWGPlatformInfo
+import com.mr3y.ludi.core.network.model.RAWGStoreInfo
+import com.mr3y.ludi.core.network.model.ShallowRAWGPlatformInfo
+import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfo
+import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfoWithId
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement

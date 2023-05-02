@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -39,14 +38,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.fade
-import com.google.accompanist.placeholder.material.placeholder
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.FreeGame
 import com.mr3y.ludi.core.model.RichInfoGame
-import com.mr3y.ludi.ui.components.SingleRowLayout
 import com.mr3y.ludi.ui.components.LudiSuggestionChip
+import com.mr3y.ludi.ui.components.SingleRowLayout
 import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.actualResource
@@ -127,30 +123,30 @@ fun RichInfoGameCard(
                 }
             }
         }
-            richInfoGame?.rating?.let {
-                Row(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Filled.Star),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.star,
-                        modifier = Modifier.size(24.dp)
-                    )
+        richInfoGame?.rating?.let {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Filled.Star),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.star,
+                    modifier = Modifier.size(24.dp)
+                )
 
-                    Text(
-                        text = it.toString().takeIf { it != "0.0" } ?: "N/A",
-                        style = MaterialTheme.typography.titleLarge,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+                Text(
+                    text = it.toString().takeIf { it != "0.0" } ?: "N/A",
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
+        }
         richInfoGame?.suggestionsCount?.let {
             Text(
                 text = "$it people Suggests this",
@@ -248,15 +244,15 @@ fun SearchResultsGameCard(
                     ) {
                         richInfoGame.platformsInfo?.map { it.name.mapPlatformNameToVectorDrawable() }
                             ?.distinct()?.forEach { drawableId ->
-                            if (drawableId != null) {
-                                Icon(
-                                    painter = painterResource(id = drawableId),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(24.dp)
-                                )
+                                if (drawableId != null) {
+                                    Icon(
+                                        painter = painterResource(id = drawableId),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
                             }
-                        }
                     }
                 }
                 richInfoGame?.rating.let {
@@ -275,7 +271,7 @@ fun SearchResultsGameCard(
                             text = it.toString().takeIf { it != "0.0" } ?: "N/A",
                             style = MaterialTheme.typography.titleSmall,
                             textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -294,7 +290,7 @@ fun SuggestionGameCardScaffold(
     title: String?,
     modifier: Modifier = Modifier,
     showPlaceholder: Boolean = false,
-    other: @Composable ColumnScope.() -> Unit,
+    other: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         shape = MaterialTheme.shapes.medium,

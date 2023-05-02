@@ -92,9 +92,9 @@ internal fun buildRichInfoGamesFullUrl(endpointUrl: String, queryParameters: Ric
             append("parent_platforms=")
             queryParameters.parentPlatforms.forEachIndexed { index, parentPlatform ->
                 if (index == queryParameters.parentPlatforms.lastIndex) {
-                    append("${parentPlatform}&")
+                    append("$parentPlatform&")
                 } else {
-                    append("${parentPlatform},")
+                    append("$parentPlatform,")
                 }
             }
         }
@@ -102,9 +102,9 @@ internal fun buildRichInfoGamesFullUrl(endpointUrl: String, queryParameters: Ric
             append("platforms=")
             queryParameters.platforms.forEachIndexed { index, platform ->
                 if (index == queryParameters.platforms.lastIndex) {
-                    append("${platform}&")
+                    append("$platform&")
                 } else {
-                    append("${platform},")
+                    append("$platform,")
                 }
             }
         }
@@ -112,9 +112,9 @@ internal fun buildRichInfoGamesFullUrl(endpointUrl: String, queryParameters: Ric
             append("stores=")
             queryParameters.stores.forEachIndexed { index, store ->
                 if (index == queryParameters.stores.lastIndex) {
-                    append("${store}&")
+                    append("$store&")
                 } else {
-                    append("${store},")
+                    append("$store,")
                 }
             }
         }
@@ -122,9 +122,9 @@ internal fun buildRichInfoGamesFullUrl(endpointUrl: String, queryParameters: Ric
             append("developers=")
             queryParameters.developers.forEachIndexed { index, developer ->
                 if (index == queryParameters.developers.lastIndex) {
-                    append("${developer}&")
+                    append("$developer&")
                 } else {
-                    append("${developer},")
+                    append("$developer,")
                 }
             }
         }
@@ -132,9 +132,9 @@ internal fun buildRichInfoGamesFullUrl(endpointUrl: String, queryParameters: Ric
             append("genres=")
             queryParameters.genres.forEachIndexed { index, genre ->
                 if (index == queryParameters.genres.lastIndex) {
-                    append("${genre}&")
+                    append("$genre&")
                 } else {
-                    append("${genre},")
+                    append("$genre,")
                 }
             }
         }
@@ -142,9 +142,9 @@ internal fun buildRichInfoGamesFullUrl(endpointUrl: String, queryParameters: Ric
             append("tags=")
             queryParameters.tags.forEachIndexed { index, tag ->
                 if (index == queryParameters.tags.lastIndex) {
-                    append("${tag}&")
+                    append("$tag&")
                 } else {
-                    append("${tag},")
+                    append("$tag,")
                 }
             }
         }
@@ -152,9 +152,9 @@ internal fun buildRichInfoGamesFullUrl(endpointUrl: String, queryParameters: Ric
             append("dates=")
             queryParameters.dates.forEachIndexed { index, date ->
                 if (index == queryParameters.dates.lastIndex) {
-                    append("${date}&")
+                    append("$date&")
                 } else {
-                    append("${date},")
+                    append("$date,")
                 }
             }
         }
@@ -162,15 +162,15 @@ internal fun buildRichInfoGamesFullUrl(endpointUrl: String, queryParameters: Ric
             append("metacritic=")
             queryParameters.metaCriticScores.forEachIndexed { index, score ->
                 if (index == queryParameters.metaCriticScores.lastIndex) {
-                    append("${score}&")
+                    append("$score&")
                 } else {
-                    append("${score},")
+                    append("$score,")
                 }
             }
         }
         if (queryParameters.sortingCriteria != null) {
             append("ordering=")
-            when(queryParameters.sortingCriteria) {
+            when (queryParameters.sortingCriteria) {
                 RichInfoGamesSortingCriteria.NameAscending -> append("name")
                 RichInfoGamesSortingCriteria.NameDescending -> append("-name")
                 RichInfoGamesSortingCriteria.ReleasedAscending -> append("released")

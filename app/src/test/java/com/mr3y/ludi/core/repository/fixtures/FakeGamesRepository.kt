@@ -14,7 +14,6 @@ class FakeGamesRepository : GamesRepository {
 //    private val richInfoGamesResult =
 
     fun addMockedResponse() {
-
     }
 
     override fun queryFreeGames(queryParameters: FreeGamesQueryParameters): Flow<Result<List<FreeGame>, Throwable>> {

@@ -28,7 +28,7 @@ class GameSpotDataSourceTest {
         coEvery { rssParser.getChannel(rssFeedUrlWithSampleData.url) } returns rssFeedUrlWithSampleData.channel
 
         // when trying to fetch rss feed
-        val result = when(rssFeedUrlWithSampleData.url) {
+        val result = when (rssFeedUrlWithSampleData.url) {
             GameSpotDataSource.RSSNewsFeedURL -> sut.fetchNewsFeed()
             GameSpotDataSource.RSSNewReleasesFeedURL -> sut.fetchNewReleasesFeed()
             GameSpotDataSource.RSSReviewsFeedURL -> sut.fetchReviewsFeed()
@@ -47,7 +47,7 @@ class GameSpotDataSourceTest {
         coEvery { rssParser.getChannel(rssFeedUrlWithSampleData.url) } throws Exception()
 
         // when trying to fetch rss feed
-        val result = when(rssFeedUrlWithSampleData.url) {
+        val result = when (rssFeedUrlWithSampleData.url) {
             GameSpotDataSource.RSSNewsFeedURL -> sut.fetchNewsFeed()
             GameSpotDataSource.RSSNewReleasesFeedURL -> sut.fetchNewReleasesFeed()
             GameSpotDataSource.RSSReviewsFeedURL -> sut.fetchReviewsFeed()
@@ -131,7 +131,7 @@ class GameSpotDataSourceTest {
                     image = "https://www.gamespot.com/a/uploads/screen_medium/679/6794662/4102198-1%284%29.jpg",
                     content = null,
                     sourceLink = "https://www.gamespot.com/articles/wo-long-fallen-dynasty-new-game-plus-explained-5-star-gear-and-other-changes/1100-6511878/?ftag=CAD-01-10abi2f",
-                    publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800",
+                    publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800"
                 ),
                 GameSpotArticle(
                     title = "How Long Is Wo Long: Fallen Dynasty?",
@@ -140,7 +140,7 @@ class GameSpotDataSourceTest {
                     image = "https://www.gamespot.com/a/uploads/screen_medium/679/6794662/4102197-1%283%29.jpg",
                     content = null,
                     sourceLink = "https://www.gamespot.com/articles/how-long-is-wo-long-fallen-dynasty/1100-6511879/?ftag=CAD-01-10abi2f",
-                    publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800",
+                    publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800"
                 ),
                 GameSpotArticle(
                     title = "Halo Infinite Team Deep Dives On Season 3's New Maps",
@@ -149,7 +149,7 @@ class GameSpotDataSourceTest {
                     image = "https://www.gamespot.com/a/uploads/screen_medium/1690/16904437/4106435-oasis%281%29.jpg",
                     content = null,
                     sourceLink = "https://www.gamespot.com/articles/halo-infinite-team-deep-dives-on-season-3s-new-maps/1100-6511964/?ftag=CAD-01-10abi2f",
-                    publicationDate = "Wed, 01 Mar 2023 21:30:00 -0800",
+                    publicationDate = "Wed, 01 Mar 2023 21:30:00 -0800"
                 )
             )
         ),

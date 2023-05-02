@@ -6,7 +6,7 @@ import com.mr3y.ludi.core.model.RichInfoGame
 data class DiscoverState(
     val searchQuery: String,
     val filtersState: DiscoverFiltersState,
-    val games: DiscoverStateGames,
+    val games: DiscoverStateGames
 )
 
 sealed interface DiscoverStateGames {
@@ -17,7 +17,7 @@ sealed interface DiscoverStateGames {
         val topRatedGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
         val multiplayerGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
         val familyGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
-        val realisticGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
+        val realisticGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>
     ) : DiscoverStateGames
     data class SearchQueryBasedGames(
         val richInfoGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>
@@ -37,7 +37,7 @@ data class DiscoverFiltersState(
 
 data class Platform(
     val id: Int,
-    val label: String,
+    val label: String
 )
 
 data class Store(

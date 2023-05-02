@@ -60,7 +60,7 @@ fun SegmentedTabRow(
 ) {
     require(numOfTabs in 2..5) {
         "SegmentedTabRow should be used to display 2 to 5 tabs as per material design guidelines," +
-                " read more at: https://m3.material.io/components/segmented-buttons/guidelines#1a7a67bb-a2ee-4bbe-a375-8d78fc6391ff"
+            " read more at: https://m3.material.io/components/segmented-buttons/guidelines#1a7a67bb-a2ee-4bbe-a375-8d78fc6391ff"
     }
     val density = LocalDensity.current
     val outlineWidthInPx = with(density) { outlineWidth.roundToPx() }
@@ -86,7 +86,7 @@ fun SegmentedTabRow(
                                 start = if (index == 0) SegmentedTabRowDefaults.StartPadding else 0.dp,
                                 end = if (index == numOfTabs - 1) SegmentedTabRowDefaults.EndPadding else 0.dp
                             ),
-                        contentAlignment = Alignment.Center,
+                        contentAlignment = Alignment.Center
                     ) {
                         tabContent(index)
                     }
@@ -100,10 +100,10 @@ fun SegmentedTabRow(
                             topStartPercent = if (selectedTabIndex == 0) 50 else 0,
                             bottomStartPercent = if (selectedTabIndex == 0) 50 else 0,
                             topEndPercent = if (selectedTabIndex == numOfTabs - 1) 50 else 0,
-                            bottomEndPercent = if (selectedTabIndex == numOfTabs - 1) 50 else 0,
+                            bottomEndPercent = if (selectedTabIndex == numOfTabs - 1) 50 else 0
                         )
                     )
-                    .background(colors.containerColor(selected = true).value),
+                    .background(colors.containerColor(selected = true).value)
             )
             repeat(numOfTabs - 1) {
                 Box(
@@ -119,7 +119,7 @@ fun SegmentedTabRow(
         val outlineConstraints = Constraints.fixed(width = outlineWidthInPx, height = height)
 
         val tabWidth = (constraints.maxWidth - (numOfTabs - 1) * outlineWidthInPx) / numOfTabs
-        val tabConstraints = Constraints.fixed(width = tabWidth, height = height,)
+        val tabConstraints = Constraints.fixed(width = tabWidth, height = height)
 
         val tabPlaceables = measurables
             .filter { measurable -> measurable.layoutId == SegmentedTabRowSlots.Tab }
@@ -132,16 +132,16 @@ fun SegmentedTabRow(
             .map { measurable -> measurable.measure(outlineConstraints) }
         layout(
             width = constraints.maxWidth,
-            height = height,
+            height = height
         ) {
             selectedTabOverlayPlaceable.placeRelative(
                 x = selectedTabIndex * (tabWidth + outlineWidthInPx),
-                y = 0,
+                y = 0
             )
             tabPlaceables.forEachIndexed { index, placeable ->
                 placeable.placeRelative(
                     x = if (index == 0) 0 else (tabWidth + outlineWidthInPx) * index,
-                    y = 0,
+                    y = 0
                 )
             }
             outlinePlaceables.forEachIndexed { index, placeable ->
@@ -191,7 +191,7 @@ fun SegmentedTab(
             color = if (selected) selectedContentColor else unSelectedContentColor,
             maxLines = 1,
             textAlign = TextAlign.Start,
-            overflow = TextOverflow.Ellipsis,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -257,7 +257,7 @@ data class SegmentedTabRowColors internal constructor(
 fun PreviewMultiSelector() {
     LudiTheme {
         Surface(
-            color = MaterialTheme.colorScheme.background,
+            color = MaterialTheme.colorScheme.background
         ) {
             val options1 = listOf("Lorem", "Ipsum", "Dolor")
             var selectedTab1 by remember { mutableStateOf(0) }
@@ -267,7 +267,7 @@ fun PreviewMultiSelector() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SegmentedTabRow(
                     selectedTabIndex = selectedTab1,

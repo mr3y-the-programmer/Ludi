@@ -1,6 +1,5 @@
 package com.mr3y.ludi.ui.presenter
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,7 +15,6 @@ import com.mr3y.ludi.FollowedNewsDataSources
 import com.mr3y.ludi.R
 import com.mr3y.ludi.UserFavouriteGame
 import com.mr3y.ludi.UserFavouriteGames
-import com.mr3y.ludi.copy
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.Source
@@ -24,13 +22,25 @@ import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.RichInfoGamesQuery
 import com.mr3y.ludi.core.repository.query.RichInfoGamesSortingCriteria
 import com.mr3y.ludi.ui.datastore.PreferencesKeys
-import com.mr3y.ludi.ui.presenter.model.*
+import com.mr3y.ludi.ui.presenter.model.FavouriteGame
+import com.mr3y.ludi.ui.presenter.model.NewsDataSource
+import com.mr3y.ludi.ui.presenter.model.OnboardingGames
+import com.mr3y.ludi.ui.presenter.model.OnboardingState
+import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
+import com.mr3y.ludi.ui.presenter.model.wrapResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.io.IOException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -41,7 +51,7 @@ class OnBoardingViewModel @Inject constructor(
     private val gamesRepository: GamesRepository,
     private val favGamesStore: DataStore<UserFavouriteGames>,
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>,
-    private val userPreferences: DataStore<Preferences>,
+    private val userPreferences: DataStore<Preferences>
 ) : ViewModel() {
 
     private val userFollowedNewsSources = followedNewsDataSourcesStore.data
@@ -83,7 +93,7 @@ class OnBoardingViewModel @Inject constructor(
                         sortingCriteria = RichInfoGamesSortingCriteria.DateAddedDescending
                     )
                 ).map {
-                    val result = when(it) {
+                    val result = when (it) {
                         is Result.Success -> Result.Success(it.data.games.map(RichInfoGame::wrapResource))
                         is Result.Error -> Result.Error(it.exception)
                     }
@@ -97,7 +107,7 @@ class OnBoardingViewModel @Inject constructor(
                     sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
                 )
             ).map {
-                val result = when(it) {
+                val result = when (it) {
                     is Result.Success -> Result.Success(it.data.games.map(RichInfoGame::wrapResource))
                     is Result.Error -> Result.Error(it.exception)
                 }
@@ -134,8 +144,9 @@ class OnBoardingViewModel @Inject constructor(
                 // guard against cases where the user follows the source, and then unfollows it immediately after a few milliseconds.
                 if (sourceIndex != -1) {
                     it.toBuilder().removeNewsDataSource(sourceIndex).build()
-                } else
+                } else {
                     it
+                }
             }
             Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFollowedNewsDataSources = false) }
         }
@@ -148,8 +159,9 @@ class OnBoardingViewModel @Inject constructor(
                 val followedNewsDataSource = source.toFollowedNewsDataSource()
                 if (followedNewsDataSource !in it.newsDataSourceList) {
                     it.toBuilder().addNewsDataSource(followedNewsDataSource).build()
-                } else
+                } else {
                     it
+                }
             }
             Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFollowedNewsDataSources = false) }
         }
@@ -169,8 +181,9 @@ class OnBoardingViewModel @Inject constructor(
                 val favouriteGame = game.toUserFavouriteGame()
                 if (favouriteGame !in it.favGameList) {
                     it.toBuilder().addFavGame(favouriteGame).build()
-                } else
+                } else {
                     it
+                }
             }
             Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFavouriteGames = false) }
         }
@@ -184,8 +197,9 @@ class OnBoardingViewModel @Inject constructor(
                 // guard against cases where the user adds the game to favourites, and then removes it immediately after a few milliseconds.
                 if (sourceIndex != -1) {
                     it.toBuilder().removeFavGame(sourceIndex).build()
-                } else
+                } else {
                     it
+                }
             }
             Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFavouriteGames = false) }
         }
@@ -205,7 +219,7 @@ class OnBoardingViewModel @Inject constructor(
             NewsDataSource("Giant bomb", R.drawable.giant_bomb_logo, Source.GiantBomb),
             NewsDataSource("IGN", R.drawable.ign_logo, Source.IGN),
             NewsDataSource("MMO bomb", R.drawable.mmobomb_logo, Source.MMOBomb),
-            NewsDataSource("Tech Radar", R.drawable.tech_radar_logo, Source.TechRadar),
+            NewsDataSource("Tech Radar", R.drawable.tech_radar_logo, Source.TechRadar)
         )
         val InitialOnboardingState = OnboardingState(
             bannerDrawablesIds = listOf(

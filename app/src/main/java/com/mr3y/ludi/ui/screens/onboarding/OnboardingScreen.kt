@@ -1,30 +1,95 @@
 package com.mr3y.ludi.ui.screens.onboarding
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.*
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -51,7 +116,12 @@ import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.presenter.OnBoardingViewModel
-import com.mr3y.ludi.ui.presenter.model.*
+import com.mr3y.ludi.ui.presenter.model.FavouriteGame
+import com.mr3y.ludi.ui.presenter.model.NewsDataSource
+import com.mr3y.ludi.ui.presenter.model.OnboardingGames
+import com.mr3y.ludi.ui.presenter.model.OnboardingState
+import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
+import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.screens.discover.richInfoGamesSamples
 import com.mr3y.ludi.ui.theme.LudiTheme
 import com.mr3y.ludi.ui.theme.dark_star
@@ -64,7 +134,7 @@ const val OnboardingPagesCount = 2
 @Composable
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
-    viewModel: OnBoardingViewModel = hiltViewModel(),
+    viewModel: OnBoardingViewModel = hiltViewModel()
 ) {
     val onboardingState by viewModel.onboardingState.collectAsStateWithLifecycle()
     OnboardingScreen(
@@ -91,7 +161,7 @@ fun OnboardingScreen(
     onUnselectNewsDataSource: (NewsDataSource) -> Unit,
     onUpdatingSearchQueryText: (String) -> Unit,
     onAddingGameToFavourites: (FavouriteGame) -> Unit,
-    onRemovingGameFromFavourites: (FavouriteGame) -> Unit,
+    onRemovingGameFromFavourites: (FavouriteGame) -> Unit
 ) {
     val pagerState = rememberPagerState()
     Scaffold(
@@ -104,7 +174,7 @@ fun OnboardingScreen(
                     (pagerState.currentPage + 1).toFloat() / OnboardingPagesCount
                 }
             }
-            val fabState = when(pagerState.currentPage) {
+            val fabState = when (pagerState.currentPage) {
                 0 -> {
                     if (onboardingState.followedNewsDataSources.isNotEmpty()) OnboardingFABState.Continue else OnboardingFABState.Skip
                 }
@@ -138,14 +208,14 @@ fun OnboardingScreen(
         ) {
             Banner(
                 modifier = Modifier.fillMaxWidth(),
-                drawableIds = onboardingState.bannerDrawablesIds,
+                drawableIds = onboardingState.bannerDrawablesIds
             )
             HorizontalPager(
                 pageCount = OnboardingPagesCount,
                 state = pagerState,
                 contentPadding = PaddingValues(16.dp),
                 pageSpacing = 32.dp,
-                userScrollEnabled = false,
+                userScrollEnabled = false
             ) { pageIndex: Int ->
                 AnimatedContent(
                     targetState = pageIndex,
@@ -154,17 +224,18 @@ fun OnboardingScreen(
                         .fillMaxWidth()
                         .fillMaxHeight(0.9f)
                 ) { targetIndex ->
-                    when(targetIndex) {
+                    when (targetIndex) {
                         0 -> NewsSourcesPage(
                             allNewsDataSources = onboardingState.allNewsDataSources,
                             selectedNewsSources = onboardingState.followedNewsDataSources,
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             onToggleNewsSourceTile = {
-                                if (it in onboardingState.followedNewsDataSources)
+                                if (it in onboardingState.followedNewsDataSources) {
                                     onUnselectNewsDataSource(it)
-                                else
+                                } else {
                                     onSelectingNewsDataSource(it)
-                            },
+                                }
+                            }
                         )
                         1 -> SelectingFavouriteGamesPage(
                             searchQueryText = onboardingState.searchQuery,
@@ -328,8 +399,9 @@ fun NewsSourcesPage(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
-    ExperimentalComposeUiApi::class, ExperimentalLayoutApi::class
+@OptIn(
+    ExperimentalFoundationApi::class,
+    ExperimentalComposeUiApi::class,
 )
 @Composable
 fun SelectingFavouriteGamesPage(
@@ -386,21 +458,25 @@ fun SelectingFavouriteGamesPage(
                     Icon(
                         painter = rememberVectorPainter(image = Icons.Filled.Search),
                         contentDescription = null,
-                        modifier = Modifier.fillMaxHeight(),
+                        modifier = Modifier.fillMaxHeight()
                     )
                 }
             },
-            trailingIcon = if (searchQueryText.isNotEmpty()) { {
-                IconButton(
-                    onClick = { onUpdatingSearchQueryText("") }
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Filled.Close),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxHeight(),
-                    )
+            trailingIcon = if (searchQueryText.isNotEmpty()) {
+                {
+                    IconButton(
+                        onClick = { onUpdatingSearchQueryText("") }
+                    ) {
+                        Icon(
+                            painter = rememberVectorPainter(image = Icons.Filled.Close),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxHeight()
+                        )
+                    }
                 }
-            } } else null,
+            } else {
+                null
+            },
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { softwareKeyboard?.hide() }),
             modifier = Modifier
@@ -420,7 +496,7 @@ fun SelectingFavouriteGamesPage(
                 .fillMaxWidth()
                 .height(236.dp),
             horizontalItemSpacing = 8.dp,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             when (val result = allGames.games) {
                 is Result.Success -> {
@@ -431,10 +507,11 @@ fun SelectingFavouriteGamesPage(
                                 game = game,
                                 selected = game?.let { FavouriteGame(it.id, it.name, it.imageUrl, it.rating) } in favouriteUserGames,
                                 onToggleSelectingFavouriteGame = {
-                                    if (it in favouriteUserGames)
+                                    if (it in favouriteUserGames) {
                                         onRemovingGameFromFavourites(it)
-                                    else
+                                    } else {
                                         onAddingGameToFavourites(it)
+                                    }
                                 },
                                 modifier = Modifier.height(IntrinsicSize.Min)
                             )
@@ -483,13 +560,13 @@ fun AnimatedExtendedFab(
                 Text(
                     text = label(currentState),
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelLarge
                 )
                 if (showIcon) {
                     Icon(
                         imageVector = Icons.Filled.ArrowForward,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -649,7 +726,7 @@ fun GameTile(
                     )
                     val rating = game?.rating?.toString() ?: "Rating Placeholder"
                     Text(
-                        text = if(rating == "0.0") "N/A" else rating,
+                        text = if (rating == "0.0") "N/A" else rating,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.labelMedium,
                         textAlign = TextAlign.Start,
@@ -705,7 +782,7 @@ fun AnimatedImages(
         delay(delayTimeInMs)
         while (isActive) {
             if (currentDrawableIndex == drawablesResIds.lastIndex) {
-                currentDrawableIndex = when(repeatMode) {
+                currentDrawableIndex = when (repeatMode) {
                     null -> break
                     RepeatMode.Restart -> 0
                     RepeatMode.Reverse -> {
@@ -747,7 +824,7 @@ fun AnimatedImages(
         Image(
             painter = painterResource(id = drawablesResIds[drawableIndex]),
             contentDescription = null,
-            contentScale = contentScale,
+            contentScale = contentScale
         )
     }
 }
@@ -776,7 +853,7 @@ fun OnboardingScreenPreview() {
                 NewsDataSource("Giant bomb", R.drawable.giant_bomb_logo, Source.GiantBomb),
                 NewsDataSource("IGN", R.drawable.ign_logo, Source.IGN),
                 NewsDataSource("MMO bomb", R.drawable.mmobomb_logo, Source.MMOBomb),
-                NewsDataSource("Tech Radar", R.drawable.tech_radar_logo, Source.TechRadar),
+                NewsDataSource("Tech Radar", R.drawable.tech_radar_logo, Source.TechRadar)
             ),
             followedNewsDataSources = emptyList(),
             isUpdatingFollowedNewsDataSources = false,
@@ -818,11 +895,13 @@ fun AnimatedImagePreview() {
             listOf(R.drawable.game1, R.drawable.game2, R.drawable.game3, R.drawable.game4, R.drawable.game5),
             listOf(R.drawable.game6, R.drawable.game7, R.drawable.game8, R.drawable.game9, R.drawable.game10),
             listOf(R.drawable.game11, R.drawable.game12, R.drawable.game13, R.drawable.game14, R.drawable.game15),
-            listOf(R.drawable.game16, R.drawable.game17, R.drawable.game18, R.drawable.game19, R.drawable.game20),
+            listOf(R.drawable.game16, R.drawable.game17, R.drawable.game18, R.drawable.game19, R.drawable.game20)
         )
-        Row(modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
             repeat(4) { i ->
                 AnimatedImages(
                     drawablesResIds = games[i],

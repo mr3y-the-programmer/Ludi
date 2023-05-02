@@ -13,7 +13,7 @@ data class OnboardingState(
     val searchQuery: String,
     val onboardingGames: OnboardingGames,
     val favouriteGames: List<FavouriteGame>,
-    val isUpdatingFavouriteGames: Boolean,
+    val isUpdatingFavouriteGames: Boolean
 )
 
 sealed interface OnboardingGames {

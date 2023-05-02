@@ -4,7 +4,9 @@ import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.network.model.GiantBombArticle
-import com.prof.rssparser.*
+import com.prof.rssparser.Article
+import com.prof.rssparser.Channel
+import com.prof.rssparser.Parser
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,7 +28,7 @@ class GiantBombDataSourceTest {
         coEvery { rssParser.getChannel(rssFeedUrlWithSampleData.url) } returns rssFeedUrlWithSampleData.channel
 
         // when trying to fetch rss feed
-        val result = when(rssFeedUrlWithSampleData.url) {
+        val result = when (rssFeedUrlWithSampleData.url) {
             GiantBombDataSource.RSSNewsFeedURL -> sut.fetchNewsFeed()
             GiantBombDataSource.RSSNewReleasesFeedURL -> sut.fetchNewReleasesFeed()
             GiantBombDataSource.RSSReviewsFeedURL -> sut.fetchReviewsFeed()
@@ -45,7 +47,7 @@ class GiantBombDataSourceTest {
         coEvery { rssParser.getChannel(rssFeedUrlWithSampleData.url) } throws Exception()
 
         // when trying to fetch rss feed
-        val result = when(rssFeedUrlWithSampleData.url) {
+        val result = when (rssFeedUrlWithSampleData.url) {
             GiantBombDataSource.RSSNewsFeedURL -> sut.fetchNewsFeed()
             GiantBombDataSource.RSSNewReleasesFeedURL -> sut.fetchNewReleasesFeed()
             GiantBombDataSource.RSSReviewsFeedURL -> sut.fetchReviewsFeed()
@@ -129,7 +131,7 @@ class GiantBombDataSourceTest {
                     image = "https://www.giantbomb.com/a/uploads/screen_medium/0/1992/3451643-2626131732-34516.jpg",
                     content = null,
                     sourceLink = "https://www.giantbomb.com/articles/the-community-spotlight-2023-02-25/1100-6288/",
-                    publicationDate = "Sat, 25 Feb 2023 15:00:00 -0800",
+                    publicationDate = "Sat, 25 Feb 2023 15:00:00 -0800"
                 ),
                 GiantBombArticle(
                     title = "What's Happening On Giant Bomb: Week of 2/20/23",
@@ -138,7 +140,7 @@ class GiantBombDataSourceTest {
                     image = "https://www.giantbomb.com/a/uploads/screen_medium/0/1992/3449858-untitled-1.png",
                     content = null,
                     sourceLink = "https://www.giantbomb.com/articles/whats-happening-on-giant-bomb-week-of-2-20-23/1100-6287/",
-                    publicationDate = "Tue, 21 Feb 2023 14:04:00 -0800",
+                    publicationDate = "Tue, 21 Feb 2023 14:04:00 -0800"
                 ),
                 GiantBombArticle(
                     title = "Community GOTY 2022 Winners",
@@ -147,7 +149,7 @@ class GiantBombDataSourceTest {
                     image = "https://www.giantbomb.com/a/uploads/screen_medium/8/87610/3448901-pxl_20230222_004303336.jpg",
                     content = null,
                     sourceLink = "https://www.giantbomb.com/articles/community-goty-2022-winners/1100-6280/",
-                    publicationDate = "Sat, 18 Feb 2023 12:00:00 -0800",
+                    publicationDate = "Sat, 18 Feb 2023 12:00:00 -0800"
                 )
             )
         ),

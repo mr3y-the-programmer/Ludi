@@ -15,7 +15,7 @@ data class DealsQueryParameters(
     val page: Int?,
     val stores: List<Int>?,
     val sorting: DealsSorting?,
-    val sortingDirection: DealsSortingDirection?,
+    val sortingDirection: DealsSortingDirection?
 )
 
 enum class DealsSorting(val value: String) {

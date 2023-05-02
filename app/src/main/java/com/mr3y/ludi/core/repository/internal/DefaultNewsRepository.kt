@@ -1,14 +1,19 @@
 package com.mr3y.ludi.core.repository.internal
 
-import com.mr3y.ludi.core.model.*
+import com.mr3y.ludi.core.model.NewReleaseArticle
+import com.mr3y.ludi.core.model.NewsArticle
+import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.model.ReviewArticle
+import com.mr3y.ludi.core.model.Source
+import com.mr3y.ludi.core.model.toCoreErrorResult
 import com.mr3y.ludi.core.network.datasources.RSSFeedDataSource
 import com.mr3y.ludi.core.network.datasources.RSSNewReleasesFeedDataSource
 import com.mr3y.ludi.core.network.datasources.RSSNewsFeedDataSource
 import com.mr3y.ludi.core.network.datasources.RSSReviewsFeedDataSource
 import com.mr3y.ludi.core.network.datasources.internal.MMOGamesDataSource
+import com.mr3y.ludi.core.network.model.MMOGamesArticle
 import com.mr3y.ludi.core.network.model.RSSFeedArticle
 import com.mr3y.ludi.core.repository.NewsRepository
-import com.mr3y.ludi.core.network.model.MMOGamesArticle
 import com.slack.eithernet.ApiResult
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -28,7 +33,7 @@ class DefaultNewsRepository @Inject constructor(
                 it.fetchNewsFeed()
             }
         }.awaitAll().fold(Result.Success<Set<NewsArticle>>(emptySet())) { acc, result ->
-            when(result) {
+            when (result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toNewsArticle()!! }) }
                 is Result.Error -> {
                     // TODO: log the exception locally & report it with the crash reporting sdk
@@ -42,7 +47,7 @@ class DefaultNewsRepository @Inject constructor(
                 mmoGamesDataSource.getLatestNews("https://www.mmobomb.com/api1/latestnews")
             }
             mmoBombNewsResult.await().let { result ->
-                when(result) {
+                when (result) {
                     is ApiResult.Success -> {
                         aggregatedNews = aggregatedNews.copy(data = aggregatedNews.data + result.value.map(MMOGamesArticle::toNewsArticle))
                     }
@@ -67,7 +72,7 @@ class DefaultNewsRepository @Inject constructor(
                 it.fetchNewReleasesFeed()
             }
         }.awaitAll().fold(Result.Success<Set<NewReleaseArticle>>(emptySet())) { acc, result ->
-            when(result) {
+            when (result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toNewReleaseArticle()!! }) }
                 is Result.Error -> {
                     // TODO: log the exception locally & report it with the crash reporting sdk
@@ -90,7 +95,7 @@ class DefaultNewsRepository @Inject constructor(
                 it.fetchReviewsFeed()
             }
         }.awaitAll().fold(Result.Success<Set<ReviewArticle>>(emptySet())) { acc, result ->
-            when(result) {
+            when (result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toReviewArticle()!! }) }
                 is Result.Error -> {
                     // TODO: log the exception locally & report it with the crash reporting sdk

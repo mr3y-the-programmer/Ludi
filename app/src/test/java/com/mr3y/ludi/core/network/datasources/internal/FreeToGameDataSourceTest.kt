@@ -117,7 +117,7 @@ class FreeToGameDataSourceTest {
                 "Smilegate RPG",
                 "2022-02-11",
                 "https://www.freetogame.com/lost-ark"
-            ),
+            )
         )
         mockWebServer.enqueue(mockResponse)
 

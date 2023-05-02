@@ -35,7 +35,6 @@ class MainActivityViewModel @Inject constructor(
             SharingStarted.WhileSubscribed(5000),
             null
         )
-
 }
 
 data class UserPreferences(

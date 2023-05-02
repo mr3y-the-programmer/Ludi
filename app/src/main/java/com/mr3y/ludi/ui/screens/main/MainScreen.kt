@@ -4,7 +4,13 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,7 +22,6 @@ import androidx.navigation.compose.rememberNavController
 import com.mr3y.ludi.ui.navigation.LudiNavHost
 import com.mr3y.ludi.ui.navigation.Screen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -24,7 +29,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         Screen.Discover,
         Screen.News,
         Screen.Deals,
-        Screen.Settings,
+        Screen.Settings
     )
     val showBottomBar = navController.currentBackStackEntryAsState().value?.destination?.route in bottomBarTabs.map { it.route }
     Scaffold(
@@ -57,7 +62,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                                 unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
                                 unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
                             ),
-                            modifier = Modifier.weight(tabWeight),
+                            modifier = Modifier.weight(tabWeight)
                         )
                     }
                 }

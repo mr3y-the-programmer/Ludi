@@ -1,6 +1,14 @@
 package com.mr3y.ludi.core.network.model
 
-import com.mr3y.ludi.core.model.*
+import com.mr3y.ludi.core.model.GameGenre
+import com.mr3y.ludi.core.model.GameRequirements
+import com.mr3y.ludi.core.model.GameScreenshot
+import com.mr3y.ludi.core.model.GameTag
+import com.mr3y.ludi.core.model.MarkupText
+import com.mr3y.ludi.core.model.PlatformInfo
+import com.mr3y.ludi.core.model.RichInfoGame
+import com.mr3y.ludi.core.model.RichInfoGamesPage
+import com.mr3y.ludi.core.model.StoreInfo
 import com.mr3y.ludi.core.network.serialization.RAWGPlatformSerializer
 import com.mr3y.ludi.core.network.serialization.RAWGStoreSerializer
 import kotlinx.serialization.SerialName
@@ -76,7 +84,7 @@ data class RAWGGameTag(
 data class RAWGGameScreenshot(
     val id: Long?,
     @SerialName("image")
-    val imageUrl: String?,
+    val imageUrl: String?
 )
 
 @Serializable
@@ -129,7 +137,7 @@ data class RAWGPlatformProperties(
     @SerialName("games_count")
     val gamesCount: Long? = null,
     @SerialName("image_background")
-    val imageBackground: String? = null,
+    val imageBackground: String? = null
 )
 
 @Serializable(with = RAWGStoreSerializer::class)
@@ -138,10 +146,10 @@ sealed class RAWGStoreInfo {
 }
 
 @Serializable
-data class ShallowRAWGStoreInfo(override val store: RAWGStoreProperties): RAWGStoreInfo()
+data class ShallowRAWGStoreInfo(override val store: RAWGStoreProperties) : RAWGStoreInfo()
 
 @Serializable
-data class ShallowRAWGStoreInfoWithId(val id: Long, override val store: RAWGStoreProperties): RAWGStoreInfo()
+data class ShallowRAWGStoreInfoWithId(val id: Long, override val store: RAWGStoreProperties) : RAWGStoreInfo()
 
 @Serializable
 data class RAWGStoreProperties(
@@ -169,7 +177,7 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame? {
         suggestionsCount = suggestionsCount ?: return null,
         platformsInfo = platforms?.map { platformInfo ->
             val properties = platformInfo.platform
-            when(platformInfo) {
+            when (platformInfo) {
                 is ShallowRAWGPlatformInfo -> {
                     PlatformInfo(
                         id = properties.id,
@@ -198,7 +206,7 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame? {
                         gameRequirementsInEnglish = platformInfo.requirementsInEnglish?.let { requirements ->
                             GameRequirements(
                                 minimum = MarkupText(requirements.minimum),
-                                recommended = MarkupText(requirements.recommended),
+                                recommended = MarkupText(requirements.recommended)
                             )
                         }
                     )
@@ -207,7 +215,7 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame? {
         },
         storesInfo = stores?.map { storeInfo ->
             val properties = storeInfo.store
-            when(storeInfo) {
+            when (storeInfo) {
                 is ShallowRAWGStoreInfo -> {
                     StoreInfo(
                         id = properties.id ?: return@map null,
@@ -216,7 +224,7 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame? {
                         slug = properties.slug,
                         domain = properties.domain,
                         gamesCount = properties.gamesCount,
-                        imageUrl = properties.imageUrl,
+                        imageUrl = properties.imageUrl
                     )
                 }
                 is ShallowRAWGStoreInfoWithId -> {
@@ -227,7 +235,7 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame? {
                         slug = properties.slug,
                         domain = properties.domain,
                         gamesCount = properties.gamesCount,
-                        imageUrl = properties.imageUrl,
+                        imageUrl = properties.imageUrl
                     )
                 }
             }
@@ -239,7 +247,7 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame? {
                 slug = gameTag.slug,
                 language = gameTag.language ?: return@map null,
                 gamesCount = gameTag.gamesCount,
-                imageUrl = gameTag.imageUrl ?: return@map null,
+                imageUrl = gameTag.imageUrl ?: return@map null
             )
         }.filterNotNull(),
         screenshots = screenshots.map { screenshot ->
@@ -254,7 +262,7 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame? {
                 name = genre.name,
                 slug = genre.slug,
                 gamesCount = genre.gamesCount,
-                imageUrl = genre.imageUrl,
+                imageUrl = genre.imageUrl
             )
         }.filterNotNull()
     )

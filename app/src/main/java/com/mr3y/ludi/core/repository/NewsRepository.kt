@@ -1,10 +1,10 @@
 package com.mr3y.ludi.core.repository
 
-import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.NewReleaseArticle
 import com.mr3y.ludi.core.model.NewsArticle
+import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.ReviewArticle
+import com.mr3y.ludi.core.model.Source
 
 interface NewsRepository {
     suspend fun getLatestGamingNews(sources: Set<Source>): Result<Set<NewsArticle>, Throwable>

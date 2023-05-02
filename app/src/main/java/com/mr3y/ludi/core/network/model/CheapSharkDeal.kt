@@ -1,7 +1,11 @@
 package com.mr3y.ludi.core.network.model
 
 import com.mr3y.ludi.core.model.Deal
-import com.mr3y.ludi.core.network.serialization.*
+import com.mr3y.ludi.core.network.serialization.StringAsBooleanSerializer
+import com.mr3y.ludi.core.network.serialization.StringAsDoubleSerializer
+import com.mr3y.ludi.core.network.serialization.StringAsFloatSerializer
+import com.mr3y.ludi.core.network.serialization.StringAsIntSerializer
+import com.mr3y.ludi.core.network.serialization.StringAsLongSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -40,7 +44,7 @@ data class CheapSharkDeal(
     @Serializable(with = StringAsFloatSerializer::class)
     val dealRating: Float,
     @SerialName("thumb")
-    val thumbnailUrl: String,
+    val thumbnailUrl: String
 )
 
 fun CheapSharkDeal.toDeal(): Deal {

@@ -15,7 +15,7 @@ data class MMOGiveawayEntry(
     val imageUrl: String,
     val description: String,
     val giveawayUrl: String
-): GiveawayEntry
+) : GiveawayEntry
 
 @JvmInline
 value class Percent(val value: Int) {
@@ -40,6 +40,6 @@ data class GamerPowerGiveawayEntry(
     val users: Int,
     val status: GamerPowerGiveawayEntryStatus,
     val gamerPowerUrl: String
-): GiveawayEntry
+) : GiveawayEntry
 
 enum class GamerPowerGiveawayEntryStatus { Active }

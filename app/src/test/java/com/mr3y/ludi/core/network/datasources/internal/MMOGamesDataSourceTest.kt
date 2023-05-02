@@ -93,7 +93,7 @@ class MMOGamesDataSourceTest {
                 "https://www.mmobomb.com/file/2023/3/veiled-experts-nexon-final-closed-beta.jpg",
                 "<p><img class=\"type:primaryImage aligncenter size-large\" src=\"https://www.mmobomb.com/file/2023/3/veiled-experts-nexon-final-closed-beta-812x456.jpg\" alt=\"Veiled Experts Nexon final closed beta\" width=\"812\" height=\"456\" /></p>\r\n<p>Nexon announced today that it is opening up registration for the final Beta test for <a href=\"https://www.mmobomb.com/topic/veiled-experts\" target=\"_blank\" rel=\"noopener\">Veiled Experts</a>, a free-to-play online tactical <a href=\"https://www.mmobomb.com/games/shooter\" target=\"_blank\" rel=\"noopener\">multiplayer shooter</a>.</p>\r\n<p>The game features 3v3 or 5v5 Bomb Defusal mode, Team Deathmatch, Free for All, and team Deathmatch vs AI. The game is slated for release later this year.</p>\r\n<p>The final Beta test kicks off on March 30th and will run through April 6th.</p>\r\n<p>In Veiled Experts, players take on the roles of agents engaged in a worldwide conflict between governments, corporations, and terrorists. Each fights for control of a groundbreaking technology known as the Lepton System microchip. Each of the nine agents have a unique blend of skills and Lepton abilities.</p>\r\n<p>Check out the trailer for Veiled Experts below, and you can sign up for the final Beta test over on the official <a href=\"https://store.steampowered.com/app/1934780/VEILED_EXPERTS/\" target=\"_blank\" rel=\"noopener\">Steam page</a>.</p>\r\n<p><iframe src=\"https://www.youtube.com/embed/4ndc3lXlsd8\" title=\"YouTube video player\" width=\"560\" height=\"315\" allowfullscreen=\"allowfullscreen\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\"></iframe></p>",
                 "https://www.mmobomb.com/news/pre-register-nexon-veiled-experts-final-beta-test"
-            ),
+            )
         )
         mockWebServer.enqueue(mockResponse)
 
@@ -171,7 +171,7 @@ class MMOGamesDataSourceTest {
                 "https://www.mmobomb.com/file/2023/3/eudemons-online-gift-pack-key-giveaway.png",
                 "To unlock your key instantly you just need to complete all the steps on the top.",
                 "https://www.mmobomb.com/giveaway/eudemons-online-gift-pack-key-giveaway"
-            ),
+            )
         )
 
         // when trying to get the latest giveaways

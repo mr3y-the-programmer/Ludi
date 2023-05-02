@@ -2,21 +2,54 @@ package com.mr3y.ludi.ui.screens.deals
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.TopAppBarState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,10 +64,9 @@ import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiFilterChip
 import com.mr3y.ludi.ui.presenter.DealsViewModel
+import com.mr3y.ludi.ui.presenter.model.DealStore
 import com.mr3y.ludi.ui.presenter.model.DealsFiltersState
 import com.mr3y.ludi.ui.presenter.model.DealsState
-import com.mr3y.ludi.ui.presenter.model.DealStore
-import com.mr3y.ludi.ui.presenter.model.Genre
 import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.ui.presenter.model.GiveawaysFiltersState
@@ -254,7 +286,7 @@ fun SearchFilterBar(
                             Icon(
                                 painter = rememberVectorPainter(image = Icons.Filled.Search),
                                 contentDescription = null,
-                                modifier = Modifier.fillMaxHeight(),
+                                modifier = Modifier.fillMaxHeight()
                             )
                         }
                     },
@@ -291,7 +323,7 @@ fun <T> LazyListScope.SectionScaffold(
     result: Result<List<ResourceWrapper<T>>, Throwable>,
     itemContent: @Composable (ResourceWrapper<T>) -> Unit
 ) {
-    when(result) {
+    when (result) {
         is Result.Success -> {
             itemsIndexed(result.data) { index, resourceWrapper ->
                 key(index) {
@@ -326,7 +358,7 @@ internal fun FiltersBottomSheet(
     onSelectingDealStore: (DealStore) -> Unit,
     onUnselectingDealStore: (DealStore) -> Unit,
     onSelectingGiveawayStore: (GiveawayStore) -> Unit,
-    onUnselectingGiveawayStore: (GiveawayStore) -> Unit,
+    onUnselectingGiveawayStore: (GiveawayStore) -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -349,7 +381,7 @@ internal fun FiltersBottomSheet(
             onClick = onCloseClicked
         ) {
             Text(
-                text = "Close",
+                text = "Close"
             )
         }
         Column(
@@ -376,10 +408,11 @@ internal fun FiltersBottomSheet(
                             label = it.label,
                             modifier = chipModifier,
                             onClick = {
-                                if (it in dealsFiltersState.selectedStores)
+                                if (it in dealsFiltersState.selectedStores) {
                                     onUnselectingDealStore(it)
-                                else
+                                } else {
                                     onSelectingDealStore(it)
+                                }
                             }
                         )
                     }
@@ -405,10 +438,11 @@ internal fun FiltersBottomSheet(
                             label = it.name,
                             modifier = chipModifier,
                             onClick = {
-                                if (it in giveawaysFiltersState.selectedStores)
+                                if (it in giveawaysFiltersState.selectedStores) {
                                     onUnselectingGiveawayStore(it)
-                                else
+                                } else {
                                     onSelectingGiveawayStore(it)
+                                }
                             }
                         )
                     }
@@ -433,10 +467,11 @@ internal fun FiltersBottomSheet(
                             label = it.name,
                             modifier = chipModifier,
                             onClick = {
-                                if (it in giveawaysFiltersState.selectedPlatforms)
+                                if (it in giveawaysFiltersState.selectedPlatforms) {
                                     onUnselectingGiveawayPlatform(it)
-                                else
+                                } else {
                                     onSelectingGiveawayPlatform(it)
+                                }
                             }
                         )
                     }
@@ -471,7 +506,7 @@ fun DealsScreenPreview() {
             {},
             {},
             {},
-            {},
+            {}
         )
     }
 }

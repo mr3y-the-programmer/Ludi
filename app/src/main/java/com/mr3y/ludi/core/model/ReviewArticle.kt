@@ -11,4 +11,4 @@ data class ReviewArticle(
     val sourceLinkUrl: String,
     val author: String,
     val publicationDate: ZonedDateTime
-): Article
+) : Article

@@ -8,4 +8,4 @@ data class NewReleaseArticle(
     val source: Source,
     val sourceLinkUrl: String,
     val releaseDate: ZonedDateTime
-): Article
+) : Article

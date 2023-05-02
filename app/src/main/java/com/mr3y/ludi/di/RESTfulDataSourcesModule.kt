@@ -1,6 +1,10 @@
 package com.mr3y.ludi.di
 
-import com.mr3y.ludi.core.network.datasources.internal.*
+import com.mr3y.ludi.core.network.datasources.internal.CheapSharkDataSource
+import com.mr3y.ludi.core.network.datasources.internal.FreeToGameDataSource
+import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSource
+import com.mr3y.ludi.core.network.datasources.internal.MMOGamesDataSource
+import com.mr3y.ludi.core.network.datasources.internal.RAWGDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

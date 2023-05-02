@@ -36,6 +36,30 @@ jobs:
       - name: Run local tests
         run: ./gradlew testDebug --stacktrace
 
+      - name: Apply ktlint formatting to (.kt/s) files if not applied.
+        run: |
+          CHANGED_FILES="$(git diff-tree --no-commit-id --name-only HEAD -r | awk '$1 != "D" && $NF ~ /\.kts?$/ { print $NF }')"
+          if [ -z "$CHANGED_FILES" ]; then
+              echo "No Kotlin commited files."
+              exit 0
+          fi;
+          echo "Running ktlint over these files:"
+          echo "$CHANGED_FILES"
+          ./gradlew --quiet ktlintFormat -PinternalKtlintGitFilter="$CHANGED_FILES"
+          gradle_command_exit_code=$?
+          
+          exit $gradle_command_exit_code
+
+      - name: Apply Spotless formatting if not applied.
+        run: ./gradlew spotlessApply --stacktrace
+
+      - name: Commit and push changes
+        run: |
+          git config user.email "github-actions@github.com"
+          git config user.name "Github Actions"
+          git commit -am "Apply style formatting"
+          git push origin HEAD
+
       - name: Upload build outputs (APKs)
         uses: actions/upload-artifact@v3
         with:

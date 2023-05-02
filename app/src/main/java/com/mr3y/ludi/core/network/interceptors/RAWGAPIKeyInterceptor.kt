@@ -1,7 +1,8 @@
 package com.mr3y.ludi.core.network.interceptors
 
 import com.mr3y.ludi.BuildConfig
-import okhttp3.*
+import okhttp3.Interceptor
+import okhttp3.Response
 
 class RAWGAPIKeyInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {

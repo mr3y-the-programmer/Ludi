@@ -13,18 +13,18 @@ data class NewsArticle(
     val imageUrl: String?,
     val author: String?,
     val publicationDate: ZonedDateTime?
-): Article {
+) : Article {
 
     override fun toString(): String {
         return "NewsArticle(id=$id," +
-                "    title=\"$title\"," +
-                "    description=\"$description\",\n" +
-                "    thumbnailUrl=\"$thumbnailUrl\",\n" +
-                "    source=\"$source\",\n" +
-                "    sourceLinkUrl=\"$sourceLinkUrl\",\n" +
-                "    content=\"$content\",\n" +
-                "    imageUrl=\"$imageUrl\",\n" +
-                "    author=\"$author\",\n" +
-                "    publicationDate=\"$publicationDate\")"
+            "    title=\"$title\"," +
+            "    description=\"$description\",\n" +
+            "    thumbnailUrl=\"$thumbnailUrl\",\n" +
+            "    source=\"$source\",\n" +
+            "    sourceLinkUrl=\"$sourceLinkUrl\",\n" +
+            "    content=\"$content\",\n" +
+            "    imageUrl=\"$imageUrl\",\n" +
+            "    author=\"$author\",\n" +
+            "    publicationDate=\"$publicationDate\")"
     }
 }

@@ -89,7 +89,6 @@ fun Deal(
                         )
                     ) {
                         append(deal.normalPriceInUsDollar.toString())
-
                     }
                     withStyle(style = MaterialTheme.typography.titleSmall.toSpanStyle().copy(color = MaterialTheme.colorScheme.onSurfaceVariant)) {
                         append('$')
@@ -108,7 +107,7 @@ fun Deal(
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Start,
-                overflow = TextOverflow.Ellipsis,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -117,7 +116,7 @@ fun Deal(
 @Composable
 fun MMOGameGiveaway(
     giveawayWrapper: ResourceWrapper<MMOGiveawayEntry>,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val giveaway = giveawayWrapper.actualResource
     OfferScaffold(
@@ -133,7 +132,7 @@ fun MMOGameGiveaway(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Start,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -205,7 +204,7 @@ private fun OfferScaffold(
 ) {
     Card(
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier.padding(8.dp),
+        modifier = modifier.padding(8.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),

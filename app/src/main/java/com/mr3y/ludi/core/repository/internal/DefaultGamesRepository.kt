@@ -21,12 +21,12 @@ import javax.inject.Inject
 
 class DefaultGamesRepository @Inject constructor(
     private val freeToGameDataSource: FreeToGameDataSource,
-    private val rawgDataSource: RAWGDataSource,
+    private val rawgDataSource: RAWGDataSource
 ) : GamesRepository {
-    
+
     override fun queryFreeGames(queryParameters: FreeGamesQueryParameters): Flow<Result<List<FreeGame>, Throwable>> = flow {
         val fullUrl = buildFreeGamesFullUrl(endpointUrl = "$FreeToGameBaseUrl/games", queryParameters)
-        when(val result = freeToGameDataSource.queryGames(fullUrl)) {
+        when (val result = freeToGameDataSource.queryGames(fullUrl)) {
             is ApiResult.Success -> {
                 emit(Result.Success(result.value.map(FreeToGameGame::toFreeGame)))
             }
@@ -38,7 +38,7 @@ class DefaultGamesRepository @Inject constructor(
 
     override fun queryRichInfoGames(queryParameters: RichInfoGamesQueryParameters): Flow<Result<RichInfoGamesPage, Throwable>> = flow {
         val fullUrl = buildRichInfoGamesFullUrl(endpointUrl = "$RAWGApiBaseUrl/games", queryParameters)
-        when(val result = rawgDataSource.queryGames(fullUrl)) {
+        when (val result = rawgDataSource.queryGames(fullUrl)) {
             is ApiResult.Success -> {
                 emit(Result.Success(result.value.toRichInfoGamesPage()))
             }

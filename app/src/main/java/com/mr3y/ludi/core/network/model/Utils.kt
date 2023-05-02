@@ -21,11 +21,10 @@ internal fun String.toZonedDate(): ZonedDateTime {
 }
 
 internal fun String.toZonedDateTime(pattern: Pattern = Pattern.RFC_1123, isLenient: Boolean = false): ZonedDateTime {
-    return when(pattern) {
+    return when (pattern) {
         Pattern.RFC_1123 -> fromRFC1123ToZonedDateTime(this)
         Pattern.ISO_UTC_DATE_TIME -> fromISOUTCToZonedDateTime(this, isLenient)
     }
-
 }
 
 internal enum class Pattern {

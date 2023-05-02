@@ -7,8 +7,8 @@ import com.mr3y.ludi.core.network.datasources.RSSReviewsFeedDataSource
 import com.mr3y.ludi.core.network.model.GameSpotArticle
 import java.util.ArrayDeque
 
-class FakeGameSpotDataSource
-: RSSNewsFeedDataSource<GameSpotArticle>, RSSNewReleasesFeedDataSource<GameSpotArticle>, RSSReviewsFeedDataSource<GameSpotArticle> {
+class FakeGameSpotDataSource :
+    RSSNewsFeedDataSource<GameSpotArticle>, RSSNewReleasesFeedDataSource<GameSpotArticle>, RSSReviewsFeedDataSource<GameSpotArticle> {
 
     private val newsResponses = ArrayDeque<List<GameSpotArticle>>()
     private var newsError: Result.Error? = null

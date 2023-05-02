@@ -33,7 +33,7 @@ class ConvertersTest {
             ZonedDateTime.of(LocalDate.of(2023, 3, 24), LocalTime.of(15, 16, 31), ZoneId.systemDefault()),
             ZonedDateTime.of(LocalDate.of(2021, 9, 16), LocalTime.of(15, 16, 31), ZoneId.systemDefault())
         )
-        expectThat(dateTimeStringsBeforeParsing.map{ it.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME, isLenient = true) }).isEqualTo(expected)
+        expectThat(dateTimeStringsBeforeParsing.map { it.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME, isLenient = true) }).isEqualTo(expected)
     }
 
     @Test

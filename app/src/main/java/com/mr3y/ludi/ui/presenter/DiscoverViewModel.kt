@@ -1,8 +1,6 @@
 package com.mr3y.ludi.ui.presenter
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
@@ -12,7 +10,11 @@ import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.RichInfoGamesPage
 import com.mr3y.ludi.core.repository.GamesRepository
-import com.mr3y.ludi.core.repository.query.*
+import com.mr3y.ludi.core.repository.query.FreeGamesPlatform
+import com.mr3y.ludi.core.repository.query.FreeGamesQueryParameters
+import com.mr3y.ludi.core.repository.query.FreeGamesSortingCriteria
+import com.mr3y.ludi.core.repository.query.RichInfoGamesQuery
+import com.mr3y.ludi.core.repository.query.RichInfoGamesSortingCriteria
 import com.mr3y.ludi.ui.presenter.model.Criteria
 import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
@@ -25,7 +27,6 @@ import com.mr3y.ludi.ui.presenter.model.Store
 import com.mr3y.ludi.ui.presenter.model.wrapResource
 import com.mr3y.ludi.ui.presenter.model.wrapResultResources
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -35,8 +36,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -44,7 +43,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val gamesRepository: GamesRepository
@@ -62,52 +61,64 @@ class DiscoverViewModel @Inject constructor(
     ) { searchText, filtersState ->
         if (searchText.isEmpty() && filtersState == InitialFiltersState) {
             coroutineScope {
-                val freeGames = async { gamesRepository.queryFreeGames(
-                    FreeGamesQueryParameters(
-                        platform = FreeGamesPlatform.pc,
-                        sortingCriteria = FreeGamesSortingCriteria.relevance,
-                        categories = null
-                    )
-                ).single() }
-                val trendingGames = async { gamesRepository.queryRichInfoGames(
-                    RichInfoGamesQuery(
-                        pageSize = 20,
-                        dates = listOf(
-                            LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_DATE),
-                            LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-                        ),
-                        metaCriticScores = listOf(85, 100),
-                        sortingCriteria = RichInfoGamesSortingCriteria.ReleasedDescending
-                    )
-                ).single() }
-                val topRatedGames = async { gamesRepository.queryRichInfoGames(
-                    RichInfoGamesQuery(
-                        pageSize = 20,
-                        metaCriticScores = listOf(95, 100),
-                        sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending,
-                    )
-                ).single() }
-                val multiplayerGames = async { gamesRepository.queryRichInfoGames(
-                    RichInfoGamesQuery(
-                        pageSize = 20,
-                        genres = listOf(59),
-                        sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending,
-                    )
-                ).single() }
-                val familyGames = async { gamesRepository.queryRichInfoGames(
-                    RichInfoGamesQuery(
-                        pageSize = 20,
-                        genres = listOf(19),
-                        sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
-                    )
-                ).single() }
-                val realisticGames = async { gamesRepository.queryRichInfoGames(
-                    RichInfoGamesQuery(
-                        pageSize = 20,
-                        tags = listOf(77),
-                        sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
-                    )
-                ).single() }
+                val freeGames = async {
+                    gamesRepository.queryFreeGames(
+                        FreeGamesQueryParameters(
+                            platform = FreeGamesPlatform.pc,
+                            sortingCriteria = FreeGamesSortingCriteria.relevance,
+                            categories = null
+                        )
+                    ).single()
+                }
+                val trendingGames = async {
+                    gamesRepository.queryRichInfoGames(
+                        RichInfoGamesQuery(
+                            pageSize = 20,
+                            dates = listOf(
+                                LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_DATE),
+                                LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+                            ),
+                            metaCriticScores = listOf(85, 100),
+                            sortingCriteria = RichInfoGamesSortingCriteria.ReleasedDescending
+                        )
+                    ).single()
+                }
+                val topRatedGames = async {
+                    gamesRepository.queryRichInfoGames(
+                        RichInfoGamesQuery(
+                            pageSize = 20,
+                            metaCriticScores = listOf(95, 100),
+                            sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+                        )
+                    ).single()
+                }
+                val multiplayerGames = async {
+                    gamesRepository.queryRichInfoGames(
+                        RichInfoGamesQuery(
+                            pageSize = 20,
+                            genres = listOf(59),
+                            sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+                        )
+                    ).single()
+                }
+                val familyGames = async {
+                    gamesRepository.queryRichInfoGames(
+                        RichInfoGamesQuery(
+                            pageSize = 20,
+                            genres = listOf(19),
+                            sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+                        )
+                    ).single()
+                }
+                val realisticGames = async {
+                    gamesRepository.queryRichInfoGames(
+                        RichInfoGamesQuery(
+                            pageSize = 20,
+                            tags = listOf(77),
+                            sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+                        )
+                    ).single()
+                }
                 listOf(
                     freeGames,
                     trendingGames,
@@ -122,7 +133,7 @@ class DiscoverViewModel @Inject constructor(
                         topRatedGames = (it[2] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
                         multiplayerGames = (it[3] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
                         familyGames = (it[4] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
-                        realisticGames = (it[5] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
+                        realisticGames = (it[5] as Result<RichInfoGamesPage, Throwable>).wrapResultResources()
                     )
                 }
             }
@@ -137,48 +148,55 @@ class DiscoverViewModel @Inject constructor(
                     genres = filtersState.selectedGenres.map { it.id }.takeIf { it.isNotEmpty() },
                     sortingCriteria = run {
                         val sortingCriteria = filtersState.sortingCriteria ?: return@run null
-                        when(sortingCriteria.criteria) {
+                        when (sortingCriteria.criteria) {
                             Criteria.Name -> {
-                                if (sortingCriteria.order == Order.Ascending)
+                                if (sortingCriteria.order == Order.Ascending) {
                                     RichInfoGamesSortingCriteria.NameAscending
-                                else
+                                } else {
                                     RichInfoGamesSortingCriteria.NameDescending
+                                }
                             }
                             Criteria.DateReleased -> {
-                                if (sortingCriteria.order == Order.Ascending)
+                                if (sortingCriteria.order == Order.Ascending) {
                                     RichInfoGamesSortingCriteria.ReleasedAscending
-                                else
+                                } else {
                                     RichInfoGamesSortingCriteria.ReleasedDescending
+                                }
                             }
                             Criteria.DateAdded -> {
-                                if (sortingCriteria.order == Order.Ascending)
+                                if (sortingCriteria.order == Order.Ascending) {
                                     RichInfoGamesSortingCriteria.DateAddedAscending
-                                else
+                                } else {
                                     RichInfoGamesSortingCriteria.DateAddedDescending
+                                }
                             }
                             Criteria.DateCreated -> {
-                                if (sortingCriteria.order == Order.Ascending)
+                                if (sortingCriteria.order == Order.Ascending) {
                                     RichInfoGamesSortingCriteria.DateCreatedAscending
-                                else
+                                } else {
                                     RichInfoGamesSortingCriteria.DateCreatedDescending
+                                }
                             }
                             Criteria.DateUpdated -> {
-                                if (sortingCriteria.order == Order.Ascending)
+                                if (sortingCriteria.order == Order.Ascending) {
                                     RichInfoGamesSortingCriteria.DateUpdatedAscending
-                                else
+                                } else {
                                     RichInfoGamesSortingCriteria.DateUpdatedDescending
+                                }
                             }
                             Criteria.Rating -> {
-                                if (sortingCriteria.order == Order.Ascending)
+                                if (sortingCriteria.order == Order.Ascending) {
                                     RichInfoGamesSortingCriteria.RatingAscending
-                                else
+                                } else {
                                     RichInfoGamesSortingCriteria.RatingDescending
+                                }
                             }
                             Criteria.Metascore -> {
-                                if (sortingCriteria.order == Order.Ascending)
+                                if (sortingCriteria.order == Order.Ascending) {
                                     RichInfoGamesSortingCriteria.MetacriticScoreAscending
-                                else
+                                } else {
                                     RichInfoGamesSortingCriteria.MetacriticScoreDescending
+                                }
                             }
                         }
                     }
@@ -199,7 +217,7 @@ class DiscoverViewModel @Inject constructor(
         DiscoverState(
             searchQuery = searchText,
             filtersState = filters,
-            games = games,
+            games = games
         )
     }.stateIn(
         viewModelScope,
@@ -284,7 +302,7 @@ class DiscoverViewModel @Inject constructor(
                 Genre(id = 59, label = "Massively Multiplayer")
             ),
             selectedGenres = emptySet(),
-            sortingCriteria = null,
+            sortingCriteria = null
         )
 
         val Initial = DiscoverState(
@@ -297,7 +315,7 @@ class DiscoverViewModel @Inject constructor(
                 multiplayerGames = Result.Success(placeholders()),
                 familyGames = Result.Success(placeholders()),
                 realisticGames = Result.Success(placeholders())
-            ),
+            )
         )
 
         private fun placeholders(size: Int = 8): List<ResourceWrapper.Placeholder> {
@@ -307,7 +325,7 @@ class DiscoverViewModel @Inject constructor(
 }
 
 private fun Result<RichInfoGamesPage, Throwable>.wrapResultResources(): Result<List<ResourceWrapper<RichInfoGame>>, Throwable> {
-    return when(this) {
+    return when (this) {
         is Result.Success -> Result.Success(data.games.map(RichInfoGame::wrapResource))
         is Result.Error -> this
     }

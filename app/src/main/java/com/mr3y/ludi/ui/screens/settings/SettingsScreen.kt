@@ -94,8 +94,9 @@ fun SettingsScreen(
                         RadioButton(
                             selected = theme == state.selectedTheme,
                             onClick = {
-                                if (theme != state.selectedTheme)
+                                if (theme != state.selectedTheme) {
                                     onUpdateTheme(theme)
+                                }
                             }
                         )
                         Text(

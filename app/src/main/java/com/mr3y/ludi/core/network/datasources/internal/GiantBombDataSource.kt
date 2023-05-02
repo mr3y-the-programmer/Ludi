@@ -12,7 +12,7 @@ import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
 
 class GiantBombDataSource @Inject constructor(
-  private val parser: Parser,
+    private val parser: Parser
 ) : RSSNewsFeedDataSource<GiantBombArticle>, RSSNewReleasesFeedDataSource<GiantBombArticle>, RSSReviewsFeedDataSource<GiantBombArticle> {
 
     override suspend fun fetchNewsFeed(): Result<List<GiantBombArticle>, Throwable> {

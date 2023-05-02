@@ -15,9 +15,9 @@ import com.mr3y.ludi.core.repository.query.DealsSorting
 import com.mr3y.ludi.core.repository.query.DealsSortingDirection
 import com.mr3y.ludi.core.repository.query.GiveawaysQueryParameters
 import com.mr3y.ludi.core.repository.query.GiveawaysSorting
+import com.mr3y.ludi.ui.presenter.model.DealStore
 import com.mr3y.ludi.ui.presenter.model.DealsFiltersState
 import com.mr3y.ludi.ui.presenter.model.DealsState
-import com.mr3y.ludi.ui.presenter.model.DealStore
 import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.ui.presenter.model.GiveawaysFiltersState
@@ -99,17 +99,19 @@ class DealsViewModel @Inject constructor(
             dealsFiltersState = updates[1] as DealsFiltersState,
             deals = if (isDealsLoading) Initial.deals else (updates[2] as Result<List<Deal>, Throwable>).wrapResultResources(),
             giveawaysFiltersState = (updates[3] as GiveawaysFiltersState),
-            otherGamesGiveaways = if (isGiveawaysLoading)
+            otherGamesGiveaways = if (isGiveawaysLoading) {
                 Initial.otherGamesGiveaways
-            else
+            } else {
                 (updates[4] as Result<List<GamerPowerGiveawayEntry>, Throwable>).wrapResultResources(
                     transform = { giveaways ->
                         giveaways.filter { giveaway ->
                             giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault()))
                                 ?: true
                         }
-                    }),
-            mmoGamesGiveaways = (updates[5] as Result<List<MMOGiveawayEntry>, Throwable>).wrapResultResources(),
+                    }
+                )
+            },
+            mmoGamesGiveaways = (updates[5] as Result<List<MMOGiveawayEntry>, Throwable>).wrapResultResources()
         )
     }.stateIn(
         viewModelScope,
@@ -151,7 +153,7 @@ class DealsViewModel @Inject constructor(
         return when {
             selectedPlatforms.isNotEmpty() && selectedStores.isNotEmpty() -> {
                 var temp = selectedStores.map { store ->
-                    when(store) {
+                    when (store) {
                         GiveawayStore.Steam -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.Steam
                         GiveawayStore.EpicGames -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.EpicGames
                         GiveawayStore.Battlenet -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.Battlenet
@@ -162,7 +164,7 @@ class DealsViewModel @Inject constructor(
                     }
                 }
                 temp = temp + selectedPlatforms.map { platform ->
-                    when(platform) {
+                    when (platform) {
                         GiveawayPlatform.Android -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.Android
                         GiveawayPlatform.IOS -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.IOS
                         GiveawayPlatform.Playstation4 -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.Playstation4
@@ -178,7 +180,7 @@ class DealsViewModel @Inject constructor(
             }
             selectedPlatforms.isNotEmpty() -> {
                 selectedPlatforms.map { platform ->
-                    when(platform) {
+                    when (platform) {
                         GiveawayPlatform.Android -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.Android
                         GiveawayPlatform.IOS -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.IOS
                         GiveawayPlatform.Playstation4 -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.Playstation4
@@ -193,7 +195,7 @@ class DealsViewModel @Inject constructor(
             }
             selectedStores.isNotEmpty() -> {
                 selectedStores.map { store ->
-                    when(store) {
+                    when (store) {
                         GiveawayStore.Steam -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.Steam
                         GiveawayStore.EpicGames -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.EpicGames
                         GiveawayStore.Battlenet -> com.mr3y.ludi.core.repository.query.GiveawayPlatform.Battlenet

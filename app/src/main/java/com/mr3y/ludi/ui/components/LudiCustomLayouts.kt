@@ -18,9 +18,9 @@ fun SingleRowLayout(
     spacing: Dp = 8.dp,
     overflowIndicator: (@Composable (remainingChildrenCount: Int) -> Unit)? = null,
     overflowMinWidthRatio: Float = 0.2f,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
-    SubcomposeLayout(modifier = modifier) {constraints ->
+    SubcomposeLayout(modifier = modifier) { constraints ->
         val measurables = subcompose(1) { content() }
         val childrenWidths = measurables.map { it.maxIntrinsicWidth(constraints.maxHeight) }
         val unOccupiedWidth = constraints.maxWidth - (childrenWidths.sum() + (measurables.size - 1) * spacing.roundToPx())
@@ -31,7 +31,8 @@ fun SingleRowLayout(
                 measurables.map {
                     it.measure(
                         constraints.copy(
-                            minWidth = it.minIntrinsicWidth(constraints.maxHeight), maxWidth = it.maxIntrinsicWidth(constraints.maxHeight),
+                            minWidth = it.minIntrinsicWidth(constraints.maxHeight),
+                            maxWidth = it.maxIntrinsicWidth(constraints.maxHeight)
                         )
                     )
                 }
@@ -46,12 +47,13 @@ fun SingleRowLayout(
                     i++
                     numOfFittingChildren++
                 }
-                val overflowMeasurable = if (overflowIndicator != null)
+                val overflowMeasurable = if (overflowIndicator != null) {
                     subcompose(2) {
                         overflowIndicator.invoke(measurables.size - numOfFittingChildren)
                     }.single()
-                else
+                } else {
                     null
+                }
                 val overflowPlaceableWidth = constraints.maxWidth - occupiedWidth - spacing.roundToPx()
                 overflowPlaceable = overflowMeasurable?.measure(
                     constraints.copy(
@@ -65,7 +67,7 @@ fun SingleRowLayout(
                     it.measure(
                         constraints.copy(
                             minWidth = it.minIntrinsicWidth(constraints.maxHeight),
-                            maxWidth = it.maxIntrinsicWidth(constraints.maxHeight),
+                            maxWidth = it.maxIntrinsicWidth(constraints.maxHeight)
                         )
                     )
                 }

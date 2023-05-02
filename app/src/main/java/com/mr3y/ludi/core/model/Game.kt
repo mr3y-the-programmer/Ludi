@@ -43,7 +43,7 @@ data class RichInfoGame(
     val tags: List<GameTag>,
     val screenshots: List<GameScreenshot>,
     val genres: List<GameGenre>
-): Game
+) : Game
 
 data class PlatformInfo(
     val id: Int,

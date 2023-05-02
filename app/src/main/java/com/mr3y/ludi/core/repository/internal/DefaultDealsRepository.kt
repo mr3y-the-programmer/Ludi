@@ -1,6 +1,10 @@
 package com.mr3y.ludi.core.repository.internal
 
-import com.mr3y.ludi.core.model.*
+import com.mr3y.ludi.core.model.Deal
+import com.mr3y.ludi.core.model.GamerPowerGiveawayEntry
+import com.mr3y.ludi.core.model.MMOGiveawayEntry
+import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.model.toCoreErrorResult
 import com.mr3y.ludi.core.network.datasources.internal.CheapSharkDataSource
 import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSource
 import com.mr3y.ludi.core.network.datasources.internal.MMOGamesDataSource
@@ -27,25 +31,26 @@ class DefaultDealsRepository @Inject constructor(
 
     override fun queryDeals(queryParameters: DealsQueryParameters): Flow<Result<List<Deal>, Throwable>> = flow {
         val fullUrl = buildDealsFullUrl(endpointUrl = "$CheapSharkBaseUrl/deals", queryParameters)
-        when(val result = cheapSharkDataSource.queryLatestDeals(fullUrl)) {
+        when (val result = cheapSharkDataSource.queryLatestDeals(fullUrl)) {
             is ApiResult.Success -> emit(Result.Success(result.value.map(CheapSharkDeal::toDeal)))
             is ApiResult.Failure -> emit(result.toCoreErrorResult())
         }
     }
 
     override fun queryMMOGiveaways(): Flow<Result<List<MMOGiveawayEntry>, Throwable>> = flow {
-        when(val result = mmoGamesDataSource.getLatestGiveaways("$MMOGamesBaseUrl/giveaways")) {
+        when (val result = mmoGamesDataSource.getLatestGiveaways("$MMOGamesBaseUrl/giveaways")) {
             is ApiResult.Success -> emit(Result.Success(result.value.map(com.mr3y.ludi.core.network.model.MMOGiveawayEntry::toCoreGiveawayEntry)))
             is ApiResult.Failure -> emit(result.toCoreErrorResult())
         }
     }
 
     override fun queryGamerPowerGiveaways(queryParameters: GiveawaysQueryParameters): Flow<Result<List<GamerPowerGiveawayEntry>, Throwable>> = flow {
-        val fullUrl = if (queryParameters.isValid())
+        val fullUrl = if (queryParameters.isValid()) {
             buildGiveawaysFullUrl("$GamerPowerBaseUrl/filter", queryParameters)
-        else
+        } else {
             "$GamerPowerBaseUrl/giveaways"
-        when(val result = gamerPowerDataSource.queryLatestGiveaways(fullUrl)) {
+        }
+        when (val result = gamerPowerDataSource.queryLatestGiveaways(fullUrl)) {
             is ApiResult.Success -> emit(Result.Success(result.value.map(com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry::toCoreGamerPowerGiveawayEntry)))
             is ApiResult.Failure -> emit(result.toCoreErrorResult())
         }

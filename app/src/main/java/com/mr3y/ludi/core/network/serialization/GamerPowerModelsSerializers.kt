@@ -1,3 +1,4 @@
+// ktlint-disable filename
 package com.mr3y.ludi.core.network.serialization
 
 import kotlinx.serialization.KSerializer
@@ -12,7 +13,7 @@ object NotAvailableAsNullSerializer : KSerializer<String?> {
         get() = PrimitiveSerialDescriptor(serialName = "String?", kind = PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): String? {
-        return when(val value = decoder.decodeString()) {
+        return when (val value = decoder.decodeString()) {
             "N/A" -> null
             else -> value
         }

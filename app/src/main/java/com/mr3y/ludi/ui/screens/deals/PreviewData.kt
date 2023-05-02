@@ -77,7 +77,7 @@ val dealSamples = listOf(
             9.1f,
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1549710/capsule_sm_120.jpg?t=1614708882"
         ).toDeal()
-    ),
+    )
 )
 
 val mmoGiveawaysSamples = listOf(
@@ -113,7 +113,7 @@ val mmoGiveawaysSamples = listOf(
             "To unlock your key instantly you just need to complete all the steps on the top.",
             "https://www.mmobomb.com/giveaway/eudemons-online-gift-pack-key-giveaway"
         )
-    ),
+    )
 )
 
 val otherGamesGiveawaysSamples = listOf(
@@ -133,7 +133,7 @@ val otherGamesGiveawaysSamples = listOf(
             "2023-04-28 23:59:00",
             930,
             GiveawayEntryStatus.Active,
-            "https://www.gamerpower.com/world-of-warships-starter-pack-ishizuchi",
+            "https://www.gamerpower.com/world-of-warships-starter-pack-ishizuchi"
         ).toCoreGamerPowerGiveawayEntry()
     ),
     ResourceWrapper.ActualResource(
@@ -152,7 +152,7 @@ val otherGamesGiveawaysSamples = listOf(
             null,
             1480,
             GiveawayEntryStatus.Active,
-            "https://www.gamerpower.com/spandex-force-champion-rising",
+            "https://www.gamerpower.com/spandex-force-champion-rising"
         ).toCoreGamerPowerGiveawayEntry()
     ),
     ResourceWrapper.ActualResource(
@@ -171,7 +171,7 @@ val otherGamesGiveawaysSamples = listOf(
             "2023-04-23 23:59:00",
             3540,
             GiveawayEntryStatus.Active,
-            "https://www.gamerpower.com/dungeons-and-dragons-online-all-quest-packs",
+            "https://www.gamerpower.com/dungeons-and-dragons-online-all-quest-packs"
         ).toCoreGamerPowerGiveawayEntry()
-    ),
+    )
 )

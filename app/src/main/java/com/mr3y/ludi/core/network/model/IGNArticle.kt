@@ -1,6 +1,11 @@
 package com.mr3y.ludi.core.network.model
 
-import com.mr3y.ludi.core.model.*
+import com.mr3y.ludi.core.model.MarkupText
+import com.mr3y.ludi.core.model.NewReleaseArticle
+import com.mr3y.ludi.core.model.NewsArticle
+import com.mr3y.ludi.core.model.ReviewArticle
+import com.mr3y.ludi.core.model.Source
+import com.mr3y.ludi.core.model.Title
 import com.prof.rssparser.Article
 
 data class IGNArticle(
@@ -10,8 +15,8 @@ data class IGNArticle(
     val image: String?,
     val content: String?,
     val sourceLink: String?,
-    override val publicationDate: String?,
-): RSSFeedArticle {
+    override val publicationDate: String?
+) : RSSFeedArticle {
     override fun toNewsArticle(): NewsArticle {
         return NewsArticle(
             id = null,

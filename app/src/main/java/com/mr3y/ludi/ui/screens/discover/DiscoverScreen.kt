@@ -1,22 +1,49 @@
 package com.mr3y.ludi.ui.screens.discover
 
-import androidx.compose.animation.*
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.runtime.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +61,13 @@ import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiFilterChip
 import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
-import com.mr3y.ludi.ui.presenter.model.*
+import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
+import com.mr3y.ludi.ui.presenter.model.DiscoverState
+import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
+import com.mr3y.ludi.ui.presenter.model.Genre
+import com.mr3y.ludi.ui.presenter.model.Platform
+import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
+import com.mr3y.ludi.ui.presenter.model.Store
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @Composable
@@ -94,10 +127,9 @@ fun DiscoverScreen(
             discoverState.games as DiscoverStateGames.SearchQueryBasedGames
             SearchQueryAndFilterPage(
                 searchResult = discoverState.games.richInfoGames,
-                modifier = Modifier.padding(contentPadding),
+                modifier = Modifier.padding(contentPadding)
             )
         }
-
     }
     if (openFiltersSheet) {
         FiltersBottomSheet(
@@ -192,17 +224,18 @@ fun SuggestedGamesPage(
         }
     }
 }
+
 @Composable
 fun SearchQueryAndFilterPage(
     searchResult: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        when(searchResult) {
+        when (searchResult) {
             is Result.Success -> {
                 itemsIndexed(searchResult.data) { index, gameWrapper ->
                     key(index) {
@@ -234,7 +267,7 @@ fun DiscoverTopBar(
     onSearchQueryValueChanged: (String) -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     onCloseClicked: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
         title = {
@@ -248,7 +281,7 @@ fun DiscoverTopBar(
                     disabledIndicatorColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent,
+                    errorIndicatorColor = Color.Transparent
                 ),
                 leadingIcon = {
                     IconButton(
@@ -257,7 +290,7 @@ fun DiscoverTopBar(
                         Icon(
                             painter = rememberVectorPainter(image = Icons.Filled.Search),
                             contentDescription = null,
-                            modifier = Modifier.fillMaxHeight(),
+                            modifier = Modifier.fillMaxHeight()
                         )
                     }
                 },
@@ -330,7 +363,7 @@ fun <T> GamesSectionScaffold(
     gamesResult: Result<List<ResourceWrapper<T>>, Throwable>,
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(8.dp),
-    itemContent: @Composable (ResourceWrapper<T>) -> Unit,
+    itemContent: @Composable (ResourceWrapper<T>) -> Unit
 ) {
     LazyRow(
         modifier = modifier,
@@ -365,7 +398,7 @@ fun FiltersBottomSheet(
     onSelectingStore: (Store) -> Unit,
     onUnselectingStore: (Store) -> Unit,
     onSelectingGenre: (Genre) -> Unit,
-    onUnselectingGenre: (Genre) -> Unit,
+    onUnselectingGenre: (Genre) -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -388,7 +421,7 @@ fun FiltersBottomSheet(
             onClick = onCloseClicked
         ) {
             Text(
-                text = "Close",
+                text = "Close"
             )
         }
         Column(
@@ -414,10 +447,11 @@ fun FiltersBottomSheet(
                         label = it.label,
                         modifier = chipModifier,
                         onClick = {
-                            if (it in filtersState.selectedPlatforms)
+                            if (it in filtersState.selectedPlatforms) {
                                 onUnselectingPlatform(it)
-                            else
+                            } else {
                                 onSelectingPlatform(it)
+                            }
                         }
                     )
                 }
@@ -442,10 +476,11 @@ fun FiltersBottomSheet(
                         label = it.label,
                         modifier = chipModifier,
                         onClick = {
-                            if (it in filtersState.selectedStores)
+                            if (it in filtersState.selectedStores) {
                                 onUnselectingStore(it)
-                            else
+                            } else {
                                 onSelectingStore(it)
+                            }
                         }
                     )
                 }
@@ -470,10 +505,11 @@ fun FiltersBottomSheet(
                         label = it.label,
                         modifier = chipModifier,
                         onClick = {
-                            if (it in filtersState.selectedGenres)
+                            if (it in filtersState.selectedGenres) {
                                 onUnselectingGenre(it)
-                            else
+                            } else {
                                 onSelectingGenre(it)
+                            }
                         }
                     )
                 }
@@ -495,7 +531,7 @@ fun DiscoverScreenPreview() {
                     topRatedGames = Result.Success(richInfoGamesSamples),
                     multiplayerGames = Result.Success(richInfoGamesSamples),
                     familyGames = Result.Success(richInfoGamesSamples),
-                    realisticGames = Result.Success(richInfoGamesSamples),
+                    realisticGames = Result.Success(richInfoGamesSamples)
                 ),
                 filtersState = DiscoverViewModel.InitialFiltersState
             ),

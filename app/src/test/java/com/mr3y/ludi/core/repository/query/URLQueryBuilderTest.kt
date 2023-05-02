@@ -33,9 +33,9 @@ class URLQueryBuilderTest {
     fun givenSomeQueryParametersWithRichInfoGamesEndPointUrl_thenVerifyTheResultingUrlMatchingExpectedOne() {
         val endPointUrl = "https://api.rawg.io/api/games"
         val queryParameters = listOf(
-            RichInfoGamesQueryParameters.Empty.copy(isFuzzinessEnabled = true, platforms = listOf(18,1,7), dates = listOf("2019-09-01", "2019-09-30"), sortingCriteria = RichInfoGamesSortingCriteria.NameAscending),
+            RichInfoGamesQueryParameters.Empty.copy(isFuzzinessEnabled = true, platforms = listOf(18, 1, 7), dates = listOf("2019-09-01", "2019-09-30"), sortingCriteria = RichInfoGamesSortingCriteria.NameAscending),
             RichInfoGamesQueryParameters.Empty,
-            RichInfoGamesQueryParameters.Empty.copy(pageSize = 50, searchQuery = "fall", matchTermsExactly = true, stores = listOf(5,6), tags = listOf(31, 7), sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending),
+            RichInfoGamesQueryParameters.Empty.copy(pageSize = 50, searchQuery = "fall", matchTermsExactly = true, stores = listOf(5, 6), tags = listOf(31, 7), sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending)
         )
         val result = queryParameters.map { buildRichInfoGamesFullUrl(endPointUrl, it) }
         val expected = listOf(
@@ -56,7 +56,7 @@ class URLQueryBuilderTest {
         val result = queryParameters.map { buildDealsFullUrl(endPointUrl, it) }
         val expected = listOf(
             "https://www.cheapshark.com/api/1.0/deals?title=lo&exact=0&storeID=1,2,3&sortBy=Recent&desc=1",
-            "https://www.cheapshark.com/api/1.0/deals",
+            "https://www.cheapshark.com/api/1.0/deals"
         )
         expectThat(result).isEqualTo(expected)
     }

@@ -20,7 +20,6 @@ import org.junit.BeforeClass
 import org.junit.Test
 import strikt.api.expectThat
 import strikt.assertions.isA
-import strikt.assertions.isEqualTo
 import java.net.HttpURLConnection
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -56,7 +55,7 @@ class DefaultNewsRepositoryTest {
                 "https://www.mmobomb.com/file/2023/3/veiled-experts-nexon-final-closed-beta.jpg",
                 "<p><img class=\"type:primaryImage aligncenter size-large\" src=\"https://www.mmobomb.com/file/2023/3/veiled-experts-nexon-final-closed-beta-812x456.jpg\" alt=\"Veiled Experts Nexon final closed beta\" width=\"812\" height=\"456\" /></p>\r\n<p>Nexon announced today that it is opening up registration for the final Beta test for <a href=\"https://www.mmobomb.com/topic/veiled-experts\" target=\"_blank\" rel=\"noopener\">Veiled Experts</a>, a free-to-play online tactical <a href=\"https://www.mmobomb.com/games/shooter\" target=\"_blank\" rel=\"noopener\">multiplayer shooter</a>.</p>\r\n<p>The game features 3v3 or 5v5 Bomb Defusal mode, Team Deathmatch, Free for All, and team Deathmatch vs AI. The game is slated for release later this year.</p>\r\n<p>The final Beta test kicks off on March 30th and will run through April 6th.</p>\r\n<p>In Veiled Experts, players take on the roles of agents engaged in a worldwide conflict between governments, corporations, and terrorists. Each fights for control of a groundbreaking technology known as the Lepton System microchip. Each of the nine agents have a unique blend of skills and Lepton abilities.</p>\r\n<p>Check out the trailer for Veiled Experts below, and you can sign up for the final Beta test over on the official <a href=\"https://store.steampowered.com/app/1934780/VEILED_EXPERTS/\" target=\"_blank\" rel=\"noopener\">Steam page</a>.</p>\r\n<p><iframe src=\"https://www.youtube.com/embed/4ndc3lXlsd8\" title=\"YouTube video player\" width=\"560\" height=\"315\" allowfullscreen=\"allowfullscreen\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\"></iframe></p>",
                 "https://www.mmobomb.com/news/pre-register-nexon-veiled-experts-final-beta-test"
-            ),
+            )
         )
         controller.enqueue(MMOGamesDataSource::getLatestNews, ApiResult.success(mmoBombArticles))
         val gameSpotArticles = listOf(
@@ -67,7 +66,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.gamespot.com/a/uploads/screen_medium/679/6794662/4102198-1%284%29.jpg",
                 content = null,
                 sourceLink = "https://www.gamespot.com/articles/wo-long-fallen-dynasty-new-game-plus-explained-5-star-gear-and-other-changes/1100-6511878/?ftag=CAD-01-10abi2f",
-                publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800",
+                publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800"
             ),
             GameSpotArticle(
                 title = "How Long Is Wo Long: Fallen Dynasty?",
@@ -76,7 +75,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.gamespot.com/a/uploads/screen_medium/679/6794662/4102197-1%283%29.jpg",
                 content = null,
                 sourceLink = "https://www.gamespot.com/articles/how-long-is-wo-long-fallen-dynasty/1100-6511879/?ftag=CAD-01-10abi2f",
-                publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800",
+                publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800"
             ),
             GameSpotArticle(
                 title = "Halo Infinite Team Deep Dives On Season 3's New Maps",
@@ -85,7 +84,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.gamespot.com/a/uploads/screen_medium/1690/16904437/4106435-oasis%281%29.jpg",
                 content = null,
                 sourceLink = "https://www.gamespot.com/articles/halo-infinite-team-deep-dives-on-season-3s-new-maps/1100-6511964/?ftag=CAD-01-10abi2f",
-                publicationDate = "Wed, 01 Mar 2023 21:30:00 -0800",
+                publicationDate = "Wed, 01 Mar 2023 21:30:00 -0800"
             )
         )
         gameSpotDataSource.enqueueSuccessfulNewsFeedResponse(gameSpotArticles)
@@ -97,7 +96,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.giantbomb.com/a/uploads/screen_medium/0/1992/3451643-2626131732-34516.jpg",
                 content = null,
                 sourceLink = "https://www.giantbomb.com/articles/the-community-spotlight-2023-02-25/1100-6288/",
-                publicationDate = "Sat, 25 Feb 2023 15:00:00 -0800",
+                publicationDate = "Sat, 25 Feb 2023 15:00:00 -0800"
             ),
             GiantBombArticle(
                 title = "What's Happening On Giant Bomb: Week of 2/20/23",
@@ -106,7 +105,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.giantbomb.com/a/uploads/screen_medium/0/1992/3449858-untitled-1.png",
                 content = null,
                 sourceLink = "https://www.giantbomb.com/articles/whats-happening-on-giant-bomb-week-of-2-20-23/1100-6287/",
-                publicationDate = "Tue, 21 Feb 2023 14:04:00 -0800",
+                publicationDate = "Tue, 21 Feb 2023 14:04:00 -0800"
             ),
             GiantBombArticle(
                 title = "Community GOTY 2022 Winners",
@@ -115,7 +114,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.giantbomb.com/a/uploads/screen_medium/8/87610/3448901-pxl_20230222_004303336.jpg",
                 content = null,
                 sourceLink = "https://www.giantbomb.com/articles/community-goty-2022-winners/1100-6280/",
-                publicationDate = "Sat, 18 Feb 2023 12:00:00 -0800",
+                publicationDate = "Sat, 18 Feb 2023 12:00:00 -0800"
             )
         )
         giantBombDataSource.enqueueSuccessfulNewsFeedResponse(giantBombArticles)
@@ -142,7 +141,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.gamespot.com/a/uploads/screen_medium/679/6794662/4102198-1%284%29.jpg",
                 content = null,
                 sourceLink = "https://www.gamespot.com/articles/wo-long-fallen-dynasty-new-game-plus-explained-5-star-gear-and-other-changes/1100-6511878/?ftag=CAD-01-10abi2f",
-                publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800",
+                publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800"
             ),
             GameSpotArticle(
                 title = "How Long Is Wo Long: Fallen Dynasty?",
@@ -151,7 +150,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.gamespot.com/a/uploads/screen_medium/679/6794662/4102197-1%283%29.jpg",
                 content = null,
                 sourceLink = "https://www.gamespot.com/articles/how-long-is-wo-long-fallen-dynasty/1100-6511879/?ftag=CAD-01-10abi2f",
-                publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800",
+                publicationDate = "Thu, 02 Mar 2023 03:00:00 -0800"
             ),
             GameSpotArticle(
                 title = "Halo Infinite Team Deep Dives On Season 3's New Maps",
@@ -160,7 +159,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.gamespot.com/a/uploads/screen_medium/1690/16904437/4106435-oasis%281%29.jpg",
                 content = null,
                 sourceLink = "https://www.gamespot.com/articles/halo-infinite-team-deep-dives-on-season-3s-new-maps/1100-6511964/?ftag=CAD-01-10abi2f",
-                publicationDate = "Wed, 01 Mar 2023 21:30:00 -0800",
+                publicationDate = "Wed, 01 Mar 2023 21:30:00 -0800"
             )
         )
         gameSpotDataSource.enqueueSuccessfulNewsFeedResponse(gameSpotArticles)
@@ -172,7 +171,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.giantbomb.com/a/uploads/screen_medium/0/1992/3451643-2626131732-34516.jpg",
                 content = null,
                 sourceLink = "https://www.giantbomb.com/articles/the-community-spotlight-2023-02-25/1100-6288/",
-                publicationDate = "Sat, 25 Feb 2023 15:00:00 -0800",
+                publicationDate = "Sat, 25 Feb 2023 15:00:00 -0800"
             ),
             GiantBombArticle(
                 title = "What's Happening On Giant Bomb: Week of 2/20/23",
@@ -181,7 +180,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.giantbomb.com/a/uploads/screen_medium/0/1992/3449858-untitled-1.png",
                 content = null,
                 sourceLink = "https://www.giantbomb.com/articles/whats-happening-on-giant-bomb-week-of-2-20-23/1100-6287/",
-                publicationDate = "Tue, 21 Feb 2023 14:04:00 -0800",
+                publicationDate = "Tue, 21 Feb 2023 14:04:00 -0800"
             ),
             GiantBombArticle(
                 title = "Community GOTY 2022 Winners",
@@ -190,7 +189,7 @@ class DefaultNewsRepositoryTest {
                 image = "https://www.giantbomb.com/a/uploads/screen_medium/8/87610/3448901-pxl_20230222_004303336.jpg",
                 content = null,
                 sourceLink = "https://www.giantbomb.com/articles/community-goty-2022-winners/1100-6280/",
-                publicationDate = "Sat, 18 Feb 2023 12:00:00 -0800",
+                publicationDate = "Sat, 18 Feb 2023 12:00:00 -0800"
             )
         )
         giantBombDataSource.enqueueSuccessfulNewsFeedResponse(giantBombArticles)
@@ -241,7 +240,7 @@ class DefaultNewsRepositoryTest {
                 mapOf(
                     Source.GiantBomb to giantBombDataSource,
                     Source.GameSpot to gameSpotDataSource,
-                    Source.IGN to ignDataSource,
+                    Source.IGN to ignDataSource
                 ),
                 controller.api
             )

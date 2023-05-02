@@ -6,6 +6,6 @@ sealed interface Article {
 
 sealed interface Title {
     val text: String
-    data class Markup(override val text: String): Title
-    data class Plain(override val text: String): Title
+    data class Markup(override val text: String) : Title
+    data class Plain(override val text: String) : Title
 }
