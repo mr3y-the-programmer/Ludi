@@ -1,5 +1,6 @@
 package com.mr3y.ludi.core.repository.internal
 
+import co.touchlab.kermit.Logger
 import com.mr3y.ludi.core.model.NewReleaseArticle
 import com.mr3y.ludi.core.model.NewsArticle
 import com.mr3y.ludi.core.model.Result
@@ -22,7 +23,8 @@ import javax.inject.Inject
 
 class DefaultNewsRepository @Inject constructor(
     private val rssDataSources: Map<Source, @JvmSuppressWildcards RSSFeedDataSource<RSSFeedArticle>>,
-    private val mmoGamesDataSource: MMOGamesDataSource
+    private val mmoGamesDataSource: MMOGamesDataSource,
+    private val logger: Logger
 ) : NewsRepository {
 
     override suspend fun getLatestGamingNews(sources: Set<Source>): Result<Set<NewsArticle>, Throwable> = coroutineScope {
@@ -36,7 +38,7 @@ class DefaultNewsRepository @Inject constructor(
             when (result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toNewsArticle()!! }) }
                 is Result.Error -> {
-                    // TODO: log the exception locally & report it with the crash reporting sdk
+                    logger.e(result.exception) { "aggregated data before throwing exception $acc"}
                     aggregatedErrors += result
                     return@fold acc
                 }
@@ -52,7 +54,7 @@ class DefaultNewsRepository @Inject constructor(
                         aggregatedNews = aggregatedNews.copy(data = aggregatedNews.data + result.value.map(MMOGamesArticle::toNewsArticle))
                     }
                     is ApiResult.Failure -> {
-                        // TODO: log the exception locally & report it with the crash reporting sdk
+                        logger.e(result.toCoreErrorResult().exception) { "$result" }
                         aggregatedErrors += result.toCoreErrorResult()
                     }
                 }
@@ -75,7 +77,7 @@ class DefaultNewsRepository @Inject constructor(
             when (result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toNewReleaseArticle()!! }) }
                 is Result.Error -> {
-                    // TODO: log the exception locally & report it with the crash reporting sdk
+                    logger.e(result.exception) { "aggregated data before throwing exception $acc"}
                     aggregatedErrors += result
                     return@fold acc
                 }
@@ -98,7 +100,7 @@ class DefaultNewsRepository @Inject constructor(
             when (result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toReviewArticle()!! }) }
                 is Result.Error -> {
-                    // TODO: log the exception locally & report it with the crash reporting sdk
+                    logger.e(result.exception) { "aggregated data before throwing exception $acc"}
                     aggregatedErrors += result
                     return@fold acc
                 }

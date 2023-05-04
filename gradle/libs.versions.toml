@@ -38,6 +38,7 @@ kotlin = "1.8.20"
 kotlinxSerialization = "1.5.0"
 ktlintVersion = "11.3.2"
 spotlessVersion = "6.18.0"
+kermit = "2.0.0-RC4"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
@@ -57,6 +58,8 @@ accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeho
 accompanist-system-ui-controller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 compose-html = { module = "com.github.ireward:compose-html", version.ref = "composeHtml" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+kermit-test = { module = "co.touchlab:kermit-test", version.ref = "kermit" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHilt" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }

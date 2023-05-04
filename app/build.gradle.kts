@@ -124,6 +124,9 @@ dependencies {
     testImplementation(libs.hilt.android.testing)
     kaptTest(libs.hilt.android.compiler)
 
+    // Logging
+    implementation(libs.kermit)
+
     // Datastore
     implementation(libs.datastore)
     implementation(libs.datastore.preferences)
@@ -169,6 +172,7 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(testFixtures(libs.eithernet))
     testImplementation(libs.mockwebserver)
+    testImplementation(libs.kermit.test)
 
     // Instrumented tests: jUnit rules and runners
 

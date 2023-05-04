@@ -1,5 +1,6 @@
 package com.mr3y.ludi.core.network.datasources.internal
 
+import co.touchlab.kermit.Logger
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.network.datasources.RSSNewReleasesFeedDataSource
 import com.mr3y.ludi.core.network.datasources.RSSNewsFeedDataSource
@@ -12,17 +13,21 @@ import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
 
 class GameSpotDataSource @Inject constructor(
-    private val parser: Parser
+    private val parser: Parser,
+    private val logger: Logger
 ) : RSSNewsFeedDataSource<GameSpotArticle>, RSSReviewsFeedDataSource<GameSpotArticle>, RSSNewReleasesFeedDataSource<GameSpotArticle> {
     override suspend fun fetchNewReleasesFeed(): Result<List<GameSpotArticle>, Throwable> {
+        logger.d { "Fetching GameSpot New releases Feed" }
         return fetchFeedFromUrl(RSSNewReleasesFeedURL)
     }
 
     override suspend fun fetchNewsFeed(): Result<List<GameSpotArticle>, Throwable> {
+        logger.d { "Fetching GameSpot News Feed" }
         return fetchFeedFromUrl(RSSNewsFeedURL)
     }
 
     override suspend fun fetchReviewsFeed(): Result<List<GameSpotArticle>, Throwable> {
+        logger.d { "Fetching GameSpot Reviews Feed" }
         return fetchFeedFromUrl(RSSReviewsFeedURL)
     }
 
@@ -36,6 +41,7 @@ class GameSpotDataSource @Inject constructor(
             if (e is CancellationException) {
                 throw e
             }
+            logger.e(e) { "Error occurred while trying to fetch GameSpot feed from $url" }
             Result.Error(e)
         }
     }
