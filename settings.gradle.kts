@@ -6,6 +6,12 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    plugins {
+        id("de.fayard.refreshVersions") version "0.51.0"
+    }
+}
+plugins {
+    id("de.fayard.refreshVersions")
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)

@@ -1,3 +1,4 @@
+import de.fayard.refreshVersions.core.versionFor
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -56,7 +57,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
+        kotlinCompilerExtensionVersion = versionFor(AndroidX.Compose.compiler)
     }
 
     packagingOptions {
