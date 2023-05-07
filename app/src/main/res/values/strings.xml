@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Ludi</string>
+    <string name="leak_canary_test_class_name">strikt.api.expectThat</string>
 </resources>
