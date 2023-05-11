@@ -9,6 +9,6 @@ data class ReviewArticle(
     val source: Source,
     val content: MarkupText?,
     val sourceLinkUrl: String,
-    val author: String,
+    val author: String?,
     val publicationDate: ZonedDateTime
 ) : Article

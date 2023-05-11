@@ -3,6 +3,7 @@ package com.mr3y.ludi.core.network.datasources.internal
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.network.fixtures.TestLogger
 import com.mr3y.ludi.core.network.model.GiantBombArticle
 import com.prof.rssparser.Article
 import com.prof.rssparser.Channel
@@ -350,7 +351,7 @@ class GiantBombDataSourceTest {
         @JvmStatic
         @BeforeClass
         fun setUp() {
-            sut = GiantBombDataSource(rssParser)
+            sut = GiantBombDataSource(rssParser, TestLogger)
         }
     }
 }

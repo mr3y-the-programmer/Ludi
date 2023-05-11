@@ -7,6 +7,7 @@ import com.mr3y.ludi.core.network.datasources.internal.MMOGamesDataSource
 import com.mr3y.ludi.core.network.fixtures.FakeGameSpotDataSource
 import com.mr3y.ludi.core.network.fixtures.FakeGiantBombDataSource
 import com.mr3y.ludi.core.network.fixtures.FakeIGNDataSource
+import com.mr3y.ludi.core.network.fixtures.TestLogger
 import com.mr3y.ludi.core.network.model.GameSpotArticle
 import com.mr3y.ludi.core.network.model.GiantBombArticle
 import com.mr3y.ludi.core.network.model.MMOGamesArticle
@@ -242,7 +243,8 @@ class DefaultNewsRepositoryTest {
                     Source.GameSpot to gameSpotDataSource,
                     Source.IGN to ignDataSource
                 ),
-                controller.api
+                controller.api,
+                TestLogger
             )
         }
     }

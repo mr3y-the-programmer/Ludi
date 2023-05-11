@@ -1,6 +1,7 @@
 package com.mr3y.ludi.core.network.datasources.internal
 
 import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.network.fixtures.TestLogger
 import com.mr3y.ludi.core.network.model.IGNArticle
 import com.prof.rssparser.Article
 import com.prof.rssparser.Channel
@@ -149,7 +150,7 @@ class IGNDataSourceTest {
         @JvmStatic
         @BeforeClass
         fun setUp() {
-            sut = IGNDataSource(rssParser)
+            sut = IGNDataSource(rssParser, TestLogger)
         }
     }
 }
