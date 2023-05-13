@@ -43,7 +43,6 @@ object NetworkModule {
         return OkHttpClient.Builder().addInterceptor(RAWGAPIKeyInterceptor()).build()
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     @Singleton
     @Provides
     fun provideRetrofitInstance(okHttpClient: OkHttpClient, jsonInstance: Json): Retrofit {
