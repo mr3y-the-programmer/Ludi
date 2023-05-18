@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.stateIn
@@ -63,7 +64,7 @@ class DealsViewModel @Inject constructor(
                 sortingCriteria = dealsFiltersState.sortingCriteria,
                 sortingDirection = dealsFiltersState.sortingDirection
             )
-        ).single().also {
+        ).also {
             isDealsLoading.update { false }
         }
     }
@@ -77,7 +78,7 @@ class DealsViewModel @Inject constructor(
                 platforms = giveawayFiltersState.selectedPlatformsAndStores(),
                 sorting = giveawayFiltersState.sortingCriteria
             )
-        ).single().also {
+        ).also {
             isGiveawaysLoading.update { false }
         }
     }
@@ -88,7 +89,7 @@ class DealsViewModel @Inject constructor(
         deals,
         giveawaysFiltersState,
         gamerPowerGiveaways,
-        dealsRepository.queryMMOGiveaways(),
+        flow { emit(dealsRepository.queryMMOGiveaways()) },
         isDealsLoading,
         isGiveawaysLoading
     ) { updates ->

@@ -15,8 +15,6 @@ import com.mr3y.ludi.core.repository.query.RichInfoGamesQueryParameters
 import com.mr3y.ludi.core.repository.query.buildFreeGamesFullUrl
 import com.mr3y.ludi.core.repository.query.buildRichInfoGamesFullUrl
 import com.slack.eithernet.ApiResult
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class DefaultGamesRepository @Inject constructor(
@@ -24,26 +22,26 @@ class DefaultGamesRepository @Inject constructor(
     private val rawgDataSource: RAWGDataSource
 ) : GamesRepository {
 
-    override fun queryFreeGames(queryParameters: FreeGamesQueryParameters): Flow<Result<List<FreeGame>, Throwable>> = flow {
+    override suspend fun queryFreeGames(queryParameters: FreeGamesQueryParameters): Result<List<FreeGame>, Throwable> {
         val fullUrl = buildFreeGamesFullUrl(endpointUrl = "$FreeToGameBaseUrl/games", queryParameters)
-        when (val result = freeToGameDataSource.queryGames(fullUrl)) {
+        return when (val result = freeToGameDataSource.queryGames(fullUrl)) {
             is ApiResult.Success -> {
-                emit(Result.Success(result.value.map(FreeToGameGame::toFreeGame)))
+                Result.Success(result.value.map(FreeToGameGame::toFreeGame))
             }
             is ApiResult.Failure -> {
-                emit(result.toCoreErrorResult())
+                result.toCoreErrorResult()
             }
         }
     }
 
-    override fun queryRichInfoGames(queryParameters: RichInfoGamesQueryParameters): Flow<Result<RichInfoGamesPage, Throwable>> = flow {
+    override suspend fun queryRichInfoGames(queryParameters: RichInfoGamesQueryParameters): Result<RichInfoGamesPage, Throwable> {
         val fullUrl = buildRichInfoGamesFullUrl(endpointUrl = "$RAWGApiBaseUrl/games", queryParameters)
-        when (val result = rawgDataSource.queryGames(fullUrl)) {
+        return when (val result = rawgDataSource.queryGames(fullUrl)) {
             is ApiResult.Success -> {
-                emit(Result.Success(result.value.toRichInfoGamesPage()))
+                Result.Success(result.value.toRichInfoGamesPage())
             }
             is ApiResult.Failure -> {
-                emit(result.toCoreErrorResult())
+                result.toCoreErrorResult()
             }
         }
     }

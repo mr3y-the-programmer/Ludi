@@ -36,7 +36,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
@@ -68,7 +67,7 @@ class DiscoverViewModel @Inject constructor(
                             sortingCriteria = FreeGamesSortingCriteria.relevance,
                             categories = null
                         )
-                    ).single()
+                    )
                 }
                 val trendingGames = async {
                     gamesRepository.queryRichInfoGames(
@@ -81,7 +80,7 @@ class DiscoverViewModel @Inject constructor(
                             metaCriticScores = listOf(85, 100),
                             sortingCriteria = RichInfoGamesSortingCriteria.ReleasedDescending
                         )
-                    ).single()
+                    )
                 }
                 val topRatedGames = async {
                     gamesRepository.queryRichInfoGames(
@@ -90,7 +89,7 @@ class DiscoverViewModel @Inject constructor(
                             metaCriticScores = listOf(95, 100),
                             sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
                         )
-                    ).single()
+                    )
                 }
                 val multiplayerGames = async {
                     gamesRepository.queryRichInfoGames(
@@ -99,7 +98,7 @@ class DiscoverViewModel @Inject constructor(
                             genres = listOf(59),
                             sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
                         )
-                    ).single()
+                    )
                 }
                 val familyGames = async {
                     gamesRepository.queryRichInfoGames(
@@ -108,7 +107,7 @@ class DiscoverViewModel @Inject constructor(
                             genres = listOf(19),
                             sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
                         )
-                    ).single()
+                    )
                 }
                 val realisticGames = async {
                     gamesRepository.queryRichInfoGames(
@@ -117,7 +116,7 @@ class DiscoverViewModel @Inject constructor(
                             tags = listOf(77),
                             sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
                         )
-                    ).single()
+                    )
                 }
                 listOf(
                     freeGames,
@@ -201,7 +200,7 @@ class DiscoverViewModel @Inject constructor(
                         }
                     }
                 )
-            ).single().let {
+            ).let {
                 DiscoverStateGames.SearchQueryBasedGames(
                     richInfoGames = it.wrapResultResources()
                 )

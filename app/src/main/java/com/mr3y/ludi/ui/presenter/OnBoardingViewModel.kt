@@ -37,8 +37,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -83,16 +83,16 @@ class OnBoardingViewModel @Inject constructor(
     private val allOnboardingGames = snapshotFlow { searchQuery.value }
         .debounce(275)
         .distinctUntilChanged()
-        .flatMapLatest { searchText ->
+        .mapLatest { searchText ->
             if (searchText.isEmpty()) {
                 // Retrieve suggested games
-                return@flatMapLatest gamesRepository.queryRichInfoGames(
+                return@mapLatest gamesRepository.queryRichInfoGames(
                     RichInfoGamesQuery(
                         pageSize = 20,
                         dates = listOf(LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_DATE), LocalDate.now().format(DateTimeFormatter.ISO_DATE)),
                         sortingCriteria = RichInfoGamesSortingCriteria.DateAddedDescending
                     )
-                ).map {
+                ).let {
                     val result = when (it) {
                         is Result.Success -> Result.Success(it.data.games.map(RichInfoGame::wrapResource))
                         is Result.Error -> Result.Error(it.exception)
@@ -106,7 +106,7 @@ class OnBoardingViewModel @Inject constructor(
                     searchQuery = searchText,
                     sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
                 )
-            ).map {
+            ).let {
                 val result = when (it) {
                     is Result.Success -> Result.Success(it.data.games.map(RichInfoGame::wrapResource))
                     is Result.Error -> Result.Error(it.exception)

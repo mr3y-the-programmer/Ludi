@@ -16,11 +16,11 @@ class FakeGamesRepository : GamesRepository {
     fun addMockedResponse() {
     }
 
-    override fun queryFreeGames(queryParameters: FreeGamesQueryParameters): Flow<Result<List<FreeGame>, Throwable>> {
-        return emptyFlow()
+    override suspend fun queryFreeGames(queryParameters: FreeGamesQueryParameters): Result<List<FreeGame>, Throwable> {
+        TODO("Not yet implemented")
     }
 
-    override fun queryRichInfoGames(queryParameters: RichInfoGamesQueryParameters): Flow<Result<RichInfoGamesPage, Throwable>> {
+    override suspend fun queryRichInfoGames(queryParameters: RichInfoGamesQueryParameters): Result<RichInfoGamesPage, Throwable> {
         TODO("Not yet implemented")
     }
 }

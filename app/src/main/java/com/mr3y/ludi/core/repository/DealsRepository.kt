@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface DealsRepository {
 
-    fun queryDeals(queryParameters: DealsQueryParameters): Flow<Result<List<Deal>, Throwable>>
+    suspend fun queryDeals(queryParameters: DealsQueryParameters): Result<List<Deal>, Throwable>
 
-    fun queryMMOGiveaways(): Flow<Result<List<MMOGiveawayEntry>, Throwable>>
+    suspend fun queryMMOGiveaways(): Result<List<MMOGiveawayEntry>, Throwable>
 
-    fun queryGamerPowerGiveaways(queryParameters: GiveawaysQueryParameters): Flow<Result<List<GamerPowerGiveawayEntry>, Throwable>>
+    suspend fun queryGamerPowerGiveaways(queryParameters: GiveawaysQueryParameters): Result<List<GamerPowerGiveawayEntry>, Throwable>
 }
