@@ -136,7 +136,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-const val OnboardingPagesCount = 2
+const val OnboardingPagesCount = 3
 
 @Composable
 fun OnboardingScreen(
@@ -187,10 +187,13 @@ fun OnboardingScreen(
             }
             val fabState = when (pagerState.currentPage) {
                 0 -> {
-                    if (onboardingState.followedNewsDataSources.isNotEmpty()) OnboardingFABState.Continue else OnboardingFABState.Skip
+                    if (onboardingState.selectedGamingGenres.isNotEmpty()) OnboardingFABState.Continue else OnboardingFABState.Skip
+                }
+                1 -> {
+                    if (onboardingState.favouriteGames.isNotEmpty()) OnboardingFABState.Continue else OnboardingFABState.Skip
                 }
                 else -> {
-                    if (onboardingState.favouriteGames.isNotEmpty()) OnboardingFABState.Finish else OnboardingFABState.Skip
+                    if (onboardingState.followedNewsDataSources.isNotEmpty()) OnboardingFABState.Finish else OnboardingFABState.Skip
                 }
             }
             val scope = rememberCoroutineScope()
@@ -202,7 +205,7 @@ fun OnboardingScreen(
                     scope.launch {
                         when (onboardingFABState) {
                             OnboardingFABState.Skip -> onSkipButtonClicked()
-                            OnboardingFABState.Continue -> pagerState.animateScrollToPage(1)
+                            OnboardingFABState.Continue -> pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             OnboardingFABState.Finish -> onFinishButtonClicked()
                         }
                     }
@@ -232,7 +235,24 @@ fun OnboardingScreen(
                         .fillMaxHeight(0.9f)
                 ) { targetIndex ->
                     when (targetIndex) {
-                        0 -> NewsSourcesPage(
+                        0 -> GenresPage(
+                            allGenres = onboardingState.allGamingGenres,
+                            selectedGenres = onboardingState.selectedGamingGenres,
+                            onSelectingGenre = onSelectingGenre,
+                            onUnselectingGenre = onUnselectingGenre,
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                        )
+                        1 -> SelectingFavouriteGamesPage(
+                            searchQueryText = onboardingState.searchQuery,
+                            onUpdatingSearchQueryText = onUpdatingSearchQueryText,
+                            allGames = onboardingState.onboardingGames,
+                            favouriteUserGames = onboardingState.favouriteGames,
+                            onAddingGameToFavourites = onAddingGameToFavourites,
+                            onRemovingGameFromFavourites = onRemovingGameFromFavourites,
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            scrollState = scrollState
+                        )
+                        2 -> NewsSourcesPage(
                             allNewsDataSources = onboardingState.allNewsDataSources,
                             selectedNewsSources = onboardingState.followedNewsDataSources,
                             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -243,20 +263,6 @@ fun OnboardingScreen(
                                     onSelectingNewsDataSource(it)
                                 }
                             }
-                        )
-                        1 -> SelectingFavouriteGamesPage(
-                            searchQueryText = onboardingState.searchQuery,
-                            onUpdatingSearchQueryText = onUpdatingSearchQueryText,
-                            allGames = onboardingState.onboardingGames,
-                            favouriteUserGames = onboardingState.favouriteGames,
-                            onAddingGameToFavourites = onAddingGameToFavourites,
-                            onRemovingGameFromFavourites = onRemovingGameFromFavourites,
-                            allGenres = onboardingState.allGamingGenres,
-                            selectedGenres = onboardingState.selectedGamingGenres,
-                            onSelectingGenre = onSelectingGenre,
-                            onUnselectingGenre = onUnselectingGenre,
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            scrollState = scrollState
                         )
                     }
                 }
@@ -312,7 +318,6 @@ fun OnboardingBottomBar(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         val indicatorColor = MaterialTheme.colorScheme.primary
-        val indicatorHeightInPx = with(LocalDensity.current) { indicatorDepth.toPx() }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -324,7 +329,7 @@ fun OnboardingBottomBar(
                             color = indicatorColor,
                             start = Offset(0f, 0f),
                             end = Offset(progressAnimatable.value * size.width, 0f),
-                            strokeWidth = indicatorHeightInPx
+                            strokeWidth = indicatorDepth.toPx()
                         )
                     }
                 }
@@ -339,267 +344,6 @@ fun OnboardingBottomBar(
                 .align(Alignment.End),
             onClick = onFABClicked
         )
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun NewsSourcesPage(
-    allNewsDataSources: List<NewsDataSource>,
-    selectedNewsSources: List<NewsDataSource>,
-    modifier: Modifier = Modifier,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    onToggleNewsSourceTile: (NewsDataSource) -> Unit
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = verticalArrangement,
-        horizontalAlignment = horizontalAlignment
-    ) {
-        Column(
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            Text(
-                text = "Follow your favorite news sources",
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.headlineMedium,
-                textAlign = TextAlign.End,
-                modifier = Modifier.align(Alignment.End),
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "You can always change that later",
-                modifier = Modifier.align(Alignment.End),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            allNewsDataSources.forEach {
-                NewsSourceTile(
-                    newsDataSource = it,
-                    selected = it in selectedNewsSources,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .width(IntrinsicSize.Max),
-                    onToggleSelection = onToggleNewsSourceTile
-                )
-            }
-        }
-    }
-}
-
-@OptIn(
-    ExperimentalFoundationApi::class,
-    ExperimentalComposeUiApi::class, ExperimentalLayoutApi::class,
-)
-@Composable
-fun SelectingFavouriteGamesPage(
-    searchQueryText: String,
-    onUpdatingSearchQueryText: (String) -> Unit,
-    allGames: OnboardingGames,
-    favouriteUserGames: List<FavouriteGame>,
-    onAddingGameToFavourites: (FavouriteGame) -> Unit,
-    onRemovingGameFromFavourites: (FavouriteGame) -> Unit,
-    allGenres: Result<ResourceWrapper<Set<GameGenre>>, Throwable>,
-    selectedGenres: Set<GameGenre>,
-    onSelectingGenre: (GameGenre) -> Unit,
-    onUnselectingGenre: (GameGenre) -> Unit,
-    scrollState: ScrollState,
-    modifier: Modifier = Modifier,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    horizontalAlignment: Alignment.Horizontal = Alignment.Start
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = verticalArrangement,
-        horizontalAlignment = horizontalAlignment
-    ) {
-        val softwareKeyboard = LocalSoftwareKeyboardController.current
-        val imePadding = WindowInsets.ime.getBottom(LocalDensity.current)
-        LaunchedEffect(imePadding) {
-            if (imePadding > 0) {
-                scrollState.animateScrollTo(scrollState.maxValue)
-            }
-        }
-        Text(
-//            text = "Tell us about your favourite games",
-            text = "What are your favourite game genres",
-            modifier = Modifier.align(Alignment.End),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.End,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "You can always change that later",
-            modifier = Modifier.align(Alignment.End),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyLarge
-        )
-        when (allGenres) {
-            is Result.Success -> {
-                    if (allGenres.data is ResourceWrapper.ActualResource) {
-                        FlowRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                        allGenres.data.resource.forEach { genre ->
-                            Row(
-                                modifier = Modifier
-                                    .padding(vertical = 8.dp)
-                                    .border(
-                                        1.dp,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(
-                                        color = if (genre in selectedGenres) MaterialTheme.colorScheme.primary.copy(
-                                            alpha = 0.2f
-                                        ) else Color.Transparent
-                                    )
-                                    .selectable(
-                                        selected = genre in selectedGenres,
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = null,
-                                        role = Role.Button,
-                                        onClick = {
-                                            if (genre in selectedGenres)
-                                                onUnselectingGenre(genre)
-                                            else
-                                                onSelectingGenre(genre)
-                                        }
-                                    )
-                                    .animateContentSize()
-                                    .padding(8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "\n",
-                                    textAlign = TextAlign.Center
-                                )
-                                Text(
-                                    text = genre.name,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.width(IntrinsicSize.Min),
-                                    textAlign = TextAlign.Center
-                                )
-                                if (genre in selectedGenres) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.padding(8.dp),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-            }
-
-            is Result.Error -> {
-                LudiErrorBox(modifier = Modifier.fillMaxWidth())
-            }
-        }
-        TextField(
-            value = searchQueryText,
-            onValueChange = onUpdatingSearchQueryText,
-            colors = TextFieldDefaults.colors(
-                disabledIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent
-            ),
-            leadingIcon = {
-                IconButton(
-                    onClick = { }
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Filled.Search),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxHeight()
-                    )
-                }
-            },
-            trailingIcon = if (searchQueryText.isNotEmpty()) {
-                {
-                    IconButton(
-                        onClick = { onUpdatingSearchQueryText("") }
-                    ) {
-                        Icon(
-                            painter = rememberVectorPainter(image = Icons.Filled.Close),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxHeight()
-                        )
-                    }
-                }
-            } else {
-                null
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { softwareKeyboard?.hide() }),
-            modifier = Modifier
-                .clip(RoundedCornerShape(50))
-                .align(Alignment.CenterHorizontally)
-                .shadow(elevation = 8.dp, shape = RoundedCornerShape(50))
-        )
-        Text(
-            text = "Suggestions",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Start
-        )
-        LazyHorizontalStaggeredGrid(
-            rows = StaggeredGridCells.Adaptive(minSize = 64.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(236.dp),
-            horizontalItemSpacing = 8.dp,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            when (val result = allGames.games) {
-                is Result.Success -> {
-                    itemsIndexed(result.data) { index, gameWrapper ->
-                        key(index) {
-                            val game = gameWrapper.actualResource
-                            GameTile(
-                                game = game,
-                                selected = game?.let { FavouriteGame(it.id, it.name, it.imageUrl, it.rating) } in favouriteUserGames,
-                                onToggleSelectingFavouriteGame = {
-                                    if (it in favouriteUserGames) {
-                                        onRemovingGameFromFavourites(it)
-                                    } else {
-                                        onAddingGameToFavourites(it)
-                                    }
-                                },
-                                modifier = Modifier.height(IntrinsicSize.Min)
-                            )
-                        }
-                    }
-                }
-                is Result.Error -> {
-                    item {
-                        LudiErrorBox(modifier = Modifier.fillMaxWidth())
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -655,326 +399,12 @@ enum class OnboardingFABState {
     Finish
 }
 
-@Composable
-fun NewsSourceTile(
-    newsDataSource: NewsDataSource,
-    modifier: Modifier = Modifier,
-    selected: Boolean = false,
-    onToggleSelection: (NewsDataSource) -> Unit
-) {
-    Card(
-        modifier = modifier
-            .selectable(
-                selected,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                role = Role.Button,
-                onClick = { onToggleSelection(newsDataSource) }
-            )
-            .padding(4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        shape = MaterialTheme.shapes.small
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colorScheme.surfaceVariant)
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier.size(48.dp),
-                painter = painterResource(id = newsDataSource.drawableId),
-                contentDescription = null
-            )
-            Text(
-                text = newsDataSource.name,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.labelLarge
-            )
-            val unselectedColor = MaterialTheme.colorScheme.background
-            val circleModifier = Modifier
-                .size(20.dp)
-                .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
-                .clip(CircleShape)
-            Box(
-                modifier = circleModifier
-                    .then(
-                        if (selected) circleModifier else circleModifier.drawBehind { drawCircle(color = unselectedColor) }
-                    ),
-                contentAlignment = Alignment.Center,
-                propagateMinConstraints = true
-            ) {
-                if (selected) {
-                    Icon(
-                        imageVector = Icons.Filled.CheckCircle,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun GameTile(
-    game: RichInfoGame?,
-    selected: Boolean,
-    onToggleSelectingFavouriteGame: (FavouriteGame) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .selectable(
-                selected = selected,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                role = Role.Button,
-                onClick = {
-                    if (game != null) {
-                        onToggleSelectingFavouriteGame(
-                            FavouriteGame(
-                                id = game.id,
-                                title = game.name,
-                                imageUrl = game.imageUrl,
-                                rating = game.rating
-                            )
-                        )
-                    }
-                }
-            )
-            .padding(4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        shape = MaterialTheme.shapes.small
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colorScheme.surfaceVariant)
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                model = game?.imageUrl,
-                modifier = Modifier
-                    .padding(4.dp)
-                    .size(48.dp)
-                    .placeholder(
-                        visible = game == null,
-                        highlight = PlaceholderHighlight.fade(
-                            highlightColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
-                        )
-                    ),
-                contentScale = ContentScale.FillWidth,
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = game?.name ?: "Name Placeholder",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.labelLarge,
-                    maxLines = 2,
-                    modifier = Modifier.placeholder(
-                        visible = game == null,
-                        highlight = PlaceholderHighlight.fade(
-                            highlightColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
-                        )
-                    )
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Filled.Star),
-                        contentDescription = null,
-                        tint = dark_star
-                    )
-                    val rating = game?.rating?.toString() ?: "Rating Placeholder"
-                    Text(
-                        text = if (rating == "0.0") "N/A" else rating,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelMedium,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.placeholder(
-                            visible = game == null,
-                            highlight = PlaceholderHighlight.fade(
-                                highlightColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
-                            )
-                        )
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(4.dp))
-            val unselectedColor = MaterialTheme.colorScheme.background
-            val circleModifier = Modifier
-                .size(20.dp)
-                .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
-                .clip(CircleShape)
-            Box(
-                modifier = circleModifier
-                    .then(
-                        if (selected) circleModifier else circleModifier.drawBehind { drawCircle(color = unselectedColor) }
-                    ),
-                contentAlignment = Alignment.Center,
-                propagateMinConstraints = true
-            ) {
-                if (selected) {
-                    Icon(
-                        imageVector = Icons.Filled.CheckCircle,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-        }
-    }
-}
-
 @Preview(backgroundColor = 0xFFFFFF, showBackground = true)
 @Composable
 fun OnboardingScreenPreview() {
     LudiTheme {
-        val InitialOnboardingState = OnboardingState(
-            bannerDrawablesIds = listOf(
-                R.drawable.game1, R.drawable.game2,
-                R.drawable.game3, R.drawable.game4,
-                R.drawable.game5, R.drawable.game6,
-                R.drawable.game7, R.drawable.game8,
-                R.drawable.game9, R.drawable.game10,
-                R.drawable.game11, R.drawable.game12,
-                R.drawable.game13, R.drawable.game14,
-                R.drawable.game15, R.drawable.game16,
-                R.drawable.game17, R.drawable.game18,
-                R.drawable.game19, R.drawable.game20,
-                R.drawable.game21, R.drawable.game22,
-                R.drawable.game23, R.drawable.game24
-            ),
-            allNewsDataSources = listOf(
-                NewsDataSource("Game spot", R.drawable.game_spot_logo, Source.GameSpot),
-                NewsDataSource("Giant bomb", R.drawable.giant_bomb_logo, Source.GiantBomb),
-                NewsDataSource("IGN", R.drawable.ign_logo, Source.IGN),
-                NewsDataSource("MMO bomb", R.drawable.mmobomb_logo, Source.MMOBomb),
-                NewsDataSource("Tech Radar", R.drawable.tech_radar_logo, Source.TechRadar)
-            ),
-            followedNewsDataSources = emptyList(),
-            isUpdatingFollowedNewsDataSources = false,
-            searchQuery = "",
-            onboardingGames = OnboardingGames.SuggestedGames(Result.Success(listOf(ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder))),
-            favouriteGames = emptyList(),
-            isUpdatingFavouriteGames = false,
-            allGamingGenres = Result.Success(
-                ResourceWrapper.ActualResource(
-                    setOf(
-                        GameGenre(
-                            id = 1,
-                            name = "Action",
-                            slug = null,
-                            gamesCount = 2000,
-                            imageUrl = null
-                        ),
-                        GameGenre(
-                            id = 2,
-                            name = "Adventure",
-                            slug = null,
-                            gamesCount = 2000,
-                            imageUrl = null
-                        ),
-                        GameGenre(
-                            id = 3,
-                            name = "Arcade",
-                            slug = null,
-                            gamesCount = 2000,
-                            imageUrl = null
-                        ),
-                        GameGenre(
-                            id = 4,
-                            name = "Board games",
-                            slug = null,
-                            gamesCount = 2000,
-                            imageUrl = null
-                        ),
-                        GameGenre(
-                            id = 5,
-                            name = "Educational",
-                            slug = null,
-                            gamesCount = 2000,
-                            imageUrl = null
-                        ),
-                        GameGenre(
-                            id = 6,
-                            name = "Family",
-                            slug = null,
-                            gamesCount = 2000,
-                            imageUrl = null
-                        ),
-                        GameGenre(
-                            id = 7,
-                            name = "Indie",
-                            slug = null,
-                            gamesCount = 2000,
-                            imageUrl = null
-                        ),
-                        GameGenre(
-                            id = 8,
-                            name = "Massively Multiplayer",
-                            slug = null,
-                            gamesCount = 2000,
-                            imageUrl = null
-                        ),
-                        GameGenre(
-                            id = 9,
-                            name = "Racing",
-                            slug = null,
-                            gamesCount = 2000,
-                            imageUrl = null
-                        ),
-                        GameGenre(
-                            id = 10,
-                            name = "Simulation",
-                            slug = null,
-                            gamesCount = 2000,
-                            imageUrl = null
-                        ),
-                    )
-                )
-            ),
-            selectedGamingGenres = setOf(
-                GameGenre(
-                    id = 3,
-                    name = "Arcade",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 8,
-                    name = "Massively Multiplayer",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 9,
-                    name = "Racing",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-            )
-        )
         OnboardingScreen(
-            onboardingState = InitialOnboardingState,
+            onboardingState = PreviewOnboardingState,
             onSkipButtonClicked = {},
             onFinishButtonClicked = {},
             onSelectingNewsDataSource = {},
@@ -984,18 +414,6 @@ fun OnboardingScreenPreview() {
             onRemovingGameFromFavourites = {},
             onSelectingGenre = {},
             onUnselectingGenre = {},
-        )
-    }
-}
-
-@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
-@Composable
-fun GameTilePreview() {
-    LudiTheme {
-        GameTile(
-            game = richInfoGamesSamples.first().actualResource,
-            selected = false,
-            onToggleSelectingFavouriteGame = {}
         )
     }
 }
