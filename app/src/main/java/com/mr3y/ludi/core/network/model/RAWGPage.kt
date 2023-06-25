@@ -7,13 +7,14 @@ import com.mr3y.ludi.core.model.GameTag
 import com.mr3y.ludi.core.model.MarkupText
 import com.mr3y.ludi.core.model.PlatformInfo
 import com.mr3y.ludi.core.model.RichInfoGame
+import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
 import com.mr3y.ludi.core.model.RichInfoGamesPage
 import com.mr3y.ludi.core.model.StoreInfo
 import com.mr3y.ludi.core.network.serialization.RAWGPlatformSerializer
 import com.mr3y.ludi.core.network.serialization.RAWGStoreSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
+// TODO: merge this data class with RAWGGenresPage
 @Serializable
 data class RAWGPage(
     val count: Long,
@@ -268,11 +269,38 @@ fun RAWGShallowGame.toRichInfoGame(): RichInfoGame? {
     )
 }
 
+@Serializable
+data class RAWGGenresPage(
+    val count: Long,
+    @SerialName("next")
+    val nextPageUrl: String?,
+    @SerialName("previous")
+    val previousPageUrl: String?,
+    val results: List<RAWGGameGenre>
+)
+
 fun RAWGPage.toRichInfoGamesPage(): RichInfoGamesPage {
     return RichInfoGamesPage(
         count = count,
         nextPageUrl = nextPageUrl,
         previousPageUrl = previousPageUrl,
         games = results.mapNotNull(RAWGShallowGame::toRichInfoGame)
+    )
+}
+
+fun RAWGGenresPage.toRichInfoGamesGenresPage(): RichInfoGamesGenresPage {
+    return RichInfoGamesGenresPage(
+        count = count,
+        nextPageUrl = nextPageUrl,
+        previousPageUrl = previousPageUrl,
+        genres = results.map { genre ->
+            GameGenre(
+                id = genre.id ?: return@map null,
+                name = genre.name,
+                slug = genre.slug,
+                gamesCount = genre.gamesCount,
+                imageUrl = genre.imageUrl
+            )
+        }.filterNotNull().toSet(),
     )
 }

@@ -9,7 +9,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.mr3y.ludi.FollowedNewsDataSources
 import com.mr3y.ludi.UserFavouriteGames
+import com.mr3y.ludi.UserFavouriteGenres
 import com.mr3y.ludi.ui.datastore.FavouriteGamesSerializer
+import com.mr3y.ludi.ui.datastore.FavouriteGenresSerializer
 import com.mr3y.ludi.ui.datastore.FollowedNewsDataSourceSerializer
 import dagger.Module
 import dagger.Provides
@@ -37,6 +39,15 @@ object DataStoreModule {
         return DataStoreFactory.create(
             serializer = FollowedNewsDataSourceSerializer,
             produceFile = { context.dataStoreFile("followed_news_sources.pb") }
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavouriteGenresDataStore(@ApplicationContext context: Context): DataStore<UserFavouriteGenres> {
+        return DataStoreFactory.create(
+            serializer = FavouriteGenresSerializer,
+            produceFile = { context.dataStoreFile("fav_genres.pb") }
         )
     }
 

@@ -2,12 +2,14 @@ package com.mr3y.ludi.core.repository.internal
 
 import com.mr3y.ludi.core.model.FreeGame
 import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
 import com.mr3y.ludi.core.model.RichInfoGamesPage
 import com.mr3y.ludi.core.model.toCoreErrorResult
 import com.mr3y.ludi.core.network.datasources.internal.FreeToGameDataSource
 import com.mr3y.ludi.core.network.datasources.internal.RAWGDataSource
 import com.mr3y.ludi.core.network.model.FreeToGameGame
 import com.mr3y.ludi.core.network.model.toFreeGame
+import com.mr3y.ludi.core.network.model.toRichInfoGamesGenresPage
 import com.mr3y.ludi.core.network.model.toRichInfoGamesPage
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.FreeGamesQueryParameters
@@ -39,6 +41,17 @@ class DefaultGamesRepository @Inject constructor(
         return when (val result = rawgDataSource.queryGames(fullUrl)) {
             is ApiResult.Success -> {
                 Result.Success(result.value.toRichInfoGamesPage())
+            }
+            is ApiResult.Failure -> {
+                result.toCoreErrorResult()
+            }
+        }
+    }
+
+    override suspend fun queryGamesGenres(): Result<RichInfoGamesGenresPage, Throwable> {
+        return when (val result = rawgDataSource.queryGamesGenres("$RAWGApiBaseUrl/genres?ordering=name")) {
+            is ApiResult.Success -> {
+                Result.Success(result.value.toRichInfoGamesGenresPage())
             }
             is ApiResult.Failure -> {
                 result.toCoreErrorResult()

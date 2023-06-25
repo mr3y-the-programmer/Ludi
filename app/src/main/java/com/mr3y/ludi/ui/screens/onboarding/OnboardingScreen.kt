@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -34,6 +35,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,6 +45,8 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
@@ -57,6 +61,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -101,6 +106,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -111,6 +117,7 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
 import com.mr3y.ludi.R
+import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.Source
@@ -146,7 +153,9 @@ fun OnboardingScreen(
         onUnselectNewsDataSource = viewModel::unFollowNewsDataSource,
         onUpdatingSearchQueryText = viewModel::updateSearchQuery,
         onAddingGameToFavourites = viewModel::addGameToFavourites,
-        onRemovingGameFromFavourites = viewModel::removeGameFromFavourites
+        onRemovingGameFromFavourites = viewModel::removeGameFromFavourites,
+        onSelectingGenre = viewModel::selectGenre,
+        onUnselectingGenre = viewModel::unselectGenre
     )
 }
 
@@ -161,7 +170,9 @@ fun OnboardingScreen(
     onUnselectNewsDataSource: (NewsDataSource) -> Unit,
     onUpdatingSearchQueryText: (String) -> Unit,
     onAddingGameToFavourites: (FavouriteGame) -> Unit,
-    onRemovingGameFromFavourites: (FavouriteGame) -> Unit
+    onRemovingGameFromFavourites: (FavouriteGame) -> Unit,
+    onSelectingGenre: (GameGenre) -> Unit,
+    onUnselectingGenre: (GameGenre) -> Unit
 ) {
     val pagerState = rememberPagerState()
     Scaffold(
@@ -206,10 +217,6 @@ fun OnboardingScreen(
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
         ) {
-            Banner(
-                modifier = Modifier.fillMaxWidth(),
-                drawableIds = onboardingState.bannerDrawablesIds
-            )
             HorizontalPager(
                 pageCount = OnboardingPagesCount,
                 state = pagerState,
@@ -244,6 +251,10 @@ fun OnboardingScreen(
                             favouriteUserGames = onboardingState.favouriteGames,
                             onAddingGameToFavourites = onAddingGameToFavourites,
                             onRemovingGameFromFavourites = onRemovingGameFromFavourites,
+                            allGenres = onboardingState.allGamingGenres,
+                            selectedGenres = onboardingState.selectedGamingGenres,
+                            onSelectingGenre = onSelectingGenre,
+                            onUnselectingGenre = onUnselectingGenre,
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             scrollState = scrollState
                         )
@@ -331,23 +342,6 @@ fun OnboardingBottomBar(
     }
 }
 
-@Composable
-fun Banner(
-    drawableIds: List<Int>,
-    modifier: Modifier = Modifier
-) {
-    AnimatedImages(
-        drawablesResIds = rememberSaveable(Unit) { drawableIds.shuffled() },
-        delayTimeInMs = 2000L,
-        intervalTimeInMs = 2000L,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(192.dp),
-        contentScale = ContentScale.FillBounds,
-        repeatMode = RepeatMode.Reverse
-    )
-}
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NewsSourcesPage(
@@ -401,7 +395,7 @@ fun NewsSourcesPage(
 
 @OptIn(
     ExperimentalFoundationApi::class,
-    ExperimentalComposeUiApi::class,
+    ExperimentalComposeUiApi::class, ExperimentalLayoutApi::class,
 )
 @Composable
 fun SelectingFavouriteGamesPage(
@@ -411,6 +405,10 @@ fun SelectingFavouriteGamesPage(
     favouriteUserGames: List<FavouriteGame>,
     onAddingGameToFavourites: (FavouriteGame) -> Unit,
     onRemovingGameFromFavourites: (FavouriteGame) -> Unit,
+    allGenres: Result<ResourceWrapper<Set<GameGenre>>, Throwable>,
+    selectedGenres: Set<GameGenre>,
+    onSelectingGenre: (GameGenre) -> Unit,
+    onUnselectingGenre: (GameGenre) -> Unit,
     scrollState: ScrollState,
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
@@ -429,7 +427,8 @@ fun SelectingFavouriteGamesPage(
             }
         }
         Text(
-            text = "Tell us about your favourite games",
+//            text = "Tell us about your favourite games",
+            text = "What are your favourite game genres",
             modifier = Modifier.align(Alignment.End),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineMedium,
@@ -442,6 +441,82 @@ fun SelectingFavouriteGamesPage(
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.bodyLarge
         )
+        when (allGenres) {
+            is Result.Success -> {
+                    if (allGenres.data is ResourceWrapper.ActualResource) {
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                        allGenres.data.resource.forEach { genre ->
+                            Row(
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp)
+                                    .border(
+                                        1.dp,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(
+                                        color = if (genre in selectedGenres) MaterialTheme.colorScheme.primary.copy(
+                                            alpha = 0.2f
+                                        ) else Color.Transparent
+                                    )
+                                    .selectable(
+                                        selected = genre in selectedGenres,
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null,
+                                        role = Role.Button,
+                                        onClick = {
+                                            if (genre in selectedGenres)
+                                                onUnselectingGenre(genre)
+                                            else
+                                                onSelectingGenre(genre)
+                                        }
+                                    )
+                                    .animateContentSize()
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "\n",
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    text = genre.name,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.width(IntrinsicSize.Min),
+                                    textAlign = TextAlign.Center
+                                )
+                                if (genre in selectedGenres) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Check,
+                                        contentDescription = null,
+                                        modifier = Modifier.padding(8.dp),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
+
+            is Result.Error -> {
+                LudiErrorBox(modifier = Modifier.fillMaxWidth())
+            }
+        }
         TextField(
             value = searchQueryText,
             onValueChange = onUpdatingSearchQueryText,
@@ -766,69 +841,6 @@ fun GameTile(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun AnimatedImages(
-    drawablesResIds: List<Int>,
-    delayTimeInMs: Long,
-    intervalTimeInMs: Long,
-    modifier: Modifier = Modifier,
-    repeatMode: RepeatMode? = null,
-    contentScale: ContentScale = ContentScale.Fit
-) {
-    var currentDrawableIndex by rememberSaveable(drawablesResIds) { mutableStateOf(0) }
-    var isAscendant by rememberSaveable(drawablesResIds) { mutableStateOf(true) }
-    LaunchedEffect(Unit) {
-        delay(delayTimeInMs)
-        while (isActive) {
-            if (currentDrawableIndex == drawablesResIds.lastIndex) {
-                currentDrawableIndex = when (repeatMode) {
-                    null -> break
-                    RepeatMode.Restart -> 0
-                    RepeatMode.Reverse -> {
-                        isAscendant = false
-                        drawablesResIds.lastIndex - 1
-                    }
-                }
-            } else {
-                when {
-                    repeatMode == RepeatMode.Reverse && !isAscendant && currentDrawableIndex == 0 -> {
-                        isAscendant = true
-                        currentDrawableIndex++
-                    }
-                    repeatMode == RepeatMode.Reverse && !isAscendant -> currentDrawableIndex--
-                    else -> currentDrawableIndex++
-                }
-            }
-            delay(intervalTimeInMs)
-        }
-    }
-    AnimatedContent(
-        targetState = currentDrawableIndex,
-        modifier = modifier,
-        transitionSpec = {
-            ContentTransform(
-                // The initial content should stay until the target content is completely opaque.
-                initialContentExit = fadeOut(animationSpec = snap(delayMillis = 300)),
-                // The target content fades in. This is shown on top of the initial content.
-                targetContentEnter = fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 300,
-                        // LinearOutSlowInEasing is suitable for incoming elements.
-                        easing = LinearOutSlowInEasing
-                    )
-                )
-            )
-        }
-    ) { drawableIndex ->
-        Image(
-            painter = painterResource(id = drawablesResIds[drawableIndex]),
-            contentDescription = null,
-            contentScale = contentScale
-        )
-    }
-}
-
 @Preview(backgroundColor = 0xFFFFFF, showBackground = true)
 @Composable
 fun OnboardingScreenPreview() {
@@ -860,7 +872,106 @@ fun OnboardingScreenPreview() {
             searchQuery = "",
             onboardingGames = OnboardingGames.SuggestedGames(Result.Success(listOf(ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder))),
             favouriteGames = emptyList(),
-            isUpdatingFavouriteGames = false
+            isUpdatingFavouriteGames = false,
+            allGamingGenres = Result.Success(
+                ResourceWrapper.ActualResource(
+                    setOf(
+                        GameGenre(
+                            id = 1,
+                            name = "Action",
+                            slug = null,
+                            gamesCount = 2000,
+                            imageUrl = null
+                        ),
+                        GameGenre(
+                            id = 2,
+                            name = "Adventure",
+                            slug = null,
+                            gamesCount = 2000,
+                            imageUrl = null
+                        ),
+                        GameGenre(
+                            id = 3,
+                            name = "Arcade",
+                            slug = null,
+                            gamesCount = 2000,
+                            imageUrl = null
+                        ),
+                        GameGenre(
+                            id = 4,
+                            name = "Board games",
+                            slug = null,
+                            gamesCount = 2000,
+                            imageUrl = null
+                        ),
+                        GameGenre(
+                            id = 5,
+                            name = "Educational",
+                            slug = null,
+                            gamesCount = 2000,
+                            imageUrl = null
+                        ),
+                        GameGenre(
+                            id = 6,
+                            name = "Family",
+                            slug = null,
+                            gamesCount = 2000,
+                            imageUrl = null
+                        ),
+                        GameGenre(
+                            id = 7,
+                            name = "Indie",
+                            slug = null,
+                            gamesCount = 2000,
+                            imageUrl = null
+                        ),
+                        GameGenre(
+                            id = 8,
+                            name = "Massively Multiplayer",
+                            slug = null,
+                            gamesCount = 2000,
+                            imageUrl = null
+                        ),
+                        GameGenre(
+                            id = 9,
+                            name = "Racing",
+                            slug = null,
+                            gamesCount = 2000,
+                            imageUrl = null
+                        ),
+                        GameGenre(
+                            id = 10,
+                            name = "Simulation",
+                            slug = null,
+                            gamesCount = 2000,
+                            imageUrl = null
+                        ),
+                    )
+                )
+            ),
+            selectedGamingGenres = setOf(
+                GameGenre(
+                    id = 3,
+                    name = "Arcade",
+                    slug = null,
+                    gamesCount = 2000,
+                    imageUrl = null
+                ),
+                GameGenre(
+                    id = 8,
+                    name = "Massively Multiplayer",
+                    slug = null,
+                    gamesCount = 2000,
+                    imageUrl = null
+                ),
+                GameGenre(
+                    id = 9,
+                    name = "Racing",
+                    slug = null,
+                    gamesCount = 2000,
+                    imageUrl = null
+                ),
+            )
         )
         OnboardingScreen(
             onboardingState = InitialOnboardingState,
@@ -870,7 +981,9 @@ fun OnboardingScreenPreview() {
             onUnselectNewsDataSource = {},
             onUpdatingSearchQueryText = {},
             onAddingGameToFavourites = {},
-            onRemovingGameFromFavourites = {}
+            onRemovingGameFromFavourites = {},
+            onSelectingGenre = {},
+            onUnselectingGenre = {},
         )
     }
 }
@@ -884,37 +997,6 @@ fun GameTilePreview() {
             selected = false,
             onToggleSelectingFavouriteGame = {}
         )
-    }
-}
-
-@Preview
-@Composable
-fun AnimatedImagePreview() {
-    LudiTheme {
-        val games = listOf(
-            listOf(R.drawable.game1, R.drawable.game2, R.drawable.game3, R.drawable.game4, R.drawable.game5),
-            listOf(R.drawable.game6, R.drawable.game7, R.drawable.game8, R.drawable.game9, R.drawable.game10),
-            listOf(R.drawable.game11, R.drawable.game12, R.drawable.game13, R.drawable.game14, R.drawable.game15),
-            listOf(R.drawable.game16, R.drawable.game17, R.drawable.game18, R.drawable.game19, R.drawable.game20)
-        )
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
-            repeat(4) { i ->
-                AnimatedImages(
-                    drawablesResIds = games[i],
-                    delayTimeInMs = 2000L + i * 50,
-                    intervalTimeInMs = 2000L,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(64.dp),
-                    contentScale = ContentScale.FillBounds,
-                    repeatMode = RepeatMode.Restart
-                )
-            }
-        }
     }
 }
 

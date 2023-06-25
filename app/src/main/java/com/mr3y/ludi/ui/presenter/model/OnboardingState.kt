@@ -1,6 +1,7 @@
 package com.mr3y.ludi.ui.presenter.model
 
 import androidx.annotation.DrawableRes
+import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.Source
@@ -13,7 +14,9 @@ data class OnboardingState(
     val searchQuery: String,
     val onboardingGames: OnboardingGames,
     val favouriteGames: List<FavouriteGame>,
-    val isUpdatingFavouriteGames: Boolean
+    val isUpdatingFavouriteGames: Boolean,
+    val allGamingGenres: Result<ResourceWrapper<Set<GameGenre>>, Throwable>,
+    val selectedGamingGenres: Set<GameGenre>
 )
 
 sealed interface OnboardingGames {

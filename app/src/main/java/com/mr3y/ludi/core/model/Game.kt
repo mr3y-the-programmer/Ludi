@@ -27,6 +27,14 @@ data class RichInfoGamesPage(
     val games: List<RichInfoGame>
 )
 
+data class RichInfoGamesGenresPage(
+    val count: Long,
+    val nextPageUrl: String?,
+    val previousPageUrl: String?,
+    val genres: Set<GameGenre>
+)
+
+
 data class RichInfoGame(
     override val id: Long,
     val slug: String?,

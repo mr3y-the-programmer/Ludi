@@ -15,8 +15,12 @@ import com.mr3y.ludi.FollowedNewsDataSources
 import com.mr3y.ludi.R
 import com.mr3y.ludi.UserFavouriteGame
 import com.mr3y.ludi.UserFavouriteGames
+import com.mr3y.ludi.UserFavouriteGenre
+import com.mr3y.ludi.UserFavouriteGenres
+import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
+import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.RichInfoGamesQuery
@@ -37,6 +41,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -51,6 +56,7 @@ class OnBoardingViewModel @Inject constructor(
     private val gamesRepository: GamesRepository,
     private val favGamesStore: DataStore<UserFavouriteGames>,
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>,
+    private val favGenresStore: DataStore<UserFavouriteGenres>,
     private val userPreferences: DataStore<Preferences>
 ) : ViewModel() {
 
@@ -73,6 +79,17 @@ class OnBoardingViewModel @Inject constructor(
         .map {
             it.favGameList.map { favGame ->
                 FavouriteGame(id = favGame.id, title = favGame.name, imageUrl = favGame.thumbnailUrl, rating = favGame.rating)
+            }
+        }
+
+    private val userFavGenres = favGenresStore.data
+        .catch {
+            emit(UserFavouriteGenres.getDefaultInstance())
+            // TODO: materialize the error by showing snackbar or something "Couldn't save your favourite choice"
+        }
+        .map {
+            it.favGenreList.map { favGenre ->
+                GameGenre(favGenre.id, favGenre.name, favGenre.slug, favGenre.gamesCount, favGenre.imageUrl)
             }
         }
 
@@ -115,17 +132,31 @@ class OnBoardingViewModel @Inject constructor(
             }
         }
 
+    private val allGameGenres = flow {
+        emit(gamesRepository.queryGamesGenres().wrapResultResources())
+    }
+
     val onboardingState: StateFlow<OnboardingState> = combine(
         userFollowedNewsSources,
         allOnboardingGames,
         userFavGames,
+        allGameGenres,
+        userFavGenres,
         snapshotFlow { _internalState }
-    ) { followedNewsSources, onboardingGames, favouriteGames, state ->
+    ) {
+        val followedNewsSources = it[0] as List<NewsDataSource>
+        val onboardingGames = it[1] as OnboardingGames
+        val favouriteGames = it[2] as List<FavouriteGame>
+        val allGenres = it[3] as Result<ResourceWrapper<Set<GameGenre>>, Throwable>
+        val favouriteGenres = it[4] as List<GameGenre>
+        val state = it[5] as OnboardingState
         Snapshot.withMutableSnapshot {
             _internalState = state.copy(
                 followedNewsDataSources = followedNewsSources,
                 onboardingGames = onboardingGames,
-                favouriteGames = favouriteGames
+                favouriteGames = favouriteGames,
+                allGamingGenres = allGenres,
+                selectedGamingGenres = favouriteGenres.toSet()
             )
         }
         _internalState
@@ -135,6 +166,16 @@ class OnBoardingViewModel @Inject constructor(
             SharingStarted.Lazily,
             _internalState
         )
+
+    /*init {
+        viewModelScope.launch {
+            Snapshot.withMutableSnapshot {
+                _internalState = _internalState.copy(
+                    allGamingGenres = gamesRepository.queryGamesGenres().wrapResultResources()
+                )
+            }
+        }
+    }*/
 
     fun unFollowNewsDataSource(source: NewsDataSource) {
         Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFollowedNewsDataSources = true) }
@@ -205,6 +246,33 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    fun selectGenre(genre: GameGenre) {
+        viewModelScope.launch {
+            favGenresStore.updateData {
+                val favouriteGenre = genre.toUserFavouriteGenre()
+                if (favouriteGenre !in it.favGenreList) {
+                    it.toBuilder().addFavGenre(favouriteGenre).build()
+                } else {
+                    it
+                }
+            }
+        }
+    }
+
+    fun unselectGenre(genre: GameGenre) {
+        viewModelScope.launch {
+            favGenresStore.updateData {
+                val sourceIndex = it.favGenreList.indexOf(genre.toUserFavouriteGenre())
+                // guard against cases where the user adds the genre to favourites, and then removes it immediately after a few milliseconds.
+                if (sourceIndex != -1) {
+                    it.toBuilder().removeFavGenre(sourceIndex).build()
+                } else {
+                    it
+                }
+            }
+        }
+    }
+
     fun completeOnboarding() {
         viewModelScope.launch {
             userPreferences.edit { mutablePreferences ->
@@ -242,7 +310,9 @@ class OnBoardingViewModel @Inject constructor(
             searchQuery = "",
             onboardingGames = OnboardingGames.SuggestedGames(Result.Success(listOf(ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder))),
             favouriteGames = emptyList(),
-            isUpdatingFavouriteGames = false
+            isUpdatingFavouriteGames = false,
+            allGamingGenres = Result.Success(ResourceWrapper.Placeholder),
+            selectedGamingGenres = emptySet()
         )
     }
 }
@@ -262,4 +332,21 @@ private fun FavouriteGame.toUserFavouriteGame(): UserFavouriteGame {
         .setThumbnailUrl(imageUrl)
         .setRating(rating)
         .build()
+}
+
+private fun GameGenre.toUserFavouriteGenre(): UserFavouriteGenre {
+    return UserFavouriteGenre.newBuilder()
+        .setId(id)
+        .setName(name)
+        .setSlug(slug)
+        .setGamesCount(gamesCount ?: 0L)
+        .setImageUrl(imageUrl)
+        .build()
+}
+
+private fun Result<RichInfoGamesGenresPage, Throwable>.wrapResultResources(): Result<ResourceWrapper<Set<GameGenre>>, Throwable> {
+    return when (this) {
+        is Result.Success -> Result.Success(ResourceWrapper.ActualResource(data.genres))
+        is Result.Error -> this
+    }
 }
