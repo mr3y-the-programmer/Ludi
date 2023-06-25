@@ -121,20 +121,6 @@ val PreviewNewsDataSources = listOf(
 )
 
 val PreviewOnboardingState = OnboardingState(
-    bannerDrawablesIds = listOf(
-        R.drawable.game1, R.drawable.game2,
-        R.drawable.game3, R.drawable.game4,
-        R.drawable.game5, R.drawable.game6,
-        R.drawable.game7, R.drawable.game8,
-        R.drawable.game9, R.drawable.game10,
-        R.drawable.game11, R.drawable.game12,
-        R.drawable.game13, R.drawable.game14,
-        R.drawable.game15, R.drawable.game16,
-        R.drawable.game17, R.drawable.game18,
-        R.drawable.game19, R.drawable.game20,
-        R.drawable.game21, R.drawable.game22,
-        R.drawable.game23, R.drawable.game24
-    ),
     allNewsDataSources = PreviewNewsDataSources,
     followedNewsDataSources = emptyList(),
     isUpdatingFollowedNewsDataSources = false,

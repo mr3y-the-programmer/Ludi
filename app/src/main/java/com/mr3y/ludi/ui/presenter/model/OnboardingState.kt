@@ -7,7 +7,6 @@ import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.Source
 
 data class OnboardingState(
-    val bannerDrawablesIds: List<Int>,
     val allNewsDataSources: List<NewsDataSource>,
     val followedNewsDataSources: List<NewsDataSource>,
     val isUpdatingFollowedNewsDataSources: Boolean,
