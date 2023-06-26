@@ -90,7 +90,6 @@ fun SelectingFavouriteGamesPage(
     favouriteUserGames: List<FavouriteGame>,
     onAddingGameToFavourites: (FavouriteGame) -> Unit,
     onRemovingGameFromFavourites: (FavouriteGame) -> Unit,
-    scrollState: ScrollState,
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start
@@ -401,7 +400,6 @@ fun SelectingFavouriteGamesPagePreview() {
             favouriteUserGames = emptyList(),
             onAddingGameToFavourites = {},
             onRemovingGameFromFavourites = {},
-            scrollState = rememberScrollState()
         )
     }
 }
