@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -58,6 +59,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.ui.components.LudiErrorBox
@@ -92,7 +94,7 @@ fun SelectingFavouriteGamesPage(
     ) {
         val softwareKeyboard = LocalSoftwareKeyboardController.current
         Text(
-            text = "Tell us about your favourite games",
+            text = stringResource(R.string.on_boarding_games_page_title),
             modifier = Modifier.align(Alignment.End),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineMedium,
@@ -100,7 +102,7 @@ fun SelectingFavouriteGamesPage(
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "You can always change that later",
+            text = stringResource(R.string.on_boarding_secondary_text),
             modifier = Modifier.align(Alignment.End),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.bodyLarge
@@ -149,7 +151,7 @@ fun SelectingFavouriteGamesPage(
                 .shadow(elevation = 8.dp, shape = RoundedCornerShape(50))
         )
         Text(
-            text = "Suggestions",
+            text = stringResource(R.string.games_page_suggestions_label),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Start
@@ -190,7 +192,7 @@ fun SelectingFavouriteGamesPage(
         }
         if (favouriteUserGames.isNotEmpty()) {
             Text(
-                text = "Selected",
+                text = stringResource(R.string.games_page_selected_label),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Start

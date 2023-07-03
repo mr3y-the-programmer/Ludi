@@ -31,11 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mr3y.ludi.R
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.theme.LudiTheme
 
@@ -58,7 +60,7 @@ fun NewsSourcesPage(
             modifier = Modifier.align(Alignment.End)
         ) {
             Text(
-                text = "Follow your favorite news sources",
+                text = stringResource(R.string.on_boarding_data_sources_page_title),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.End,
@@ -66,7 +68,7 @@ fun NewsSourcesPage(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "You can always change that later",
+                text = stringResource(R.string.on_boarding_secondary_text),
                 modifier = Modifier.align(Alignment.End),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyLarge

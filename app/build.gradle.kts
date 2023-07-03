@@ -26,7 +26,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "com.mr3y.ludi.HiltTestRunner"
+        testInstrumentationRunner = "com.mr3y.ludi.runner.CustomTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -185,5 +185,5 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.strikt)
     androidTestImplementation(libs.turbine)
-    androidTestImplementation(libs.kotlinx.coroutines.test)
+    implementation(libs.kotlinx.coroutines.test)
 }

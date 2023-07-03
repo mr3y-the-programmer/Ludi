@@ -1,5 +1,6 @@
 package com.mr3y.ludi.ui.screens.onboarding
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -56,12 +57,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.ui.presenter.OnBoardingViewModel
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
@@ -274,7 +277,6 @@ fun OnboardingBottomBar(
         AnimatedExtendedFab(
             targetState = fabState,
             showIcon = showForwardIcon,
-            label = { it.name.replaceFirstChar { char -> char.uppercase() } },
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 .align(Alignment.End),
@@ -287,7 +289,6 @@ fun OnboardingBottomBar(
 @Composable
 fun AnimatedExtendedFab(
     targetState: OnboardingFABState,
-    label: (OnboardingFABState) -> String,
     modifier: Modifier = Modifier,
     showIcon: Boolean = true,
     onClick: (OnboardingFABState) -> Unit
@@ -313,7 +314,7 @@ fun AnimatedExtendedFab(
                 modifier = Modifier.align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = label(currState),
+                    text = stringResource(currState.labelResId),
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.labelLarge
                 )
@@ -329,10 +330,10 @@ fun AnimatedExtendedFab(
     }
 }
 
-enum class OnboardingFABState {
-    Skip,
-    Continue,
-    Finish
+enum class OnboardingFABState(@StringRes val labelResId: Int) {
+    Skip(R.string.on_boarding_fab_state_skip),
+    Continue(R.string.on_boarding_fab_state_continue),
+    Finish(R.string.on_boarding_fab_state_finish)
 }
 
 @Preview(backgroundColor = 0xFFFFFF, showBackground = true)

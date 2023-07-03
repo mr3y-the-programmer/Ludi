@@ -28,12 +28,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.components.LudiErrorBox
@@ -57,7 +59,7 @@ fun GenresPage(
         horizontalAlignment = horizontalAlignment
     ) {
         Text(
-            text = "What are your favourite game genres",
+            text = stringResource(R.string.on_boarding_genres_page_title),
             modifier = Modifier.align(Alignment.End),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineMedium,
@@ -65,7 +67,7 @@ fun GenresPage(
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "You can always change that later",
+            text = stringResource(R.string.on_boarding_secondary_text),
             modifier = Modifier.align(Alignment.End),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.bodyLarge
