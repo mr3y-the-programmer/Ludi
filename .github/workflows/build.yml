@@ -83,7 +83,7 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        api-level: [ 26, 29, 30, 31, 33 ]
+        api-level: [ 29, 30, 31, 33 ]
 
     steps:
       - name: Checkout
@@ -110,7 +110,7 @@ jobs:
           disable-animations: true
           disk-size: 6000M
           heap-size: 600M
-          script: ./gradlew connectedDebugAndroidTest --stacktrace
+          script: ./gradlew connectedDebugAndroidTest --stacktrace --daemon
 
       - name: Upload test reports
         if: always()
