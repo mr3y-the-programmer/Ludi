@@ -81,9 +81,14 @@ spotless {
 
 buildConfig {
     packageName("com.mr3y.ludi")
-    val properties = Properties()
-    properties.load(FileInputStream(rootProject.file("local.properties")))
-    buildConfigField("String", "RAWG_API_KEY", "\"${properties.getProperty("RAWG_API_KEY")}\"")
+    val key = if (System.getenv("CI").toBoolean()) {
+        System.getenv("RAWG_API_KEY")
+    } else {
+        val properties = Properties()
+        properties.load(FileInputStream(rootProject.file("local.properties")))
+        properties.getProperty("RAWG_API_KEY")
+    }
+    buildConfigField("String", "RAWG_API_KEY", "\"$key\"")
 }
 
 protobuf {

@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+env:
+  RAWG_API_KEY: ${{ secrets.RAWG_API_KEY }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
