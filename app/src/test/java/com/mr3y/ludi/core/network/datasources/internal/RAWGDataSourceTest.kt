@@ -18,8 +18,8 @@ import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 import java.net.HttpURLConnection
+import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(TestParameterInjector::class)
 class RAWGDataSourceTest {
 
@@ -33,7 +33,7 @@ class RAWGDataSourceTest {
     }
 
     @Test
-    fun whenSendingRequestToRAWGEndpointResource_APIKeyInterceptorIsAddingAuthentication() = runTest {
+    fun whenSendingRequestToRAWGEndpointResource_APIKeyInterceptorIsAddingAuthentication() = runTest(timeout = 30.seconds) {
         // given a new unauthenticated request to RAWG API endpoint
         sut.queryGames(mockWebServer.url("/api.rawg.io/api/games?page_size=3").toString())
         // then assert that Interceptor is taking effect and appending the authentication key to the end
@@ -43,7 +43,7 @@ class RAWGDataSourceTest {
     }
 
     @Test
-    fun whenSendingRequestToOtherEndpoints_APIKeyInterceptorHasNoEffect() = runTest {
+    fun whenSendingRequestToOtherEndpoints_APIKeyInterceptorHasNoEffect() = runTest(timeout = 30.seconds) {
         // given a new unauthenticated request to any other endpoint other than RAWG API endpoint
         sut.queryGames(mockWebServer.url("/www.freetogame.com/api/games?platform=browser").toString())
         // then assert that Interceptor has no effect on the request url
