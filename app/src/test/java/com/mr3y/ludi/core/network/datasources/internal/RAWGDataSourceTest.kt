@@ -101,3 +101,4 @@ class RAWGDataSourceTest {
         ResponseB(serializedMockResponseB, deserializedMockResponseB)
     }
 }
+

@@ -43,15 +43,14 @@ jobs:
         run: |
           CHANGED_FILES="$(git diff-tree --no-commit-id --name-only HEAD -r | awk '$1 != "D" && $NF ~ /\.kts?$/ { print $NF }')"
           if [ -z "$CHANGED_FILES" ]; then
-              echo "No Kotlin commited files."
-              exit 0
+              echo "Running ktlint over these files:"
+              echo "$CHANGED_FILES"
+              ./gradlew --quiet ktlintFormat -PinternalKtlintGitFilter="$CHANGED_FILES"
+              gradle_command_exit_code=$?
+              exit $gradle_command_exit_code
           fi;
-          echo "Running ktlint over these files:"
-          echo "$CHANGED_FILES"
-          ./gradlew --quiet ktlintFormat -PinternalKtlintGitFilter="$CHANGED_FILES"
-          gradle_command_exit_code=$?
-          
-          exit $gradle_command_exit_code
+          echo "No Kotlin commited files."
+          exit 0
 
       - name: Apply Spotless formatting if not applied.
         run: ./gradlew spotlessApply --stacktrace
