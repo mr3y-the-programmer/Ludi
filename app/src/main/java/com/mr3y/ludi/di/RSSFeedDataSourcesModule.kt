@@ -41,5 +41,4 @@ abstract class RSSFeedDataSourcesModule {
     @IntoMap
     @SourceKey(Source.TechRadar)
     abstract fun bindTechRadarDataSource(dataSource: TechRadarGamingDataSource): RSSFeedDataSource<RSSFeedArticle>
-
 }

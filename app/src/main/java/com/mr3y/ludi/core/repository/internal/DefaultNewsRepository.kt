@@ -38,7 +38,7 @@ class DefaultNewsRepository @Inject constructor(
             when (result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toNewsArticle()!! }) }
                 is Result.Error -> {
-                    logger.e(result.exception) { "aggregated data before throwing exception $acc"}
+                    logger.e(result.exception) { "aggregated data before throwing exception $acc" }
                     aggregatedErrors += result
                     return@fold acc
                 }
@@ -77,7 +77,7 @@ class DefaultNewsRepository @Inject constructor(
             when (result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toNewReleaseArticle()!! }) }
                 is Result.Error -> {
-                    logger.e(result.exception) { "aggregated data before throwing exception $acc"}
+                    logger.e(result.exception) { "aggregated data before throwing exception $acc" }
                     aggregatedErrors += result
                     return@fold acc
                 }
@@ -100,7 +100,7 @@ class DefaultNewsRepository @Inject constructor(
             when (result) {
                 is Result.Success -> { acc.copy(data = acc.data + result.data.map { it.toReviewArticle()!! }) }
                 is Result.Error -> {
-                    logger.e(result.exception) { "aggregated data before throwing exception $acc"}
+                    logger.e(result.exception) { "aggregated data before throwing exception $acc" }
                     aggregatedErrors += result
                     return@fold acc
                 }

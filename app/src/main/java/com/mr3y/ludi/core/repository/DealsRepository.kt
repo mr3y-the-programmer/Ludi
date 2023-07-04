@@ -6,7 +6,6 @@ import com.mr3y.ludi.core.model.MMOGiveawayEntry
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.repository.query.DealsQueryParameters
 import com.mr3y.ludi.core.repository.query.GiveawaysQueryParameters
-import kotlinx.coroutines.flow.Flow
 
 interface DealsRepository {
 

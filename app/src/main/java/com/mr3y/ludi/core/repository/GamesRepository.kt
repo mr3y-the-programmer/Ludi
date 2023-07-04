@@ -6,7 +6,6 @@ import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
 import com.mr3y.ludi.core.model.RichInfoGamesPage
 import com.mr3y.ludi.core.repository.query.FreeGamesQueryParameters
 import com.mr3y.ludi.core.repository.query.RichInfoGamesQueryParameters
-import kotlinx.coroutines.flow.Flow
 
 interface GamesRepository {
 

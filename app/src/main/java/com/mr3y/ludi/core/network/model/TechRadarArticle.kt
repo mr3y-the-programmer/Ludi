@@ -28,7 +28,7 @@ data class TechRadarArticle(
             content = content?.let { MarkupText(it) },
             imageUrl = image,
             author = author,
-            publicationDate = publicationDate?.toZonedDateTime(),
+            publicationDate = publicationDate?.toZonedDateTime()
         )
     }
 
@@ -41,7 +41,7 @@ data class TechRadarArticle(
             sourceLinkUrl = sourceLink!!,
             content = content?.let { MarkupText(it) },
             author = author,
-            publicationDate = publicationDate!!.toZonedDateTime(),
+            publicationDate = publicationDate!!.toZonedDateTime()
         )
     }
 
@@ -56,6 +56,6 @@ fun Article.toTechRadarArticle(): TechRadarArticle {
         pubDate.ignoreIfEmptyOrNull(),
         content.ignoreIfEmptyOrNull(),
         image.ignoreIfEmptyOrNull(),
-        link.ignoreIfEmptyOrNull(),
+        link.ignoreIfEmptyOrNull()
     )
 }

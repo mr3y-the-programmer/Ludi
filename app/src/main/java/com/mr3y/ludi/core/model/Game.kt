@@ -34,7 +34,6 @@ data class RichInfoGamesGenresPage(
     val genres: Set<GameGenre>
 )
 
-
 data class RichInfoGame(
     override val id: Long,
     val slug: String?,

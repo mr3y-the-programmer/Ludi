@@ -81,7 +81,7 @@ val PreviewAllGenres = Result.Success(
                 slug = null,
                 gamesCount = 2000,
                 imageUrl = null
-            ),
+            )
         )
     )
 )
@@ -107,7 +107,7 @@ val PreviewSelectedGenres = setOf(
         slug = null,
         gamesCount = 2000,
         imageUrl = null
-    ),
+    )
 )
 
 val PreviewOnboardingGames = OnboardingGames.SuggestedGames(Result.Success(listOf(ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder)))

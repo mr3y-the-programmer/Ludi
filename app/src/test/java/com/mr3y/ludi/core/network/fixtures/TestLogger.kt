@@ -22,7 +22,7 @@ val TestLogger = Logger(
     config = TestConfig(
         minSeverity = Severity.Verbose,
         logWriterList = listOf(PrintlnLogWriter())
-    ),
+    )
 )
 
 class PrintlnLogWriter : LogWriter() {

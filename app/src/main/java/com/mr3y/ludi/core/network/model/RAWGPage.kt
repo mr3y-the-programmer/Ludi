@@ -301,6 +301,6 @@ fun RAWGGenresPage.toRichInfoGamesGenresPage(): RichInfoGamesGenresPage {
                 gamesCount = genre.gamesCount,
                 imageUrl = genre.imageUrl
             )
-        }.filterNotNull().toSet(),
+        }.filterNotNull().toSet()
     )
 }

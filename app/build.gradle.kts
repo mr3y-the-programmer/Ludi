@@ -128,7 +128,7 @@ dependencies {
     // Logging
     implementation(libs.kermit)
 
-    //Leak Canary
+    // Leak Canary
     debugImplementation(libs.leakcanary)
 
     // Datastore

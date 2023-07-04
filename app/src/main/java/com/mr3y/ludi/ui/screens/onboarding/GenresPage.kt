@@ -99,10 +99,11 @@ fun GenresPage(
                                         indication = null,
                                         role = Role.Button,
                                         onClick = {
-                                            if (genre in selectedGenres)
+                                            if (genre in selectedGenres) {
                                                 onUnselectingGenre(genre)
-                                            else
+                                            } else {
                                                 onSelectingGenre(genre)
+                                            }
                                         }
                                     )
                                     .animateContentSize()
@@ -151,10 +152,11 @@ fun GenresPage(
 }
 
 private fun Modifier.conditionalBackground(color: Color, predicate: Boolean): Modifier {
-    return if (predicate)
+    return if (predicate) {
         background(color)
-    else
+    } else {
         this
+    }
 }
 
 @Preview(backgroundColor = 0xFFFFFF, showBackground = true)

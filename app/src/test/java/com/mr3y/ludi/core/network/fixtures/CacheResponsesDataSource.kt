@@ -9,8 +9,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-open class CacheResponsesDataSource<T: RSSFeedArticle> : RSSNewsFeedDataSource<T>,
-    RSSNewReleasesFeedDataSource<T>, RSSReviewsFeedDataSource<T> {
+open class CacheResponsesDataSource<T : RSSFeedArticle> :
+    RSSNewsFeedDataSource<T>,
+    RSSNewReleasesFeedDataSource<T>,
+    RSSReviewsFeedDataSource<T> {
 
     val cache: Map<Feed, List<T>?>
         get() = _cache

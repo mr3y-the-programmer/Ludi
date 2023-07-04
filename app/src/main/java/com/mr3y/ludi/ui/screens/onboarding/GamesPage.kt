@@ -73,7 +73,7 @@ import com.mr3y.ludi.ui.theme.dark_star
 
 @OptIn(
     ExperimentalFoundationApi::class,
-    ExperimentalComposeUiApi::class,
+    ExperimentalComposeUiApi::class
 )
 @Composable
 fun SelectingFavouriteGamesPage(
@@ -366,7 +366,6 @@ private fun GameTileScaffold(
     }
 }
 
-
 @Preview(backgroundColor = 0xFFFFFF, showBackground = true)
 @Composable
 fun SelectingFavouriteGamesPagePreview() {
@@ -377,7 +376,7 @@ fun SelectingFavouriteGamesPagePreview() {
             allGames = PreviewOnboardingGames,
             favouriteUserGames = emptyList(),
             onAddingGameToFavourites = {},
-            onRemovingGameFromFavourites = {},
+            onRemovingGameFromFavourites = {}
         )
     }
 }

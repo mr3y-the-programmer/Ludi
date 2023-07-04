@@ -6,12 +6,14 @@ data class FreeGamesQueryParameters(
     val sortingCriteria: FreeGamesSortingCriteria?
 )
 
+@Suppress("ktlint")
 enum class FreeGamesPlatform {
     all,
     pc,
     browser
 }
 
+@Suppress("ktlint")
 enum class FreeGamesCategory {
     mmorpg,
     shooter,
@@ -60,6 +62,7 @@ enum class FreeGamesCategory {
     mmorts
 }
 
+@Suppress("ktlint")
 enum class FreeGamesSortingCriteria {
     alphabetical,
     `release-date`,

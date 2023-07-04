@@ -179,7 +179,7 @@ fun OnboardingScreen(
                             selectedGenres = onboardingState.selectedGamingGenres,
                             onSelectingGenre = onSelectingGenre,
                             onUnselectingGenre = onUnselectingGenre,
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         )
                         1 -> SelectingFavouriteGamesPage(
                             searchQueryText = onboardingState.searchQuery,
@@ -188,7 +188,7 @@ fun OnboardingScreen(
                             favouriteUserGames = onboardingState.favouriteGames,
                             onAddingGameToFavourites = onAddingGameToFavourites,
                             onRemovingGameFromFavourites = onRemovingGameFromFavourites,
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         )
                         2 -> NewsSourcesPage(
                             allNewsDataSources = onboardingState.allNewsDataSources,
@@ -200,7 +200,7 @@ fun OnboardingScreen(
                                 } else {
                                     onSelectingNewsDataSource(it)
                                 }
-                            },
+                            }
                         )
                     }
                 }
@@ -350,7 +350,7 @@ fun OnboardingScreenPreview() {
             onAddingGameToFavourites = {},
             onRemovingGameFromFavourites = {},
             onSelectingGenre = {},
-            onUnselectingGenre = {},
+            onUnselectingGenre = {}
         )
     }
 }

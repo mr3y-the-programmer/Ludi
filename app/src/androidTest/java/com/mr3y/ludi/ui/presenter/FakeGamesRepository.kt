@@ -1249,7 +1249,7 @@ class FakeGamesRepository : GamesRepository {
                         slug = null,
                         gamesCount = 2000,
                         imageUrl = null
-                    ),
+                    )
                 )
             )
         )

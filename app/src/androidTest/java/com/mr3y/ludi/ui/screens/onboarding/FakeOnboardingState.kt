@@ -89,7 +89,7 @@ val FakeAllGenres = Result.Success(
                 slug = null,
                 gamesCount = 2000,
                 imageUrl = null
-            ),
+            )
         )
     )
 )
@@ -115,7 +115,7 @@ val FakeSelectedGenres = setOf(
         slug = null,
         gamesCount = 2000,
         imageUrl = null
-    ),
+    )
 )
 
 private val fakeGames = listOfNotNull(
@@ -1254,7 +1254,6 @@ private val fakeGames = listOfNotNull(
         )
     ).toRichInfoGame()
 )
-
 
 val FakeOnboardingGames = OnboardingGames.SuggestedGames(Result.Success(fakeGames.map { ResourceWrapper.ActualResource(it) }))
 val FakeSelectedGames = listOf(FavouriteGame(id = 3498, title = "Grand Theft Auto V", imageUrl = "https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg", rating = 4.47f))
