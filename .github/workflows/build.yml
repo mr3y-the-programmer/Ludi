@@ -56,12 +56,13 @@ jobs:
       - name: Apply Spotless formatting if not applied.
         run: ./gradlew spotlessApply --stacktrace
 
-      - name: Commit and push changes
-        run: |
-          git config user.email "github-actions@github.com"
-          git config user.name "Github Actions"
-          git commit -am "Apply style formatting"
-          git push origin HEAD
+      - name: Commit and push changes (if any).
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: GitHub Actions
+          author_email: github-actions@github.com
+          message: Apply style formatting
+          push: true
 
       - name: Upload build outputs (APKs)
         uses: actions/upload-artifact@v3
