@@ -5,14 +5,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mr3y.ludi.core.model.FreeGame
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.RichInfoGamesPage
 import com.mr3y.ludi.core.repository.GamesRepository
-import com.mr3y.ludi.core.repository.query.FreeGamesPlatform
-import com.mr3y.ludi.core.repository.query.FreeGamesQueryParameters
-import com.mr3y.ludi.core.repository.query.FreeGamesSortingCriteria
 import com.mr3y.ludi.core.repository.query.RichInfoGamesQuery
 import com.mr3y.ludi.core.repository.query.RichInfoGamesSortingCriteria
 import com.mr3y.ludi.ui.presenter.model.Criteria
@@ -25,7 +21,6 @@ import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.Store
 import com.mr3y.ludi.ui.presenter.model.wrapResource
-import com.mr3y.ludi.ui.presenter.model.wrapResultResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
@@ -60,15 +55,6 @@ class DiscoverViewModel @Inject constructor(
     ) { searchText, filtersState ->
         if (searchText.isEmpty() && filtersState == InitialFiltersState) {
             coroutineScope {
-                val freeGames = async {
-                    gamesRepository.queryFreeGames(
-                        FreeGamesQueryParameters(
-                            platform = FreeGamesPlatform.pc,
-                            sortingCriteria = FreeGamesSortingCriteria.relevance,
-                            categories = null
-                        )
-                    )
-                }
                 val trendingGames = async {
                     gamesRepository.queryRichInfoGames(
                         RichInfoGamesQuery(
@@ -119,7 +105,6 @@ class DiscoverViewModel @Inject constructor(
                     )
                 }
                 listOf(
-                    freeGames,
                     trendingGames,
                     topRatedGames,
                     multiplayerGames,
@@ -127,7 +112,6 @@ class DiscoverViewModel @Inject constructor(
                     realisticGames
                 ).awaitAll().let {
                     DiscoverStateGames.SuggestedGames(
-                        freeGames = (it[0] as Result<List<FreeGame>, Throwable>).wrapResultResources(),
                         trendingGames = (it[1] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
                         topRatedGames = (it[2] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
                         multiplayerGames = (it[3] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
@@ -308,7 +292,6 @@ class DiscoverViewModel @Inject constructor(
             "",
             InitialFiltersState,
             games = DiscoverStateGames.SuggestedGames(
-                freeGames = Result.Success(placeholders()),
                 trendingGames = Result.Success(placeholders()),
                 topRatedGames = Result.Success(placeholders()),
                 multiplayerGames = Result.Success(placeholders()),

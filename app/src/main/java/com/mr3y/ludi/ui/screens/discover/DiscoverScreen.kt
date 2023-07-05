@@ -54,7 +54,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mr3y.ludi.core.model.FreeGame
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.ui.components.LudiErrorBox
@@ -169,16 +168,6 @@ fun SuggestedGamesPage(
         item {
             RichInfoGamesSection(
                 games = suggestedGames.trendingGames,
-                modifier = sectionsModifier
-            )
-        }
-
-        item {
-            LudiSectionHeader(text = "Free", modifier = headersModifier)
-        }
-        item {
-            FreeGamesSection(
-                freeGames = suggestedGames.freeGames,
                 modifier = sectionsModifier
             )
         }
@@ -331,25 +320,6 @@ fun RichInfoGamesSection(
     ) { gameWrapper ->
         RichInfoGameCard(
             richInfoGameWrapper = gameWrapper,
-            modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-                .width(248.dp)
-                .height(IntrinsicSize.Min)
-        )
-    }
-}
-
-@Composable
-fun FreeGamesSection(
-    freeGames: Result<List<ResourceWrapper<FreeGame>>, Throwable>,
-    modifier: Modifier = Modifier
-) {
-    GamesSectionScaffold(
-        gamesResult = freeGames,
-        modifier = modifier
-    ) { gameWrapper ->
-        FreeGameCard(
-            freeGameWrapper = gameWrapper,
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 8.dp)
                 .width(248.dp)
@@ -526,7 +496,6 @@ fun DiscoverScreenPreview() {
             discoverState = DiscoverState(
                 searchQuery = "",
                 games = DiscoverStateGames.SuggestedGames(
-                    freeGames = Result.Success(freeGamesSamples),
                     trendingGames = Result.Success(richInfoGamesSamples),
                     topRatedGames = Result.Success(richInfoGamesSamples),
                     multiplayerGames = Result.Success(richInfoGamesSamples),

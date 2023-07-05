@@ -6,20 +6,6 @@ sealed interface Game {
     val id: Long
 }
 
-data class FreeGame(
-    override val id: Long,
-    val title: String,
-    val thumbnailUrl: String,
-    val description: String,
-    val gameUrl: String,
-    val genre: String,
-    val platform: String,
-    val publisher: String,
-    val developer: String,
-    val releaseDate: ZonedDateTime,
-    val gameProfileUrl: String
-) : Game
-
 data class RichInfoGamesPage(
     val count: Long,
     val nextPageUrl: String?,

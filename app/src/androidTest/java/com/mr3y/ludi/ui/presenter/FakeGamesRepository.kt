@@ -1,6 +1,5 @@
 package com.mr3y.ludi.ui.presenter
 
-import com.mr3y.ludi.core.model.FreeGame
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
@@ -16,7 +15,6 @@ import com.mr3y.ludi.core.network.model.RAWGStoreProperties
 import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfoWithId
 import com.mr3y.ludi.core.network.model.toRichInfoGame
 import com.mr3y.ludi.core.repository.GamesRepository
-import com.mr3y.ludi.core.repository.query.FreeGamesQueryParameters
 import com.mr3y.ludi.core.repository.query.RichInfoGamesQueryParameters
 
 class FakeGamesRepository : GamesRepository {
@@ -1157,10 +1155,6 @@ class FakeGamesRepository : GamesRepository {
             )
         ).toRichInfoGame()
     )
-
-    override suspend fun queryFreeGames(queryParameters: FreeGamesQueryParameters): Result<List<FreeGame>, Throwable> {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun queryRichInfoGames(queryParameters: RichInfoGamesQueryParameters): Result<RichInfoGamesPage, Throwable> {
         return Result.Success(

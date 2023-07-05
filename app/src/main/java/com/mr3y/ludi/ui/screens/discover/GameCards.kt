@@ -39,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.mr3y.ludi.R
-import com.mr3y.ludi.core.model.FreeGame
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.ui.components.LudiSuggestionChip
 import com.mr3y.ludi.ui.components.SingleRowLayout
@@ -47,41 +46,6 @@ import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.theme.LudiTheme
-
-@Composable
-fun FreeGameCard(
-    freeGameWrapper: ResourceWrapper<FreeGame>,
-    modifier: Modifier = Modifier
-) {
-    val freeGame = freeGameWrapper.actualResource
-    SuggestionGameCardScaffold(
-        modifier = modifier,
-        imageUrl = freeGame?.thumbnailUrl,
-        title = freeGame?.title,
-        showPlaceholder = freeGameWrapper is ResourceWrapper.Placeholder
-    ) {
-        Text(
-            text = freeGame?.publisher ?: "Publisher placeholder",
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Start,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .fillMaxWidth()
-                .defaultPlaceholder(freeGameWrapper is ResourceWrapper.Placeholder)
-        )
-        freeGame?.genre?.let {
-            LudiSuggestionChip(
-                label = it,
-                modifier = Modifier
-                    .padding(vertical = 4.dp, horizontal = 8.dp)
-                    .width(IntrinsicSize.Max)
-            )
-        }
-    }
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -329,19 +293,6 @@ fun SuggestionGameCardScaffold(
                 this.other()
             }
         }
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
-@Composable
-fun FreeGameCardPreview() {
-    LudiTheme {
-        FreeGameCard(
-            freeGameWrapper = freeGamesSamples.first(),
-            modifier = Modifier
-                .padding(16.dp)
-                .size(width = 248.dp, height = 360.dp)
-        )
     }
 }
 

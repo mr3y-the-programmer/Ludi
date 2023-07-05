@@ -1,6 +1,5 @@
 package com.mr3y.ludi.ui.presenter.model
 
-import com.mr3y.ludi.core.model.FreeGame
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 data class DiscoverState(
@@ -12,7 +11,6 @@ data class DiscoverState(
 sealed interface DiscoverStateGames {
 
     data class SuggestedGames(
-        val freeGames: Result<List<ResourceWrapper<FreeGame>>, Throwable>,
         val trendingGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
         val topRatedGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
         val multiplayerGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
@@ -46,11 +44,6 @@ data class Store(
 )
 
 data class Genre(
-    val id: Int,
-    val label: String
-)
-
-data class Tag(
     val id: Int,
     val label: String
 )

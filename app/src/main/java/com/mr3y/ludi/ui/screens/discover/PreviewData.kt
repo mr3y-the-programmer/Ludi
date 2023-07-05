@@ -2,7 +2,6 @@ package com.mr3y.ludi.ui.screens.discover
 
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.network.model.DetailedRAWGPlatformInfo
-import com.mr3y.ludi.core.network.model.FreeToGameGame
 import com.mr3y.ludi.core.network.model.RAWGGameGenre
 import com.mr3y.ludi.core.network.model.RAWGGameScreenshot
 import com.mr3y.ludi.core.network.model.RAWGGameTag
@@ -11,57 +10,8 @@ import com.mr3y.ludi.core.network.model.RAWGPlatformRequirements
 import com.mr3y.ludi.core.network.model.RAWGShallowGame
 import com.mr3y.ludi.core.network.model.RAWGStoreProperties
 import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfoWithId
-import com.mr3y.ludi.core.network.model.toFreeGame
 import com.mr3y.ludi.core.network.model.toRichInfoGame
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
-
-val freeGamesSamples = listOf(
-    ResourceWrapper.ActualResource(
-        FreeToGameGame(
-            540,
-            "Overwatch 2",
-            "https://www.freetogame.com/g/540/thumbnail.jpg",
-            "A hero-focused first-person team shooter from Blizzard Entertainment.",
-            "https://www.freetogame.com/open/overwatch-2",
-            "Shooter",
-            "PC (Windows)",
-            "Activision Blizzard",
-            "Blizzard Entertainment",
-            "2022-10-04",
-            "https://www.freetogame.com/overwatch-2"
-        ).toFreeGame()
-    ),
-    ResourceWrapper.ActualResource(
-        FreeToGameGame(
-            521,
-            "Diablo Immortal",
-            "https://www.freetogame.com/g/521/thumbnail.jpg",
-            "Built for mobile and also released on PC, Diablo Immortal fills in the gaps between Diablo II and III in an MMOARPG environment.",
-            "https://www.freetogame.com/open/diablo-immortal",
-            "MMOARPG",
-            "PC (Windows)",
-            "Blizzard Entertainment",
-            "Blizzard Entertainment",
-            "2022-06-02",
-            "https://www.freetogame.com/diablo-immortal"
-        ).toFreeGame()
-    ),
-    ResourceWrapper.ActualResource(
-        FreeToGameGame(
-            517,
-            "Lost Ark",
-            "https://www.freetogame.com/g/517/thumbnail.jpg",
-            "Smilegate’s free-to-play multiplayer ARPG is a massive adventure filled with lands waiting to be explored, people waiting to be met, and an ancient evil waiting to be destroyed.",
-            "https://www.freetogame.com/open/lost-ark",
-            "ARPG",
-            "PC (Windows)",
-            "Amazon Games",
-            "Smilegate RPG",
-            "2022-02-11",
-            "https://www.freetogame.com/lost-ark"
-        ).toFreeGame()
-    )
-)
 
 val richInfoGamesSamples = listOf(
     ResourceWrapper.ActualResource(

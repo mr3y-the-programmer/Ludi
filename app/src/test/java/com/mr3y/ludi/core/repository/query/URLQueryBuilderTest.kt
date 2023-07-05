@@ -7,29 +7,6 @@ import strikt.assertions.isEqualTo
 class URLQueryBuilderTest {
 
     @Test
-    fun givenSomeQueryParametersWithFreeGamesEndPointUrl_thenVerifyTheResultingUrlMatchingExpectedOne() {
-        val endPointUrl = "https://www.freetogame.com/api/games"
-        val queryParameters = listOf(
-            FreeGamesQueryParameters(null, null, null),
-            FreeGamesQueryParameters(FreeGamesPlatform.pc, listOf(FreeGamesCategory.action), sortingCriteria = null),
-            FreeGamesQueryParameters(FreeGamesPlatform.all, listOf(FreeGamesCategory.`2d`, FreeGamesCategory.fantasy, FreeGamesCategory.anime), sortingCriteria = FreeGamesSortingCriteria.`release-date`),
-            FreeGamesQueryParameters(null, listOf(FreeGamesCategory.anime, FreeGamesCategory.`first-person`), sortingCriteria = FreeGamesSortingCriteria.alphabetical),
-            FreeGamesQueryParameters(FreeGamesPlatform.browser, null, sortingCriteria = FreeGamesSortingCriteria.relevance)
-        )
-        val result = queryParameters.map {
-            buildFreeGamesFullUrl(endPointUrl, it)
-        }
-        val expected = listOf(
-            "https://www.freetogame.com/api/games",
-            "https://www.freetogame.com/api/games?platform=pc&category=action",
-            "https://www.freetogame.com/api/games?platform=all&tag=2d.fantasy.anime&sort-by=release-date",
-            "https://www.freetogame.com/api/games?tag=anime.first-person&sort-by=alphabetical",
-            "https://www.freetogame.com/api/games?platform=browser&sort-by=relevance"
-        )
-        expectThat(result).isEqualTo(expected)
-    }
-
-    @Test
     fun givenSomeQueryParametersWithRichInfoGamesEndPointUrl_thenVerifyTheResultingUrlMatchingExpectedOne() {
         val endPointUrl = "https://api.rawg.io/api/games"
         val queryParameters = listOf(
