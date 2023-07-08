@@ -5,6 +5,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.RichInfoGamesPage
@@ -112,11 +113,11 @@ class DiscoverViewModel @Inject constructor(
                     realisticGames
                 ).awaitAll().let {
                     DiscoverStateGames.SuggestedGames(
-                        trendingGames = (it[1] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
-                        topRatedGames = (it[2] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
-                        multiplayerGames = (it[3] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
-                        familyGames = (it[4] as Result<RichInfoGamesPage, Throwable>).wrapResultResources(),
-                        realisticGames = (it[5] as Result<RichInfoGamesPage, Throwable>).wrapResultResources()
+                        trendingGames = it[0].wrapResultResources(),
+                        topRatedGames = it[1].wrapResultResources(),
+                        multiplayerGames = it[2].wrapResultResources(),
+                        familyGames = it[3].wrapResultResources(),
+                        realisticGames = it[4].wrapResultResources()
                     )
                 }
             }
@@ -186,7 +187,7 @@ class DiscoverViewModel @Inject constructor(
                 )
             ).let {
                 DiscoverStateGames.SearchQueryBasedGames(
-                    richInfoGames = it.wrapResultResources()
+                    richInfoGames = it.groupByGenreAndWrapResources()
                 )
             }
         }
@@ -310,5 +311,51 @@ private fun Result<RichInfoGamesPage, Throwable>.wrapResultResources(): Result<L
     return when (this) {
         is Result.Success -> Result.Success(data.games.map(RichInfoGame::wrapResource))
         is Result.Error -> this
+    }
+}
+
+private fun Result<RichInfoGamesPage, Throwable>.groupByGenreAndWrapResources(): Result<ResourceWrapper<Map<GameGenre, List<RichInfoGame>>>, Throwable> {
+    return when (this) {
+        is Result.Success -> Result.Success(ResourceWrapper.ActualResource(data.games.groupByGenre()))
+        is Result.Error -> this
+    }
+}
+
+internal fun List<RichInfoGame>.groupByGenre(): Map<GameGenre, List<RichInfoGame>> {
+    if (isEmpty()) {
+        return emptyMap()
+    }
+    val otherGenreGames = mutableListOf<RichInfoGame>()
+    val otherGenre = GameGenre(
+        id = Int.MAX_VALUE,
+        name = "Other",
+        slug = "other",
+        gamesCount = Long.MAX_VALUE,
+        imageUrl = null
+    )
+    val alreadyAssociated = mutableListOf<RichInfoGame>()
+    val genres = this.mapNotNull { it.genres.firstOrNull() }.toSet()
+    if (genres.isEmpty()) {
+        return mapOf(otherGenre.copy(gamesCount = size.toLong()) to this)
+    }
+    val gamesGroupedByGenre = genres.associateWith { genre ->
+        (this - alreadyAssociated.toSet()).filter {
+            val gameFirstGenre = it.genres.firstOrNull()
+            if (gameFirstGenre != null) {
+                val matched = gameFirstGenre == genre
+                if (matched) {
+                    alreadyAssociated += it
+                }
+                matched
+            } else {
+                otherGenreGames += it
+                return@filter false
+            }
+        }
+    }
+    return if (otherGenreGames.isNotEmpty()) {
+        gamesGroupedByGenre + Pair(otherGenre, otherGenreGames)
+    } else {
+        gamesGroupedByGenre
     }
 }

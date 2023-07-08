@@ -1,6 +1,8 @@
 package com.mr3y.ludi.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -58,8 +60,8 @@ fun LudiSuggestionChip(
 ) {
     SuggestionChip(
         onClick = { },
-        modifier = modifier,
-        shape = RoundedCornerShape(50),
+        modifier = modifier.wrapContentHeight().height(32.dp),
+        shape = RoundedCornerShape(8.dp),
         border = SuggestionChipDefaults.suggestionChipBorder(borderWidth = 0.dp, borderColor = Color.Transparent),
         colors = SuggestionChipDefaults.suggestionChipColors(
             labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -68,7 +70,7 @@ fun LudiSuggestionChip(
         label = {
             Text(
                 text = label,
-                modifier = Modifier.fillMaxWidth()
+                textAlign = TextAlign.Center
             )
         }
     )

@@ -1,43 +1,22 @@
 package com.mr3y.ludi.ui.screens.discover
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -46,27 +25,25 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.ui.components.LudiErrorBox
-import com.mr3y.ludi.ui.components.LudiFilterChip
 import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
-import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
+import com.mr3y.ludi.ui.presenter.groupByGenre
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.ui.presenter.model.Genre
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.Store
+import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @Composable
@@ -168,7 +145,8 @@ fun SuggestedGamesPage(
         item {
             RichInfoGamesSection(
                 games = suggestedGames.trendingGames,
-                modifier = sectionsModifier
+                modifier = sectionsModifier,
+                showGenre = true
             )
         }
 
@@ -178,7 +156,8 @@ fun SuggestedGamesPage(
         item {
             RichInfoGamesSection(
                 games = suggestedGames.topRatedGames,
-                modifier = sectionsModifier
+                modifier = sectionsModifier,
+                showGenre = true
             )
         }
 
@@ -216,25 +195,48 @@ fun SuggestedGamesPage(
 
 @Composable
 fun SearchQueryAndFilterPage(
-    searchResult: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
+    searchResult: Result<ResourceWrapper<Map<GameGenre, List<RichInfoGame>>>, Throwable>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when (searchResult) {
             is Result.Success -> {
-                itemsIndexed(searchResult.data) { index, gameWrapper ->
-                    key(index) {
-                        SearchResultsGameCard(
-                            richInfoGameWrapper = gameWrapper,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min)
-                        )
+                if (searchResult.data is ResourceWrapper.ActualResource) {
+                    searchResult.data.resource.forEach { (gameGenre, games) ->
+                        item {
+                            LudiSectionHeader(text = gameGenre.name, modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp))
+                        }
+                        item {
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .padding(horizontal = 8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(games) {
+                                    GameCard(
+                                        richInfoGame = it,
+                                        modifier = Modifier
+                                            .padding(horizontal = 8.dp, vertical = 8.dp)
+                                            .width(200.dp)
+                                            .height(280.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
             }
@@ -249,81 +251,23 @@ fun SearchQueryAndFilterPage(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DiscoverTopBar(
-    searchQuery: String,
-    onSearchQueryValueChanged: (String) -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior,
-    onCloseClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TopAppBar(
-        title = {
-            TextField(
-                value = searchQuery,
-                onValueChange = onSearchQueryValueChanged,
-                placeholder = {
-                    Text(text = "What are you looking for?")
-                },
-                colors = TextFieldDefaults.colors(
-                    disabledIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent
-                ),
-                leadingIcon = {
-                    IconButton(
-                        onClick = { }
-                    ) {
-                        Icon(
-                            painter = rememberVectorPainter(image = Icons.Filled.Search),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxHeight()
-                        )
-                    }
-                },
-                shape = RoundedCornerShape(50),
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .fillMaxWidth()
-            )
-        },
-        modifier = modifier,
-        actions = {
-            IconButton(
-                onClick = onCloseClicked,
-                modifier = Modifier.requiredSize(48.dp)
-            ) {
-                Icon(
-                    painter = rememberVectorPainter(image = Icons.Filled.Tune),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxSize(),
-                    tint = MaterialTheme.colorScheme.tertiary
-                )
-            }
-        },
-        scrollBehavior = scrollBehavior
-    )
-}
-
 @Composable
 fun RichInfoGamesSection(
     games: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showGenre: Boolean = false
 ) {
     GamesSectionScaffold(
         gamesResult = games,
         modifier = modifier
     ) { gameWrapper ->
-        RichInfoGameCard(
-            richInfoGameWrapper = gameWrapper,
+        GameCard(
+            richInfoGame = gameWrapper.actualResource,
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 8.dp)
-                .width(248.dp)
-                .height(IntrinsicSize.Min)
+                .width(200.dp)
+                .height(280.dp),
+            showGenre = showGenre
         )
     }
 }
@@ -350,138 +294,6 @@ fun <T> GamesSectionScaffold(
             is Result.Error -> {
                 item {
                     LudiErrorBox(modifier = Modifier.fillMaxWidth())
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
-@Composable
-fun FiltersBottomSheet(
-    filtersState: DiscoverFiltersState,
-    modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit,
-    onCloseClicked: () -> Unit,
-    onSelectingPlatform: (Platform) -> Unit,
-    onUnselectingPlatform: (Platform) -> Unit,
-    onSelectingStore: (Store) -> Unit,
-    onUnselectingStore: (Store) -> Unit,
-    onSelectingGenre: (Genre) -> Unit,
-    onUnselectingGenre: (Genre) -> Unit
-) {
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        dragHandle = null,
-        modifier = modifier
-    ) {
-        val chipModifier = Modifier
-            .padding(vertical = 4.dp)
-            .width(IntrinsicSize.Max)
-            .animateContentSize()
-        OutlinedButton(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .align(Alignment.End),
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.tertiary
-            ),
-            border = BorderStroke(0.dp, Color.Transparent),
-            onClick = onCloseClicked
-        ) {
-            Text(
-                text = "Close"
-            )
-        }
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            Text(
-                text = "Platforms:",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Start
-            )
-            FlowRow(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                filtersState.allPlatforms.forEach {
-                    LudiFilterChip(
-                        selected = it in filtersState.selectedPlatforms,
-                        label = it.label,
-                        modifier = chipModifier,
-                        onClick = {
-                            if (it in filtersState.selectedPlatforms) {
-                                onUnselectingPlatform(it)
-                            } else {
-                                onSelectingPlatform(it)
-                            }
-                        }
-                    )
-                }
-            }
-            Text(
-                text = "Stores: ",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Start
-            )
-            FlowRow(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                filtersState.allStores.forEach {
-                    LudiFilterChip(
-                        selected = it in filtersState.selectedStores,
-                        label = it.label,
-                        modifier = chipModifier,
-                        onClick = {
-                            if (it in filtersState.selectedStores) {
-                                onUnselectingStore(it)
-                            } else {
-                                onSelectingStore(it)
-                            }
-                        }
-                    )
-                }
-            }
-            Text(
-                text = "Genres:",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Start
-            )
-            FlowRow(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                filtersState.allGenres.forEach {
-                    LudiFilterChip(
-                        selected = it in filtersState.selectedGenres,
-                        label = it.label,
-                        modifier = chipModifier,
-                        onClick = {
-                            if (it in filtersState.selectedGenres) {
-                                onUnselectingGenre(it)
-                            } else {
-                                onSelectingGenre(it)
-                            }
-                        }
-                    )
                 }
             }
         }
@@ -521,7 +333,7 @@ fun DiscoverScreenPreview() {
 fun SearchResultsPagePreview() {
     LudiTheme {
         SearchQueryAndFilterPage(
-            searchResult = Result.Success(richInfoGamesSamples),
+            searchResult = Result.Success(ResourceWrapper.ActualResource(richInfoGamesSamples.map { it.resource }.groupByGenre())),
             modifier = Modifier.fillMaxSize()
         )
     }

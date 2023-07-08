@@ -1,5 +1,6 @@
 package com.mr3y.ludi.ui.presenter.model
 
+import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
 data class DiscoverState(
@@ -18,7 +19,7 @@ sealed interface DiscoverStateGames {
         val realisticGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>
     ) : DiscoverStateGames
     data class SearchQueryBasedGames(
-        val richInfoGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>
+        val richInfoGames: Result<ResourceWrapper<Map<GameGenre, List<RichInfoGame>>>, Throwable>
     ) : DiscoverStateGames
 }
 
