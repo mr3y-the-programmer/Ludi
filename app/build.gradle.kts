@@ -165,6 +165,8 @@ dependencies {
     implementation(libs.accompanist.placeholder)
     implementation(libs.accompanist.system.ui.controller)
     implementation(libs.compose.html)
+    // Chrome custom tabs
+    implementation(libs.androidx.browser)
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
     // Instrumented tests

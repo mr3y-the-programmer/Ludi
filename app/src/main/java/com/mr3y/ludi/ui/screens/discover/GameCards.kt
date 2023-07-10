@@ -51,7 +51,7 @@ fun GameCard(
 ) {
     Card(
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier,
+        modifier = modifier
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
@@ -84,7 +84,7 @@ fun GameCard(
                                 0.3f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
                                 0.5f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.65f),
                                 0.7f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.85f),
-                                0.9f to MaterialTheme.colorScheme.primaryContainer,
+                                0.9f to MaterialTheme.colorScheme.primaryContainer
                             )
                         )
                         .padding(16.dp)

@@ -1,46 +1,28 @@
 package com.mr3y.ludi.ui.screens.deals
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
+import android.content.Context
+import android.net.Uri
+import androidx.annotation.ColorInt
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -50,26 +32,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.components.LudiErrorBox
-import com.mr3y.ludi.ui.components.LudiFilterChip
 import com.mr3y.ludi.ui.presenter.DealsViewModel
 import com.mr3y.ludi.ui.presenter.model.DealStore
-import com.mr3y.ludi.ui.presenter.model.DealsFiltersState
 import com.mr3y.ludi.ui.presenter.model.DealsState
 import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.ui.presenter.model.GiveawayStore
-import com.mr3y.ludi.ui.presenter.model.GiveawaysFiltersState
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.theme.LudiTheme
 
@@ -116,10 +95,9 @@ fun DealsScreen(
     }
     val listState = rememberKeyedLazyListState(input = selectedTab)
     Column(
-        modifier = modifier
-            .padding(WindowInsets.statusBars.asPaddingValues())
+        modifier = modifier.padding(WindowInsets.statusBars.asPaddingValues())
     ) {
-        val tabsLabels = listOf("Deals", "Giveaways")
+        val tabsLabels = listOf(stringResource(R.string.deals_label), stringResource(R.string.giveaways_label))
         SegmentedTabRow(
             numOfTabs = tabsLabels.size,
             selectedTabIndex = selectedTab,
@@ -150,14 +128,17 @@ fun DealsScreen(
             },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { contentPadding ->
+            val context = LocalContext.current
+            val chromeTabToolbarColor = MaterialTheme.colorScheme.primaryContainer.toArgb()
             LazyColumn(
                 state = listState,
                 modifier = Modifier
                     .padding(contentPadding)
-                    .fillMaxSize()
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (selectedTab == 0) {
-                    SectionScaffold(
+                    sectionScaffold(
                         result = dealsState.deals
                     ) {
                         Deal(
@@ -165,30 +146,30 @@ fun DealsScreen(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .fillMaxWidth()
-                                .height(160.dp)
+                                .height(160.dp),
+                            onClick = {
+                                if (it is ResourceWrapper.ActualResource) {
+                                    val dealUrl = Uri.parse("https://www.cheapshark.com/redirect?dealID=${it.resource.dealID}")
+                                    launchChromeCustomTab(context, dealUrl, chromeTabToolbarColor)
+                                }
+                            }
                         )
                     }
                 } else {
-                    SectionScaffold(
-                        result = dealsState.mmoGamesGiveaways
-                    ) {
-                        MMOGameGiveaway(
-                            giveawayWrapper = it,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .fillMaxWidth()
-                                .height(120.dp)
-                        )
-                    }
-                    SectionScaffold(
-                        result = dealsState.otherGamesGiveaways
+                    sectionScaffold(
+                        result = dealsState.giveaways
                     ) {
                         GamerPowerGameGiveaway(
                             giveawayWrapper = it,
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .fillMaxWidth()
-                                .height(120.dp)
+                                .height(120.dp),
+                            onClick = {
+                                if (it is ResourceWrapper.ActualResource) {
+                                    launchChromeCustomTab(context, Uri.parse(it.resource.gamerPowerUrl), chromeTabToolbarColor)
+                                }
+                            }
                         )
                     }
                 }
@@ -210,6 +191,18 @@ fun DealsScreen(
             onUnselectingGiveawayStore = onUnselectingGiveawayStore
         )
     }
+}
+
+fun launchChromeCustomTab(context: Context, url: Uri, @ColorInt toolbarColor: Int) {
+    val customTabsIntent = CustomTabsIntent.Builder()
+        .setDefaultColorSchemeParams(
+            CustomTabColorSchemeParams.Builder()
+                .setToolbarColor(toolbarColor)
+                .build()
+        )
+        .build()
+
+    customTabsIntent.launchUrl(context, url)
 }
 
 /**
@@ -253,73 +246,7 @@ fun rememberKeyedLazyListState(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchFilterBar(
-    searchQuery: String,
-    onSearchQueryValueChanged: (String) -> Unit,
-    onFilterClicked: () -> Unit,
-    showSearchBar: Boolean,
-    scrollBehavior: TopAppBarScrollBehavior,
-    modifier: Modifier = Modifier
-) {
-    TopAppBar(
-        title = {
-            if (showSearchBar) {
-                TextField(
-                    value = searchQuery,
-                    onValueChange = onSearchQueryValueChanged,
-                    shape = RoundedCornerShape(50),
-                    placeholder = {
-                        Text(text = "Search for a specific deal")
-                    },
-                    colors = TextFieldDefaults.colors(
-                        disabledIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        errorIndicatorColor = Color.Transparent
-                    ),
-                    leadingIcon = {
-                        IconButton(
-                            onClick = { /*TODO*/ }
-                        ) {
-                            Icon(
-                                painter = rememberVectorPainter(image = Icons.Filled.Search),
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxHeight()
-                            )
-                        }
-                    },
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .fillMaxWidth()
-                )
-            }
-        },
-        actions = {
-            IconButton(
-                onClick = onFilterClicked,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .align(Alignment.CenterVertically)
-                    .size(48.dp)
-                    .padding(4.dp)
-            ) {
-                Icon(
-                    painter = rememberVectorPainter(image = Icons.Filled.Tune),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    tint = MaterialTheme.colorScheme.tertiary
-                )
-            }
-        },
-        modifier = modifier,
-        scrollBehavior = scrollBehavior,
-        windowInsets = WindowInsets(0.dp)
-    )
-}
-
-fun <T> LazyListScope.SectionScaffold(
+fun <T> LazyListScope.sectionScaffold(
     result: Result<List<ResourceWrapper<T>>, Throwable>,
     itemContent: @Composable (ResourceWrapper<T>) -> Unit
 ) {
@@ -339,148 +266,6 @@ fun <T> LazyListScope.SectionScaffold(
     }
 }
 
-internal enum class BottomSheetType {
-    Deals,
-    Giveaways
-}
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
-@Composable
-internal fun FiltersBottomSheet(
-    dealsFiltersState: DealsFiltersState,
-    giveawaysFiltersState: GiveawaysFiltersState,
-    type: BottomSheetType,
-    modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit,
-    onCloseClicked: () -> Unit,
-    onSelectingGiveawayPlatform: (GiveawayPlatform) -> Unit,
-    onUnselectingGiveawayPlatform: (GiveawayPlatform) -> Unit,
-    onSelectingDealStore: (DealStore) -> Unit,
-    onUnselectingDealStore: (DealStore) -> Unit,
-    onSelectingGiveawayStore: (GiveawayStore) -> Unit,
-    onUnselectingGiveawayStore: (GiveawayStore) -> Unit
-) {
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        dragHandle = null,
-        modifier = modifier
-    ) {
-        val chipModifier = Modifier
-            .padding(vertical = 4.dp)
-            .width(IntrinsicSize.Max)
-            .animateContentSize()
-        OutlinedButton(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .align(Alignment.End),
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.tertiary
-            ),
-            border = BorderStroke(0.dp, Color.Transparent),
-            onClick = onCloseClicked
-        ) {
-            Text(
-                text = "Close"
-            )
-        }
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            if (type == BottomSheetType.Deals) {
-                Text(
-                    text = "Stores:",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
-                FlowRow(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    dealsFiltersState.allStores.forEach {
-                        LudiFilterChip(
-                            selected = it in dealsFiltersState.selectedStores,
-                            label = it.label,
-                            modifier = chipModifier,
-                            onClick = {
-                                if (it in dealsFiltersState.selectedStores) {
-                                    onUnselectingDealStore(it)
-                                } else {
-                                    onSelectingDealStore(it)
-                                }
-                            }
-                        )
-                    }
-                }
-            } else {
-                Text(
-                    text = "Stores: ",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
-                FlowRow(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    giveawaysFiltersState.allStores.forEach {
-                        LudiFilterChip(
-                            selected = it in giveawaysFiltersState.selectedStores,
-                            label = it.name,
-                            modifier = chipModifier,
-                            onClick = {
-                                if (it in giveawaysFiltersState.selectedStores) {
-                                    onUnselectingGiveawayStore(it)
-                                } else {
-                                    onSelectingGiveawayStore(it)
-                                }
-                            }
-                        )
-                    }
-                }
-                Text(
-                    text = "Platforms: ",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
-                FlowRow(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    giveawaysFiltersState.allPlatforms.forEach {
-                        LudiFilterChip(
-                            selected = it in giveawaysFiltersState.selectedPlatforms,
-                            label = it.name,
-                            modifier = chipModifier,
-                            onClick = {
-                                if (it in giveawaysFiltersState.selectedPlatforms) {
-                                    onUnselectingGiveawayPlatform(it)
-                                } else {
-                                    onSelectingGiveawayPlatform(it)
-                                }
-                            }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF, device = "id:pixel_6")
 @Composable
 fun DealsScreenPreview() {
@@ -489,8 +274,7 @@ fun DealsScreenPreview() {
             DealsState(
                 searchQuery = "",
                 deals = Result.Success(dealSamples),
-                mmoGamesGiveaways = Result.Success(mmoGiveawaysSamples),
-                otherGamesGiveaways = Result.Success(otherGamesGiveawaysSamples),
+                giveaways = Result.Success(otherGamesGiveawaysSamples),
                 dealsFiltersState = DealsViewModel.InitialDealsFiltersState,
                 giveawaysFiltersState = DealsViewModel.InitialGiveawaysFiltersState
             )

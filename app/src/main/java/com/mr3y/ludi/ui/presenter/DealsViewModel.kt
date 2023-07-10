@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mr3y.ludi.core.model.Deal
 import com.mr3y.ludi.core.model.GamerPowerGiveawayEntry
-import com.mr3y.ludi.core.model.MMOGiveawayEntry
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.repository.DealsRepository
 import com.mr3y.ludi.core.repository.query.DealsQuery
@@ -31,7 +30,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -88,30 +86,27 @@ class DealsViewModel @Inject constructor(
         deals,
         giveawaysFiltersState,
         gamerPowerGiveaways,
-        flow { emit(dealsRepository.queryMMOGiveaways()) },
         isDealsLoading,
         isGiveawaysLoading
     ) { updates ->
-        val isDealsLoading = updates[6] as Boolean
-        val isGiveawaysLoading = updates[7] as Boolean
+        val isDealsLoading = updates[5] as Boolean
+        val isGiveawaysLoading = updates[6] as Boolean
         DealsState(
             searchQuery = updates[0] as String,
             dealsFiltersState = updates[1] as DealsFiltersState,
             deals = if (isDealsLoading) Initial.deals else (updates[2] as Result<List<Deal>, Throwable>).wrapResultResources(),
             giveawaysFiltersState = (updates[3] as GiveawaysFiltersState),
-            otherGamesGiveaways = if (isGiveawaysLoading) {
-                Initial.otherGamesGiveaways
+            giveaways = if (isGiveawaysLoading) {
+                Initial.giveaways
             } else {
                 (updates[4] as Result<List<GamerPowerGiveawayEntry>, Throwable>).wrapResultResources(
                     transform = { giveaways ->
                         giveaways.filter { giveaway ->
-                            giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault()))
-                                ?: true
+                            giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault())) ?: true
                         }
                     }
                 )
-            },
-            mmoGamesGiveaways = (updates[5] as Result<List<MMOGiveawayEntry>, Throwable>).wrapResultResources()
+            }
         )
     }.stateIn(
         viewModelScope,
@@ -247,7 +242,6 @@ class DealsViewModel @Inject constructor(
         )
         val Initial = DealsState(
             "",
-            Result.Success(placeholderList()),
             Result.Success(placeholderList()),
             Result.Success(placeholderList()),
             InitialDealsFiltersState,

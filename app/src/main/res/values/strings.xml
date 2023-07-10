@@ -10,4 +10,9 @@
     <string name="on_boarding_fab_state_finish">Finish</string>
     <string name="games_page_selected_label">Selected</string>
     <string name="games_page_suggestions_label">Suggestions</string>
+    <string name="deals_label">Deals</string>
+    <string name="giveaways_label">Giveaways</string>
+    <string name="close_filters">Close</string>
+    <string name="deals_search_filter_bar_placeholder">Search for a specific deal</string>
+    <string name="deals_filter_icon_content_description">Show filters</string>
 </resources>

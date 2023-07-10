@@ -200,7 +200,7 @@ fun SearchQueryAndFilterPage(
 ) {
     LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         when (searchResult) {
             is Result.Success -> {

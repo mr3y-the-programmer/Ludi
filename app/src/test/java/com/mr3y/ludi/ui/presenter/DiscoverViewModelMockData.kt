@@ -1146,7 +1146,7 @@ val games = listOfNotNull(
                 imageUrl = "https://media.rawg.io/media/games/2e1/2e187b31e5cee21c110bd16798d75fab.jpg"
             )
         )
-    ).toRichInfoGame(),
+    ).toRichInfoGame()
 )
 
 val gameWithNoGenres = RAWGShallowGame(
@@ -2553,7 +2553,7 @@ val expectedGamesGroupedByGenre = mapOf(
                 )
             ).toRichInfoGame()
         )
-    ),
+    )
 )
 
 val otherGenreWithGames = Pair(

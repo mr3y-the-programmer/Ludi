@@ -1,5 +1,6 @@
 package com.mr3y.ludi.ui.screens.deals
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,8 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -33,9 +34,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
 import com.mr3y.ludi.core.model.Deal
 import com.mr3y.ludi.core.model.GamerPowerGiveawayEntry
-import com.mr3y.ludi.core.model.MMOGiveawayEntry
 import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.actualResource
@@ -50,14 +52,15 @@ import kotlin.time.toKotlinDuration
 @Composable
 fun Deal(
     dealWrapper: ResourceWrapper<Deal>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     val deal = dealWrapper.actualResource
     OfferScaffold(
         thumbnailUrl = deal?.thumbnailUrl,
-        title = deal?.name ?: "Deal Placeholder",
+        title = deal?.name,
         modifier = modifier,
-        showPlaceholder = dealWrapper is ResourceWrapper.Placeholder
+        onClick = onClick
     ) {
         if (deal != null) {
             Row(
@@ -65,7 +68,7 @@ fun Deal(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 val salePrice = buildAnnotatedString {
-                    withStyle(style = MaterialTheme.typography.titleLarge.toSpanStyle().copy(color = Color(0xFF07DA74))) {
+                    withStyle(style = MaterialTheme.typography.titleLarge.toSpanStyle().copy(color = MaterialTheme.colorScheme.onSurface)) {
                         append(deal.salePriceInUsDollar.toString())
                         withStyle(style = MaterialTheme.typography.titleSmall.toSpanStyle()) {
                             append('$')
@@ -81,7 +84,6 @@ fun Deal(
                 )
 
                 val normalPrice = buildAnnotatedString {
-                    append("normal price: ")
                     withStyle(
                         style = MaterialTheme.typography.titleLarge.toSpanStyle().copy(
                             textDecoration = TextDecoration.LineThrough,
@@ -114,48 +116,24 @@ fun Deal(
 }
 
 @Composable
-fun MMOGameGiveaway(
-    giveawayWrapper: ResourceWrapper<MMOGiveawayEntry>,
-    modifier: Modifier = Modifier
-) {
-    val giveaway = giveawayWrapper.actualResource
-    OfferScaffold(
-        thumbnailUrl = giveaway?.thumbnailUrl,
-        title = giveaway?.title ?: "Giveaway Placeholder",
-        modifier = modifier,
-        showPlaceholder = giveawayWrapper is ResourceWrapper.Placeholder
-    ) {
-        if (giveaway != null) {
-            Text(
-                text = "keys Left: ${giveaway.keysLeftPercent.value}%",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Start,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
-
-@Composable
 fun GamerPowerGameGiveaway(
     giveawayWrapper: ResourceWrapper<GamerPowerGiveawayEntry>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     val giveaway = giveawayWrapper.actualResource
     OfferScaffold(
         thumbnailUrl = giveaway?.thumbnailUrl,
-        title = giveaway?.title ?: "Giveaway Placeholder",
+        title = giveaway?.title,
         modifier = modifier,
-        showPlaceholder = giveawayWrapper is ResourceWrapper.Placeholder
+        onClick = onClick
     ) {
         if (giveaway != null) {
             if (giveaway.endDateTime != null) {
                 var currentTime: ZonedDateTime by remember { mutableStateOf(ZonedDateTime.now()) }
                 LaunchedEffect(Unit) {
                     while (isActive) {
-                        delay(60 * 1000L) // update time every 1 minute
+                        delay(60 * 1000L)
                         currentTime = ZonedDateTime.now()
                     }
                 }
@@ -197,17 +175,27 @@ private fun durationBetween(start: ZonedDateTime, end: ZonedDateTime): Triple<St
 @Composable
 private fun OfferScaffold(
     thumbnailUrl: String?,
-    title: String,
+    title: String?,
     modifier: Modifier = Modifier,
-    showPlaceholder: Boolean = false,
+    onClick: () -> Unit,
     other: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier.padding(8.dp)
+        modifier = modifier
+            .padding(8.dp)
+            .clickable(
+                role = Role.Button,
+                onClick = onClick
+            )
     ) {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .defaultPlaceholder(
+                    isVisible = title == null,
+                    highlight = PlaceholderHighlight.shimmer()
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -215,25 +203,25 @@ private fun OfferScaffold(
                 model = thumbnailUrl,
                 modifier = Modifier
                     .fillMaxHeight()
-                    .aspectRatio(1f)
-                    .defaultPlaceholder(showPlaceholder),
+                    .aspectRatio(1f),
                 contentDescription = null,
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.FillBounds
             )
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.defaultPlaceholder(showPlaceholder)
-                )
-                this.other()
+            if (title != null) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        textAlign = TextAlign.Start,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    this.other()
+                }
             }
         }
     }
@@ -248,21 +236,8 @@ fun DealPreview() {
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min)
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
-@Composable
-fun MMOGiveawayPreview() {
-    LudiTheme {
-        MMOGameGiveaway(
-            giveawayWrapper = mmoGiveawaysSamples.first(),
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min),
+            onClick = {}
         )
     }
 }
@@ -276,7 +251,8 @@ fun GamerPowerGiveawayPreview() {
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min),
+            onClick = {}
         )
     }
 }
