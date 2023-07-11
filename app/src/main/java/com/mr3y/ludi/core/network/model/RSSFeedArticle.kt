@@ -36,12 +36,12 @@ fun Article.toNewReleaseArticle(source: Source): NewReleaseArticle? {
 fun Article.toReviewArticle(source: Source): ReviewArticle? {
     return ReviewArticle(
         title = Title.Plain(title ?: return null),
-        description = MarkupText(description ?: return null),
+        description = description?.let { MarkupText(it) },
         source = source,
         imageUrl = image,
         content = content?.let { MarkupText(it) },
         sourceLinkUrl = link ?: return null,
-        author = author ?: return null,
-        publicationDate = pubDate?.toZonedDateTime() ?: return null
+        author = author,
+        publicationDate = pubDate?.toZonedDateTime()
     )
 }
