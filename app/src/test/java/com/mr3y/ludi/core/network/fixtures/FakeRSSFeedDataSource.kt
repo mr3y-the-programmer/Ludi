@@ -1,0 +1,88 @@
+package com.mr3y.ludi.core.network.fixtures
+
+import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.model.Source
+import com.mr3y.ludi.core.network.datasources.RSSFeedDataSource
+import com.mr3y.ludi.core.network.datasources.internal.RSSFeedSamples
+import com.prof.rssparser.Article
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+
+class FakeRSSFeedDataSource : RSSFeedDataSource {
+
+    val cache: Map<Feed, List<Article>?>
+        get() = _cache
+
+    private val _cache: HashMap<Feed, List<Article>?> = hashMapOf(Feed.News to null, Feed.Reviews to null, Feed.NewReleases to null)
+    private val simulateFailure = MutableStateFlow(false)
+    private var failureCause: Exception? = null
+    private val simulatedFailureSources = mutableSetOf<Source>()
+
+    override suspend fun fetchNewsFeed(source: Source): Result<List<Article>, Throwable> {
+        return if (_cache[Feed.News] != null && source !in simulatedFailureSources) {
+            Result.Success(_cache[Feed.News] as List<Article>)
+        } else {
+            delay(300) // simulate network delay
+            return if (simulateFailure.value || source in simulatedFailureSources) {
+                Result.Error(failureCause)
+            } else {
+                Result.Success(RSSFeedSamples.NewsFeed.expectedArticles).also { _cache[Feed.News] = it.data }
+            }
+        }
+    }
+
+    override suspend fun fetchReviewsFeed(source: Source): Result<List<Article>, Throwable> {
+        return if (_cache[Feed.Reviews] != null && source !in simulatedFailureSources) {
+            Result.Success(_cache[Feed.Reviews] as List<Article>)
+        } else {
+            delay(300) // simulate network delay
+            return if (simulateFailure.value || source in simulatedFailureSources) {
+                Result.Error(failureCause)
+            } else {
+                Result.Success(RSSFeedSamples.ReviewsFeed.expectedArticles).also { _cache[Feed.Reviews] = it.data }
+            }
+        }
+    }
+
+    override suspend fun fetchNewReleasesFeed(source: Source): Result<List<Article>, Throwable> {
+        return if (_cache[Feed.NewReleases] != null && source !in simulatedFailureSources) {
+            Result.Success(_cache[Feed.NewReleases] as List<Article>)
+        } else {
+            delay(300) // simulate network delay
+            return if (simulateFailure.value || source in simulatedFailureSources) {
+                Result.Error(failureCause)
+            } else {
+                Result.Success(RSSFeedSamples.NewReleasesFeed.expectedArticles).also { _cache[Feed.NewReleases] = it.data }
+            }
+        }
+    }
+
+    fun simulateSuccess() {
+        simulateFailure.update { false }
+        simulatedFailureSources.clear()
+    }
+
+    fun simulateFailure(cause: Exception? = null) {
+        failureCause = cause
+        simulateFailure.update { true }
+    }
+
+    fun simulateFailureOnDataSource(source: Source, cause: Exception? = null) {
+        failureCause = cause
+        simulatedFailureSources += source
+    }
+
+    fun reset() {
+        _cache.putAll(hashMapOf(Feed.News to null, Feed.Reviews to null, Feed.NewReleases to null))
+        simulateFailure.update { false }
+        failureCause = null
+        simulatedFailureSources.clear()
+    }
+}
+
+enum class Feed {
+    News,
+    Reviews,
+    NewReleases
+}

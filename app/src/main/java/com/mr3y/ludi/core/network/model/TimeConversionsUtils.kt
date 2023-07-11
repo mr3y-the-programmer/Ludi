@@ -4,10 +4,6 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-internal fun String?.ignoreIfEmptyOrNull(): String? {
-    return takeIf { this != null && this.isNotEmpty() }
-}
-
 internal fun Long.convertEpochSecondToZonedDateTime(): ZonedDateTime {
     return ZonedDateTime.ofInstant(Instant.ofEpochSecond(this), ZoneId.systemDefault())
 }
