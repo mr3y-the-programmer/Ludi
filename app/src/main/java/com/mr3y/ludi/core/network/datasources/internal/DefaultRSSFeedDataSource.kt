@@ -52,12 +52,29 @@ class DefaultRSSFeedDataSource @Inject constructor(
             Source.GiantBomb to "https://www.giantbomb.com/feeds/news",
             Source.GameSpot to "https://www.gamespot.com/feeds/game-news",
             Source.IGN to "https://feeds.feedburner.com/ign/games-all",
-            Source.TechRadar to "https://www.techradar.com/rss/news/gaming"
+            Source.TechRadar to "https://www.techradar.com/rss/news/gaming",
+            Source.PCGamesN to "https://www.pcgamesn.com/mainrss.xml",
+            Source.RockPaperShotgun to "https://www.rockpapershotgun.com/feed/news",
+            Source.PCInvasion to "https://www.pcinvasion.com/news/feed/",
+            Source.GloriousGaming to "https://www.gloriousgaming.com/blogs/gaming-news.atom",
+            Source.EuroGamer to "https://www.eurogamer.net/feed/news",
+            Source.VG247 to "https://www.vg247.com/feed/news",
+            Source.TheGamer to "https://www.thegamer.com/feed/category/game-news/",
+            Source.GameRant to "https://gamerant.com/feed/category/gaming/",
+            Source.VentureBeat to "https://venturebeat.com/category/pc-gaming/feed/",
+            Source.PCGamer to "https://www.pcgamer.com/rss/",
+            Source.Polygon to "https://www.polygon.com/rss/index.xml"
         )
         val supportedReviewsFeedDataSources = mapOf(
             Source.GiantBomb to "https://www.giantbomb.com/feeds/reviews",
             Source.GameSpot to "https://www.gamespot.com/feeds/reviews",
-            Source.TechRadar to "https://www.techradar.com/rss/reviews/gaming"
+            Source.TechRadar to "https://www.techradar.com/rss/reviews/gaming",
+            Source.RockPaperShotgun to "https://www.rockpapershotgun.com/feed/reviews",
+            Source.EuroGamer to "https://www.eurogamer.net/feed/reviews",
+            Source.VG247 to "https://www.vg247.com/feed/reviews",
+            Source.TheGamer to "https://www.thegamer.com/feed/category/game-reviews/",
+            Source.GameRant to "https://gamerant.com/feed/category/game-reviews/",
+            Source.BrutalGamer to "https://brutalgamer.com/category/reviews/pc-reviews/feed/"
         )
         val supportedNewReleasesFeedDataSources = mapOf(
             Source.GiantBomb to "https://www.giantbomb.com/feeds/new_releases",

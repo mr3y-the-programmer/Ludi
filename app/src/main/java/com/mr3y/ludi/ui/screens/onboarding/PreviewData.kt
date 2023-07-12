@@ -116,8 +116,14 @@ val PreviewNewsDataSources = listOf(
     NewsDataSource("Game spot", R.drawable.game_spot_logo, Source.GameSpot),
     NewsDataSource("Giant bomb", R.drawable.giant_bomb_logo, Source.GiantBomb),
     NewsDataSource("IGN", R.drawable.ign_logo, Source.IGN),
-    NewsDataSource("MMO bomb", R.drawable.mmobomb_logo, Source.MMOBomb),
-    NewsDataSource("Tech Radar", R.drawable.tech_radar_logo, Source.TechRadar)
+    NewsDataSource("Tech Radar", R.drawable.tech_radar_logo, Source.TechRadar),
+    NewsDataSource("PCGamesN", R.drawable.pcgamesn_logo, Source.PCGamesN),
+    NewsDataSource("PCGamer", R.drawable.pcgamer_logo, Source.PCGamer),
+    NewsDataSource("PC Invasion", R.drawable.pcinvasion_logo, Source.PCInvasion),
+    NewsDataSource("Euro Gamer", R.drawable.eurogamer_logo, Source.EuroGamer),
+    NewsDataSource("VentureBeat", R.drawable.venturebeat_logo, Source.VentureBeat),
+    NewsDataSource("VG247", R.drawable.vg247_logo, Source.VG247),
+    NewsDataSource("Glorious Gaming", R.drawable.gloriousgaming_logo, Source.GloriousGaming)
 )
 
 val PreviewOnboardingState = OnboardingState(

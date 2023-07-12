@@ -24,7 +24,8 @@ data class MMOGamesArticle(
     val articleUrl: String
 ) {
     fun toNewsArticle(): NewsArticle {
-        return NewsArticle(
+        TODO("Not Implemented")
+        /*return NewsArticle(
             id = id,
             title = Title.Plain(title),
             description = MarkupText(description),
@@ -35,7 +36,7 @@ data class MMOGamesArticle(
             imageUrl = image,
             author = null,
             publicationDate = null
-        )
+        )*/
     }
 }
 

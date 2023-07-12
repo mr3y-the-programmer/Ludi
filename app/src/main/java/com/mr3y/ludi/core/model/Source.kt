@@ -4,6 +4,17 @@ enum class Source {
     GiantBomb,
     GameSpot,
     IGN,
-    MMOBomb,
-    TechRadar
+    TechRadar,
+    PCGamesN,
+    RockPaperShotgun,
+    PCInvasion,
+    GloriousGaming,
+    EuroGamer,
+    VG247,
+    TheGamer,
+    GameRant,
+    BrutalGamer,
+    VentureBeat,
+    Polygon,
+    PCGamer
 }
