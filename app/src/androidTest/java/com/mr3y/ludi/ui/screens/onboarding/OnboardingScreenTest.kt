@@ -199,24 +199,35 @@ class OnboardingScreenTest {
 
         composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_data_sources_page_title)).assertIsDisplayed()
 
-        val allSources = FakeOnboardingState.allNewsDataSources
-        allSources.forEach { source ->
-            composeTestRule.onNodeWithText(source.name).assertIsDisplayed()
-            composeTestRule.onNodeWithText(source.name).assertIsSelectable()
-            composeTestRule.onNodeWithText(source.name).assertIsNotSelected()
-        }
-
         composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_skip)).assertIsDisplayed()
 
-        val randomSelectedSource = allSources.random().name
-        composeTestRule.onNodeWithText(randomSelectedSource).performClick()
-        composeTestRule.onNodeWithText(randomSelectedSource).assertIsSelected()
-        composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_finish)).assertIsDisplayed()
+        val allSources = FakeOnboardingState.allNewsDataSources
+        allSources.forEach { source ->
+            composeTestRule.onNodeWithText(source.name).assertIsSelectable()
+            composeTestRule.onNodeWithText(source.name).assertIsNotSelected()
+
+            composeTestRule.onNodeWithText(source.name).performClick()
+            composeTestRule.onNodeWithText(source.name).assertIsSelected()
+
+            composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_finish)).assertIsDisplayed()
+        }
 
         restorationTester.emulateSavedInstanceStateRestore()
 
         composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_finish)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(randomSelectedSource).performClick()
-        composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_skip)).assertIsDisplayed()
+
+        allSources.forEachIndexed { index, source ->
+            composeTestRule.onNodeWithText(source.name).assertIsSelectable()
+            composeTestRule.onNodeWithText(source.name).assertIsSelected()
+
+            composeTestRule.onNodeWithText(source.name).performClick()
+            composeTestRule.onNodeWithText(source.name).assertIsNotSelected()
+
+            if (index != allSources.lastIndex) {
+                composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_finish)).assertIsDisplayed()
+            } else {
+                composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_skip)).assertIsDisplayed()
+            }
+        }
     }
 }

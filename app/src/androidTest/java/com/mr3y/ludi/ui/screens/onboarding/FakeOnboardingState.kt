@@ -1,7 +1,9 @@
 package com.mr3y.ludi.ui.screens.onboarding
 
+import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.network.model.DetailedRAWGPlatformInfo
 import com.mr3y.ludi.core.network.model.RAWGGameGenre
 import com.mr3y.ludi.core.network.model.RAWGGameScreenshot
@@ -13,6 +15,7 @@ import com.mr3y.ludi.core.network.model.RAWGStoreProperties
 import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfoWithId
 import com.mr3y.ludi.core.network.model.toRichInfoGame
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
+import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.ui.presenter.model.OnboardingState
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
@@ -1258,9 +1261,15 @@ private val fakeGames = listOfNotNull(
 val FakeOnboardingGames = OnboardingGames.SuggestedGames(Result.Success(fakeGames.map { ResourceWrapper.ActualResource(it) }))
 val FakeSelectedGames = listOf(FavouriteGame(id = 3498, title = "Grand Theft Auto V", imageUrl = "https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg", rating = 4.47f))
 
+val FakeNewsDataSources = listOf(
+    NewsDataSource("Game spot", R.drawable.game_spot_logo, Source.GameSpot),
+    NewsDataSource("Giant bomb", R.drawable.giant_bomb_logo, Source.GiantBomb),
+    NewsDataSource("IGN", R.drawable.ign_logo, Source.IGN)
+)
+
 val FakeOnboardingState = OnboardingState(
-    allNewsDataSources = PreviewNewsDataSources,
-    followedNewsDataSources = PreviewNewsDataSources.subList(0, 2),
+    allNewsDataSources = FakeNewsDataSources,
+    followedNewsDataSources = listOf(FakeNewsDataSources.random()),
     isUpdatingFollowedNewsDataSources = false,
     searchQuery = "",
     onboardingGames = FakeOnboardingGames,

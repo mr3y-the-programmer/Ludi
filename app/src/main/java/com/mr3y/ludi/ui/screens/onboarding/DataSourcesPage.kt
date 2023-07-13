@@ -1,35 +1,21 @@
 package com.mr3y.ludi.ui.screens.onboarding
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -41,7 +27,6 @@ import com.mr3y.ludi.R
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.theme.LudiTheme
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NewsSourcesPage(
     allNewsDataSources: List<NewsDataSource>,
@@ -74,19 +59,20 @@ fun NewsSourcesPage(
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
-            allNewsDataSources.forEach {
+            allNewsDataSources.forEachIndexed { index, newsDataSource ->
                 NewsSourceTile(
-                    newsDataSource = it,
-                    selected = it in selectedNewsSources,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .width(IntrinsicSize.Max),
+                    newsDataSource = newsDataSource,
+                    selected = newsDataSource in selectedNewsSources,
                     onToggleSelection = onToggleNewsSourceTile
                 )
+                if (index != allNewsDataSources.lastIndex) {
+                    Divider(modifier = Modifier.padding(horizontal = 8.dp))
+                }
             }
         }
     }
@@ -99,61 +85,39 @@ fun NewsSourceTile(
     selected: Boolean = false,
     onToggleSelection: (NewsDataSource) -> Unit
 ) {
-    Card(
+    Row(
         modifier = modifier
+            .fillMaxWidth()
             .selectable(
                 selected,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
                 role = Role.Button,
                 onClick = { onToggleSelection(newsDataSource) }
             )
-            .padding(4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        shape = MaterialTheme.shapes.small
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colorScheme.surfaceVariant)
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(64.dp),
                 painter = painterResource(id = newsDataSource.drawableId),
-                contentDescription = null
+                contentDescription = null,
+                tint = Color.Unspecified // instruct Icon to not override android:fillColor specified in the vector drawable
             )
             Text(
                 text = newsDataSource.name,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.titleLarge
             )
-            val unselectedColor = MaterialTheme.colorScheme.background
-            val circleModifier = Modifier
-                .size(20.dp)
-                .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
-                .clip(CircleShape)
-            Box(
-                modifier = circleModifier
-                    .then(
-                        if (selected) circleModifier else circleModifier.drawBehind { drawCircle(color = unselectedColor) }
-                    ),
-                contentAlignment = Alignment.Center,
-                propagateMinConstraints = true
-            ) {
-                if (selected) {
-                    Icon(
-                        imageVector = Icons.Filled.CheckCircle,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
         }
+        Checkbox(
+            checked = selected,
+            onCheckedChange = null
+        )
     }
 }
 
