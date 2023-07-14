@@ -33,7 +33,7 @@ data class GamerPowerGiveawayEntry(
     val description: String,
     val instructions: String,
     val giveawayUrl: String,
-    val publishedDateTime: ZonedDateTime,
+    val publishedDateTime: ZonedDateTime?,
     val type: String,
     val platforms: List<String>,
     val endDateTime: ZonedDateTime?,

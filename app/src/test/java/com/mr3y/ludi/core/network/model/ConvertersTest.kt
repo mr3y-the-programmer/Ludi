@@ -3,8 +3,6 @@ package com.mr3y.ludi.core.network.model
 import org.junit.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import java.time.LocalDate
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -30,10 +28,28 @@ class ConvertersTest {
             "2021-09-16T15:16:31"
         )
         val expected = listOf(
-            ZonedDateTime.of(LocalDate.of(2023, 3, 24), LocalTime.of(15, 16, 31), ZoneId.systemDefault()),
-            ZonedDateTime.of(LocalDate.of(2021, 9, 16), LocalTime.of(15, 16, 31), ZoneId.systemDefault())
+            ZonedDateTime.parse("2023-03-24T15:16:31Z"),
+            ZonedDateTime.parse("2021-09-16T15:16:31Z")
         )
-        expectThat(dateTimeStringsBeforeParsing.map { it.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME, isLenient = true) }).isEqualTo(expected)
+        expectThat(dateTimeStringsBeforeParsing.map { it.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME) }).isEqualTo(expected)
+    }
+
+    @Test
+    fun whenParsingValidZonedDateTime_ReturnTheDateTimeUnchanged() {
+        val dateTimeString = "2023-03-24T15:16:31Z"
+        val expected = ZonedDateTime.parse("2023-03-24T15:16:31Z")
+        expectThat(dateTimeString.toZonedDateTime(pattern = Pattern.RFC_1123)).isEqualTo(expected)
+        expectThat(dateTimeString.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME)).isEqualTo(expected)
+    }
+
+    @Test
+    fun whenParsingInvalidZonedDateTimeString_ReturnNull() {
+        val invalidDateTimeStrings = listOf(
+            "Invalid date time",
+            "2023-03-24  15:16Z"
+        )
+        expectThat(invalidDateTimeStrings.map { it.toZonedDateTime(pattern = Pattern.RFC_1123) }).isEqualTo(listOf(null, null))
+        expectThat(invalidDateTimeStrings.map { it.toZonedDateTime(pattern = Pattern.RFC_1123) }).isEqualTo(listOf(null, null))
     }
 
     @Test
