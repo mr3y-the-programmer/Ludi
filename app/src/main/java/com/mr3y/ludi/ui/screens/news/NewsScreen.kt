@@ -1,7 +1,14 @@
 package com.mr3y.ludi.ui.screens.news
 
+import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,27 +26,44 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mr3y.ludi.R
+import com.mr3y.ludi.core.model.Article
 import com.mr3y.ludi.core.model.MarkupText
 import com.mr3y.ludi.core.model.NewReleaseArticle
 import com.mr3y.ludi.core.model.NewsArticle
@@ -48,14 +72,14 @@ import com.mr3y.ludi.core.model.ReviewArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.Title
 import com.mr3y.ludi.ui.components.LudiErrorBox
-import com.mr3y.ludi.ui.components.LudiNewRelease
-import com.mr3y.ludi.ui.components.LudiNewsArticleCard
-import com.mr3y.ludi.ui.components.LudiReviewArticleCard
 import com.mr3y.ludi.ui.components.LudiSectionHeader
+import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
+import com.mr3y.ludi.ui.components.launchChromeCustomTab
 import com.mr3y.ludi.ui.presenter.NewsViewModel
 import com.mr3y.ludi.ui.presenter.model.NewsState
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.theme.LudiTheme
+import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 
 @Composable
@@ -64,17 +88,26 @@ fun NewsScreen(
     viewModel: NewsViewModel = hiltViewModel()
 ) {
     val newsState by viewModel.newsState.collectAsStateWithLifecycle()
-    NewsScreen(newsState = newsState, modifier = modifier)
+    NewsScreen(
+        newsState = newsState,
+        onRefresh = viewModel::refresh,
+        modifier = modifier
+    )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun NewsScreen(
     newsState: NewsState,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val state = rememberPullRefreshState(
+        refreshing = newsState.isRefreshing,
+        onRefresh = onRefresh
+    )
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.pullRefresh(state),
         topBar = {
             TopAppBar(
                 title = {},
@@ -102,83 +135,121 @@ fun NewsScreen(
             )
         }
     ) { contentPadding ->
-        LazyColumn(
+        val context = LocalContext.current
+        val chromeTabToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
+        Box(
             modifier = Modifier
                 .padding(contentPadding)
-                .background(MaterialTheme.colorScheme.background),
-            contentPadding = PaddingValues(start = 16.dp)
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            val headerModifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min)
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-                .padding(bottom = 8.dp)
-
-            val cardModifier = Modifier
-                .width(width = 248.dp)
-                .height(IntrinsicSize.Min)
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = headerModifier
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.TrendingUp,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.size(36.dp)
-                    )
-                    LudiSectionHeader(
-                        text = "Latest",
-                        modifier = Modifier.fillMaxHeight()
-                    )
-                }
-                FeedSectionScaffold(
-                    sectionFeedResult = newsState.newsFeed,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    LudiNewsArticleCard(
-                        articleWrapper = it,
-                        modifier = cardModifier
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            item {
-                LudiSectionHeader(
-                    text = "Reviews",
-                    modifier = headerModifier
-                )
-                FeedSectionScaffold(
-                    sectionFeedResult = newsState.reviewsFeed,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    LudiReviewArticleCard(
-                        articleWrapper = it,
-                        modifier = cardModifier
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            item {
-                LudiSectionHeader(
-                    text = "Upcoming releases",
-                    modifier = headerModifier
-                )
-            }
-            NewReleasesSection(
-                newReleases = newsState.newReleasesFeed
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 16.dp)
             ) {
-                LudiNewRelease(
-                    newReleaseArticleWrapper = it,
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
-                )
-                Divider(modifier = Modifier.padding(end = 16.dp))
+                val headerModifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .padding(bottom = 8.dp)
+
+                val cardModifier = Modifier
+                    .width(width = 248.dp)
+                    .height(IntrinsicSize.Min)
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = headerModifier
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.TrendingUp,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.size(36.dp)
+                        )
+                        LudiSectionHeader(
+                            text = "Latest",
+                            modifier = Modifier.fillMaxHeight()
+                        )
+                    }
+                    FeedSectionScaffold(
+                        sectionFeedResult = newsState.newsFeed,
+                        modifier = Modifier.fillMaxWidth(),
+                        onEmptySuccessfulResultLabel = stringResource(id = R.string.news_no_news_to_show)
+                    ) {
+                        ArticleCardTile(
+                            articleWrapper = it,
+                            onClick = {
+                                if (it is ResourceWrapper.ActualResource) {
+                                    launchChromeCustomTab(
+                                        context,
+                                        Uri.parse(it.resource.sourceLinkUrl),
+                                        chromeTabToolbarColor
+                                    )
+                                }
+                            },
+                            modifier = cardModifier
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                item {
+                    LudiSectionHeader(
+                        text = "Reviews",
+                        modifier = headerModifier
+                    )
+                    FeedSectionScaffold(
+                        sectionFeedResult = newsState.reviewsFeed,
+                        modifier = Modifier.fillMaxWidth(),
+                        onEmptySuccessfulResultLabel = stringResource(id = R.string.news_no_reviews_to_show)
+                    ) {
+                        ArticleCardTile(
+                            articleWrapper = it,
+                            onClick = {
+                                if (it is ResourceWrapper.ActualResource) {
+                                    launchChromeCustomTab(
+                                        context,
+                                        Uri.parse(it.resource.sourceLinkUrl),
+                                        chromeTabToolbarColor
+                                    )
+                                }
+                            },
+                            modifier = cardModifier
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                item {
+                    LudiSectionHeader(
+                        text = "Upcoming releases",
+                        modifier = headerModifier
+                    )
+                }
+                NewReleasesSection(
+                    newReleases = newsState.newReleasesFeed
+                ) {
+                    NewReleaseTile(
+                        newReleaseArticleWrapper = it,
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Min),
+                        onClick = {
+                            if (it is ResourceWrapper.ActualResource) {
+                                launchChromeCustomTab(context, Uri.parse(it.resource.sourceLinkUrl), chromeTabToolbarColor)
+                            }
+                        }
+                    )
+                    Divider(modifier = Modifier.padding(end = 16.dp))
+                }
             }
+            PullRefreshIndicator(
+                refreshing = newsState.isRefreshing,
+                state = state,
+                modifier = Modifier.align(Alignment.TopCenter),
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -189,8 +260,14 @@ fun LazyListScope.NewReleasesSection(
 ) {
     when (newReleases) {
         is Result.Success -> {
-            items(newReleases.data) { newReleaseArticle ->
-                onSuccessItemContent(newReleaseArticle)
+            if (newReleases.data.isEmpty()) {
+                item {
+                    Empty(label = stringResource(id = R.string.news_no_releases_to_show), modifier = Modifier.fillMaxWidth())
+                }
+            } else {
+                items(newReleases.data) { newReleaseArticle ->
+                    onSuccessItemContent(newReleaseArticle)
+                }
             }
         }
         is Result.Error -> {
@@ -202,30 +279,85 @@ fun LazyListScope.NewReleasesSection(
 }
 
 @Composable
-fun <T> FeedSectionScaffold(
+fun <T : Article> FeedSectionScaffold(
     sectionFeedResult: Result<List<ResourceWrapper<T>>, Throwable>,
+    onEmptySuccessfulResultLabel: String,
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(16.dp),
     itemContent: @Composable (ResourceWrapper<T>) -> Unit
 ) {
-    LazyRow(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement
+    Box(
+        modifier = modifier
     ) {
-        when (sectionFeedResult) {
-            is Result.Success -> {
-                itemsIndexed(sectionFeedResult.data) { index, resourceWrapper ->
-                    key(index) {
-                        itemContent(resourceWrapper)
+        val state = rememberLazyListState()
+        val scope = rememberCoroutineScope()
+        LazyRow(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = horizontalArrangement,
+            state = state
+        ) {
+            when (sectionFeedResult) {
+                is Result.Success -> {
+                    if (sectionFeedResult.data.isEmpty()) {
+                        item {
+                            Empty(label = onEmptySuccessfulResultLabel, modifier = Modifier.fillMaxWidth())
+                        }
+                    } else {
+                        itemsIndexed(sectionFeedResult.data) { index, resourceWrapper ->
+                            key(index) {
+                                itemContent(resourceWrapper)
+                            }
+                        }
+                    }
+                }
+                is Result.Error -> {
+                    item {
+                        LudiErrorBox(modifier = Modifier.fillMaxWidth())
                     }
                 }
             }
-            is Result.Error -> {
-                item {
-                    LudiErrorBox(modifier = Modifier.fillMaxWidth())
-                }
+        }
+        val isScrollToStartButtonVisible by remember { derivedStateOf { state.firstVisibleItemIndex > 1 } }
+        AnimatedVisibility(
+            visible = isScrollToStartButtonVisible,
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomStart)
+                .size(56.dp),
+            enter = fadeIn() + slideInHorizontally { -it },
+            exit = fadeOut() + slideOutHorizontally { -it }
+        ) {
+            IconButton(
+                onClick = { scope.launch { state.animateScrollToItem(0) } },
+                modifier = Modifier
+                    .shadow(16.dp, shape = CircleShape)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxSize()
+            ) {
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Filled.KeyboardArrowLeft),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
             }
         }
+    }
+}
+
+@Composable
+fun Empty(
+    label: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+        )
     }
 }
 
@@ -379,6 +511,7 @@ fun NewsScreenPreview() {
         )
     )
     val newsState = NewsState(
+        isRefreshing = false,
         newsFeed = Result.Success(newsArticleSamples),
         reviewsFeed = Result.Success(reviewsArticleSamples),
         newReleasesFeed = Result.Success(newReleasesSamples)
@@ -386,6 +519,7 @@ fun NewsScreenPreview() {
     LudiTheme {
         NewsScreen(
             newsState = newsState,
+            onRefresh = {},
             modifier = Modifier.fillMaxSize()
         )
     }
