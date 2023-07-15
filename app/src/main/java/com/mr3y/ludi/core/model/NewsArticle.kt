@@ -5,14 +5,14 @@ import java.time.ZonedDateTime
 data class NewsArticle(
     val id: Long?,
     override val title: Title,
-    val description: MarkupText?,
+    override val description: MarkupText?,
     val thumbnailUrl: String?,
-    val source: Source,
-    val sourceLinkUrl: String,
-    val content: MarkupText?,
-    val imageUrl: String?,
-    val author: String?,
-    val publicationDate: ZonedDateTime?
+    override val source: Source,
+    override val sourceLinkUrl: String,
+    override val content: MarkupText?,
+    override val imageUrl: String?,
+    override val author: String?,
+    override val publicationDate: ZonedDateTime?
 ) : Article {
 
     override fun toString(): String {

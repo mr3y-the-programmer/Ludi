@@ -4,11 +4,11 @@ import java.time.ZonedDateTime
 
 data class ReviewArticle(
     override val title: Title,
-    val description: MarkupText?,
-    val imageUrl: String?,
-    val source: Source,
-    val content: MarkupText?,
-    val sourceLinkUrl: String,
-    val author: String?,
-    val publicationDate: ZonedDateTime?
+    override val description: MarkupText?,
+    override val imageUrl: String?,
+    override val source: Source,
+    override val content: MarkupText?,
+    override val sourceLinkUrl: String,
+    override val author: String?,
+    override val publicationDate: ZonedDateTime?
 ) : Article
