@@ -1,10 +1,13 @@
-package com.mr3y.ludi.ui.components
+package com.mr3y.ludi.ui.screens.news
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,84 +18,76 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
 import com.ireward.htmlcompose.HtmlText
+import com.mr3y.ludi.R
+import com.mr3y.ludi.core.model.Article
 import com.mr3y.ludi.core.model.MarkupText
 import com.mr3y.ludi.core.model.NewsArticle
-import com.mr3y.ludi.core.model.ReviewArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.Title
+import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.theme.LudiTheme
+import java.time.Duration
+import java.time.ZonedDateTime
+import kotlin.time.toKotlinDuration
 
 @Composable
-fun LudiNewsArticleCard(
-    articleWrapper: ResourceWrapper<NewsArticle>,
-    modifier: Modifier = Modifier
-) {
-    val article = articleWrapper.actualResource
-    LudiCardScaffold(
-        title = article?.title,
-        description = article?.description,
-        imageUrl = article?.thumbnailUrl ?: article?.imageUrl,
-        source = article?.source,
-        showPlaceholder = articleWrapper is ResourceWrapper.Placeholder,
-        modifier = modifier
-    )
-}
-
-@Composable
-fun LudiReviewArticleCard(
-    articleWrapper: ResourceWrapper<ReviewArticle>,
-    modifier: Modifier = Modifier
-) {
-    val article = articleWrapper.actualResource
-    LudiCardScaffold(
-        title = article?.title,
-        description = article?.description,
-        imageUrl = article?.imageUrl,
-        source = article?.source,
-        showPlaceholder = articleWrapper is ResourceWrapper.Placeholder,
-        modifier = modifier
-    )
-}
-
-@Composable
-private fun LudiCardScaffold(
-    title: Title?,
-    description: MarkupText?,
-    imageUrl: String?,
-    source: Source?,
+fun ArticleCardTile(
+    articleWrapper: ResourceWrapper<Article>?,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    showPlaceholder: Boolean = false
 ) {
+    val article = articleWrapper?.actualResource
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClickLabel = null,
+                enabled = articleWrapper is ResourceWrapper.ActualResource,
+                role = Role.Button,
+                onClick = onClick
+            )
+            .defaultPlaceholder(
+                isVisible = articleWrapper is ResourceWrapper.Placeholder,
+                highlight = PlaceholderHighlight.shimmer()
+            )
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            var imageLoaded by remember { mutableStateOf(false) }
             AsyncImage(
-                model = imageUrl,
+                model = article?.imageUrl,
+                placeholder = painterResource(id = R.drawable.placeholder),
+                error = painterResource(id = R.drawable.placeholder),
+                onSuccess = { imageLoaded = true },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
-                    .defaultPlaceholder(showPlaceholder),
+                    .weight(1f),
                 contentDescription = null,
-                contentScale = ContentScale.Crop
+                contentScale = if (imageLoaded) ContentScale.Crop else ContentScale.FillBounds
             )
             Column(
                 modifier = Modifier
@@ -110,13 +105,12 @@ private fun LudiCardScaffold(
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = title?.text?.removePrefix("<![CDATA[ ")?.removeSuffix(" ]]>") ?: "Title placeholder",
+                        text = article?.title?.text?.removeCDATA() ?: "Title placeholder",
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Start,
                         maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.defaultPlaceholder(showPlaceholder)
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
@@ -128,35 +122,71 @@ private fun LudiCardScaffold(
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyLarge
                     )
+                    val markupText = (article?.description?.text ?: article?.content?.text)?.removeCDATA()
                     HtmlText(
-                        text = description?.text ?: "No description available",
+                        text = markupText ?: "No description available",
                         style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                         maxLines = 6,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.defaultPlaceholder(showPlaceholder)
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
-                if (source != null) {
-                    val sourceName = buildAnnotatedString {
-                        append("Source: ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(source.name)
+                if (article != null) {
+                    Row(
+                        horizontalArrangement = if (article.author != null || article.publicationDate != null) Arrangement.SpaceBetween else Arrangement.End,
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (article.author != null || article.publicationDate != null) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                article.author?.let {
+                                    Text(
+                                        text = it.removeCDATA(),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        textAlign = TextAlign.Start,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                                article.publicationDate?.let {
+                                    val durationSincePubDate = Duration.between(it.toLocalDateTime(), ZonedDateTime.now().toLocalDateTime()).toKotlinDuration()
+                                    val timePassed = when {
+                                        durationSincePubDate.inWholeDays > 0 -> "${durationSincePubDate.inWholeDays}d"
+                                        durationSincePubDate.inWholeHours > 0 -> "${durationSincePubDate.inWholeHours}h"
+                                        durationSincePubDate.inWholeMinutes > 0 -> "${durationSincePubDate.inWholeMinutes}m"
+                                        else -> stringResource(R.string.now)
+                                    }
+                                    Text(
+                                        text = timePassed,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        textAlign = TextAlign.Start,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                    )
+                                }
+                            }
                         }
+                        Text(
+                            text = article.source.name,
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Start,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
-                    Text(
-                        text = sourceName,
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Start,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.align(Alignment.End)
-                    )
                 }
             }
         }
     }
 }
+
+private fun String.removeCDATA() = removePrefix("<![CDATA[ ").removeSuffix(" ]]>")
 
 @Preview(device = "id:pixel_6", showBackground = true)
 @Composable
@@ -171,8 +201,8 @@ fun LudiContentCardPreview() {
             content = null,
             thumbnailUrl = null,
             sourceLinkUrl = "content",
-            author = null,
-            publicationDate = null
+            author = "Tim Cook",
+            publicationDate = ZonedDateTime.parse("2023-07-11T15:16:31Z")
         ),
         NewsArticle(
             id = null,
@@ -183,7 +213,7 @@ fun LudiContentCardPreview() {
             content = null,
             thumbnailUrl = null,
             sourceLinkUrl = "content",
-            author = null,
+            author = "Boein",
             publicationDate = null
         ),
         NewsArticle(
@@ -196,7 +226,7 @@ fun LudiContentCardPreview() {
             thumbnailUrl = null,
             sourceLinkUrl = "content",
             author = null,
-            publicationDate = null
+            publicationDate = ZonedDateTime.parse("2023-07-10T15:16:31Z")
         ),
         NewsArticle(
             id = null,
@@ -213,7 +243,7 @@ fun LudiContentCardPreview() {
         NewsArticle(
             id = null,
             title = Title.Markup("<![CDATA[ Get Dead Space Remake for \$20 Off ]]>"),
-            description = MarkupText("<section class=\"article-page\"><p>Magic: The Gathering has been doing a <em>lot </em>of Universes Beyond crossovers, from <a href=\"https://www.ign.com/articles/inside-magic-the-gatherings-new-warhammer-40000-commander-decks\"><u>Warhammer 40,000</u></a> to <a href=\"https://www.ign.com/articles/magic-the-gathering-street-fighter-secret-lair-february-superdrop-spoilers\"><u>Street Fighter</u></a>, but its next might be one of the most exciting yet. The Lord of the Rings: Tales of Middle-earth will be a full, draftable card set legal for play in Magic’s Modern format. We have an exclusive look at the first cards to be revealed from it, including both Gandalf the Grey and The One Ring itself, as well as some insight from the team at Wizards of the Coast. </p><section data-transform=\"mobile-ad-break\"></section><p>Watch the reveal video above or flip through the gallery below to see for yourself:</p><section data-transform=\"slideshow\" data-slug=\"the-lord-of-the-rings-tales-of-middle-earth-magic-the-gathering-card-reveals\" data-value=\"the-lord-of-the-rings-tales-of-middle-earth-magic-the-gathering-card-reveals\" data-type=\"slug\" data-caption=\"\"></section><p>Illustrated by Veli Nystrom, The One Ring is a 4-mana legendary artifact that’s indestructible and gives you protection from everything until your next turn – as long as you cast it, that is, so no shenanigans where you can blink it for endless protection here. The One Ring also taps to draw you cards at the cost of life later. The more times you tap it, the more cards you will draw, but also the more damage you will take at the start of your next turn, which seems like a delightfully flavorful way to express the tempting but costly power of using The Ring. I also like the idea that <em>not</em> using it doesn’t actually stop you from taking damage each turn… so after all, why shouldn’t you tap it again?</p><aside><section data-transform=\"object-feedback\"></section><p><strong>MTG: Lord of the Rings Cards Are Available for Preorder</strong></p><ul><li><a href=\"https://zdcs.link/plk8w\">Starter Kit on Amazon</a></li><li><a href=\"https://zdcs.link/LXN1m\">LotR Bundle on Amazon</a></li><li><a href=\"https://zdcs.link/nJDZG\">All MTG: LotR cards on Amazon</a></li></ul></aside><p>On a lighter note, a cycle of full art basic lands will feature art from different sections of Middle-earth’s iconic map. Art Director Ovidio Cartagena tells me this was one of their very first ideas for the set, saying “Middle-earth has such a specific geography, and it is of course one of the genius details of storytelling that influenced a lot of subsequent works in fantasy and science fiction. That approach told us not only the challenges and natural obstacles the Fellowship had to traverse in this story, but also is linked to the rich and mythic history of Arda in the previous ages. Making those maps as full art lands compliments the card illustrations to create an immersive experience for players.” The artist for these lands, Devin Rue, may also be a familiar name to any Critical Role fans, as they create the maps of Exandria for that show as well.</p><section data-transform=\"quoteBox\">The showcase frame is meant to express what happens “inside” the Ring.</section><p>The last new card we get to reveal is Gandalf the Grey, who you might notice is actually blue-red. That certainly caught me off guard initially, but it does make sense in the context of Magic, where Wizards are mostly commonly represented in the blue-red color pair. Illustrated by Aaron Miller, Gandalf the Grey is a 5-mana legendary Avatar Wizard, and in typical red-blue fashion, it triggers whenever you cast an instant or sorcery spell. That ability lets you pick once from four different effects: tapping or untapping a permanent, dealing 3 damage to each opponent, copying an instant or sorcery, or (presumably your last choice) putting Gandalf back on top of your deck.</p><p>You may also notice the rather prominent glowing sword in Gandalf’s hand, which Vice President of Game Design Aaron Forsythe confirmed is his signature weapon, Glamdring. Cartagena teased that “I think fans are going to be pleasantly surprised to find many of their favorite artifacts from Lord of the Rings in the card set.” No word on whether or not Glamdring might get an equipment card of its own or anything, but he did tell me that they had a lot of fun coming up with new interpretations of the legendary objects from the War of the Ring, keeping them consistently recognizable throughout the set.</p><p>We also got a glimpse of Gandalf’s epic confrontation with the Balrog on Anato Finnstark’s art for the showcase ring treatment of Gandalf the Grey. Not so much of a triumphant portrait, Cartagena says the circular shape of this set’s showcase frame is meant to express what happens “inside” the Ring, saying it symbolizes “the power that the quest for the One Ring can have in the different characters’ internal struggles.” </p><section data-transform=\"poll\" data-id=\"bd0f8f84-89a2-4598-bac3-92dabe007e82\"></section><p>While that’s it for new cards, we were also given a first look at another of Gandalf’s incarnations as the much more stern Gandalf the White. Now I genuinely don’t know anything else about the card, but I’m certainly getting some (purely speculative) planeswalker vibes from Magali Villeneuve’s shining rendition. Gandalf also has a third card in the previously shown art for Gandalf, Friend of the Shire – when I asked Cartagena why Gandalf had so many renditions in the set, he told me that it gives them an opportunity to explore the character more, and that “Tolkien’s rich storytelling allowed us to explore how Gandalf (and others) present themselves to different allies and at different times throughout the story.”</p><p>If you’re hungry for more, you won’t have to wait long, as a <a href=\"https://www.twitch.tv/magic\"><u>WeeklyMTG livestream</u></a> on Tuesday, March 10 at 10am PT will have further details and reveals from The Lord of the Rings: Tales of Middle-earth (which is <a href=\"https://www.ign.com/articles/magic-the-gathering-lord-of-the-rings-tales-of-middle-earth-cards\">available for pre-order</a> now). In the meantime you can read my full Q&amp;A with Wizards of the Coast down below, or if want to see some more fancy showcase versions of cards from Magic’s most recent set, you can watch me <a href=\"https://www.ign.com/videos/unboxing-magic-the-gatherings-fancy-compleat-edition-from-phyrexia-all-will-be-one\"><u>unbox the Phyrexia: All Will Be One Compleat Edition bundle</u></a>.</p><section data-transform=\"ignvideo\" data-slug=\"unboxing-magic-the-gatherings-fancy-compleat-edition-from-phyrexia-all-will-be-one\" data-loop=\"\"></section><section data-transform=\"divider\"></section><p><strong>IGN: With all the past Universes Beyond cards, you’ve been able to bring the exact likenesses of iconic characters or actors into Magic: The Gathering’s art style, but this set is a bit different. What were some of the challenges of making new interpretations of characters that fans may be familiar with some other version of, and how did you go about making them recognizable but still your own?</strong></p><p><strong>Ovidio Cartagena, Art Director:</strong> There have been many interpretations and likenesses for the characters in The Lord of the Rings throughout the years. The fanbase for this world has only grown in the last two decades, and this version seeks to reflect that growth. The main challenge was balancing the familiarity, timelessness, and deep reverence of the original Lord of the Rings with a modern sensibility. The Lord of the Rings is about the different peoples of Middle-earth coming together to fight Sauron, finding strength in their diversity. We worked really closely with the dedicated people at Middle-earth Enterprises to reflect that sensibility while staying true to the original vision, and it was certainly a challenge to strike the right balance. I believe what the teams have delivered not only walks that line well, but creates a deep, immersive experience that fans of both Magic and The Lord of the Rings will love.</p><section data-transform=\"quoteBox\">&quot;Gandalf the Grey is the quintessential fantasy wizard&quot;</section><p><strong>Okay, I am going to address the elephant in the room: Gandalf the Grey is blue-red! I imagine it’s tricky to design a card for a notable character with a color in their name, as well as to make art that then still has to show all those colors. Could you tell me a bit about why he is blue-red and how it affected his look?</strong></p><p><strong>Aaron Forsythe, Vice President of Game Design:</strong> It is true that certain color words in characters’ names can complicate design decisions just because those words have such powerful associations in Magic. But thankfully, “grey” is not one such word! There are actually several versions of Gandalf in the set (including Gandalf the White, whose color identity will not surprise you), and we show him at different points throughout the story by making him different colors. Gandalf the Grey is the quintessential fantasy wizard, so it made sense for his card design to be blue-red as those are the colors that do the most “wizardy” things in-game. As for how that color choice influenced his art, we did ask for his sword, Glamdring, to have bluish energy, and the setting of Moria lends a red glow to everything. Aaron Miller did a great job infusing those colors into the piece while leaving his costuming the traditional grey that is so iconic for Gandalf.</p><a href=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-gandalf-the-grey-1678480748713.jpg\"><img src=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-gandalf-the-grey-1678480748713.jpg\" class=\"article-image-full-size\"/></a><p><strong>Cartagena: </strong>Gandalf’s sword Glamdring was something we thought about from very early on in the creative visual process. I think fans are going to be pleasantly surprised to find many of their favorite artifacts from Lord of the Rings in the card set.</p><p><strong>Was it fun to get to design your own takes on famous Lord of the Rings weapons or artifacts like The One Ring in addition to their wielders?</strong></p><p><strong>Cartagena: </strong>Of course! In order to have storytelling in the illustrations, objects had to be consistently recognizable throughout. The process of designing weapons, equipment, armor and of course characters was very fun! For decades, many of us have been imagining different ways the legendary objects from the War of the Ring could be depicted. We had that in mind from the very beginning of concept art creation, and it was very interesting seeing the various proposals artists made.</p><p><strong>Can you tell me about what led you to this look for the showcase frame and why it was ultimately the right one?</strong></p><p><strong>Cartagena: </strong>In early conversations, we discussed the power that the One Ring would have over different characters in the story. The One Ring offers you conflict but also misleading promises. Tom Jenkot and his team came up with the awesome showcase treatment, with the circular shape expressing what happens “inside” the Ring, and of course symbolizing the power that the quest for the One Ring can have in the different characters’ internal struggles. </p><a href=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-gandalf-showcase-1678480748712.jpg\"><img src=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-gandalf-showcase-1678480748712.jpg\" class=\"article-image-full-size\"/></a><p><strong>You&#39;ve said there are actually at least three Gandalfs in this set (Gandalf the Grey, Gandalf the White, and Gandalf, Friend of the Shire). Why give him multiple cards, and how did you go about approaching the looks and designs of these cards differently?</strong></p><p><strong>Cartagena: </strong>As an artist and art director, having different Gandalfs in the set gives us a chance to further explore the character in his various presentations. Tolkien’s rich storytelling allowed us to explore how Gandalf (and others) present themselves to different allies and at different times throughout the story.</p><section data-transform=\"quoteBox\">&quot;We have been having fun pushing the envelope in creative ways&quot;</section><p><strong>Why did you decide to feature maps of Middle-earth on the full art lands for this set?</strong></p><p><strong>Cartagena: </strong>That is a great question! This was one of the very first ideas for the set, even before we had illustrations, and it came from our creative director, Jess Lanzillo. Middle-earth has such a specific geography, and it is of course one of the genius details of storytelling that influenced a lot of subsequent works in fantasy and science fiction. That approach told us not only the challenges and natural obstacles the Fellowship had to traverse in this story, but also is linked to the rich and mythic history of Arda in the previous ages. Making those maps as full art lands compliments the card illustrations to create an immersive experience for players. Those arts were commissioned by Sarah Wassell, who worked with Deven Rue on this treatment.</p><a href=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-mountain-1678480748714.jpg\"><img src=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-mountain-1678480748714.jpg\" class=\"article-image-full-size\"/></a><p><strong>Is the fact that the Mountain has primarily green art rather than red a concern or a consideration at all when designing lands like this? I’m curious if your philosophy around land art color has evolved at all in recent years, as it seems like y’all have been having fun pushing the envelope.</strong></p><p><strong>Mike Turian, Product Architect: </strong>We have been having fun pushing the envelope in creative ways to show off our most fundamental piece of Magic, Basic Lands. Basics offer a great way to show off the creative setting and backgrounds of the world we are in. From Full-art Constellation lands highlighting the beauty of Theros to fun expressions of our Magic partnerships, such as the Godzilla basic lands, we are always looking for ways to bring the universe we are visiting to our players. With The Lord of the Rings: Tales of Middle-earth, we were inspired by the novels, to create our own maps of Middle-earth that blended the vast lands traversed by the Fellowship on their journey with our own Magic Basic Lands. To be authentic to what a map would look like, we choose colors that would most strongly resonate and then used our Magic frame and mana symbols to communicate gameplay information.</p><section data-transform=\"divider\"></section><p><em></em><a href=\"https://twitter.com/TomRMarks\"><em>Tom Marks</em></a><em> is IGN&#39;s Deputy Reviews Editor. He loves card games, puzzles, platformers, puzzle-platformers, and lots more.</em></p></section>"),
+            description = MarkupText("<![CDATA[ <section class=\"article-page\"><p>Magic: The Gathering has been doing a <em>lot </em>of Universes Beyond crossovers, from <a href=\"https://www.ign.com/articles/inside-magic-the-gatherings-new-warhammer-40000-commander-decks\"><u>Warhammer 40,000</u></a> to <a href=\"https://www.ign.com/articles/magic-the-gathering-street-fighter-secret-lair-february-superdrop-spoilers\"><u>Street Fighter</u></a>, but its next might be one of the most exciting yet. The Lord of the Rings: Tales of Middle-earth will be a full, draftable card set legal for play in Magic’s Modern format. We have an exclusive look at the first cards to be revealed from it, including both Gandalf the Grey and The One Ring itself, as well as some insight from the team at Wizards of the Coast. </p><section data-transform=\"mobile-ad-break\"></section><p>Watch the reveal video above or flip through the gallery below to see for yourself:</p><section data-transform=\"slideshow\" data-slug=\"the-lord-of-the-rings-tales-of-middle-earth-magic-the-gathering-card-reveals\" data-value=\"the-lord-of-the-rings-tales-of-middle-earth-magic-the-gathering-card-reveals\" data-type=\"slug\" data-caption=\"\"></section><p>Illustrated by Veli Nystrom, The One Ring is a 4-mana legendary artifact that’s indestructible and gives you protection from everything until your next turn – as long as you cast it, that is, so no shenanigans where you can blink it for endless protection here. The One Ring also taps to draw you cards at the cost of life later. The more times you tap it, the more cards you will draw, but also the more damage you will take at the start of your next turn, which seems like a delightfully flavorful way to express the tempting but costly power of using The Ring. I also like the idea that <em>not</em> using it doesn’t actually stop you from taking damage each turn… so after all, why shouldn’t you tap it again?</p><aside><section data-transform=\"object-feedback\"></section><p><strong>MTG: Lord of the Rings Cards Are Available for Preorder</strong></p><ul><li><a href=\"https://zdcs.link/plk8w\">Starter Kit on Amazon</a></li><li><a href=\"https://zdcs.link/LXN1m\">LotR Bundle on Amazon</a></li><li><a href=\"https://zdcs.link/nJDZG\">All MTG: LotR cards on Amazon</a></li></ul></aside><p>On a lighter note, a cycle of full art basic lands will feature art from different sections of Middle-earth’s iconic map. Art Director Ovidio Cartagena tells me this was one of their very first ideas for the set, saying “Middle-earth has such a specific geography, and it is of course one of the genius details of storytelling that influenced a lot of subsequent works in fantasy and science fiction. That approach told us not only the challenges and natural obstacles the Fellowship had to traverse in this story, but also is linked to the rich and mythic history of Arda in the previous ages. Making those maps as full art lands compliments the card illustrations to create an immersive experience for players.” The artist for these lands, Devin Rue, may also be a familiar name to any Critical Role fans, as they create the maps of Exandria for that show as well.</p><section data-transform=\"quoteBox\">The showcase frame is meant to express what happens “inside” the Ring.</section><p>The last new card we get to reveal is Gandalf the Grey, who you might notice is actually blue-red. That certainly caught me off guard initially, but it does make sense in the context of Magic, where Wizards are mostly commonly represented in the blue-red color pair. Illustrated by Aaron Miller, Gandalf the Grey is a 5-mana legendary Avatar Wizard, and in typical red-blue fashion, it triggers whenever you cast an instant or sorcery spell. That ability lets you pick once from four different effects: tapping or untapping a permanent, dealing 3 damage to each opponent, copying an instant or sorcery, or (presumably your last choice) putting Gandalf back on top of your deck.</p><p>You may also notice the rather prominent glowing sword in Gandalf’s hand, which Vice President of Game Design Aaron Forsythe confirmed is his signature weapon, Glamdring. Cartagena teased that “I think fans are going to be pleasantly surprised to find many of their favorite artifacts from Lord of the Rings in the card set.” No word on whether or not Glamdring might get an equipment card of its own or anything, but he did tell me that they had a lot of fun coming up with new interpretations of the legendary objects from the War of the Ring, keeping them consistently recognizable throughout the set.</p><p>We also got a glimpse of Gandalf’s epic confrontation with the Balrog on Anato Finnstark’s art for the showcase ring treatment of Gandalf the Grey. Not so much of a triumphant portrait, Cartagena says the circular shape of this set’s showcase frame is meant to express what happens “inside” the Ring, saying it symbolizes “the power that the quest for the One Ring can have in the different characters’ internal struggles.” </p><section data-transform=\"poll\" data-id=\"bd0f8f84-89a2-4598-bac3-92dabe007e82\"></section><p>While that’s it for new cards, we were also given a first look at another of Gandalf’s incarnations as the much more stern Gandalf the White. Now I genuinely don’t know anything else about the card, but I’m certainly getting some (purely speculative) planeswalker vibes from Magali Villeneuve’s shining rendition. Gandalf also has a third card in the previously shown art for Gandalf, Friend of the Shire – when I asked Cartagena why Gandalf had so many renditions in the set, he told me that it gives them an opportunity to explore the character more, and that “Tolkien’s rich storytelling allowed us to explore how Gandalf (and others) present themselves to different allies and at different times throughout the story.”</p><p>If you’re hungry for more, you won’t have to wait long, as a <a href=\"https://www.twitch.tv/magic\"><u>WeeklyMTG livestream</u></a> on Tuesday, March 10 at 10am PT will have further details and reveals from The Lord of the Rings: Tales of Middle-earth (which is <a href=\"https://www.ign.com/articles/magic-the-gathering-lord-of-the-rings-tales-of-middle-earth-cards\">available for pre-order</a> now). In the meantime you can read my full Q&amp;A with Wizards of the Coast down below, or if want to see some more fancy showcase versions of cards from Magic’s most recent set, you can watch me <a href=\"https://www.ign.com/videos/unboxing-magic-the-gatherings-fancy-compleat-edition-from-phyrexia-all-will-be-one\"><u>unbox the Phyrexia: All Will Be One Compleat Edition bundle</u></a>.</p><section data-transform=\"ignvideo\" data-slug=\"unboxing-magic-the-gatherings-fancy-compleat-edition-from-phyrexia-all-will-be-one\" data-loop=\"\"></section><section data-transform=\"divider\"></section><p><strong>IGN: With all the past Universes Beyond cards, you’ve been able to bring the exact likenesses of iconic characters or actors into Magic: The Gathering’s art style, but this set is a bit different. What were some of the challenges of making new interpretations of characters that fans may be familiar with some other version of, and how did you go about making them recognizable but still your own?</strong></p><p><strong>Ovidio Cartagena, Art Director:</strong> There have been many interpretations and likenesses for the characters in The Lord of the Rings throughout the years. The fanbase for this world has only grown in the last two decades, and this version seeks to reflect that growth. The main challenge was balancing the familiarity, timelessness, and deep reverence of the original Lord of the Rings with a modern sensibility. The Lord of the Rings is about the different peoples of Middle-earth coming together to fight Sauron, finding strength in their diversity. We worked really closely with the dedicated people at Middle-earth Enterprises to reflect that sensibility while staying true to the original vision, and it was certainly a challenge to strike the right balance. I believe what the teams have delivered not only walks that line well, but creates a deep, immersive experience that fans of both Magic and The Lord of the Rings will love.</p><section data-transform=\"quoteBox\">&quot;Gandalf the Grey is the quintessential fantasy wizard&quot;</section><p><strong>Okay, I am going to address the elephant in the room: Gandalf the Grey is blue-red! I imagine it’s tricky to design a card for a notable character with a color in their name, as well as to make art that then still has to show all those colors. Could you tell me a bit about why he is blue-red and how it affected his look?</strong></p><p><strong>Aaron Forsythe, Vice President of Game Design:</strong> It is true that certain color words in characters’ names can complicate design decisions just because those words have such powerful associations in Magic. But thankfully, “grey” is not one such word! There are actually several versions of Gandalf in the set (including Gandalf the White, whose color identity will not surprise you), and we show him at different points throughout the story by making him different colors. Gandalf the Grey is the quintessential fantasy wizard, so it made sense for his card design to be blue-red as those are the colors that do the most “wizardy” things in-game. As for how that color choice influenced his art, we did ask for his sword, Glamdring, to have bluish energy, and the setting of Moria lends a red glow to everything. Aaron Miller did a great job infusing those colors into the piece while leaving his costuming the traditional grey that is so iconic for Gandalf.</p><a href=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-gandalf-the-grey-1678480748713.jpg\"><img src=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-gandalf-the-grey-1678480748713.jpg\" class=\"article-image-full-size\"/></a><p><strong>Cartagena: </strong>Gandalf’s sword Glamdring was something we thought about from very early on in the creative visual process. I think fans are going to be pleasantly surprised to find many of their favorite artifacts from Lord of the Rings in the card set.</p><p><strong>Was it fun to get to design your own takes on famous Lord of the Rings weapons or artifacts like The One Ring in addition to their wielders?</strong></p><p><strong>Cartagena: </strong>Of course! In order to have storytelling in the illustrations, objects had to be consistently recognizable throughout. The process of designing weapons, equipment, armor and of course characters was very fun! For decades, many of us have been imagining different ways the legendary objects from the War of the Ring could be depicted. We had that in mind from the very beginning of concept art creation, and it was very interesting seeing the various proposals artists made.</p><p><strong>Can you tell me about what led you to this look for the showcase frame and why it was ultimately the right one?</strong></p><p><strong>Cartagena: </strong>In early conversations, we discussed the power that the One Ring would have over different characters in the story. The One Ring offers you conflict but also misleading promises. Tom Jenkot and his team came up with the awesome showcase treatment, with the circular shape expressing what happens “inside” the Ring, and of course symbolizing the power that the quest for the One Ring can have in the different characters’ internal struggles. </p><a href=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-gandalf-showcase-1678480748712.jpg\"><img src=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-gandalf-showcase-1678480748712.jpg\" class=\"article-image-full-size\"/></a><p><strong>You&#39;ve said there are actually at least three Gandalfs in this set (Gandalf the Grey, Gandalf the White, and Gandalf, Friend of the Shire). Why give him multiple cards, and how did you go about approaching the looks and designs of these cards differently?</strong></p><p><strong>Cartagena: </strong>As an artist and art director, having different Gandalfs in the set gives us a chance to further explore the character in his various presentations. Tolkien’s rich storytelling allowed us to explore how Gandalf (and others) present themselves to different allies and at different times throughout the story.</p><section data-transform=\"quoteBox\">&quot;We have been having fun pushing the envelope in creative ways&quot;</section><p><strong>Why did you decide to feature maps of Middle-earth on the full art lands for this set?</strong></p><p><strong>Cartagena: </strong>That is a great question! This was one of the very first ideas for the set, even before we had illustrations, and it came from our creative director, Jess Lanzillo. Middle-earth has such a specific geography, and it is of course one of the genius details of storytelling that influenced a lot of subsequent works in fantasy and science fiction. That approach told us not only the challenges and natural obstacles the Fellowship had to traverse in this story, but also is linked to the rich and mythic history of Arda in the previous ages. Making those maps as full art lands compliments the card illustrations to create an immersive experience for players. Those arts were commissioned by Sarah Wassell, who worked with Deven Rue on this treatment.</p><a href=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-mountain-1678480748714.jpg\"><img src=\"https://assets-prd.ignimgs.com/2023/03/10/lotr-mountain-1678480748714.jpg\" class=\"article-image-full-size\"/></a><p><strong>Is the fact that the Mountain has primarily green art rather than red a concern or a consideration at all when designing lands like this? I’m curious if your philosophy around land art color has evolved at all in recent years, as it seems like y’all have been having fun pushing the envelope.</strong></p><p><strong>Mike Turian, Product Architect: </strong>We have been having fun pushing the envelope in creative ways to show off our most fundamental piece of Magic, Basic Lands. Basics offer a great way to show off the creative setting and backgrounds of the world we are in. From Full-art Constellation lands highlighting the beauty of Theros to fun expressions of our Magic partnerships, such as the Godzilla basic lands, we are always looking for ways to bring the universe we are visiting to our players. With The Lord of the Rings: Tales of Middle-earth, we were inspired by the novels, to create our own maps of Middle-earth that blended the vast lands traversed by the Fellowship on their journey with our own Magic Basic Lands. To be authentic to what a map would look like, we choose colors that would most strongly resonate and then used our Magic frame and mana symbols to communicate gameplay information.</p><section data-transform=\"divider\"></section><p><em></em><a href=\"https://twitter.com/TomRMarks\"><em>Tom Marks</em></a><em> is IGN&#39;s Deputy Reviews Editor. He loves card games, puzzles, platformers, puzzle-platformers, and lots more.</em></p></section> ]]>"),
             imageUrl = "https://assets-prd.ignimgs.com/2023/03/10/gandalf-blogroll-1678480774762.jpg",
             source = Source.IGN,
             content = null,
@@ -232,14 +262,12 @@ fun LudiContentCardPreview() {
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(samples) {
-                LudiCardScaffold(
-                    title = it.title,
-                    description = it.description,
-                    imageUrl = it.imageUrl,
-                    source = it.source,
+                ArticleCardTile(
+                    articleWrapper = ResourceWrapper.ActualResource(it),
                     modifier = Modifier
                         .width(width = 248.dp)
-                        .height(IntrinsicSize.Min)
+                        .height(IntrinsicSize.Min),
+                    onClick = {}
                 )
             }
         }

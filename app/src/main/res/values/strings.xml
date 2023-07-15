@@ -15,4 +15,8 @@
     <string name="close_filters">Close</string>
     <string name="deals_search_filter_bar_placeholder">Search for a specific deal</string>
     <string name="deals_filter_icon_content_description">Show filters</string>
+    <string name="now">now</string>
+    <string name="news_no_releases_to_show">No New Releases to show</string>
+    <string name="news_no_news_to_show">No New News to show</string>
+    <string name="news_no_reviews_to_show">No New Reviews to show</string>
 </resources>
