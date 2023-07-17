@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mr3y.ludi.FollowedNewsDataSource
 import com.mr3y.ludi.FollowedNewsDataSources
-import com.mr3y.ludi.R
 import com.mr3y.ludi.UserFavouriteGame
 import com.mr3y.ludi.UserFavouriteGames
 import com.mr3y.ludi.UserFavouriteGenre
@@ -20,7 +19,6 @@ import com.mr3y.ludi.UserFavouriteGenres
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
-import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.RichInfoGamesQuery
@@ -31,7 +29,9 @@ import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.ui.presenter.model.OnboardingState
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
+import com.mr3y.ludi.ui.presenter.model.SupportedNewsDataSources
 import com.mr3y.ludi.ui.presenter.model.wrapResource
+import com.mr3y.ludi.ui.presenter.model.wrapResultResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -272,24 +272,6 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     companion object {
-        private val SupportedNewsDataSources = listOf(
-            NewsDataSource("Game spot", R.drawable.game_spot_logo, Source.GameSpot),
-            NewsDataSource("Giant bomb", R.drawable.giant_bomb_logo, Source.GiantBomb),
-            NewsDataSource("IGN", R.drawable.ign_logo, Source.IGN),
-            NewsDataSource("Tech Radar", R.drawable.tech_radar_logo, Source.TechRadar),
-            NewsDataSource("PCGamesN", R.drawable.pcgamesn_logo, Source.PCGamesN),
-            NewsDataSource("PCGamer", R.drawable.pcgamer_logo, Source.PCGamer),
-            NewsDataSource("PC Invasion", R.drawable.pcinvasion_logo, Source.PCInvasion),
-            NewsDataSource("Euro Gamer", R.drawable.eurogamer_logo, Source.EuroGamer),
-            NewsDataSource("VentureBeat", R.drawable.venturebeat_logo, Source.VentureBeat),
-            NewsDataSource("VG247", R.drawable.vg247_logo, Source.VG247),
-            NewsDataSource("Glorious Gaming", R.drawable.gloriousgaming_logo, Source.GloriousGaming),
-            NewsDataSource("Rock Paper Shotgun", R.drawable.rockpapershotgun_logo, Source.RockPaperShotgun),
-            NewsDataSource("Game Rant", R.drawable.gamerant_logo, Source.GameRant),
-            NewsDataSource("The Gamer", R.drawable.thegamer_logo, Source.TheGamer),
-            NewsDataSource("Polygon", R.drawable.polygon_logo, Source.Polygon),
-            NewsDataSource("Brutal Gamer", R.drawable.brutalgamer_logo, Source.BrutalGamer)
-        )
         val InitialOnboardingState = OnboardingState(
             allNewsDataSources = SupportedNewsDataSources,
             followedNewsDataSources = emptyList(),
@@ -329,11 +311,4 @@ private fun GameGenre.toUserFavouriteGenre(): UserFavouriteGenre {
         .setGamesCount(gamesCount ?: 0L)
         .setImageUrl(imageUrl)
         .build()
-}
-
-private fun Result<RichInfoGamesGenresPage, Throwable>.wrapResultResources(): Result<ResourceWrapper<Set<GameGenre>>, Throwable> {
-    return when (this) {
-        is Result.Success -> Result.Success(ResourceWrapper.ActualResource(data.genres))
-        is Result.Error -> this
-    }
 }

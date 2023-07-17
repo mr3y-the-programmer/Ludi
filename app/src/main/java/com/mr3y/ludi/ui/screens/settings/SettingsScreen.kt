@@ -56,6 +56,9 @@ import com.mr3y.ludi.ui.theme.LudiTheme
 
 @Composable
 fun SettingsScreen(
+    onFollowedNewsDataSourcesClick: () -> Unit,
+    onFavouriteGamesClick: () -> Unit,
+    onFavouriteGenresClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
@@ -63,6 +66,9 @@ fun SettingsScreen(
     SettingsScreen(
         settingsState,
         modifier = modifier,
+        onFollowedNewsDataSourcesClick = onFollowedNewsDataSourcesClick,
+        onFavouriteGamesClick = onFavouriteGamesClick,
+        onFavouriteGenresClick = onFavouriteGenresClick,
         onUpdateTheme = viewModel::setAppTheme,
         onToggleDynamicColorValue = viewModel::enableUsingDynamicColor
     )
@@ -72,6 +78,9 @@ fun SettingsScreen(
 fun SettingsScreen(
     state: SettingsState,
     modifier: Modifier = Modifier,
+    onFollowedNewsDataSourcesClick: () -> Unit,
+    onFavouriteGamesClick: () -> Unit,
+    onFavouriteGenresClick: () -> Unit,
     onUpdateTheme: (Theme) -> Unit,
     onToggleDynamicColorValue: (Boolean) -> Unit
 ) {
@@ -158,17 +167,17 @@ fun SettingsScreen(
             Divider()
             Preference(
                 label = "Followed News Data Sources",
-                onClick = { /*TODO*/ }
+                onClick = onFollowedNewsDataSourcesClick
             )
             Divider()
             Preference(
                 label = "Favourite Games",
-                onClick = { /*TODO*/ }
+                onClick = onFavouriteGamesClick
             )
             Divider()
             Preference(
                 label = "Favourite Genres",
-                onClick = { /*TODO*/ }
+                onClick = onFavouriteGenresClick
             )
             Divider()
             var isDialogOpened by rememberSaveable(Unit) { mutableStateOf(false) }
@@ -332,6 +341,9 @@ fun SettingsScreenPreview() {
         SettingsScreen(
             state = settingsState,
             modifier = Modifier.fillMaxSize(),
+            {},
+            {},
+            {},
             {},
             {}
         )

@@ -84,12 +84,14 @@ import java.time.ZonedDateTime
 
 @Composable
 fun NewsScreen(
+    onTuneClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: NewsViewModel = hiltViewModel()
 ) {
     val newsState by viewModel.newsState.collectAsStateWithLifecycle()
     NewsScreen(
         newsState = newsState,
+        onTuneClick = onTuneClick,
         onRefresh = viewModel::refresh,
         modifier = modifier
     )
@@ -99,6 +101,7 @@ fun NewsScreen(
 @Composable
 fun NewsScreen(
     newsState: NewsState,
+    onTuneClick: () -> Unit,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -113,7 +116,7 @@ fun NewsScreen(
                 title = {},
                 actions = {
                     IconButton(
-                        onClick = { },
+                        onClick = onTuneClick,
                         modifier = Modifier.requiredSize(48.dp)
                     ) {
                         Icon(
@@ -519,6 +522,7 @@ fun NewsScreenPreview() {
     LudiTheme {
         NewsScreen(
             newsState = newsState,
+            onTuneClick = {},
             onRefresh = {},
             modifier = Modifier.fillMaxSize()
         )

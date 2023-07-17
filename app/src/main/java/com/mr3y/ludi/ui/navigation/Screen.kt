@@ -16,4 +16,12 @@ sealed class Screen(open val route: String, open val label: String?, open val ic
     object Deals : Screen("deals", "Deals", Icons.Outlined.LocalOffer)
 
     object Settings : Screen("settings", "Settings", Icons.Outlined.Settings)
+
+    object EditPreferences : Screen("edit_preferences", "Edit Preferences", null)
+}
+
+enum class PreferencesType {
+    NewsDataSources,
+    Genres,
+    Games
 }
