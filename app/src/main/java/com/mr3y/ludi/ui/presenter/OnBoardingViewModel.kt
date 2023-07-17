@@ -33,7 +33,6 @@ import com.mr3y.ludi.ui.presenter.model.SupportedNewsDataSources
 import com.mr3y.ludi.ui.presenter.model.wrapResource
 import com.mr3y.ludi.ui.presenter.model.wrapResultResources
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -43,7 +42,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -51,7 +49,7 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(FlowPreview::class)
 class OnBoardingViewModel @Inject constructor(
     private val gamesRepository: GamesRepository,
     private val favGamesStore: DataStore<UserFavouriteGames>,
@@ -97,40 +95,43 @@ class OnBoardingViewModel @Inject constructor(
 
     private var searchQuery = mutableStateOf("")
 
-    private val allOnboardingGames = snapshotFlow { searchQuery.value }
-        .debounce(275)
-        .distinctUntilChanged()
-        .mapLatest { searchText ->
-            if (searchText.isEmpty()) {
-                // Retrieve suggested games
-                return@mapLatest gamesRepository.queryRichInfoGames(
-                    RichInfoGamesQuery(
-                        pageSize = 20,
-                        dates = listOf(LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_DATE), LocalDate.now().format(DateTimeFormatter.ISO_DATE)),
-                        sortingCriteria = RichInfoGamesSortingCriteria.DateAddedDescending
-                    )
-                ).let {
-                    val result = when (it) {
-                        is Result.Success -> Result.Success(it.data.games.map(RichInfoGame::wrapResource))
-                        is Result.Error -> Result.Error(it.exception)
-                    }
-                    OnboardingGames.SuggestedGames(result)
-                }
-            }
-            gamesRepository.queryRichInfoGames(
+    private val allOnboardingGames = combine(
+        snapshotFlow { searchQuery.value }
+            .debounce(275)
+            .distinctUntilChanged(),
+        userFavGenres
+    ) { searchText, favouriteGenres ->
+        if (searchText.isEmpty()) {
+            // Retrieve suggested games
+            return@combine gamesRepository.queryRichInfoGames(
                 RichInfoGamesQuery(
                     pageSize = 20,
-                    searchQuery = searchText,
-                    sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+                    dates = listOf(LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_DATE), LocalDate.now().format(DateTimeFormatter.ISO_DATE)),
+                    sortingCriteria = RichInfoGamesSortingCriteria.DateAddedDescending,
+                    genres = favouriteGenres.map { it.id }
                 )
             ).let {
                 val result = when (it) {
                     is Result.Success -> Result.Success(it.data.games.map(RichInfoGame::wrapResource))
                     is Result.Error -> Result.Error(it.exception)
                 }
-                OnboardingGames.SearchQueryBasedGames(result)
+                OnboardingGames.SuggestedGames(result)
             }
         }
+        gamesRepository.queryRichInfoGames(
+            RichInfoGamesQuery(
+                pageSize = 20,
+                searchQuery = searchText,
+                sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+            )
+        ).let {
+            val result = when (it) {
+                is Result.Success -> Result.Success(it.data.games.map(RichInfoGame::wrapResource))
+                is Result.Error -> Result.Error(it.exception)
+            }
+            OnboardingGames.SearchQueryBasedGames(result)
+        }
+    }
 
     private val allGameGenres = flow {
         emit(gamesRepository.queryGamesGenres().wrapResultResources())
