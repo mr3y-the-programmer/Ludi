@@ -118,7 +118,7 @@ class EditPreferencesViewModel @Inject constructor(
         viewModelScope.launch {
             followedNewsDataSourcesStore.updateData {
                 val followedNewsDataSource = source.toFollowedNewsDataSource()
-                if (followedNewsDataSource !in it.newsDataSourceList) {
+                if (followedNewsDataSource.type !in it.newsDataSourceList.map { source -> source.type }) {
                     it.toBuilder().addNewsDataSource(followedNewsDataSource).build()
                 } else {
                     it

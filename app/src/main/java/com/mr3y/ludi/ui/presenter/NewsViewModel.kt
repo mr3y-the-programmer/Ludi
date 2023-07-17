@@ -45,7 +45,6 @@ class NewsViewModel @Inject constructor(
                 .map { followedNewsDataSource -> Source.valueOf(followedNewsDataSource.type) }
                 .toSet()
                 .ifEmpty { Source.values().toSet() }
-                .also { refresh() }
         }
 
     private val _internalState = MutableStateFlow(InitialNewsState)
@@ -54,37 +53,37 @@ class NewsViewModel @Inject constructor(
     val newsState: StateFlow<NewsState> = combine(
         followedNewsDataSources,
         _internalState
-    ) { sources, state ->
-        if (!state.isRefreshing) {
-            state
-        } else {
-            val newsResult = viewModelScope.async {
-                newsRepository.getLatestGamingNews(sources).wrapResultResources(
-                    transform = { articles -> articles.sortByRecent() }
-                )
-            }
-            val reviewsResult = viewModelScope.async {
-                newsRepository.getGamesReviews(sources).wrapResultResources(
-                    transform = { articles -> articles.sortByRecent() }
-                )
-            }
-            val newReleasesResult = viewModelScope.async {
-                newsRepository.getGamesNewReleases(sources).wrapResultResources(
-                    transform = { articles ->
-                        articles.sortByRecent(desc = false)
-                            .filter { article -> article.releaseDate.isAfter(ZonedDateTime.now()) }
-                    }
-                )
-            }
-            val (news, reviews, newReleases) = listOf(newsResult, reviewsResult, newReleasesResult).awaitAll()
-            _internalState.updateAndGet {
-                NewsState(
-                    isRefreshing = false,
-                    newsFeed = news as Result<List<ResourceWrapper<NewsArticle>>, Throwable>,
-                    reviewsFeed = reviews as Result<List<ResourceWrapper<ReviewArticle>>, Throwable>,
-                    newReleasesFeed = newReleases as Result<List<ResourceWrapper<NewReleaseArticle>>, Throwable>
-                )
-            }
+    ) { sources, _ ->
+        val newsResult = viewModelScope.async {
+            newsRepository.getLatestGamingNews(sources).wrapResultResources(
+                transform = { articles -> articles.sortByRecent() }
+            )
+        }
+        val reviewsResult = viewModelScope.async {
+            newsRepository.getGamesReviews(sources).wrapResultResources(
+                transform = { articles -> articles.sortByRecent() }
+            )
+        }
+        val newReleasesResult = viewModelScope.async {
+            newsRepository.getGamesNewReleases(sources).wrapResultResources(
+                transform = { articles ->
+                    articles.sortByRecent(desc = false)
+                        .filter { article -> article.releaseDate.isAfter(ZonedDateTime.now()) }
+                }
+            )
+        }
+        val (news, reviews, newReleases) = listOf(
+            newsResult,
+            reviewsResult,
+            newReleasesResult
+        ).awaitAll()
+        _internalState.updateAndGet {
+            NewsState(
+                isRefreshing = false,
+                newsFeed = news as Result<List<ResourceWrapper<NewsArticle>>, Throwable>,
+                reviewsFeed = reviews as Result<List<ResourceWrapper<ReviewArticle>>, Throwable>,
+                newReleasesFeed = newReleases as Result<List<ResourceWrapper<NewReleaseArticle>>, Throwable>
+            )
         }
     }.stateIn(
         viewModelScope,

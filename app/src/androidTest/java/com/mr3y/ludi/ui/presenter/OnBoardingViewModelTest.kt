@@ -132,6 +132,7 @@ class OnBoardingViewModelTest {
         val followedNewsDataSource = NewsDataSource("Game spot", R.drawable.game_spot_logo, Source.GameSpot)
         // make sure the function is idempotent
         repeat(2) { sut.followNewsDataSource(followedNewsDataSource) }
+        repeat(2) { sut.followNewsDataSource(followedNewsDataSource.copy(name = "foo bar", R.drawable.giant_bomb_logo)) }
 
         advanceUntilIdle()
 
