@@ -9,6 +9,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -70,11 +71,14 @@ import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.ReviewArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.Title
+import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.launchChromeCustomTab
 import com.mr3y.ludi.ui.presenter.NewsViewModel
+import com.mr3y.ludi.ui.presenter.connectivityState
+import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.NewsState
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.preview.LudiPreview
@@ -145,105 +149,115 @@ fun NewsScreen(
                 .padding(contentPadding)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            LazyColumn(
+            Column(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                val headerModifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
-                    .padding(bottom = 8.dp)
-
-                val cardModifier = Modifier
-                    .width(width = 248.dp)
-                    .height(IntrinsicSize.Min)
-                item {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = headerModifier
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.TrendingUp,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(36.dp)
-                        )
-                        LudiSectionHeader(
-                            text = "Latest",
-                            modifier = Modifier.fillMaxHeight()
-                        )
-                    }
-                    FeedSectionScaffold(
-                        sectionFeedResult = newsState.newsFeed,
-                        modifier = Modifier.fillMaxWidth(),
-                        onEmptySuccessfulResultLabel = stringResource(id = R.string.news_no_news_to_show)
-                    ) {
-                        ArticleCardTile(
-                            articleWrapper = it,
-                            onClick = {
-                                if (it is ResourceWrapper.ActualResource) {
-                                    launchChromeCustomTab(
-                                        context,
-                                        Uri.parse(it.resource.sourceLinkUrl),
-                                        chromeTabToolbarColor
-                                    )
-                                }
-                            },
-                            modifier = cardModifier
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
+                val connectionState by connectivityState()
+                val isInternetConnectionNotAvailable by remember {
+                    derivedStateOf { connectionState != ConnectionState.Available }
                 }
-                item {
-                    LudiSectionHeader(
-                        text = "Reviews",
-                        modifier = headerModifier
-                    )
-                    FeedSectionScaffold(
-                        sectionFeedResult = newsState.reviewsFeed,
-                        modifier = Modifier.fillMaxWidth(),
-                        onEmptySuccessfulResultLabel = stringResource(id = R.string.news_no_reviews_to_show)
-                    ) {
-                        ArticleCardTile(
-                            articleWrapper = it,
-                            onClick = {
-                                if (it is ResourceWrapper.ActualResource) {
-                                    launchChromeCustomTab(
-                                        context,
-                                        Uri.parse(it.resource.sourceLinkUrl),
-                                        chromeTabToolbarColor
-                                    )
-                                }
-                            },
-                            modifier = cardModifier
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-                item {
-                    LudiSectionHeader(
-                        text = "Upcoming releases",
-                        modifier = headerModifier
-                    )
-                }
-                NewReleasesSection(
-                    newReleases = newsState.newReleasesFeed
+                AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(start = 16.dp)
                 ) {
-                    NewReleaseTile(
-                        newReleaseArticleWrapper = it,
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .fillMaxWidth()
-                            .height(IntrinsicSize.Min),
-                        onClick = {
-                            if (it is ResourceWrapper.ActualResource) {
-                                launchChromeCustomTab(context, Uri.parse(it.resource.sourceLinkUrl), chromeTabToolbarColor)
-                            }
+                    val headerModifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
+                        .padding(bottom = 8.dp)
+
+                    val cardModifier = Modifier
+                        .width(width = 248.dp)
+                        .height(IntrinsicSize.Min)
+                    item {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = headerModifier
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.TrendingUp,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier.size(36.dp)
+                            )
+                            LudiSectionHeader(
+                                text = "Latest",
+                                modifier = Modifier.fillMaxHeight()
+                            )
                         }
-                    )
-                    Divider(modifier = Modifier.padding(end = 16.dp))
+                        FeedSectionScaffold(
+                            sectionFeedResult = newsState.newsFeed,
+                            modifier = Modifier.fillMaxWidth(),
+                            onEmptySuccessfulResultLabel = stringResource(id = R.string.news_no_news_to_show)
+                        ) {
+                            ArticleCardTile(
+                                articleWrapper = it,
+                                onClick = {
+                                    if (it is ResourceWrapper.ActualResource) {
+                                        launchChromeCustomTab(
+                                            context,
+                                            Uri.parse(it.resource.sourceLinkUrl),
+                                            chromeTabToolbarColor
+                                        )
+                                    }
+                                },
+                                modifier = cardModifier
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                    item {
+                        LudiSectionHeader(
+                            text = "Reviews",
+                            modifier = headerModifier
+                        )
+                        FeedSectionScaffold(
+                            sectionFeedResult = newsState.reviewsFeed,
+                            modifier = Modifier.fillMaxWidth(),
+                            onEmptySuccessfulResultLabel = stringResource(id = R.string.news_no_reviews_to_show)
+                        ) {
+                            ArticleCardTile(
+                                articleWrapper = it,
+                                onClick = {
+                                    if (it is ResourceWrapper.ActualResource) {
+                                        launchChromeCustomTab(
+                                            context,
+                                            Uri.parse(it.resource.sourceLinkUrl),
+                                            chromeTabToolbarColor
+                                        )
+                                    }
+                                },
+                                modifier = cardModifier
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                    item {
+                        LudiSectionHeader(
+                            text = "Upcoming releases",
+                            modifier = headerModifier
+                        )
+                    }
+                    NewReleasesSection(
+                        newReleases = newsState.newReleasesFeed
+                    ) {
+                        NewReleaseTile(
+                            newReleaseArticleWrapper = it,
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Min),
+                            onClick = {
+                                if (it is ResourceWrapper.ActualResource) {
+                                    launchChromeCustomTab(context, Uri.parse(it.resource.sourceLinkUrl), chromeTabToolbarColor)
+                                }
+                            }
+                        )
+                        Divider(modifier = Modifier.padding(end = 16.dp))
+                    }
                 }
             }
             PullRefreshIndicator(

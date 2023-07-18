@@ -37,10 +37,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.launchChromeCustomTab
 import com.mr3y.ludi.ui.presenter.DealsViewModel
+import com.mr3y.ludi.ui.presenter.connectivityState
+import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.DealStore
 import com.mr3y.ludi.ui.presenter.model.DealsState
 import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
@@ -125,49 +128,67 @@ fun DealsScreen(
             },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { contentPadding ->
-            val context = LocalContext.current
-            val chromeTabToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
-            LazyColumn(
-                state = listState,
+            Column(
                 modifier = Modifier
                     .padding(contentPadding)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                if (selectedTab == 0) {
-                    sectionScaffold(
-                        result = dealsState.deals
-                    ) {
-                        Deal(
-                            dealWrapper = it,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .fillMaxWidth()
-                                .height(160.dp),
-                            onClick = {
-                                if (it is ResourceWrapper.ActualResource) {
-                                    val dealUrl = Uri.parse("https://www.cheapshark.com/redirect?dealID=${it.resource.dealID}")
-                                    launchChromeCustomTab(context, dealUrl, chromeTabToolbarColor)
+                val context = LocalContext.current
+                val chromeTabToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
+                val connectionState by connectivityState()
+                val isInternetConnectionNotAvailable by remember {
+                    derivedStateOf { connectionState != ConnectionState.Available }
+                }
+                AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
+                LazyColumn(
+                    state = listState,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (selectedTab == 0) {
+                        sectionScaffold(
+                            result = dealsState.deals
+                        ) {
+                            Deal(
+                                dealWrapper = it,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .fillMaxWidth()
+                                    .height(160.dp),
+                                onClick = {
+                                    if (it is ResourceWrapper.ActualResource) {
+                                        val dealUrl =
+                                            Uri.parse("https://www.cheapshark.com/redirect?dealID=${it.resource.dealID}")
+                                        launchChromeCustomTab(
+                                            context,
+                                            dealUrl,
+                                            chromeTabToolbarColor
+                                        )
+                                    }
                                 }
-                            }
-                        )
-                    }
-                } else {
-                    sectionScaffold(
-                        result = dealsState.giveaways
-                    ) {
-                        GamerPowerGameGiveaway(
-                            giveawayWrapper = it,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .fillMaxWidth()
-                                .height(120.dp),
-                            onClick = {
-                                if (it is ResourceWrapper.ActualResource) {
-                                    launchChromeCustomTab(context, Uri.parse(it.resource.gamerPowerUrl), chromeTabToolbarColor)
+                            )
+                        }
+                    } else {
+                        sectionScaffold(
+                            result = dealsState.giveaways
+                        ) {
+                            GamerPowerGameGiveaway(
+                                giveawayWrapper = it,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .fillMaxWidth()
+                                    .height(120.dp),
+                                onClick = {
+                                    if (it is ResourceWrapper.ActualResource) {
+                                        launchChromeCustomTab(
+                                            context,
+                                            Uri.parse(it.resource.gamerPowerUrl),
+                                            chromeTabToolbarColor
+                                        )
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }

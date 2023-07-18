@@ -3,6 +3,7 @@ package com.mr3y.ludi.ui.screens.discover
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,9 +19,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,10 +35,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.RichInfoGame
+import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
+import com.mr3y.ludi.ui.presenter.connectivityState
 import com.mr3y.ludi.ui.presenter.groupByGenre
+import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.ui.presenter.model.Genre
@@ -94,17 +100,29 @@ fun DiscoverScreen(
             )
         }
     ) { contentPadding ->
-        if (discoverState.games is DiscoverStateGames.SuggestedGames) {
-            SuggestedGamesPage(
-                suggestedGames = discoverState.games,
-                modifier = Modifier.padding(contentPadding)
-            )
-        } else {
-            discoverState.games as DiscoverStateGames.SearchQueryBasedGames
-            SearchQueryAndFilterPage(
-                searchResult = discoverState.games.richInfoGames,
-                modifier = Modifier.padding(contentPadding)
-            )
+        Column(
+            modifier = Modifier.padding(contentPadding),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val connectionState by connectivityState()
+            val isInternetConnectionNotAvailable by remember {
+                derivedStateOf { connectionState != ConnectionState.Available }
+            }
+            when (discoverState.games) {
+                is DiscoverStateGames.SuggestedGames -> {
+                    AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
+                    SuggestedGamesPage(
+                        suggestedGames = discoverState.games
+                    )
+                }
+                else -> {
+                    discoverState.games as DiscoverStateGames.SearchQueryBasedGames
+                    AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
+                    SearchQueryAndFilterPage(
+                        searchResult = discoverState.games.richInfoGames
+                    )
+                }
+            }
         }
     }
     if (openFiltersSheet) {
@@ -207,7 +225,12 @@ fun SearchQueryAndFilterPage(
                 if (searchResult.data is ResourceWrapper.ActualResource) {
                     searchResult.data.resource.forEach { (gameGenre, games) ->
                         item {
-                            LudiSectionHeader(text = gameGenre.name, modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp))
+                            LudiSectionHeader(
+                                text = gameGenre.name,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp)
+                            )
                         }
                         item {
                             LazyRow(
