@@ -45,8 +45,9 @@ private fun NetworkCallback(callback: (ConnectionState) -> Unit): ConnectivityMa
         ) {
             if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
                 callback(ConnectionState.Available)
-            } else
+            } else {
                 callback(ConnectionState.Unavailable)
+            }
         }
     }
 }
@@ -60,12 +61,11 @@ val Context.currentConnectivityState: ConnectionState
         return getCurrentConnectivityState(connectivityManager)
     }
 
-
 private fun getCurrentConnectivityState(connectivityManager: ConnectivityManager): ConnectionState {
     val currentDefaultNetwork = connectivityManager.activeNetwork ?: return ConnectionState.Unavailable
     val connected = connectivityManager.getNetworkCapabilities(currentDefaultNetwork)
-            ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-            ?: false
+        ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        ?: false
 
     return if (connected) ConnectionState.Available else ConnectionState.Unavailable
 }
