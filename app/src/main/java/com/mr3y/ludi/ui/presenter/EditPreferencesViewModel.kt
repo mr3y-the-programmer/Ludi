@@ -81,7 +81,7 @@ class EditPreferencesViewModel @Inject constructor(
         allGenres,
         userFavGenres
     ) { sources, games, allGenres, favouriteGenres ->
-        when(preferencesType) {
+        when (preferencesType) {
             PreferencesType.NewsDataSources ->
                 EditPreferencesState.FollowedNewsDataSources(
                     allNewsDataSources = SupportedNewsDataSources,

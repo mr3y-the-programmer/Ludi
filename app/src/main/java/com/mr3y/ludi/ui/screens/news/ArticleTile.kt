@@ -31,7 +31,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.google.accompanist.placeholder.PlaceholderHighlight
@@ -56,7 +55,7 @@ import kotlin.time.toKotlinDuration
 fun ArticleCardTile(
     articleWrapper: ResourceWrapper<Article>?,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val article = articleWrapper?.actualResource
     Card(

@@ -95,7 +95,7 @@ class NewsViewModel @Inject constructor(
         _internalState.update { it.copy(isRefreshing = true) }
     }
 
-    internal fun <T: Article> Iterable<T>.sortByRecent(desc: Boolean = true): Iterable<T> {
+    internal fun <T : Article> Iterable<T>.sortByRecent(desc: Boolean = true): Iterable<T> {
         return sortedWith(
             if (desc) {
                 compareByDescending<T> { it.publicationDate }.thenByDescending { it.title.text }

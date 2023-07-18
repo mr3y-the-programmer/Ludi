@@ -5,7 +5,6 @@ import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import com.mr3y.ludi.core.network.fixtures.RetrofitClientForTesting
 import com.mr3y.ludi.core.network.model.RAWGPage
 import com.slack.eithernet.ApiResult
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer

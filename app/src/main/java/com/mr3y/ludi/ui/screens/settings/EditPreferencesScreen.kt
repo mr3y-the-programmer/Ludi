@@ -39,7 +39,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -62,7 +61,7 @@ fun EditPreferencesScreen(
     type: PreferencesType,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EditPreferencesViewModel = hiltViewModel(),
+    viewModel: EditPreferencesViewModel = hiltViewModel()
 ) {
     val editPreferencesState by viewModel.editPreferencesState.collectAsStateWithLifecycle()
     EditPreferencesScreen(
@@ -138,7 +137,7 @@ fun EditPreferencesScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            when(state) {
+            when (state) {
                 is EditPreferencesState.FollowedNewsDataSources -> {
                     NewsSourcesList(
                         state = state,
@@ -274,7 +273,7 @@ fun GenresList(
     modifier: Modifier = Modifier
 ) {
     if (state.allGenres is Result.Success) {
-        when(state.allGenres.data) {
+        when (state.allGenres.data) {
             is ResourceWrapper.Placeholder -> {
                 Box(
                     modifier = modifier.fillMaxWidth(),

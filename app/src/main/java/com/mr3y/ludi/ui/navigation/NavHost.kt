@@ -56,7 +56,7 @@ fun LudiNavHost(
         }
         composable(
             route = "${Screen.EditPreferences.route}/{type}",
-            arguments = listOf(navArgument("type") { type = NavType.EnumType(PreferencesType::class.java)})
+            arguments = listOf(navArgument("type") { type = NavType.EnumType(PreferencesType::class.java) })
         ) { backStackEntry ->
             val type = if (Build.VERSION.SDK_INT < 33) {
                 backStackEntry.arguments?.getSerializable("type") as PreferencesType

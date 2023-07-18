@@ -24,7 +24,7 @@ internal fun String.toZonedDateTime(pattern: Pattern = Pattern.RFC_1123): ZonedD
         ZonedDateTime.parse(this)
     } else {
         try {
-            when(pattern) {
+            when (pattern) {
                 Pattern.RFC_1123 -> ZonedDateTime.parse(this, DateTimeFormatter.RFC_1123_DATE_TIME)
                 Pattern.ISO_UTC_DATE_TIME -> ZonedDateTime.parse("${this.replace(' ', 'T').removeSuffix("Z")}Z")
             }

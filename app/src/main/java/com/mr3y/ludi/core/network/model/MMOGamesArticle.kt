@@ -1,10 +1,7 @@
 package com.mr3y.ludi.core.network.model
 
-import com.mr3y.ludi.core.model.MarkupText
 import com.mr3y.ludi.core.model.NewsArticle
 import com.mr3y.ludi.core.model.Percent
-import com.mr3y.ludi.core.model.Source
-import com.mr3y.ludi.core.model.Title
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
