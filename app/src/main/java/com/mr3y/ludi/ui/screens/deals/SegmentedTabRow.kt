@@ -46,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 import kotlin.math.max
 
@@ -252,7 +253,7 @@ data class SegmentedTabRowColors internal constructor(
     }
 }
 
-@Preview(showBackground = true, wallpaper = Wallpapers.YELLOW_DOMINATED_EXAMPLE, device = "id:pixel_6")
+@LudiPreview
 @Composable
 fun PreviewMultiSelector() {
     LudiTheme {

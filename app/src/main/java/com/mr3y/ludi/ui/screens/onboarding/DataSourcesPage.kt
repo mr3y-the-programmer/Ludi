@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mr3y.ludi.R
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @Composable
@@ -121,7 +122,7 @@ fun NewsSourceTile(
     }
 }
 
-@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
+@LudiPreview
 @Composable
 fun NewsSourcesPagePreview() {
     LudiTheme {
@@ -133,7 +134,7 @@ fun NewsSourcesPagePreview() {
     }
 }
 
-@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
+@LudiPreview
 @Composable
 fun NewsSourceTilePreview() {
     LudiTheme {

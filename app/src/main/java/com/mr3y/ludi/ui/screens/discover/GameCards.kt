@@ -40,6 +40,7 @@ import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.ui.components.LudiSuggestionChip
 import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.actualResource
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -157,7 +158,7 @@ private fun String.mapPlatformNameToVectorDrawable(): Int? {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@LudiPreview
 @Composable
 fun RichInfoGameCardPreview() {
     LudiTheme {
@@ -172,7 +173,7 @@ fun RichInfoGameCardPreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@LudiPreview
 @Composable
 fun RichInfoGameCardPlaceholderPreview() {
     LudiTheme {

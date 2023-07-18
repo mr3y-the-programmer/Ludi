@@ -40,6 +40,7 @@ import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -159,7 +160,7 @@ private fun Modifier.conditionalBackground(color: Color, predicate: Boolean): Mo
     }
 }
 
-@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
+@LudiPreview
 @Composable
 fun GenresPagePreview() {
     LudiTheme {

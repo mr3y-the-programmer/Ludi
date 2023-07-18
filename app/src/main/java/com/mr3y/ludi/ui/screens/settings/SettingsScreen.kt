@@ -52,6 +52,7 @@ import com.mr3y.ludi.ui.components.launchChromeCustomTab
 import com.mr3y.ludi.ui.presenter.SettingsViewModel
 import com.mr3y.ludi.ui.presenter.model.SettingsState
 import com.mr3y.ludi.ui.presenter.model.Theme
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @Composable
@@ -324,8 +325,7 @@ fun SettingsTitle(
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF, device = "id:pixel_6")
-@Preview(name = "API 30", showBackground = true, backgroundColor = 0xFFFFFF, device = "id:pixel_6", apiLevel = 30)
+@LudiPreview
 @Composable
 fun SettingsScreenPreview() {
     val settingsState by remember {

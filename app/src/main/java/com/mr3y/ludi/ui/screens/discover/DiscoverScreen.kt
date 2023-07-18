@@ -44,6 +44,7 @@ import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.Store
 import com.mr3y.ludi.ui.presenter.model.actualResource
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @Composable
@@ -300,7 +301,7 @@ fun <T> GamesSectionScaffold(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@LudiPreview
 @Composable
 fun DiscoverScreenPreview() {
     LudiTheme {
@@ -328,7 +329,7 @@ fun DiscoverScreenPreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@LudiPreview
 @Composable
 fun SearchResultsPagePreview() {
     LudiTheme {

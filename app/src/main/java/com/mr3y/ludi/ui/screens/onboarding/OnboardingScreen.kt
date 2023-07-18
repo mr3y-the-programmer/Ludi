@@ -70,6 +70,7 @@ import com.mr3y.ludi.ui.presenter.OnBoardingViewModel
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.OnboardingState
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -336,7 +337,7 @@ enum class OnboardingFABState(@StringRes val labelResId: Int) {
     Finish(R.string.on_boarding_fab_state_finish)
 }
 
-@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
+@LudiPreview
 @Composable
 fun OnboardingScreenPreview() {
     LudiTheme {
@@ -355,7 +356,7 @@ fun OnboardingScreenPreview() {
     }
 }
 
-@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
+@LudiPreview
 @Composable
 fun OnboardingBottomBarPreview() {
     LudiTheme {

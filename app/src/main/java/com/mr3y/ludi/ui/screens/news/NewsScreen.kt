@@ -78,6 +78,7 @@ import com.mr3y.ludi.ui.components.launchChromeCustomTab
 import com.mr3y.ludi.ui.presenter.NewsViewModel
 import com.mr3y.ludi.ui.presenter.model.NewsState
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
@@ -364,7 +365,7 @@ fun Empty(
     }
 }
 
-@Preview(device = "id:pixel_6", showBackground = true)
+@LudiPreview
 @Composable
 fun NewsScreenPreview() {
     val newsArticleSamples = listOf(

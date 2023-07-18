@@ -53,6 +53,7 @@ import com.mr3y.ludi.ui.presenter.model.EditPreferencesState
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @Suppress("UNUSED_PARAMETER")
@@ -325,7 +326,7 @@ fun GenresList(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF, device = "id:pixel_6")
+@LudiPreview
 @Composable
 fun EditPreferencesScreenPreview() {
     val allGenres = Result.Success(

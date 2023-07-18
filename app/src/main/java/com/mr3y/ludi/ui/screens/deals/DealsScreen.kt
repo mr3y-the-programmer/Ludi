@@ -47,6 +47,7 @@ import com.mr3y.ludi.ui.presenter.model.DealsState
 import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @Composable
@@ -251,7 +252,7 @@ fun <T> LazyListScope.sectionScaffold(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF, device = "id:pixel_6")
+@LudiPreview
 @Composable
 fun DealsScreenPreview() {
     val dealsState = remember {

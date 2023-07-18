@@ -67,6 +67,7 @@ import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.ui.presenter.model.actualResource
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.screens.discover.richInfoGamesSamples
 import com.mr3y.ludi.ui.theme.LudiTheme
 import com.mr3y.ludi.ui.theme.dark_star
@@ -366,7 +367,7 @@ private fun GameTileScaffold(
     }
 }
 
-@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
+@LudiPreview
 @Composable
 fun SelectingFavouriteGamesPagePreview() {
     LudiTheme {
@@ -381,7 +382,7 @@ fun SelectingFavouriteGamesPagePreview() {
     }
 }
 
-@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
+@LudiPreview
 @Composable
 fun GameTilePreview() {
     LudiTheme {

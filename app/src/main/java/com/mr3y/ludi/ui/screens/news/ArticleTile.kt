@@ -46,6 +46,7 @@ import com.mr3y.ludi.core.model.Title
 import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.actualResource
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -188,7 +189,7 @@ fun ArticleCardTile(
 
 private fun String.removeCDATA() = removePrefix("<![CDATA[ ").removeSuffix(" ]]>")
 
-@Preview(device = "id:pixel_6", showBackground = true)
+@LudiPreview
 @Composable
 fun LudiContentCardPreview() {
     val samples = listOf(

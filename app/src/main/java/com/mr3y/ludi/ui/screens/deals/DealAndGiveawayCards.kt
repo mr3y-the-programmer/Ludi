@@ -41,6 +41,7 @@ import com.mr3y.ludi.core.model.GamerPowerGiveawayEntry
 import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.actualResource
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -227,7 +228,7 @@ private fun OfferScaffold(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@LudiPreview
 @Composable
 fun DealPreview() {
     LudiTheme {
@@ -242,7 +243,7 @@ fun DealPreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@LudiPreview
 @Composable
 fun GamerPowerGiveawayPreview() {
     LudiTheme {

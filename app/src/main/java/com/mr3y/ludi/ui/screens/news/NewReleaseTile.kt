@@ -31,6 +31,7 @@ import com.mr3y.ludi.core.model.Title
 import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.actualResource
+import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -108,8 +109,7 @@ fun NewReleaseTile(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, uiMode = UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, backgroundColor = 0xFF121212, uiMode = UI_MODE_NIGHT_YES)
+@LudiPreview
 @Composable
 fun NewReleasePlaceholderPreview() {
     LudiTheme {
@@ -124,8 +124,7 @@ fun NewReleasePlaceholderPreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, uiMode = UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, backgroundColor = 0xFF121212, uiMode = UI_MODE_NIGHT_YES)
+@LudiPreview
 @Composable
 fun NewReleasePreview() {
     LudiTheme {
