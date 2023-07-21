@@ -1,13 +1,14 @@
 package com.mr3y.ludi.core.repository.internal
 
 import com.mr3y.ludi.core.model.Deal
-import com.mr3y.ludi.core.model.GamerPowerGiveawayEntry
+import com.mr3y.ludi.core.model.GiveawayEntry
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.toCoreErrorResult
 import com.mr3y.ludi.core.network.datasources.internal.CheapSharkDataSource
 import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSource
 import com.mr3y.ludi.core.network.model.CheapSharkDeal
-import com.mr3y.ludi.core.network.model.toCoreGamerPowerGiveawayEntry
+import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry
+import com.mr3y.ludi.core.network.model.toGiveawayEntry
 import com.mr3y.ludi.core.network.model.toDeal
 import com.mr3y.ludi.core.repository.DealsRepository
 import com.mr3y.ludi.core.repository.query.DealsQueryParameters
@@ -31,14 +32,14 @@ class DefaultDealsRepository @Inject constructor(
         }
     }
 
-    override suspend fun queryGamerPowerGiveaways(queryParameters: GiveawaysQueryParameters): Result<List<GamerPowerGiveawayEntry>, Throwable> {
+    override suspend fun queryGiveaways(queryParameters: GiveawaysQueryParameters): Result<List<GiveawayEntry>, Throwable> {
         val fullUrl = if (queryParameters.isValid()) {
             buildGiveawaysFullUrl("$GamerPowerBaseUrl/filter", queryParameters)
         } else {
             "$GamerPowerBaseUrl/giveaways"
         }
         return when (val result = gamerPowerDataSource.queryLatestGiveaways(fullUrl)) {
-            is ApiResult.Success -> Result.Success(result.value.map(com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry::toCoreGamerPowerGiveawayEntry))
+            is ApiResult.Success -> Result.Success(result.value.map(GamerPowerGiveawayEntry::toGiveawayEntry))
             is ApiResult.Failure -> result.toCoreErrorResult()
         }
     }

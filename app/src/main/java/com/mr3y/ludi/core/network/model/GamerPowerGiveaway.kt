@@ -1,6 +1,7 @@
 package com.mr3y.ludi.core.network.model
 
-import com.mr3y.ludi.core.model.GamerPowerGiveawayEntryStatus
+import com.mr3y.ludi.core.model.GiveawayEntry
+import com.mr3y.ludi.core.model.GiveawayEntryStatus
 import com.mr3y.ludi.core.network.serialization.NotAvailableAsNullSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -27,15 +28,15 @@ data class GamerPowerGiveawayEntry(
     @SerialName("end_date")
     val endDateTime: String?,
     val users: Int,
-    val status: GiveawayEntryStatus,
+    val status: GamerPowerGiveawayEntryStatus,
     @SerialName("gamerpower_url")
     val gamerPowerUrl: String
 )
 
-enum class GiveawayEntryStatus { Active }
+enum class GamerPowerGiveawayEntryStatus { Active }
 
-fun GamerPowerGiveawayEntry.toCoreGamerPowerGiveawayEntry(): com.mr3y.ludi.core.model.GamerPowerGiveawayEntry {
-    return com.mr3y.ludi.core.model.GamerPowerGiveawayEntry(
+fun GamerPowerGiveawayEntry.toGiveawayEntry(): GiveawayEntry {
+    return GiveawayEntry(
         id = id,
         title = title,
         worthInUsDollar = worth?.substringAfter('$')?.toFloat(),
@@ -49,7 +50,7 @@ fun GamerPowerGiveawayEntry.toCoreGamerPowerGiveawayEntry(): com.mr3y.ludi.core.
         platforms = platforms.split(',').map { it.trim() },
         endDateTime = endDateTime?.toZonedDateTime(pattern = Pattern.ISO_UTC_DATE_TIME),
         users = users,
-        status = GamerPowerGiveawayEntryStatus.Active,
+        status = GiveawayEntryStatus.Active,
         gamerPowerUrl = gamerPowerUrl
     )
 }

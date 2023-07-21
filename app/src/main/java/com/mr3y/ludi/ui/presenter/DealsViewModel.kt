@@ -6,7 +6,7 @@ import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mr3y.ludi.core.model.Deal
-import com.mr3y.ludi.core.model.GamerPowerGiveawayEntry
+import com.mr3y.ludi.core.model.GiveawayEntry
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.repository.DealsRepository
 import com.mr3y.ludi.core.repository.query.DealsQuery
@@ -70,7 +70,7 @@ class DealsViewModel @Inject constructor(
     private val giveawaysFiltersState = MutableStateFlow(InitialGiveawaysFiltersState)
     private val gamerPowerGiveaways = giveawaysFiltersState.mapLatest { giveawayFiltersState ->
         isGiveawaysLoading.update { true }
-        dealsRepository.queryGamerPowerGiveaways(
+        dealsRepository.queryGiveaways(
             GiveawaysQueryParameters(
                 platforms = giveawayFiltersState.selectedPlatformsAndStores(),
                 sorting = giveawayFiltersState.sortingCriteria
@@ -99,7 +99,7 @@ class DealsViewModel @Inject constructor(
             giveaways = if (isGiveawaysLoading) {
                 Initial.giveaways
             } else {
-                (updates[4] as Result<List<GamerPowerGiveawayEntry>, Throwable>).wrapResultResources(
+                (updates[4] as Result<List<GiveawayEntry>, Throwable>).wrapResultResources(
                     transform = { giveaways ->
                         giveaways.filter { giveaway ->
                             giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault())) ?: true

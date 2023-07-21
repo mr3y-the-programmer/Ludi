@@ -1,10 +1,9 @@
 package com.mr3y.ludi.ui.screens.deals
 
-import com.mr3y.ludi.core.model.MMOGiveawayEntry
-import com.mr3y.ludi.core.model.Percent
 import com.mr3y.ludi.core.network.model.CheapSharkDeal
-import com.mr3y.ludi.core.network.model.GiveawayEntryStatus
-import com.mr3y.ludi.core.network.model.toCoreGamerPowerGiveawayEntry
+import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry
+import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntryStatus
+import com.mr3y.ludi.core.network.model.toGiveawayEntry
 import com.mr3y.ludi.core.network.model.toDeal
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 
@@ -80,45 +79,9 @@ val dealSamples = listOf(
     )
 )
 
-val mmoGiveawaysSamples = listOf(
-    ResourceWrapper.ActualResource(
-        MMOGiveawayEntry(
-            128061,
-            "Castle Clash $200 Bundle Key Giveaway (New Players Only)",
-            Percent(21),
-            "https://www.mmobomb.com/file/2022/3/castle-clash-box-218x150.png",
-            "https://www.mmobomb.com/file/2022/3/castle-clash-box.png",
-            "To unlock your key instantly you just need to log in and click the button on the top.",
-            "https://www.mmobomb.com/giveaway/castle-clash-starter-keys"
-        )
-    ),
-    ResourceWrapper.ActualResource(
-        MMOGiveawayEntry(
-            128077,
-            "Doomsday: Last Survivors Gift Key Giveaway (New Players)",
-            Percent(24),
-            "https://www.mmobomb.com/file/2022/8/doomday-box-218x150.png",
-            "https://www.mmobomb.com/file/2022/8/doomday-box.png",
-            "To unlock your key instantly you just need to log in and click the button on the top.",
-            "https://www.mmobomb.com/giveaway/doomsday-last-survivors-gift-key"
-        )
-    ),
-    ResourceWrapper.ActualResource(
-        MMOGiveawayEntry(
-            119744,
-            "Eudemons Online Gift Pack Key Giveaway",
-            Percent(89),
-            "https://www.mmobomb.com/file/2023/3/eudemons-online-gift-pack-key-giveaway-218x150.png",
-            "https://www.mmobomb.com/file/2023/3/eudemons-online-gift-pack-key-giveaway.png",
-            "To unlock your key instantly you just need to complete all the steps on the top.",
-            "https://www.mmobomb.com/giveaway/eudemons-online-gift-pack-key-giveaway"
-        )
-    )
-)
-
 val otherGamesGiveawaysSamples = listOf(
     ResourceWrapper.ActualResource(
-        com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry(
+        GamerPowerGiveawayEntry(
             2301,
             "World of Warships - Starter Pack: Ishizuchi",
             "$23.47",
@@ -132,12 +95,12 @@ val otherGamesGiveawaysSamples = listOf(
             "PC, Epic Games Store",
             "2023-04-28 23:59:00",
             930,
-            GiveawayEntryStatus.Active,
+            GamerPowerGiveawayEntryStatus.Active,
             "https://www.gamerpower.com/world-of-warships-starter-pack-ishizuchi"
-        ).toCoreGamerPowerGiveawayEntry()
+        ).toGiveawayEntry()
     ),
     ResourceWrapper.ActualResource(
-        com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry(
+        GamerPowerGiveawayEntry(
             2300,
             "Spandex Force: Champion Rising",
             "$9.99",
@@ -151,12 +114,12 @@ val otherGamesGiveawaysSamples = listOf(
             "PC, DRM-Free",
             null,
             1480,
-            GiveawayEntryStatus.Active,
+            GamerPowerGiveawayEntryStatus.Active,
             "https://www.gamerpower.com/spandex-force-champion-rising"
-        ).toCoreGamerPowerGiveawayEntry()
+        ).toGiveawayEntry()
     ),
     ResourceWrapper.ActualResource(
-        com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry(
+        GamerPowerGiveawayEntry(
             1178,
             "Dungeons and Dragons Online: Free Quest Packs",
             null,
@@ -170,8 +133,8 @@ val otherGamesGiveawaysSamples = listOf(
             "PC",
             "2023-04-23 23:59:00",
             3540,
-            GiveawayEntryStatus.Active,
+            GamerPowerGiveawayEntryStatus.Active,
             "https://www.gamerpower.com/dungeons-and-dragons-online-all-quest-packs"
-        ).toCoreGamerPowerGiveawayEntry()
+        ).toGiveawayEntry()
     )
 )

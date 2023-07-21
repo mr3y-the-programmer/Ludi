@@ -1,7 +1,7 @@
 package com.mr3y.ludi.ui.presenter.model
 
 import com.mr3y.ludi.core.model.Deal
-import com.mr3y.ludi.core.model.GamerPowerGiveawayEntry
+import com.mr3y.ludi.core.model.GiveawayEntry
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.repository.query.DealsSorting
 import com.mr3y.ludi.core.repository.query.DealsSortingDirection
@@ -10,7 +10,7 @@ import com.mr3y.ludi.core.repository.query.GiveawaysSorting
 data class DealsState(
     val searchQuery: String,
     val deals: Result<List<ResourceWrapper<Deal>>, Throwable>,
-    val giveaways: Result<List<ResourceWrapper<GamerPowerGiveawayEntry>>, Throwable>,
+    val giveaways: Result<List<ResourceWrapper<GiveawayEntry>>, Throwable>,
     val dealsFiltersState: DealsFiltersState,
     val giveawaysFiltersState: GiveawaysFiltersState
 )

@@ -2,8 +2,9 @@ package com.mr3y.ludi.ui.screens.deals
 
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.network.model.CheapSharkDeal
-import com.mr3y.ludi.core.network.model.GiveawayEntryStatus
-import com.mr3y.ludi.core.network.model.toCoreGamerPowerGiveawayEntry
+import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry
+import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntryStatus
+import com.mr3y.ludi.core.network.model.toGiveawayEntry
 import com.mr3y.ludi.core.network.model.toDeal
 import com.mr3y.ludi.core.repository.query.DealsSorting
 import com.mr3y.ludi.core.repository.query.DealsSortingDirection
@@ -125,7 +126,7 @@ val FakeDealSamples = listOf(
 
 val FakeGiveawaysSamples = listOf(
     ResourceWrapper.ActualResource(
-        com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry(
+        GamerPowerGiveawayEntry(
             2301,
             "World of Warships - Starter Pack: Ishizuchi",
             "$23.47",
@@ -139,12 +140,12 @@ val FakeGiveawaysSamples = listOf(
             "PC, Epic Games Store",
             "2023-04-28 23:59:00",
             930,
-            GiveawayEntryStatus.Active,
+            GamerPowerGiveawayEntryStatus.Active,
             "https://www.gamerpower.com/world-of-warships-starter-pack-ishizuchi"
-        ).toCoreGamerPowerGiveawayEntry()
+        ).toGiveawayEntry()
     ),
     ResourceWrapper.ActualResource(
-        com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry(
+        GamerPowerGiveawayEntry(
             2300,
             "Spandex Force: Champion Rising",
             "$9.99",
@@ -158,12 +159,12 @@ val FakeGiveawaysSamples = listOf(
             "PC, DRM-Free",
             null,
             1480,
-            GiveawayEntryStatus.Active,
+            GamerPowerGiveawayEntryStatus.Active,
             "https://www.gamerpower.com/spandex-force-champion-rising"
-        ).toCoreGamerPowerGiveawayEntry()
+        ).toGiveawayEntry()
     ),
     ResourceWrapper.ActualResource(
-        com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry(
+        GamerPowerGiveawayEntry(
             1178,
             "Dungeons and Dragons Online: Free Quest Packs",
             null,
@@ -177,9 +178,9 @@ val FakeGiveawaysSamples = listOf(
             "PC",
             "2023-04-23 23:59:00",
             3540,
-            GiveawayEntryStatus.Active,
+            GamerPowerGiveawayEntryStatus.Active,
             "https://www.gamerpower.com/dungeons-and-dragons-online-all-quest-packs"
-        ).toCoreGamerPowerGiveawayEntry()
+        ).toGiveawayEntry()
     )
 )
 

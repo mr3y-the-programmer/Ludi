@@ -36,7 +36,7 @@ import coil.compose.AsyncImage
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.mr3y.ludi.core.model.Deal
-import com.mr3y.ludi.core.model.GamerPowerGiveawayEntry
+import com.mr3y.ludi.core.model.GiveawayEntry
 import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.actualResource
@@ -117,7 +117,7 @@ fun Deal(
 
 @Composable
 fun GamerPowerGameGiveaway(
-    giveawayWrapper: ResourceWrapper<GamerPowerGiveawayEntry>,
+    giveawayWrapper: ResourceWrapper<GiveawayEntry>,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {

@@ -2,7 +2,7 @@ package com.mr3y.ludi.core.network.datasources.internal
 
 import com.mr3y.ludi.core.network.fixtures.RetrofitClientForTesting
 import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry
-import com.mr3y.ludi.core.network.model.GiveawayEntryStatus
+import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntryStatus
 import com.slack.eithernet.ApiResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -108,7 +108,7 @@ class GamerPowerDataSourceTest {
                 "PC, Epic Games Store",
                 "2023-03-30 23:59:00",
                 930,
-                GiveawayEntryStatus.Active,
+                GamerPowerGiveawayEntryStatus.Active,
                 "https://www.gamerpower.com/world-of-warships-starter-pack-ishizuchi"
             ),
             GamerPowerGiveawayEntry(
@@ -125,7 +125,7 @@ class GamerPowerDataSourceTest {
                 "PC, DRM-Free",
                 null,
                 1480,
-                GiveawayEntryStatus.Active,
+                GamerPowerGiveawayEntryStatus.Active,
                 "https://www.gamerpower.com/spandex-force-champion-rising"
             ),
             GamerPowerGiveawayEntry(
@@ -142,7 +142,7 @@ class GamerPowerDataSourceTest {
                 "PC",
                 "2023-04-23 23:59:00",
                 3540,
-                GiveawayEntryStatus.Active,
+                GamerPowerGiveawayEntryStatus.Active,
                 "https://www.gamerpower.com/dungeons-and-dragons-online-all-quest-packs"
             )
         )

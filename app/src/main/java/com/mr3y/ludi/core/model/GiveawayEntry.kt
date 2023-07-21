@@ -2,21 +2,6 @@ package com.mr3y.ludi.core.model
 
 import java.time.ZonedDateTime
 
-sealed interface GiveawayEntry {
-    val id: Long
-    val title: String
-}
-
-data class MMOGiveawayEntry(
-    override val id: Long,
-    override val title: String,
-    val keysLeftPercent: Percent,
-    val thumbnailUrl: String,
-    val imageUrl: String,
-    val description: String,
-    val giveawayUrl: String
-) : GiveawayEntry
-
 @JvmInline
 value class Percent(val value: Int) {
     init {
@@ -24,9 +9,9 @@ value class Percent(val value: Int) {
     }
 }
 
-data class GamerPowerGiveawayEntry(
-    override val id: Long,
-    override val title: String,
+data class GiveawayEntry(
+    val id: Long,
+    val title: String,
     val worthInUsDollar: Float?,
     val thumbnailUrl: String,
     val imageUrl: String,
@@ -38,8 +23,8 @@ data class GamerPowerGiveawayEntry(
     val platforms: List<String>,
     val endDateTime: ZonedDateTime?,
     val users: Int,
-    val status: GamerPowerGiveawayEntryStatus,
+    val status: GiveawayEntryStatus,
     val gamerPowerUrl: String
-) : GiveawayEntry
+)
 
-enum class GamerPowerGiveawayEntryStatus { Active }
+enum class GiveawayEntryStatus { Active }

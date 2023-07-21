@@ -1,7 +1,6 @@
 package com.mr3y.ludi.core.network.model
 
 import com.mr3y.ludi.core.model.NewsArticle
-import com.mr3y.ludi.core.model.Percent
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -52,15 +51,3 @@ data class MMOGiveawayEntry(
     @SerialName("giveaway_url")
     val giveawayUrl: String
 )
-
-fun MMOGiveawayEntry.toCoreGiveawayEntry(): com.mr3y.ludi.core.model.MMOGiveawayEntry {
-    return com.mr3y.ludi.core.model.MMOGiveawayEntry(
-        id = id,
-        title = title,
-        keysLeftPercent = Percent(keysLeftPercent.substringBefore('%').toInt()),
-        thumbnailUrl,
-        imageUrl,
-        description,
-        giveawayUrl
-    )
-}
