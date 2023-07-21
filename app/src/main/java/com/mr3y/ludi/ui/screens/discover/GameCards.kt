@@ -1,6 +1,9 @@
 package com.mr3y.ludi.ui.screens.discover
 
+import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,13 +26,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -37,7 +43,9 @@ import coil.compose.AsyncImage
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.ui.components.LudiSuggestionChip
+import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.defaultPlaceholder
+import com.mr3y.ludi.ui.components.launchChromeCustomTab
 import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
@@ -49,9 +57,26 @@ fun GameCard(
     modifier: Modifier = Modifier,
     showGenre: Boolean = false
 ) {
+    val context = LocalContext.current
+    val chromeToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                enabled = richInfoGame != null,
+                role = Role.Button,
+                onClick = {
+                    richInfoGame?.slug?.let {
+                        launchChromeCustomTab(
+                            context,
+                            Uri.parse("https://rawg.io/games/$it"),
+                            chromeToolbarColor
+                        )
+                    }
+                }
+            )
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
