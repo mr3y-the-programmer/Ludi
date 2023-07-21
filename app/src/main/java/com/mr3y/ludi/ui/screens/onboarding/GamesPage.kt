@@ -41,7 +41,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -176,19 +175,17 @@ fun SelectingFavouriteGamesPage(
         ) {
             when (val result = allGames.games) {
                 is Result.Success -> {
-                    result.data.forEachIndexed { index, gameWrapper ->
+                    result.data.forEach { gameWrapper ->
                         val game = gameWrapper.actualResource
                         val isFavGame = game?.let { FavouriteGame(it.id, it.name, it.imageUrl, it.rating) } in favouriteUserGames
                         if (!isFavGame) {
                             item {
-                                key(index) {
-                                    GameTile(
-                                        game = game,
-                                        selected = false,
-                                        onToggleSelectingFavouriteGame = { onAddingGameToFavourites(it) },
-                                        modifier = Modifier.height(IntrinsicSize.Min)
-                                    )
-                                }
+                                GameTile(
+                                    game = game,
+                                    selected = false,
+                                    onToggleSelectingFavouriteGame = { onAddingGameToFavourites(it) },
+                                    modifier = Modifier.height(IntrinsicSize.Min)
+                                )
                             }
                         }
                     }

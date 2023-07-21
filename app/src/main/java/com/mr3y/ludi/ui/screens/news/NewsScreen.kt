@@ -26,7 +26,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -49,7 +48,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -320,10 +318,8 @@ fun <T : Article> FeedSectionScaffold(
                             Empty(label = onEmptySuccessfulResultLabel, modifier = Modifier.fillMaxWidth())
                         }
                     } else {
-                        itemsIndexed(sectionFeedResult.data) { index, resourceWrapper ->
-                            key(index) {
-                                itemContent(resourceWrapper)
-                            }
+                        items(sectionFeedResult.data) { resourceWrapper ->
+                            itemContent(resourceWrapper)
                         }
                     }
                 }

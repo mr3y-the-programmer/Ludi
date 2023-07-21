@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -23,7 +23,6 @@ import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -258,10 +257,8 @@ fun <T> LazyListScope.sectionScaffold(
 ) {
     when (result) {
         is Result.Success -> {
-            itemsIndexed(result.data) { index, resourceWrapper ->
-                key(index) {
-                    itemContent(resourceWrapper)
-                }
+            items(result.data) { resourceWrapper ->
+                itemContent(resourceWrapper)
             }
         }
         is Result.Error -> {

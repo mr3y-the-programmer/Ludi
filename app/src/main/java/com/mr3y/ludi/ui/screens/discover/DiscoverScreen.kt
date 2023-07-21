@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +20,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -308,10 +306,8 @@ fun <T> GamesSectionScaffold(
     ) {
         when (gamesResult) {
             is Result.Success -> {
-                itemsIndexed(gamesResult.data) { index, gameWrapper ->
-                    key(index) {
-                        itemContent(gameWrapper)
-                    }
+                items(gamesResult.data) { gameWrapper ->
+                    itemContent(gameWrapper)
                 }
             }
             is Result.Error -> {
