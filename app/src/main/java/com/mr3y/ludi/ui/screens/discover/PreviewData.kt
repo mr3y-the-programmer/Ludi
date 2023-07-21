@@ -1,6 +1,6 @@
 package com.mr3y.ludi.ui.screens.discover
 
-import com.mr3y.ludi.core.model.RichInfoGame
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.network.model.DetailedRAWGPlatformInfo
 import com.mr3y.ludi.core.network.model.RAWGGameGenre
 import com.mr3y.ludi.core.network.model.RAWGGameScreenshot
@@ -10,10 +10,10 @@ import com.mr3y.ludi.core.network.model.RAWGPlatformRequirements
 import com.mr3y.ludi.core.network.model.RAWGShallowGame
 import com.mr3y.ludi.core.network.model.RAWGStoreProperties
 import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfoWithId
-import com.mr3y.ludi.core.network.model.toRichInfoGame
+import com.mr3y.ludi.core.network.model.toGame
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 
-val richInfoGamesSamples = listOf(
+val gamesSamples = listOf(
     ResourceWrapper.ActualResource(
         RAWGShallowGame(
             id = 3498,
@@ -386,7 +386,7 @@ val richInfoGamesSamples = listOf(
                     imageUrl = "https://media.rawg.io/media/games/995/9951d9d55323d08967640f7b9ab3e342.jpg"
                 )
             )
-        ).toRichInfoGame() as RichInfoGame
+        ).toGame() as Game
     ),
     ResourceWrapper.ActualResource(
         RAWGShallowGame(
@@ -758,7 +758,7 @@ val richInfoGamesSamples = listOf(
                     imageUrl = "https://media.rawg.io/media/games/d1a/d1a2e99ade53494c6330a0ed945fe823.jpg"
                 )
             )
-        ).toRichInfoGame() as RichInfoGame
+        ).toGame() as Game
     ),
     ResourceWrapper.ActualResource(
         RAWGShallowGame(
@@ -1152,6 +1152,6 @@ val richInfoGamesSamples = listOf(
                     imageUrl = "https://media.rawg.io/media/games/2e1/2e187b31e5cee21c110bd16798d75fab.jpg"
                 )
             )
-        ).toRichInfoGame() as RichInfoGame
+        ).toGame() as Game
     )
 )

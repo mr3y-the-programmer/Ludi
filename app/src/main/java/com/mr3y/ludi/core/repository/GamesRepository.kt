@@ -1,12 +1,12 @@
 package com.mr3y.ludi.core.repository
 
+import com.mr3y.ludi.core.model.GamesGenresPage
+import com.mr3y.ludi.core.model.GamesPage
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
-import com.mr3y.ludi.core.model.RichInfoGamesPage
-import com.mr3y.ludi.core.repository.query.RichInfoGamesQueryParameters
+import com.mr3y.ludi.core.repository.query.GamesQueryParameters
 
 interface GamesRepository {
-    suspend fun queryRichInfoGames(queryParameters: RichInfoGamesQueryParameters): Result<RichInfoGamesPage, Throwable>
+    suspend fun queryGames(queryParameters: GamesQueryParameters): Result<GamesPage, Throwable>
 
-    suspend fun queryGamesGenres(): Result<RichInfoGamesGenresPage, Throwable>
+    suspend fun queryGamesGenres(): Result<GamesGenresPage, Throwable>
 }

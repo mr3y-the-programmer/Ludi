@@ -41,7 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.mr3y.ludi.R
-import com.mr3y.ludi.core.model.RichInfoGame
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.ui.components.LudiSuggestionChip
 import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.defaultPlaceholder
@@ -53,7 +53,7 @@ import com.mr3y.ludi.ui.theme.LudiTheme
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GameCard(
-    richInfoGame: RichInfoGame?,
+    game: Game?,
     modifier: Modifier = Modifier,
     showGenre: Boolean = false
 ) {
@@ -65,10 +65,10 @@ fun GameCard(
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
-                enabled = richInfoGame != null,
+                enabled = game != null,
                 role = Role.Button,
                 onClick = {
-                    richInfoGame?.slug?.let {
+                    game?.slug?.let {
                         launchChromeCustomTab(
                             context,
                             Uri.parse("https://rawg.io/games/$it"),
@@ -80,15 +80,15 @@ fun GameCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = richInfoGame?.imageUrl,
+                model = game?.imageUrl,
                 modifier = Modifier
                     .fillMaxSize()
-                    .defaultPlaceholder(richInfoGame == null),
+                    .defaultPlaceholder(game == null),
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
             if (showGenre) {
-                richInfoGame?.genres?.firstOrNull()?.name?.let {
+                game?.genres?.firstOrNull()?.name?.let {
                     LudiSuggestionChip(
                         label = it,
                         modifier = Modifier
@@ -97,7 +97,7 @@ fun GameCard(
                     )
                 }
             }
-            if (richInfoGame != null) {
+            if (game != null) {
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -117,7 +117,7 @@ fun GameCard(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = richInfoGame.name,
+                        text = game.name,
                         style = MaterialTheme.typography.titleLarge,
                         color = contentColorFor(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
                         textAlign = TextAlign.Start,
@@ -140,7 +140,7 @@ fun GameCard(
                         )
 
                         Text(
-                            text = richInfoGame.rating.toString().takeIf { it != "0.0" } ?: "N/A",
+                            text = game.rating.toString().takeIf { it != "0.0" } ?: "N/A",
                             style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center,
                             color = contentColorFor(MaterialTheme.colorScheme.primaryContainer)
@@ -151,7 +151,7 @@ fun GameCard(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        richInfoGame.platformsInfo?.map { it.name.mapPlatformNameToVectorDrawable() }
+                        game.platformsInfo?.map { it.name.mapPlatformNameToVectorDrawable() }
                             ?.distinct()?.forEach { drawableId ->
                                 if (drawableId != null) {
                                     Icon(
@@ -187,7 +187,7 @@ private fun String.mapPlatformNameToVectorDrawable(): Int? {
 fun RichInfoGameCardPreview() {
     LudiTheme {
         GameCard(
-            richInfoGame = richInfoGamesSamples[2].actualResource,
+            game = gamesSamples[2].actualResource,
             modifier = Modifier
                 .padding(16.dp)
                 .width(IntrinsicSize.Min)
@@ -202,7 +202,7 @@ fun RichInfoGameCardPreview() {
 fun RichInfoGameCardPlaceholderPreview() {
     LudiTheme {
         GameCard(
-            richInfoGame = null,
+            game = null,
             modifier = Modifier
                 .padding(16.dp)
                 .size(width = 248.dp, height = 360.dp),

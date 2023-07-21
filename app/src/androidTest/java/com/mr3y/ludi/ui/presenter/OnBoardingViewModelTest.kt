@@ -10,9 +10,9 @@ import com.mr3y.ludi.FollowedNewsDataSources
 import com.mr3y.ludi.R
 import com.mr3y.ludi.UserFavouriteGames
 import com.mr3y.ludi.UserFavouriteGenres
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.shared.MainDispatcherRule
 import com.mr3y.ludi.ui.datastore.FavouriteGamesSerializer
@@ -113,8 +113,8 @@ class OnBoardingViewModelTest {
         advanceUntilIdle()
 
         val suggestedGames = sut.onboardingState.value.onboardingGames.games
-        expectThat(suggestedGames).isA<Result.Success<List<ResourceWrapper.ActualResource<RichInfoGame>>>>()
-        suggestedGames as Result.Success<List<ResourceWrapper.ActualResource<RichInfoGame>>>
+        expectThat(suggestedGames).isA<Result.Success<List<ResourceWrapper.ActualResource<Game>>>>()
+        suggestedGames as Result.Success<List<ResourceWrapper.ActualResource<Game>>>
         expectThat(suggestedGames.data).isNotEmpty()
         val suggestedGenres = sut.onboardingState.value.allGamingGenres
         expectThat(suggestedGenres).isA<Result.Success<ResourceWrapper.ActualResource<Set<GameGenre>>>>()

@@ -5,13 +5,13 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
+import com.mr3y.ludi.core.model.GamesPage
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGame
-import com.mr3y.ludi.core.model.RichInfoGamesPage
 import com.mr3y.ludi.core.repository.GamesRepository
-import com.mr3y.ludi.core.repository.query.RichInfoGamesQuery
-import com.mr3y.ludi.core.repository.query.RichInfoGamesSortingCriteria
+import com.mr3y.ludi.core.repository.query.GamesQuery
+import com.mr3y.ludi.core.repository.query.GamesSortingCriteria
 import com.mr3y.ludi.ui.presenter.model.Criteria
 import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
@@ -57,51 +57,51 @@ class DiscoverViewModel @Inject constructor(
         if (searchText.isEmpty() && filtersState == InitialFiltersState) {
             coroutineScope {
                 val trendingGames = async {
-                    gamesRepository.queryRichInfoGames(
-                        RichInfoGamesQuery(
+                    gamesRepository.queryGames(
+                        GamesQuery(
                             pageSize = 20,
                             dates = listOf(
                                 LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_DATE),
                                 LocalDate.now().format(DateTimeFormatter.ISO_DATE)
                             ),
                             metaCriticScores = listOf(85, 100),
-                            sortingCriteria = RichInfoGamesSortingCriteria.ReleasedDescending
+                            sortingCriteria = GamesSortingCriteria.ReleasedDescending
                         )
                     )
                 }
                 val topRatedGames = async {
-                    gamesRepository.queryRichInfoGames(
-                        RichInfoGamesQuery(
+                    gamesRepository.queryGames(
+                        GamesQuery(
                             pageSize = 20,
                             metaCriticScores = listOf(95, 100),
-                            sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+                            sortingCriteria = GamesSortingCriteria.RatingDescending
                         )
                     )
                 }
                 val multiplayerGames = async {
-                    gamesRepository.queryRichInfoGames(
-                        RichInfoGamesQuery(
+                    gamesRepository.queryGames(
+                        GamesQuery(
                             pageSize = 20,
                             genres = listOf(59),
-                            sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+                            sortingCriteria = GamesSortingCriteria.RatingDescending
                         )
                     )
                 }
                 val familyGames = async {
-                    gamesRepository.queryRichInfoGames(
-                        RichInfoGamesQuery(
+                    gamesRepository.queryGames(
+                        GamesQuery(
                             pageSize = 20,
                             genres = listOf(19),
-                            sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+                            sortingCriteria = GamesSortingCriteria.RatingDescending
                         )
                     )
                 }
                 val realisticGames = async {
-                    gamesRepository.queryRichInfoGames(
-                        RichInfoGamesQuery(
+                    gamesRepository.queryGames(
+                        GamesQuery(
                             pageSize = 20,
                             tags = listOf(77),
-                            sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+                            sortingCriteria = GamesSortingCriteria.RatingDescending
                         )
                     )
                 }
@@ -122,8 +122,8 @@ class DiscoverViewModel @Inject constructor(
                 }
             }
         } else {
-            gamesRepository.queryRichInfoGames(
-                RichInfoGamesQuery(
+            gamesRepository.queryGames(
+                GamesQuery(
                     searchQuery = searchText.takeIf { it.isNotEmpty() && it.isNotBlank() },
                     isFuzzinessEnabled = true,
                     matchTermsExactly = false,
@@ -135,51 +135,51 @@ class DiscoverViewModel @Inject constructor(
                         when (sortingCriteria.criteria) {
                             Criteria.Name -> {
                                 if (sortingCriteria.order == Order.Ascending) {
-                                    RichInfoGamesSortingCriteria.NameAscending
+                                    GamesSortingCriteria.NameAscending
                                 } else {
-                                    RichInfoGamesSortingCriteria.NameDescending
+                                    GamesSortingCriteria.NameDescending
                                 }
                             }
                             Criteria.DateReleased -> {
                                 if (sortingCriteria.order == Order.Ascending) {
-                                    RichInfoGamesSortingCriteria.ReleasedAscending
+                                    GamesSortingCriteria.ReleasedAscending
                                 } else {
-                                    RichInfoGamesSortingCriteria.ReleasedDescending
+                                    GamesSortingCriteria.ReleasedDescending
                                 }
                             }
                             Criteria.DateAdded -> {
                                 if (sortingCriteria.order == Order.Ascending) {
-                                    RichInfoGamesSortingCriteria.DateAddedAscending
+                                    GamesSortingCriteria.DateAddedAscending
                                 } else {
-                                    RichInfoGamesSortingCriteria.DateAddedDescending
+                                    GamesSortingCriteria.DateAddedDescending
                                 }
                             }
                             Criteria.DateCreated -> {
                                 if (sortingCriteria.order == Order.Ascending) {
-                                    RichInfoGamesSortingCriteria.DateCreatedAscending
+                                    GamesSortingCriteria.DateCreatedAscending
                                 } else {
-                                    RichInfoGamesSortingCriteria.DateCreatedDescending
+                                    GamesSortingCriteria.DateCreatedDescending
                                 }
                             }
                             Criteria.DateUpdated -> {
                                 if (sortingCriteria.order == Order.Ascending) {
-                                    RichInfoGamesSortingCriteria.DateUpdatedAscending
+                                    GamesSortingCriteria.DateUpdatedAscending
                                 } else {
-                                    RichInfoGamesSortingCriteria.DateUpdatedDescending
+                                    GamesSortingCriteria.DateUpdatedDescending
                                 }
                             }
                             Criteria.Rating -> {
                                 if (sortingCriteria.order == Order.Ascending) {
-                                    RichInfoGamesSortingCriteria.RatingAscending
+                                    GamesSortingCriteria.RatingAscending
                                 } else {
-                                    RichInfoGamesSortingCriteria.RatingDescending
+                                    GamesSortingCriteria.RatingDescending
                                 }
                             }
                             Criteria.Metascore -> {
                                 if (sortingCriteria.order == Order.Ascending) {
-                                    RichInfoGamesSortingCriteria.MetacriticScoreAscending
+                                    GamesSortingCriteria.MetacriticScoreAscending
                                 } else {
-                                    RichInfoGamesSortingCriteria.MetacriticScoreDescending
+                                    GamesSortingCriteria.MetacriticScoreDescending
                                 }
                             }
                         }
@@ -187,7 +187,7 @@ class DiscoverViewModel @Inject constructor(
                 )
             ).let {
                 DiscoverStateGames.SearchQueryBasedGames(
-                    richInfoGames = it.groupByGenreAndWrapResources()
+                    games = it.groupByGenreAndWrapResources()
                 )
             }
         }
@@ -307,25 +307,25 @@ class DiscoverViewModel @Inject constructor(
     }
 }
 
-private fun Result<RichInfoGamesPage, Throwable>.wrapResultResources(): Result<List<ResourceWrapper<RichInfoGame>>, Throwable> {
+private fun Result<GamesPage, Throwable>.wrapResultResources(): Result<List<ResourceWrapper<Game>>, Throwable> {
     return when (this) {
-        is Result.Success -> Result.Success(data.games.map(RichInfoGame::wrapResource))
+        is Result.Success -> Result.Success(data.games.map(Game::wrapResource))
         is Result.Error -> this
     }
 }
 
-private fun Result<RichInfoGamesPage, Throwable>.groupByGenreAndWrapResources(): Result<ResourceWrapper<Map<GameGenre, List<RichInfoGame>>>, Throwable> {
+private fun Result<GamesPage, Throwable>.groupByGenreAndWrapResources(): Result<ResourceWrapper<Map<GameGenre, List<Game>>>, Throwable> {
     return when (this) {
         is Result.Success -> Result.Success(ResourceWrapper.ActualResource(data.games.groupByGenre()))
         is Result.Error -> this
     }
 }
 
-internal fun List<RichInfoGame>.groupByGenre(): Map<GameGenre, List<RichInfoGame>> {
+internal fun List<Game>.groupByGenre(): Map<GameGenre, List<Game>> {
     if (isEmpty()) {
         return emptyMap()
     }
-    val otherGenreGames = mutableListOf<RichInfoGame>()
+    val otherGenreGames = mutableListOf<Game>()
     val otherGenre = GameGenre(
         id = Int.MAX_VALUE,
         name = "Other",
@@ -333,7 +333,7 @@ internal fun List<RichInfoGame>.groupByGenre(): Map<GameGenre, List<RichInfoGame
         gamesCount = Long.MAX_VALUE,
         imageUrl = null
     )
-    val alreadyAssociated = mutableListOf<RichInfoGame>()
+    val alreadyAssociated = mutableListOf<Game>()
     val genres = this.mapNotNull { it.genres.firstOrNull() }.toSet()
     if (genres.isEmpty()) {
         return mapOf(otherGenre.copy(gamesCount = size.toLong()) to this)

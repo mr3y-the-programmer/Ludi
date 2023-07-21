@@ -1,9 +1,9 @@
 package com.mr3y.ludi.ui.presenter
 
 import com.mr3y.ludi.core.model.GameGenre
+import com.mr3y.ludi.core.model.GamesGenresPage
+import com.mr3y.ludi.core.model.GamesPage
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
-import com.mr3y.ludi.core.model.RichInfoGamesPage
 import com.mr3y.ludi.core.network.model.DetailedRAWGPlatformInfo
 import com.mr3y.ludi.core.network.model.RAWGGameGenre
 import com.mr3y.ludi.core.network.model.RAWGGameScreenshot
@@ -13,9 +13,9 @@ import com.mr3y.ludi.core.network.model.RAWGPlatformRequirements
 import com.mr3y.ludi.core.network.model.RAWGShallowGame
 import com.mr3y.ludi.core.network.model.RAWGStoreProperties
 import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfoWithId
-import com.mr3y.ludi.core.network.model.toRichInfoGame
+import com.mr3y.ludi.core.network.model.toGame
 import com.mr3y.ludi.core.repository.GamesRepository
-import com.mr3y.ludi.core.repository.query.RichInfoGamesQueryParameters
+import com.mr3y.ludi.core.repository.query.GamesQueryParameters
 
 class FakeGamesRepository : GamesRepository {
 
@@ -391,7 +391,7 @@ class FakeGamesRepository : GamesRepository {
                     imageUrl = "https://media.rawg.io/media/games/995/9951d9d55323d08967640f7b9ab3e342.jpg"
                 )
             )
-        ).toRichInfoGame(),
+        ).toGame(),
         RAWGShallowGame(
             id = 3328,
             slug = "the-witcher-3-wild-hunt",
@@ -761,7 +761,7 @@ class FakeGamesRepository : GamesRepository {
                     imageUrl = "https://media.rawg.io/media/games/d1a/d1a2e99ade53494c6330a0ed945fe823.jpg"
                 )
             )
-        ).toRichInfoGame(),
+        ).toGame(),
         RAWGShallowGame(
             id = 4200,
             slug = "portal-2",
@@ -1153,12 +1153,12 @@ class FakeGamesRepository : GamesRepository {
                     imageUrl = "https://media.rawg.io/media/games/2e1/2e187b31e5cee21c110bd16798d75fab.jpg"
                 )
             )
-        ).toRichInfoGame()
+        ).toGame()
     )
 
-    override suspend fun queryRichInfoGames(queryParameters: RichInfoGamesQueryParameters): Result<RichInfoGamesPage, Throwable> {
+    override suspend fun queryGames(queryParameters: GamesQueryParameters): Result<GamesPage, Throwable> {
         return Result.Success(
-            RichInfoGamesPage(
+            GamesPage(
                 count = 3,
                 nextPageUrl = null,
                 previousPageUrl = null,
@@ -1167,9 +1167,9 @@ class FakeGamesRepository : GamesRepository {
         )
     }
 
-    override suspend fun queryGamesGenres(): Result<RichInfoGamesGenresPage, Throwable> {
+    override suspend fun queryGamesGenres(): Result<GamesGenresPage, Throwable> {
         return Result.Success(
-            RichInfoGamesGenresPage(
+            GamesGenresPage(
                 count = 10,
                 nextPageUrl = null,
                 previousPageUrl = null,

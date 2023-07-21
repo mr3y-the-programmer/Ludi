@@ -10,11 +10,11 @@ class URLQueryBuilderTest {
     fun givenSomeQueryParametersWithRichInfoGamesEndPointUrl_thenVerifyTheResultingUrlMatchingExpectedOne() {
         val endPointUrl = "https://api.rawg.io/api/games"
         val queryParameters = listOf(
-            RichInfoGamesQueryParameters.Empty.copy(isFuzzinessEnabled = true, platforms = listOf(18, 1, 7), dates = listOf("2019-09-01", "2019-09-30"), sortingCriteria = RichInfoGamesSortingCriteria.NameAscending),
-            RichInfoGamesQueryParameters.Empty,
-            RichInfoGamesQueryParameters.Empty.copy(pageSize = 50, searchQuery = "fall", matchTermsExactly = true, stores = listOf(5, 6), tags = listOf(31, 7), sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending)
+            GamesQueryParameters.Empty.copy(isFuzzinessEnabled = true, platforms = listOf(18, 1, 7), dates = listOf("2019-09-01", "2019-09-30"), sortingCriteria = GamesSortingCriteria.NameAscending),
+            GamesQueryParameters.Empty,
+            GamesQueryParameters.Empty.copy(pageSize = 50, searchQuery = "fall", matchTermsExactly = true, stores = listOf(5, 6), tags = listOf(31, 7), sortingCriteria = GamesSortingCriteria.RatingDescending)
         )
-        val result = queryParameters.map { buildRichInfoGamesFullUrl(endPointUrl, it) }
+        val result = queryParameters.map { buildGamesFullUrl(endPointUrl, it) }
         val expected = listOf(
             "https://api.rawg.io/api/games?search_precise=false&platforms=18,1,7&dates=2019-09-01,2019-09-30&ordering=name",
             "https://api.rawg.io/api/games",

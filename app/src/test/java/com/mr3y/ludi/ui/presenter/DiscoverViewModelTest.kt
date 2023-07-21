@@ -1,6 +1,6 @@
 package com.mr3y.ludi.ui.presenter
 
-import com.mr3y.ludi.core.model.RichInfoGame
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.repository.fixtures.FakeGamesRepository
 import com.mr3y.ludi.shared.MainDispatcherRule
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
@@ -85,7 +85,7 @@ class DiscoverViewModelTest {
 
     @Test
     fun `given a list of games, when grouped by genre, we get a map of genre to list of games`() {
-        expectThat(emptyList<RichInfoGame>().groupByGenre()).isEqualTo(emptyMap())
+        expectThat(emptyList<Game>().groupByGenre()).isEqualTo(emptyMap())
 
         val gamesGroupedByGenre = games.groupByGenre()
 

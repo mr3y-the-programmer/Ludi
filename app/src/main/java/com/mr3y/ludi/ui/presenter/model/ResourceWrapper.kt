@@ -1,8 +1,8 @@
 package com.mr3y.ludi.ui.presenter.model
 
 import com.mr3y.ludi.core.model.GameGenre
+import com.mr3y.ludi.core.model.GamesGenresPage
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
 
 sealed interface ResourceWrapper<out T> {
     object Placeholder : ResourceWrapper<Nothing>
@@ -29,7 +29,7 @@ internal fun <T : Any, R : Any> Result<Iterable<T>, Throwable>.wrapResultResourc
 }
 
 @JvmName("wrapGenresInResultResources")
-fun Result<RichInfoGamesGenresPage, Throwable>.wrapResultResources(): Result<ResourceWrapper<Set<GameGenre>>, Throwable> {
+fun Result<GamesGenresPage, Throwable>.wrapResultResources(): Result<ResourceWrapper<Set<GameGenre>>, Throwable> {
     return when (this) {
         is Result.Success -> Result.Success(ResourceWrapper.ActualResource(data.genres))
         is Result.Error -> this

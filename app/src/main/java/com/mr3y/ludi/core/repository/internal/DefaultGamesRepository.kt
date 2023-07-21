@@ -1,15 +1,15 @@
 package com.mr3y.ludi.core.repository.internal
 
+import com.mr3y.ludi.core.model.GamesGenresPage
+import com.mr3y.ludi.core.model.GamesPage
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
-import com.mr3y.ludi.core.model.RichInfoGamesPage
 import com.mr3y.ludi.core.model.toCoreErrorResult
 import com.mr3y.ludi.core.network.datasources.internal.RAWGDataSource
-import com.mr3y.ludi.core.network.model.toRichInfoGamesGenresPage
-import com.mr3y.ludi.core.network.model.toRichInfoGamesPage
+import com.mr3y.ludi.core.network.model.toGamesGenresPage
+import com.mr3y.ludi.core.network.model.toGamesPage
 import com.mr3y.ludi.core.repository.GamesRepository
-import com.mr3y.ludi.core.repository.query.RichInfoGamesQueryParameters
-import com.mr3y.ludi.core.repository.query.buildRichInfoGamesFullUrl
+import com.mr3y.ludi.core.repository.query.GamesQueryParameters
+import com.mr3y.ludi.core.repository.query.buildGamesFullUrl
 import com.slack.eithernet.ApiResult
 import javax.inject.Inject
 
@@ -17,11 +17,11 @@ class DefaultGamesRepository @Inject constructor(
     private val rawgDataSource: RAWGDataSource
 ) : GamesRepository {
 
-    override suspend fun queryRichInfoGames(queryParameters: RichInfoGamesQueryParameters): Result<RichInfoGamesPage, Throwable> {
-        val fullUrl = buildRichInfoGamesFullUrl(endpointUrl = "$RAWGApiBaseUrl/games", queryParameters)
+    override suspend fun queryGames(queryParameters: GamesQueryParameters): Result<GamesPage, Throwable> {
+        val fullUrl = buildGamesFullUrl(endpointUrl = "$RAWGApiBaseUrl/games", queryParameters)
         return when (val result = rawgDataSource.queryGames(fullUrl)) {
             is ApiResult.Success -> {
-                Result.Success(result.value.toRichInfoGamesPage())
+                Result.Success(result.value.toGamesPage())
             }
             is ApiResult.Failure -> {
                 result.toCoreErrorResult()
@@ -29,10 +29,10 @@ class DefaultGamesRepository @Inject constructor(
         }
     }
 
-    override suspend fun queryGamesGenres(): Result<RichInfoGamesGenresPage, Throwable> {
+    override suspend fun queryGamesGenres(): Result<GamesGenresPage, Throwable> {
         return when (val result = rawgDataSource.queryGamesGenres("$RAWGApiBaseUrl/genres?ordering=name")) {
             is ApiResult.Success -> {
-                Result.Success(result.value.toRichInfoGamesGenresPage())
+                Result.Success(result.value.toGamesGenresPage())
             }
             is ApiResult.Failure -> {
                 result.toCoreErrorResult()

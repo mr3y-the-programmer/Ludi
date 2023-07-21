@@ -2,26 +2,22 @@ package com.mr3y.ludi.core.model
 
 import java.time.ZonedDateTime
 
-sealed interface Game {
-    val id: Long
-}
-
-data class RichInfoGamesPage(
+data class GamesPage(
     val count: Long,
     val nextPageUrl: String?,
     val previousPageUrl: String?,
-    val games: List<RichInfoGame>
+    val games: List<Game>
 )
 
-data class RichInfoGamesGenresPage(
+data class GamesGenresPage(
     val count: Long,
     val nextPageUrl: String?,
     val previousPageUrl: String?,
     val genres: Set<GameGenre>
 )
 
-data class RichInfoGame(
-    override val id: Long,
+data class Game(
+    val id: Long,
     val slug: String?,
     val name: String,
     val releaseDate: ZonedDateTime?,
@@ -36,7 +32,7 @@ data class RichInfoGame(
     val tags: List<GameTag>,
     val screenshots: List<GameScreenshot>,
     val genres: List<GameGenre>
-) : Game
+)
 
 data class PlatformInfo(
     val id: Int,

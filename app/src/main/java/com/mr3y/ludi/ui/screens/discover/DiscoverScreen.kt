@@ -30,9 +30,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiSectionHeader
@@ -117,7 +117,7 @@ fun DiscoverScreen(
                     discoverState.games as DiscoverStateGames.SearchQueryBasedGames
                     AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
                     SearchQueryAndFilterPage(
-                        searchResult = discoverState.games.richInfoGames
+                        searchResult = discoverState.games.games
                     )
                 }
             }
@@ -211,7 +211,7 @@ fun SuggestedGamesPage(
 
 @Composable
 fun SearchQueryAndFilterPage(
-    searchResult: Result<ResourceWrapper<Map<GameGenre, List<RichInfoGame>>>, Throwable>,
+    searchResult: Result<ResourceWrapper<Map<GameGenre, List<Game>>>, Throwable>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -240,7 +240,7 @@ fun SearchQueryAndFilterPage(
                             ) {
                                 items(games) {
                                     GameCard(
-                                        richInfoGame = it,
+                                        game = it,
                                         modifier = Modifier
                                             .padding(horizontal = 8.dp, vertical = 8.dp)
                                             .width(200.dp)
@@ -274,7 +274,7 @@ fun SearchQueryAndFilterPage(
 
 @Composable
 fun RichInfoGamesSection(
-    games: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
+    games: Result<List<ResourceWrapper<Game>>, Throwable>,
     modifier: Modifier = Modifier,
     showGenre: Boolean = false
 ) {
@@ -283,7 +283,7 @@ fun RichInfoGamesSection(
         modifier = modifier
     ) { gameWrapper ->
         GameCard(
-            richInfoGame = gameWrapper.actualResource,
+            game = gameWrapper.actualResource,
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 8.dp)
                 .width(200.dp)
@@ -327,11 +327,11 @@ fun DiscoverScreenPreview() {
             discoverState = DiscoverState(
                 searchQuery = "",
                 games = DiscoverStateGames.SuggestedGames(
-                    trendingGames = Result.Success(richInfoGamesSamples),
-                    topRatedGames = Result.Success(richInfoGamesSamples),
-                    multiplayerGames = Result.Success(richInfoGamesSamples),
-                    familyGames = Result.Success(richInfoGamesSamples),
-                    realisticGames = Result.Success(richInfoGamesSamples)
+                    trendingGames = Result.Success(gamesSamples),
+                    topRatedGames = Result.Success(gamesSamples),
+                    multiplayerGames = Result.Success(gamesSamples),
+                    familyGames = Result.Success(gamesSamples),
+                    realisticGames = Result.Success(gamesSamples)
                 ),
                 filtersState = DiscoverViewModel.InitialFiltersState
             ),
@@ -352,7 +352,7 @@ fun DiscoverScreenPreview() {
 fun SearchResultsPagePreview() {
     LudiTheme {
         SearchQueryAndFilterPage(
-            searchResult = Result.Success(ResourceWrapper.ActualResource(richInfoGamesSamples.map { it.resource }.groupByGenre())),
+            searchResult = Result.Success(ResourceWrapper.ActualResource(gamesSamples.map { it.resource }.groupByGenre())),
             modifier = Modifier.fillMaxSize()
         )
     }

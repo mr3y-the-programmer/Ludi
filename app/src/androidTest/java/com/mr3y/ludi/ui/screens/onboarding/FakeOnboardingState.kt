@@ -13,7 +13,7 @@ import com.mr3y.ludi.core.network.model.RAWGPlatformRequirements
 import com.mr3y.ludi.core.network.model.RAWGShallowGame
 import com.mr3y.ludi.core.network.model.RAWGStoreProperties
 import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfoWithId
-import com.mr3y.ludi.core.network.model.toRichInfoGame
+import com.mr3y.ludi.core.network.model.toGame
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.OnboardingGames
@@ -493,7 +493,7 @@ private val fakeGames = listOfNotNull(
                 imageUrl = "https://media.rawg.io/media/games/995/9951d9d55323d08967640f7b9ab3e342.jpg"
             )
         )
-    ).toRichInfoGame(),
+    ).toGame(),
     RAWGShallowGame(
         id = 3328,
         slug = "the-witcher-3-wild-hunt",
@@ -863,7 +863,7 @@ private val fakeGames = listOfNotNull(
                 imageUrl = "https://media.rawg.io/media/games/d1a/d1a2e99ade53494c6330a0ed945fe823.jpg"
             )
         )
-    ).toRichInfoGame(),
+    ).toGame(),
     RAWGShallowGame(
         id = 4200,
         slug = "portal-2",
@@ -1255,7 +1255,7 @@ private val fakeGames = listOfNotNull(
                 imageUrl = "https://media.rawg.io/media/games/2e1/2e187b31e5cee21c110bd16798d75fab.jpg"
             )
         )
-    ).toRichInfoGame()
+    ).toGame()
 )
 
 val FakeOnboardingGames = OnboardingGames.SuggestedGames(Result.Success(fakeGames.map { ResourceWrapper.ActualResource(it) }))

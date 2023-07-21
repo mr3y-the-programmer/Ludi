@@ -60,8 +60,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.mr3y.ludi.R
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.defaultPlaceholder
@@ -71,7 +71,7 @@ import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.preview.LudiPreview
-import com.mr3y.ludi.ui.screens.discover.richInfoGamesSamples
+import com.mr3y.ludi.ui.screens.discover.gamesSamples
 import com.mr3y.ludi.ui.theme.LudiTheme
 import com.mr3y.ludi.ui.theme.dark_star
 
@@ -227,7 +227,7 @@ fun SelectingFavouriteGamesPage(
 
 @Composable
 fun GameTile(
-    game: RichInfoGame?,
+    game: Game?,
     selected: Boolean,
     onToggleSelectingFavouriteGame: (FavouriteGame) -> Unit,
     modifier: Modifier = Modifier
@@ -393,7 +393,7 @@ fun SelectingFavouriteGamesPagePreview() {
 fun GameTilePreview() {
     LudiTheme {
         GameTile(
-            game = richInfoGamesSamples.first().actualResource,
+            game = gamesSamples.first().actualResource,
             selected = false,
             onToggleSelectingFavouriteGame = {}
         )

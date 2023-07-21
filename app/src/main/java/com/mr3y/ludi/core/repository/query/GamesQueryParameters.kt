@@ -1,6 +1,6 @@
 package com.mr3y.ludi.core.repository.query
 
-fun RichInfoGamesQuery(
+fun GamesQuery(
     page: Int? = null,
     pageSize: Int? = null,
     searchQuery: String? = null,
@@ -14,10 +14,10 @@ fun RichInfoGamesQuery(
     tags: List<Int>? = null,
     dates: List<String>? = null,
     metaCriticScores: List<Int>? = null,
-    sortingCriteria: RichInfoGamesSortingCriteria? = null
-) = RichInfoGamesQueryParameters(page, pageSize, searchQuery, isFuzzinessEnabled, matchTermsExactly, parentPlatforms, platforms, stores, developers, genres, tags, dates, metaCriticScores, sortingCriteria)
+    sortingCriteria: GamesSortingCriteria? = null
+) = GamesQueryParameters(page, pageSize, searchQuery, isFuzzinessEnabled, matchTermsExactly, parentPlatforms, platforms, stores, developers, genres, tags, dates, metaCriticScores, sortingCriteria)
 
-data class RichInfoGamesQueryParameters(
+data class GamesQueryParameters(
     val page: Int?,
     val pageSize: Int?,
     val searchQuery: String?,
@@ -31,10 +31,10 @@ data class RichInfoGamesQueryParameters(
     val tags: List<Int>?,
     val dates: List<String>?,
     val metaCriticScores: List<Int>?,
-    val sortingCriteria: RichInfoGamesSortingCriteria?
+    val sortingCriteria: GamesSortingCriteria?
 ) {
     companion object {
-        val Empty = RichInfoGamesQueryParameters(
+        val Empty = GamesQueryParameters(
             null,
             null,
             null,
@@ -53,7 +53,7 @@ data class RichInfoGamesQueryParameters(
     }
 }
 
-enum class RichInfoGamesSortingCriteria {
+enum class GamesSortingCriteria {
     NameAscending, // A-Z
     NameDescending, // Z-A
     ReleasedAscending,
@@ -70,7 +70,7 @@ enum class RichInfoGamesSortingCriteria {
     MetacriticScoreDescending
 }
 
-internal fun buildRichInfoGamesFullUrl(endpointUrl: String, queryParameters: RichInfoGamesQueryParameters): String {
+internal fun buildGamesFullUrl(endpointUrl: String, queryParameters: GamesQueryParameters): String {
     return buildString {
         append("$endpointUrl?")
         if (queryParameters.page != null) {
@@ -171,20 +171,20 @@ internal fun buildRichInfoGamesFullUrl(endpointUrl: String, queryParameters: Ric
         if (queryParameters.sortingCriteria != null) {
             append("ordering=")
             when (queryParameters.sortingCriteria) {
-                RichInfoGamesSortingCriteria.NameAscending -> append("name")
-                RichInfoGamesSortingCriteria.NameDescending -> append("-name")
-                RichInfoGamesSortingCriteria.ReleasedAscending -> append("released")
-                RichInfoGamesSortingCriteria.ReleasedDescending -> append("-released")
-                RichInfoGamesSortingCriteria.DateAddedAscending -> append("added")
-                RichInfoGamesSortingCriteria.DateAddedDescending -> append("-added")
-                RichInfoGamesSortingCriteria.DateCreatedAscending -> append("created")
-                RichInfoGamesSortingCriteria.DateCreatedDescending -> append("-created")
-                RichInfoGamesSortingCriteria.DateUpdatedAscending -> append("updated")
-                RichInfoGamesSortingCriteria.DateUpdatedDescending -> append("-updated")
-                RichInfoGamesSortingCriteria.RatingAscending -> append("rating")
-                RichInfoGamesSortingCriteria.RatingDescending -> append("-rating")
-                RichInfoGamesSortingCriteria.MetacriticScoreAscending -> append("metacritic")
-                RichInfoGamesSortingCriteria.MetacriticScoreDescending -> append("-metacritic")
+                GamesSortingCriteria.NameAscending -> append("name")
+                GamesSortingCriteria.NameDescending -> append("-name")
+                GamesSortingCriteria.ReleasedAscending -> append("released")
+                GamesSortingCriteria.ReleasedDescending -> append("-released")
+                GamesSortingCriteria.DateAddedAscending -> append("added")
+                GamesSortingCriteria.DateAddedDescending -> append("-added")
+                GamesSortingCriteria.DateCreatedAscending -> append("created")
+                GamesSortingCriteria.DateCreatedDescending -> append("-created")
+                GamesSortingCriteria.DateUpdatedAscending -> append("updated")
+                GamesSortingCriteria.DateUpdatedDescending -> append("-updated")
+                GamesSortingCriteria.RatingAscending -> append("rating")
+                GamesSortingCriteria.RatingDescending -> append("-rating")
+                GamesSortingCriteria.MetacriticScoreAscending -> append("metacritic")
+                GamesSortingCriteria.MetacriticScoreDescending -> append("-metacritic")
             }
             append('&')
         }

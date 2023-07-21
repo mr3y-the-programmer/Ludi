@@ -1,9 +1,9 @@
 package com.mr3y.ludi.ui.presenter.model
 
 import androidx.annotation.DrawableRes
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.Source
 
 data class OnboardingState(
@@ -19,10 +19,10 @@ data class OnboardingState(
 )
 
 sealed interface OnboardingGames {
-    val games: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>
+    val games: Result<List<ResourceWrapper<Game>>, Throwable>
 
-    data class SuggestedGames(override val games: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>) : OnboardingGames
-    data class SearchQueryBasedGames(override val games: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>) : OnboardingGames
+    data class SuggestedGames(override val games: Result<List<ResourceWrapper<Game>>, Throwable>) : OnboardingGames
+    data class SearchQueryBasedGames(override val games: Result<List<ResourceWrapper<Game>>, Throwable>) : OnboardingGames
 }
 
 data class NewsDataSource(

@@ -1,8 +1,8 @@
 package com.mr3y.ludi.ui.presenter.model
 
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGame
 data class DiscoverState(
     val searchQuery: String,
     val filtersState: DiscoverFiltersState,
@@ -12,14 +12,14 @@ data class DiscoverState(
 sealed interface DiscoverStateGames {
 
     data class SuggestedGames(
-        val trendingGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
-        val topRatedGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
-        val multiplayerGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
-        val familyGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>,
-        val realisticGames: Result<List<ResourceWrapper<RichInfoGame>>, Throwable>
+        val trendingGames: Result<List<ResourceWrapper<Game>>, Throwable>,
+        val topRatedGames: Result<List<ResourceWrapper<Game>>, Throwable>,
+        val multiplayerGames: Result<List<ResourceWrapper<Game>>, Throwable>,
+        val familyGames: Result<List<ResourceWrapper<Game>>, Throwable>,
+        val realisticGames: Result<List<ResourceWrapper<Game>>, Throwable>
     ) : DiscoverStateGames
     data class SearchQueryBasedGames(
-        val richInfoGames: Result<ResourceWrapper<Map<GameGenre, List<RichInfoGame>>>, Throwable>
+        val games: Result<ResourceWrapper<Map<GameGenre, List<Game>>>, Throwable>
     ) : DiscoverStateGames
 }
 

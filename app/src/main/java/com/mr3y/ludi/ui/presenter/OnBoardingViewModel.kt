@@ -16,13 +16,13 @@ import com.mr3y.ludi.UserFavouriteGame
 import com.mr3y.ludi.UserFavouriteGames
 import com.mr3y.ludi.UserFavouriteGenre
 import com.mr3y.ludi.UserFavouriteGenres
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.RichInfoGame
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.repository.GamesRepository
-import com.mr3y.ludi.core.repository.query.RichInfoGamesQuery
-import com.mr3y.ludi.core.repository.query.RichInfoGamesSortingCriteria
+import com.mr3y.ludi.core.repository.query.GamesQuery
+import com.mr3y.ludi.core.repository.query.GamesSortingCriteria
 import com.mr3y.ludi.ui.datastore.PreferencesKeys
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
@@ -103,30 +103,30 @@ class OnBoardingViewModel @Inject constructor(
     ) { searchText, favouriteGenres ->
         if (searchText.isEmpty()) {
             // Retrieve suggested games
-            return@combine gamesRepository.queryRichInfoGames(
-                RichInfoGamesQuery(
+            return@combine gamesRepository.queryGames(
+                GamesQuery(
                     pageSize = 20,
                     dates = listOf(LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_DATE), LocalDate.now().format(DateTimeFormatter.ISO_DATE)),
-                    sortingCriteria = RichInfoGamesSortingCriteria.DateAddedDescending,
+                    sortingCriteria = GamesSortingCriteria.DateAddedDescending,
                     genres = favouriteGenres.map { it.id }
                 )
             ).let {
                 val result = when (it) {
-                    is Result.Success -> Result.Success(it.data.games.map(RichInfoGame::wrapResource))
+                    is Result.Success -> Result.Success(it.data.games.map(Game::wrapResource))
                     is Result.Error -> Result.Error(it.exception)
                 }
                 OnboardingGames.SuggestedGames(result)
             }
         }
-        gamesRepository.queryRichInfoGames(
-            RichInfoGamesQuery(
+        gamesRepository.queryGames(
+            GamesQuery(
                 pageSize = 20,
                 searchQuery = searchText,
-                sortingCriteria = RichInfoGamesSortingCriteria.RatingDescending
+                sortingCriteria = GamesSortingCriteria.RatingDescending
             )
         ).let {
             val result = when (it) {
-                is Result.Success -> Result.Success(it.data.games.map(RichInfoGame::wrapResource))
+                is Result.Success -> Result.Success(it.data.games.map(Game::wrapResource))
                 is Result.Error -> Result.Error(it.exception)
             }
             OnboardingGames.SearchQueryBasedGames(result)

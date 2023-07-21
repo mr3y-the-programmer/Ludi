@@ -1,14 +1,14 @@
 package com.mr3y.ludi.core.network.model
 
+import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.GameRequirements
 import com.mr3y.ludi.core.model.GameScreenshot
 import com.mr3y.ludi.core.model.GameTag
+import com.mr3y.ludi.core.model.GamesGenresPage
+import com.mr3y.ludi.core.model.GamesPage
 import com.mr3y.ludi.core.model.MarkupText
 import com.mr3y.ludi.core.model.PlatformInfo
-import com.mr3y.ludi.core.model.RichInfoGame
-import com.mr3y.ludi.core.model.RichInfoGamesGenresPage
-import com.mr3y.ludi.core.model.RichInfoGamesPage
 import com.mr3y.ludi.core.model.StoreInfo
 import com.mr3y.ludi.core.network.serialization.RAWGPlatformSerializer
 import com.mr3y.ludi.core.network.serialization.RAWGStoreSerializer
@@ -48,25 +48,6 @@ data class RAWGShallowGame(
     @SerialName("short_screenshots")
     val screenshots: List<RAWGGameScreenshot>,
     val genres: List<RAWGGameGenre>
-)
-
-@Serializable
-data class RAWGGameRate(
-    val id: Long,
-    val title: String,
-    val count: Long,
-    val percent: Float
-)
-
-@Serializable
-data class AddedByStatus(
-    @SerialName("yet")
-    val notAddedYet: Long,
-    val owned: Long,
-    val beaten: Long,
-    val toplay: Long,
-    val dropped: Long,
-    val playing: Long
 )
 
 @Serializable
@@ -164,8 +145,8 @@ data class RAWGStoreProperties(
     val imageUrl: String? = null
 )
 
-fun RAWGShallowGame.toRichInfoGame(): RichInfoGame? {
-    return RichInfoGame(
+fun RAWGShallowGame.toGame(): Game? {
+    return Game(
         id = id ?: return null,
         name = name ?: return null,
         slug = slug,
@@ -279,17 +260,17 @@ data class RAWGGenresPage(
     val results: List<RAWGGameGenre>
 )
 
-fun RAWGPage.toRichInfoGamesPage(): RichInfoGamesPage {
-    return RichInfoGamesPage(
+fun RAWGPage.toGamesPage(): GamesPage {
+    return GamesPage(
         count = count,
         nextPageUrl = nextPageUrl,
         previousPageUrl = previousPageUrl,
-        games = results.mapNotNull(RAWGShallowGame::toRichInfoGame)
+        games = results.mapNotNull(RAWGShallowGame::toGame)
     )
 }
 
-fun RAWGGenresPage.toRichInfoGamesGenresPage(): RichInfoGamesGenresPage {
-    return RichInfoGamesGenresPage(
+fun RAWGGenresPage.toGamesGenresPage(): GamesGenresPage {
+    return GamesGenresPage(
         count = count,
         nextPageUrl = nextPageUrl,
         previousPageUrl = previousPageUrl,
