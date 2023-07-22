@@ -13,6 +13,8 @@ plugins {
     alias(libs.plugins.protobuf)
     alias(libs.plugins.ktlint.plugin)
     alias(libs.plugins.spotless.plugin)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -132,6 +134,11 @@ dependencies {
 
     // Logging
     implementation(libs.kermit)
+
+    // Crashlytics
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
     // Leak Canary
     debugImplementation(libs.leakcanary)

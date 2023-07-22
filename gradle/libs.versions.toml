@@ -12,6 +12,8 @@ protobuf = "com.google.protobuf:_"
 hilt-gradle = "com.google.dagger.hilt.android:_"
 ktlint-plugin = "org.jlleitschuh.gradle.ktlint:_"
 spotless-plugin = "com.diffplug.spotless:_"
+google-services = "com.google.gms.google-services:_"
+firebase-crashlytics = "com.google.firebase.crashlytics:_"
 
 [libraries]
 
@@ -35,6 +37,9 @@ leakcanary = "com.squareup.leakcanary:leakcanary-android:_"
 coil = "io.coil-kt:coil-compose:_"
 compose-html = "com.github.ireward:compose-html:_"
 kermit = "co.touchlab:kermit:_"
+firebase-bom = "com.google.firebase:firebase-bom:_"
+firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:_"
+firebase-analytics = "com.google.firebase:firebase-analytics-ktx:_"
 kermit-test = "co.touchlab:kermit-test:_"
 androidx-hilt-navigation-compose = "androidx.hilt:hilt-navigation-compose:_"
 androidx-lifecycle-viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:_"
