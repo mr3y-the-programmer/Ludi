@@ -73,7 +73,7 @@ import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.screens.discover.gamesSamples
 import com.mr3y.ludi.ui.theme.LudiTheme
-import com.mr3y.ludi.ui.theme.dark_star
+import com.mr3y.ludi.ui.theme.rating_star
 
 @OptIn(
     ExperimentalFoundationApi::class,
@@ -334,7 +334,7 @@ private fun GameTileScaffold(
                     Icon(
                         painter = rememberVectorPainter(image = Icons.Filled.Star),
                         contentDescription = null,
-                        tint = dark_star
+                        tint = MaterialTheme.colorScheme.rating_star
                     )
                     val stringRating = rating?.toString() ?: "Rating Placeholder"
                     Text(
