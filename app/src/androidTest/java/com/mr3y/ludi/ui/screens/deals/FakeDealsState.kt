@@ -4,8 +4,8 @@ import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.network.model.CheapSharkDeal
 import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry
 import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntryStatus
-import com.mr3y.ludi.core.network.model.toGiveawayEntry
 import com.mr3y.ludi.core.network.model.toDeal
+import com.mr3y.ludi.core.network.model.toGiveawayEntry
 import com.mr3y.ludi.core.repository.query.DealsSorting
 import com.mr3y.ludi.core.repository.query.DealsSortingDirection
 import com.mr3y.ludi.core.repository.query.GiveawaysSorting

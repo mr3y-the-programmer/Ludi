@@ -20,8 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.shimmer
 import com.mr3y.ludi.core.model.NewReleaseArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.Title
@@ -51,11 +49,7 @@ fun NewReleaseTile(
                 role = Role.Button,
                 onClick = onClick
             )
-            .defaultPlaceholder(
-                isVisible = newReleaseArticleWrapper is ResourceWrapper.Placeholder,
-                highlight = PlaceholderHighlight.shimmer(),
-                color = MaterialTheme.colorScheme.surfaceVariant
-            )
+            .defaultPlaceholder(isVisible = newReleaseArticleWrapper is ResourceWrapper.Placeholder)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),

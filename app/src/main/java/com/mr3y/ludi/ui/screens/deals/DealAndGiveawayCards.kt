@@ -33,8 +33,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.shimmer
 import com.mr3y.ludi.core.model.Deal
 import com.mr3y.ludi.core.model.GiveawayEntry
 import com.mr3y.ludi.ui.components.defaultPlaceholder
@@ -192,10 +190,7 @@ private fun OfferScaffold(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .defaultPlaceholder(
-                    isVisible = title == null,
-                    highlight = PlaceholderHighlight.shimmer()
-                ),
+                .defaultPlaceholder(isVisible = title == null),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {

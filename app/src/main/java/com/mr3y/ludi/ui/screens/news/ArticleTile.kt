@@ -33,8 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.shimmer
 import com.ireward.htmlcompose.HtmlText
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Article
@@ -69,10 +67,7 @@ fun ArticleCardTile(
                 role = Role.Button,
                 onClick = onClick
             )
-            .defaultPlaceholder(
-                isVisible = articleWrapper is ResourceWrapper.Placeholder,
-                highlight = PlaceholderHighlight.shimmer()
-            )
+            .defaultPlaceholder(isVisible = articleWrapper is ResourceWrapper.Placeholder)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)

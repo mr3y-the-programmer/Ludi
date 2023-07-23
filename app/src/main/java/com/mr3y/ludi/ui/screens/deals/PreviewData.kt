@@ -3,8 +3,8 @@ package com.mr3y.ludi.ui.screens.deals
 import com.mr3y.ludi.core.network.model.CheapSharkDeal
 import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry
 import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntryStatus
-import com.mr3y.ludi.core.network.model.toGiveawayEntry
 import com.mr3y.ludi.core.network.model.toDeal
+import com.mr3y.ludi.core.network.model.toGiveawayEntry
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 
 val dealSamples = listOf(

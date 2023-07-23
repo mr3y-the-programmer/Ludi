@@ -8,8 +8,8 @@ import com.mr3y.ludi.core.network.datasources.internal.CheapSharkDataSource
 import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSource
 import com.mr3y.ludi.core.network.model.CheapSharkDeal
 import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry
-import com.mr3y.ludi.core.network.model.toGiveawayEntry
 import com.mr3y.ludi.core.network.model.toDeal
+import com.mr3y.ludi.core.network.model.toGiveawayEntry
 import com.mr3y.ludi.core.repository.DealsRepository
 import com.mr3y.ludi.core.repository.query.DealsQueryParameters
 import com.mr3y.ludi.core.repository.query.GiveawaysQueryParameters

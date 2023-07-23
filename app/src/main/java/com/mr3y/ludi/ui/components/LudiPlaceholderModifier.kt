@@ -1,11 +1,12 @@
 package com.mr3y.ludi.ui.components
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
 
 fun Modifier.defaultPlaceholder(
     isVisible: Boolean,
@@ -14,7 +15,7 @@ fun Modifier.defaultPlaceholder(
 ): Modifier = composed {
     placeholder(
         visible = isVisible,
-        highlight = highlight ?: PlaceholderHighlight.fade(),
-        color = color ?: Color.Unspecified
+        highlight = highlight ?: PlaceholderHighlight.shimmer(),
+        color = color ?: MaterialTheme.colorScheme.surfaceVariant
     )
 }

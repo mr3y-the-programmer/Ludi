@@ -59,6 +59,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.fade
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.Result
@@ -311,7 +313,11 @@ private fun GameTileScaffold(
                 modifier = Modifier
                     .padding(4.dp)
                     .size(48.dp)
-                    .defaultPlaceholder(showPlaceholder),
+                    .defaultPlaceholder(
+                        isVisible = showPlaceholder,
+                        highlight = PlaceholderHighlight.fade(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
                 contentScale = ContentScale.FillWidth,
                 contentDescription = null
             )
@@ -325,7 +331,11 @@ private fun GameTileScaffold(
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.labelLarge,
                     maxLines = 2,
-                    modifier = Modifier.defaultPlaceholder(showPlaceholder)
+                    modifier = Modifier.defaultPlaceholder(
+                        isVisible = showPlaceholder,
+                        highlight = PlaceholderHighlight.fade(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -342,7 +352,11 @@ private fun GameTileScaffold(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.labelMedium,
                         textAlign = TextAlign.Start,
-                        modifier = Modifier.defaultPlaceholder(showPlaceholder)
+                        modifier = Modifier.defaultPlaceholder(
+                            isVisible = showPlaceholder,
+                            highlight = PlaceholderHighlight.fade(),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     )
                 }
             }

@@ -66,5 +66,6 @@ val md_theme_dark_scrim = Color(0xFF000000)
 
 // Source Color
 val seed = Color(0xFF12355B)
+
 // Custom Colors
 val dark_ratingstar = Color(0xFFE9C349)
