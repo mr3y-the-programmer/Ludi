@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "807285618590",
+    "project_id": "ludi-d1698",
+    "storage_bucket": "ludi-d1698.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807285618590:android:aa1d5f1dbf1bca09b5888f",
+        "android_client_info": {
+          "package_name": "com.mr3y.ludi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807285618590-nqrmjqb4o9nscfmlckpibsrmntrbd0kf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mr3y.ludi",
+            "certificate_hash": "2763bb5905c1cefac327aeae2a28c2950459b697"
+          }
+        },
+        {
+          "client_id": "807285618590-uf86l1m9655g5mlgaapm8qat3e0r4bqc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl-A_L3jVe8JZ3L0u2ynAW1nbaBvXTVQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807285618590-uf86l1m9655g5mlgaapm8qat3e0r4bqc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
