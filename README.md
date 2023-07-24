@@ -12,6 +12,9 @@ trending new games & discover other games based on your favourite genres.
 - Dark Theme.
 - Material 3 design language.
 
+## Contributing
+See [CONTRIBUTING.md](https://github.com/mr3y-the-programmer/Ludi/blob/main/CONTRIBUTING.md).
+
 ## Credits
 - Thanks to [RAWG API](https://rawg.io/apidocs) for providing games data.
 - Thanks to [Cheapshark API](https://apidocs.cheapshark.com/) for providing price offers.
