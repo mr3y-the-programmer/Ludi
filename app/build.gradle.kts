@@ -36,7 +36,9 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -62,9 +64,18 @@ android {
         kotlinCompilerExtensionVersion = versionFor(AndroidX.Compose.compiler)
     }
 
-    packagingOptions {
+    packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            // Exclude files that unused kotlin-reflect would need, to make the app smaller:
+            // (see issue https://youtrack.jetbrains.com/issue/KT-9770)
+            excludes += setOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "META-INF/*.kotlin_module",
+                "kotlin/*.kotlin_builtins",
+                "kotlin/**/*.kotlin_builtins",
+                "META-INF/LICENSE*",
+                "META-INF/NOTICE.txt"
+            )
         }
     }
 }
