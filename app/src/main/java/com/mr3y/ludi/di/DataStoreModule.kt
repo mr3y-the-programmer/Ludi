@@ -7,9 +7,9 @@ import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.mr3y.ludi.FollowedNewsDataSources
-import com.mr3y.ludi.UserFavouriteGames
-import com.mr3y.ludi.UserFavouriteGenres
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
+import com.mr3y.ludi.datastore.model.UserFavouriteGames
+import com.mr3y.ludi.datastore.model.UserFavouriteGenres
 import com.mr3y.ludi.ui.datastore.FavouriteGamesSerializer
 import com.mr3y.ludi.ui.datastore.FavouriteGenresSerializer
 import com.mr3y.ludi.ui.datastore.FollowedNewsDataSourceSerializer

@@ -3,7 +3,7 @@ package com.mr3y.ludi.ui.datastore
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
-import com.mr3y.ludi.FollowedNewsDataSources
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import java.io.InputStream
 import java.io.OutputStream
 

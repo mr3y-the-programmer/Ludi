@@ -3,7 +3,7 @@ package com.mr3y.ludi.ui.presenter
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mr3y.ludi.FollowedNewsDataSources
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.core.model.Article
 import com.mr3y.ludi.core.model.NewReleaseArticle
 import com.mr3y.ludi.core.model.NewsArticle

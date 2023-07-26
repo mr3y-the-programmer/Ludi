@@ -1,7 +1,7 @@
 syntax = "proto3";
 import "favourite_gaming_genre.proto";
 
-option java_package = "com.mr3y.ludi";
+option java_package = "com.mr3y.ludi.datastore.model";
 option java_multiple_files = true;
 
 message UserFavouriteGenres {
