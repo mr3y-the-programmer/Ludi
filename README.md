@@ -19,6 +19,8 @@ See [CONTRIBUTING.md](https://github.com/mr3y-the-programmer/Ludi/blob/main/CONT
 - Thanks to [RAWG API](https://rawg.io/apidocs) for providing games data.
 - Thanks to [Cheapshark API](https://apidocs.cheapshark.com/) for providing price offers.
 - Thanks to [GamerPower API](https://www.gamerpower.com/api-read) for providing giveaways on games.
+- Thanks to [AppLaunchPad](https://theapplaunchpad.com/) for making app's Store listing Screenshots.
+- Thanks to [Hotpot.ai](https://hotpot.ai/) for making app's play store feature graphic.
 
 ## License
 ```

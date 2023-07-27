@@ -232,6 +232,16 @@ fun SettingsScreen(
                                 url = "https://www.gamerpower.com/api-read",
                                 urlText = "GamerPower API"
                             )
+                            CreditedText(
+                                preUrlText = "Store listing Screenshots is made using ",
+                                url = "https://theapplaunchpad.com/",
+                                urlText = "AppLaunchPad"
+                            )
+                            CreditedText(
+                                preUrlText = "Store feature graphic is made using ",
+                                url = "https://hotpot.ai/",
+                                urlText = "Hotpot.ai"
+                            )
                         }
                     }
                 )
