@@ -38,7 +38,7 @@ android {
         applicationId = "com.mr3y.ludi"
         minSdk = 26
         targetSdk = 33
-        versionCode = 3
+        versionCode = 4
         versionName = "1.0"
 
         testInstrumentationRunner = "com.mr3y.ludi.runner.CustomTestRunner"
