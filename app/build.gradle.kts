@@ -1,3 +1,4 @@
+import com.diffplug.spotless.LineEnding
 import de.fayard.refreshVersions.core.versionFor
 import java.io.FileInputStream
 import java.util.Properties
@@ -103,6 +104,8 @@ spotless {
         indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
         endWithNewline()
     }
+    // Workaround Config cache problem until https://github.com/diffplug/spotless/issues/1644 is fixed.
+    lineEndings = LineEnding.PLATFORM_NATIVE // or any other except GIT_ATTRIBUTES
 }
 
 buildConfig {
