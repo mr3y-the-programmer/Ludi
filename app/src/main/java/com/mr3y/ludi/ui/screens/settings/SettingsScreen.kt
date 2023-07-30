@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -195,6 +196,7 @@ fun SettingsScreen(
                         role = Role.Button,
                         onClick = { isDialogOpened = true }
                     )
+                    .wrapContentSize(Alignment.CenterStart)
             )
             if (isDialogOpened) {
                 AlertDialog(
@@ -246,6 +248,30 @@ fun SettingsScreen(
                     }
                 )
             }
+            val context = LocalContext.current
+            val chromeToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
+            Divider()
+            SettingsTitle(
+                text = "Privacy Policy",
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .heightIn(min = 56.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClickLabel = null,
+                        role = Role.Button,
+                        onClick = {
+                            launchChromeCustomTab(
+                                context,
+                                Uri.parse("https://mr3y-the-programmer.github.io/Ludi/docs/PrivacyPolicy"),
+                                chromeToolbarColor
+                            )
+                        }
+                    )
+            )
         }
     }
 }
