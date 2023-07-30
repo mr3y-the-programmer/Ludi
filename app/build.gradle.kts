@@ -17,16 +17,17 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
-val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(rootProject.file("keystore.properties")))
-
 android {
     signingConfigs {
         create("release") {
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            keyAlias = keystoreProperties["keyAlias"] as String
+            if (!System.getenv("CI").toBoolean()) {
+                val keystoreProperties = Properties()
+                keystoreProperties.load(FileInputStream(rootProject.file("keystore.properties")))
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+            }
         }
     }
     namespace = "com.mr3y.ludi"
