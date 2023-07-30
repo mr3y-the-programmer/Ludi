@@ -3,7 +3,6 @@ package com.mr3y.ludi.ui.presenter
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.core.model.Article
 import com.mr3y.ludi.core.model.NewReleaseArticle
 import com.mr3y.ludi.core.model.NewsArticle
@@ -11,6 +10,7 @@ import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.ReviewArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.repository.NewsRepository
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.ui.presenter.model.NewsState
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.wrapResultResources

@@ -10,12 +10,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mr3y.ludi.datastore.model.FollowedNewsDataSource
-import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
-import com.mr3y.ludi.datastore.model.UserFavouriteGame
-import com.mr3y.ludi.datastore.model.UserFavouriteGames
-import com.mr3y.ludi.datastore.model.UserFavouriteGenre
-import com.mr3y.ludi.datastore.model.UserFavouriteGenres
 import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
@@ -23,6 +17,12 @@ import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.GamesQuery
 import com.mr3y.ludi.core.repository.query.GamesSortingCriteria
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSource
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
+import com.mr3y.ludi.datastore.model.UserFavouriteGame
+import com.mr3y.ludi.datastore.model.UserFavouriteGames
+import com.mr3y.ludi.datastore.model.UserFavouriteGenre
+import com.mr3y.ludi.datastore.model.UserFavouriteGenres
 import com.mr3y.ludi.ui.datastore.PreferencesKeys
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
