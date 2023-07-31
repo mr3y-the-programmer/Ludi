@@ -3,6 +3,17 @@ Ludi is an android app that works as a RSS gaming news reader for your favourite
 additional features like: providing you with latest price discounts for games & latest giveaways, discover
 trending new games & discover other games based on your favourite genres.
 
+## Screenshots
+<p float="left">
+  <img src="https://github.com/mr3y-the-programmer/Ludi/assets/26522145/848c8963-d38b-4da3-af29-ca8d0295177f" width="33%" />
+  <img src="https://github.com/mr3y-the-programmer/Ludi/assets/26522145/45a6f701-d62e-4c9e-8b02-b516cd297820" width="33%" />
+  <img src="https://github.com/mr3y-the-programmer/Ludi/assets/26522145/9ca62359-3783-40f9-b12c-99f34e0488a7" width="33%" />
+</p>
+<p float="left">
+  <img src="https://github.com/mr3y-the-programmer/Ludi/assets/26522145/d1172b1a-b2e8-4b0d-9c26-9dd45d481107" width="33%" />
+  <img src="https://github.com/mr3y-the-programmer/Ludi/assets/26522145/0298e4c2-26b3-4250-9c7f-562f23ca97c2" width="33%" />
+</p>
+
 ## Features
 - RSS news reader for your favourite gaming websites.
 - Discover trending games.
