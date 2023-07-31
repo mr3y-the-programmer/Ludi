@@ -23,6 +23,11 @@ trending new games & discover other games based on your favourite genres.
 - Dark Theme.
 - Material 3 design language.
 
+## Download
+<a href="https://play.google.com/store/apps/details?id=com.mr3y.ludi" target="_blank">
+<img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
+</a>
+
 ## Contributing
 See [CONTRIBUTING.md](https://github.com/mr3y-the-programmer/Ludi/blob/main/CONTRIBUTING.md).
 
