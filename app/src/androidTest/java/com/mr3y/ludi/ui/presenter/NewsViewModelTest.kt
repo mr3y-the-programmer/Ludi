@@ -3,11 +3,11 @@ package com.mr3y.ludi.ui.presenter
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.mr3y.ludi.FollowedNewsDataSource
-import com.mr3y.ludi.FollowedNewsDataSources
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.data
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSource
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.shared.MainDispatcherRule
 import com.mr3y.ludi.ui.datastore.FollowedNewsDataSourceSerializer
 import com.mr3y.ludi.ui.presenter.model.actualResource

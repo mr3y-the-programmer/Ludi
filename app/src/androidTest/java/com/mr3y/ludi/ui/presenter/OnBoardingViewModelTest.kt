@@ -6,14 +6,14 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.mr3y.ludi.FollowedNewsDataSources
 import com.mr3y.ludi.R
-import com.mr3y.ludi.UserFavouriteGames
-import com.mr3y.ludi.UserFavouriteGenres
 import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.Source
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
+import com.mr3y.ludi.datastore.model.UserFavouriteGames
+import com.mr3y.ludi.datastore.model.UserFavouriteGenres
 import com.mr3y.ludi.shared.MainDispatcherRule
 import com.mr3y.ludi.ui.datastore.FavouriteGamesSerializer
 import com.mr3y.ludi.ui.datastore.FavouriteGenresSerializer
