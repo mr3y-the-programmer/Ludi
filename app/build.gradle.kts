@@ -78,6 +78,12 @@ android {
         kotlinCompilerExtensionVersion = versionFor(AndroidX.Compose.compiler)
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
     packaging {
         resources {
             // Exclude files that unused kotlin-reflect would need, to make the app smaller:
@@ -213,6 +219,8 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.mockk)
     testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.test.parameter.injector)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(testFixtures(libs.eithernet))
