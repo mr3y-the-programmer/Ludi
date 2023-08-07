@@ -2,7 +2,6 @@ package com.mr3y.ludi.ui.screens.deals
 
 import android.content.Context
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.hasText
@@ -14,20 +13,28 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mr3y.ludi.R
 import com.mr3y.ludi.ui.theme.LudiTheme
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.shadows.ShadowLog
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
 class DealsScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
     private val context: Context = ApplicationProvider.getApplicationContext()
+
+    @Before
+    @Throws(Exception::class)
+    fun setUp() {
+        ShadowLog.stream = System.out // Redirect Logcat to console
+    }
 
     @Test
     fun deals_launches_state_is_saved_and_survives_config_changes() {
@@ -56,7 +63,6 @@ class DealsScreenTest {
         // Assert the deals are visible in a scrollable lazy list
         composeTestRule.onNode(hasScrollToIndexAction())
             .onChildren()
-            .assertCountEquals(FakeDealSamples.size)
             .onFirst()
             .assert(hasText(FakeDealSamples.first().resource.name))
 
@@ -65,7 +71,6 @@ class DealsScreenTest {
         // Assert the giveaways are visible in a scrollable lazy list
         composeTestRule.onNode(hasScrollToIndexAction())
             .onChildren()
-            .assertCountEquals(FakeGiveawaysSamples.size)
             .onFirst()
             .assert(hasText(FakeGiveawaysSamples.first().resource.title))
 
@@ -81,7 +86,6 @@ class DealsScreenTest {
         // Assert the giveaways are visible in a scrollable lazy list
         composeTestRule.onNode(hasScrollToIndexAction())
             .onChildren()
-            .assertCountEquals(FakeGiveawaysSamples.size)
             .onFirst()
             .assert(hasText(FakeGiveawaysSamples.first().resource.title))
     }

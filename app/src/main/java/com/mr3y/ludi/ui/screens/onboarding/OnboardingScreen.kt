@@ -7,6 +7,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -19,17 +20,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -37,7 +33,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -58,7 +53,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -97,11 +91,12 @@ fun OnboardingScreen(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreen(
     onboardingState: OnboardingState,
     modifier: Modifier = Modifier,
+    initialPage: Int = 0,
     onSkipButtonClicked: () -> Unit,
     onFinishButtonClicked: () -> Unit,
     onSelectingNewsDataSource: (NewsDataSource) -> Unit,
@@ -112,7 +107,7 @@ fun OnboardingScreen(
     onSelectingGenre: (GameGenre) -> Unit,
     onUnselectingGenre: (GameGenre) -> Unit
 ) {
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(initialPage)
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -156,78 +151,75 @@ fun OnboardingScreen(
         Column(
             modifier = Modifier
                 .padding(contentPadding)
-                .fillMaxWidth()
+                .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
             HorizontalPager(
                 pageCount = OnboardingPagesCount,
                 state = pagerState,
-                contentPadding = PaddingValues(16.dp),
-                pageSpacing = 32.dp,
-                userScrollEnabled = false
+                userScrollEnabled = false,
+                modifier = Modifier.fillMaxSize()
             ) { pageIndex: Int ->
-                AnimatedContent(
-                    targetState = pageIndex,
-                    transitionSpec = { (slideInHorizontally { it } + fadeIn()) with (slideOutHorizontally { -it } + fadeOut()) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.9f)
-                ) { targetIndex ->
-                    when (targetIndex) {
-                        0 -> GenresPage(
-                            allGenres = onboardingState.allGamingGenres,
-                            selectedGenres = onboardingState.selectedGamingGenres,
-                            onSelectingGenre = onSelectingGenre,
-                            onUnselectingGenre = onUnselectingGenre,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        )
-                        1 -> SelectingFavouriteGamesPage(
-                            searchQueryText = onboardingState.searchQuery,
-                            onUpdatingSearchQueryText = onUpdatingSearchQueryText,
-                            allGames = onboardingState.onboardingGames,
-                            favouriteUserGames = onboardingState.favouriteGames,
-                            onAddingGameToFavourites = onAddingGameToFavourites,
-                            onRemovingGameFromFavourites = onRemovingGameFromFavourites,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        )
-                        2 -> NewsSourcesPage(
-                            allNewsDataSources = onboardingState.allNewsDataSources,
-                            selectedNewsSources = onboardingState.followedNewsDataSources,
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            onToggleNewsSourceTile = {
-                                if (it in onboardingState.followedNewsDataSources) {
-                                    onUnselectNewsDataSource(it)
-                                } else {
-                                    onSelectingNewsDataSource(it)
-                                }
-                            }
-                        )
+                val pageModifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxSize()
+
+                when (pageIndex) {
+                    0 -> {
+                        AnimatedVisibility(
+                            visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
+                            enter = slideInHorizontally { it } + fadeIn(),
+                            exit = slideOutHorizontally { -it } + fadeOut(),
+                            modifier = pageModifier
+                        ) {
+                            GenresPage(
+                                allGenres = onboardingState.allGamingGenres,
+                                selectedGenres = onboardingState.selectedGamingGenres,
+                                onSelectingGenre = onSelectingGenre,
+                                onUnselectingGenre = onUnselectingGenre,
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            )
+                        }
                     }
-                }
-            }
-            AnimatedVisibility(
-                visible = onboardingState.isUpdatingFollowedNewsDataSources || onboardingState.isUpdatingFavouriteGames,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.1f),
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Saving...",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.Start,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp)
-                    )
+                    1 -> {
+                        AnimatedVisibility(
+                            visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
+                            enter = slideInHorizontally { it } + fadeIn(),
+                            exit = slideOutHorizontally { -it } + fadeOut(),
+                            modifier = pageModifier
+                        ) {
+                            SelectingFavouriteGamesPage(
+                                searchQueryText = onboardingState.searchQuery,
+                                onUpdatingSearchQueryText = onUpdatingSearchQueryText,
+                                allGames = onboardingState.onboardingGames,
+                                favouriteUserGames = onboardingState.favouriteGames,
+                                onAddingGameToFavourites = onAddingGameToFavourites,
+                                onRemovingGameFromFavourites = onRemovingGameFromFavourites,
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            )
+                        }
+                    }
+                    2 -> {
+                        AnimatedVisibility(
+                            visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
+                            enter = slideInHorizontally { it } + fadeIn(),
+                            exit = slideOutHorizontally { -it } + fadeOut(),
+                            modifier = pageModifier
+                        ) {
+                            NewsSourcesPage(
+                                allNewsDataSources = onboardingState.allNewsDataSources,
+                                selectedNewsSources = onboardingState.followedNewsDataSources,
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                onToggleNewsSourceTile = {
+                                    if (it in onboardingState.followedNewsDataSources) {
+                                        onUnselectNewsDataSource(it)
+                                    } else {
+                                        onSelectingNewsDataSource(it)
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -307,7 +299,8 @@ fun AnimatedExtendedFab(
             targetState = currentState,
             transitionSpec = {
                 (slideInVertically { -it } + fadeIn() with slideOutVertically { it * 2 } + fadeOut()).using(SizeTransform(clip = false))
-            }
+            },
+            label = "AnimatedFABPreview"
         ) { currState ->
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
