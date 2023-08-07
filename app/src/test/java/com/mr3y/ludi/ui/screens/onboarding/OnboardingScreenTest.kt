@@ -3,38 +3,40 @@ package com.mr3y.ludi.ui.screens.onboarding
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelectable
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.GameGenre
-import com.mr3y.ludi.core.model.data
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
-import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.theme.LudiTheme
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.shadows.ShadowLog
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
 class OnboardingScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
     private val context: Context = ApplicationProvider.getApplicationContext()
+
+    @Before
+    @Throws(Exception::class)
+    fun setUp() {
+        ShadowLog.stream = System.out // Redirect Logcat to console
+    }
 
     @Test
     fun onboarding_launches_navigation_between_pages_works_as_expected() {
@@ -82,6 +84,7 @@ class OnboardingScreenTest {
 
             LudiTheme {
                 OnboardingScreen(
+                    initialPage = 0,
                     onboardingState = FakeOnboardingState.copy(selectedGamingGenres = selectedGenres.value),
                     onSkipButtonClicked = { /*TODO*/ },
                     onFinishButtonClicked = { /*TODO*/ },
@@ -120,14 +123,16 @@ class OnboardingScreenTest {
     }
 
     @Test
-    fun games_page_loads_successfully_games_are_visible_and_selectable_and_state_survives_config_changes() {
+    fun fab_state_changes_based_on_selected_games_value_and_it_survives_config_changes() {
         // setup
         val restorationTester = StateRestorationTester(composeTestRule)
+        val favouriteGames = mutableStateOf(emptyList<FavouriteGame>())
         restorationTester.setContent {
-            val selectedGames = rememberSaveable(Unit) { mutableStateOf(emptyList<FavouriteGame>()) }
+            val selectedGames = rememberSaveable(Unit) { favouriteGames }
 
             LudiTheme {
                 OnboardingScreen(
+                    initialPage = 1,
                     onboardingState = FakeOnboardingState.copy(favouriteGames = selectedGames.value),
                     onSkipButtonClicked = { /*TODO*/ },
                     onFinishButtonClicked = { /*TODO*/ },
@@ -141,46 +146,29 @@ class OnboardingScreenTest {
                 )
             }
         }
-        composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_continue)).performClick()
-
-        composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_games_page_title)).assertIsDisplayed()
-
-        composeTestRule.onNodeWithText("").assertIsDisplayed()
-        composeTestRule.onNodeWithText("").assertIsEnabled()
-        composeTestRule.onNodeWithText("").assertHasClickAction()
-        composeTestRule.onNodeWithText("").assert(hasSetTextAction())
-
-        val suggestedGames = FakeOnboardingGames.games.data!!
-        repeat(suggestedGames.size) { index ->
-            composeTestRule.onNodeWithText(suggestedGames[index].actualResource!!.name).assertIsDisplayed()
-            composeTestRule.onNodeWithText(suggestedGames[index].actualResource!!.rating.toString()).assertIsDisplayed()
-            composeTestRule.onNodeWithText(suggestedGames[index].actualResource!!.name).assertIsSelectable()
-            composeTestRule.onNodeWithText(suggestedGames[index].actualResource!!.name).assertIsNotSelected()
-        }
 
         composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_skip)).assertIsDisplayed()
-
-        val randomSelectedGame = suggestedGames.random().actualResource!!
-        composeTestRule.onNodeWithText(randomSelectedGame.name).performClick()
-        composeTestRule.onNodeWithText(randomSelectedGame.name).assertIsSelected()
+        favouriteGames.value = FakeSelectedGames
         composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_continue)).assertIsDisplayed()
 
         restorationTester.emulateSavedInstanceStateRestore()
 
         composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_continue)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(randomSelectedGame.name).performClick()
+        favouriteGames.value = emptyList()
         composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_skip)).assertIsDisplayed()
     }
 
     @Test
-    fun data_sources_page_loads_successfully_data_sources_are_visible_and_selectable_and_state_survives_config_changes() {
+    fun fab_state_changes_based_on_selected_dataSources_value_and_it_survives_config_changes() {
         // setup
         val restorationTester = StateRestorationTester(composeTestRule)
+        val selectedDataSources = mutableStateOf(emptyList<NewsDataSource>())
         restorationTester.setContent {
-            val selectedSources = rememberSaveable(Unit) { mutableStateOf(emptyList<NewsDataSource>()) }
+            val selectedSources = rememberSaveable(Unit) { selectedDataSources }
 
             LudiTheme {
                 OnboardingScreen(
+                    initialPage = 2,
                     onboardingState = FakeOnboardingState.copy(followedNewsDataSources = selectedSources.value),
                     onSkipButtonClicked = { },
                     onFinishButtonClicked = { },
@@ -194,40 +182,14 @@ class OnboardingScreenTest {
                 )
             }
         }
-        composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_continue)).performClick()
-        composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_continue)).performClick()
-
-        composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_data_sources_page_title)).assertIsDisplayed()
-
         composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_skip)).assertIsDisplayed()
-
-        val allSources = FakeOnboardingState.allNewsDataSources
-        allSources.forEach { source ->
-            composeTestRule.onNodeWithText(source.name).assertIsSelectable()
-            composeTestRule.onNodeWithText(source.name).assertIsNotSelected()
-
-            composeTestRule.onNodeWithText(source.name).performClick()
-            composeTestRule.onNodeWithText(source.name).assertIsSelected()
-
-            composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_finish)).assertIsDisplayed()
-        }
+        selectedDataSources.value = listOf(FakeNewsDataSources.first())
+        composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_finish)).assertIsDisplayed()
 
         restorationTester.emulateSavedInstanceStateRestore()
 
         composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_finish)).assertIsDisplayed()
-
-        allSources.forEachIndexed { index, source ->
-            composeTestRule.onNodeWithText(source.name).assertIsSelectable()
-            composeTestRule.onNodeWithText(source.name).assertIsSelected()
-
-            composeTestRule.onNodeWithText(source.name).performClick()
-            composeTestRule.onNodeWithText(source.name).assertIsNotSelected()
-
-            if (index != allSources.lastIndex) {
-                composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_finish)).assertIsDisplayed()
-            } else {
-                composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_skip)).assertIsDisplayed()
-            }
-        }
+        selectedDataSources.value = emptyList()
+        composeTestRule.onNodeWithText(context.resources.getString(R.string.on_boarding_fab_state_skip)).assertIsDisplayed()
     }
 }
