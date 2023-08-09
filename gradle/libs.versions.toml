@@ -14,6 +14,8 @@ ktlint-plugin = "org.jlleitschuh.gradle.ktlint:_"
 spotless-plugin = "com.diffplug.spotless:_"
 google-services = "com.google.gms.google-services:_"
 firebase-crashlytics = "com.google.firebase.crashlytics:_"
+gradle-play-publisher = "com.github.triplet.play:_"
+app-versioning = "io.github.reactivecircus.app-versioning:_"
 
 [libraries]
 
