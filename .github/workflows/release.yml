@@ -46,8 +46,8 @@ jobs:
       - name: Configure Keystore
         shell: bash
         run: |
-          echo $KEYSTORE_FILE | base64 -d > ludi_keystore.jks
-          echo "storeFile=ludi_keystore.jks" >> keystore.properties
+          echo "$KEYSTORE_FILE" | base64 -d > ./ludi_keystore.jks
+          echo "storeFile=./ludi_keystore.jks" >> keystore.properties
           echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> keystore.properties
           echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> keystore.properties
           echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> keystore.properties
