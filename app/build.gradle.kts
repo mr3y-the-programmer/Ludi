@@ -2,6 +2,7 @@ import com.diffplug.spotless.LineEnding
 import de.fayard.refreshVersions.core.versionFor
 import java.io.FileInputStream
 import java.util.Properties
+import java.time.Instant
 
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
@@ -16,12 +17,14 @@ plugins {
     alias(libs.plugins.spotless.plugin)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.gradle.play.publisher)
+    alias(libs.plugins.app.versioning)
 }
 
 android {
     signingConfigs {
         create("release") {
-            if (!System.getenv("CI").toBoolean()) {
+            if (rootProject.file("keystore.properties").exists()) {
                 val keystoreProperties = Properties()
                 keystoreProperties.load(FileInputStream(rootProject.file("keystore.properties")))
                 storeFile = file(keystoreProperties["storeFile"] as String)
@@ -38,8 +41,6 @@ android {
         applicationId = "com.mr3y.ludi"
         minSdk = 26
         targetSdk = 33
-        versionCode = 4
-        versionName = "1.0"
 
         testInstrumentationRunner = "com.mr3y.ludi.runner.CustomTestRunner"
         vectorDrawables {
@@ -98,6 +99,23 @@ android {
             )
         }
     }
+}
+
+play {
+    if(rootProject.file("play_config.json").exists()) {
+        serviceAccountCredentials.set(rootProject.file("play_config.json"))
+        defaultToAppBundles.set(true)
+        track.set("beta")
+    } else {
+        enabled.set(false)
+    }
+}
+
+appVersioning {
+    overrideVersionCode { _, _, _ ->
+        Instant.now().epochSecond.toInt()
+    }
+    releaseBuildOnly.set(true)
 }
 
 spotless {
