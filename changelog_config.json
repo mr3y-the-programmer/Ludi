@@ -2,7 +2,7 @@
   "categories": [
     {
       "title": "## 🚀 Features",
-      "labels": ["feature"]
+      "labels": ["feature", "enhancement"]
     },
     {
       "title": "## 🐛 Bugs",
