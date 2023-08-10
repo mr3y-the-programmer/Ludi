@@ -6,6 +6,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v3
@@ -28,6 +30,19 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Build changelog
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          configuration: "changelog_config.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add Play console release notes for beta track
+        run: |
+          mkdir -p ~/app/src/main/play/release-notes/en-US
+          echo ${{ steps.build_changelog.outputs.changelog }} >> ~/app/src/main/play/release-notes/en-US/beta.txt
+
       - name: Configure Keystore
         shell: bash
         run: |
@@ -49,5 +64,19 @@ jobs:
         env:
           PLAY_CONFIG_JSON: ${{ secrets.PLAY_CONFIG }}
 
-      - name: Build & Publish Release (.aab) bundle
+      - name: Build & Publish Release (.aab) bundle to Play console
         run: ./gradlew bundleRelease publishReleaseBundle
+
+      - name: Build release APK
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Upload release APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release
+          path: ./app/build/outputs/apk/release/app-release.apk
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "./app/build/outputs/apk/release/app-release.apk"
+          body: "${{ steps.build_changelog.outputs.changelog }}"
