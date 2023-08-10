@@ -2,6 +2,7 @@ import com.diffplug.spotless.LineEnding
 import de.fayard.refreshVersions.core.versionFor
 import java.io.FileInputStream
 import java.util.Properties
+import java.time.Instant
 
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
@@ -111,6 +112,9 @@ play {
 }
 
 appVersioning {
+    overrideVersionCode { _, _, _ ->
+        Instant.now().epochSecond.toInt()
+    }
     releaseBuildOnly.set(true)
 }
 
