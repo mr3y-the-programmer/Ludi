@@ -1,3 +1,5 @@
+name: Release a new version
+
 on:
   push:
     tags:
