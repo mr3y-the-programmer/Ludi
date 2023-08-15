@@ -149,7 +149,7 @@ fun GameCard(
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterVertically)
                     ) {
                         game.platformsInfo?.map { it.name.mapPlatformNameToVectorDrawable() }
                             ?.distinct()?.forEach { drawableId ->

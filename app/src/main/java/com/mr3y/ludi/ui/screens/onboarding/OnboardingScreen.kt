@@ -3,7 +3,6 @@ package com.mr3y.ludi.ui.screens.onboarding
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -14,7 +13,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -107,7 +107,10 @@ fun OnboardingScreen(
     onSelectingGenre: (GameGenre) -> Unit,
     onUnselectingGenre: (GameGenre) -> Unit
 ) {
-    val pagerState = rememberPagerState(initialPage)
+    val pagerState = rememberPagerState(
+        pageCount = ::OnboardingPagesCount,
+        initialPage = initialPage
+    )
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -155,7 +158,6 @@ fun OnboardingScreen(
                 .verticalScroll(scrollState)
         ) {
             HorizontalPager(
-                pageCount = OnboardingPagesCount,
                 state = pagerState,
                 userScrollEnabled = false,
                 modifier = Modifier.fillMaxSize()
@@ -277,7 +279,6 @@ fun OnboardingBottomBar(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AnimatedExtendedFab(
     targetState: OnboardingFABState,
@@ -298,7 +299,7 @@ fun AnimatedExtendedFab(
         AnimatedContent(
             targetState = currentState,
             transitionSpec = {
-                (slideInVertically { -it } + fadeIn() with slideOutVertically { it * 2 } + fadeOut()).using(SizeTransform(clip = false))
+                (slideInVertically { -it } + fadeIn() togetherWith slideOutVertically { it * 2 } + fadeOut()).using(SizeTransform(clip = false))
             },
             label = "AnimatedFABPreview"
         ) { currState ->
@@ -352,7 +353,7 @@ fun OnboardingScreenPreview() {
 @Composable
 fun OnboardingBottomBarPreview() {
     LudiTheme {
-        var progress by remember { mutableStateOf(0.5f) }
+        var progress by remember { mutableFloatStateOf(0.5f) }
         var fabState by remember { mutableStateOf(OnboardingFABState.Skip) }
         LaunchedEffect(Unit) {
             delay(3000)

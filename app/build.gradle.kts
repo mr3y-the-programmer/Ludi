@@ -1,8 +1,8 @@
 import com.diffplug.spotless.LineEnding
 import de.fayard.refreshVersions.core.versionFor
 import java.io.FileInputStream
-import java.util.Properties
 import java.time.Instant
+import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
@@ -102,7 +102,7 @@ android {
 }
 
 play {
-    if(rootProject.file("play_config.json").exists()) {
+    if (rootProject.file("play_config.json").exists()) {
         serviceAccountCredentials.set(rootProject.file("play_config.json"))
         defaultToAppBundles.set(true)
         track.set("beta")
