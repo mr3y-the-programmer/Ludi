@@ -35,7 +35,7 @@ android {
         }
     }
     namespace = "com.mr3y.ludi"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.mr3y.ludi"
