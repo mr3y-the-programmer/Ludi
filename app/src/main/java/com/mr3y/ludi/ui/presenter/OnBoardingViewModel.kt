@@ -108,7 +108,7 @@ class OnBoardingViewModel @Inject constructor(
                     pageSize = 20,
                     dates = listOf(LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_DATE), LocalDate.now().format(DateTimeFormatter.ISO_DATE)),
                     sortingCriteria = GamesSortingCriteria.DateAddedDescending,
-                    genres = favouriteGenres.map { it.id }
+                    genres = favouriteGenres.map { it.id }.takeIf { it.isNotEmpty() }
                 )
             ).let {
                 val result = when (it) {
