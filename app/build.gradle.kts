@@ -115,7 +115,6 @@ appVersioning {
     overrideVersionCode { _, _, _ ->
         Instant.now().epochSecond.toInt()
     }
-    releaseBuildOnly.set(true)
 }
 
 spotless {
