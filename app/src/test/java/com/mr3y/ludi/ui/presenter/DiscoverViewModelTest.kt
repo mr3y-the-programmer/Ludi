@@ -7,6 +7,9 @@ import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.ui.presenter.model.Genre
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.Store
+import com.mr3y.ludi.ui.presenter.usecases.FakeSuggestedGamesUseCase
+import com.mr3y.ludi.ui.presenter.usecases.GetSearchQueryBasedGamesUseCaseImpl
+import com.mr3y.ludi.ui.presenter.usecases.utils.groupByGenre
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -31,7 +34,10 @@ class DiscoverViewModelTest {
 
     @Before
     fun setUp() {
-        sut = DiscoverViewModel(FakeGamesRepository())
+        sut = DiscoverViewModel(
+            getSuggestedGamesUseCase = FakeSuggestedGamesUseCase(FakeGamesRepository()),
+            searchQueryBasedGamesUseCase = GetSearchQueryBasedGamesUseCaseImpl(FakeGamesRepository())
+        )
     }
 
     @Test
