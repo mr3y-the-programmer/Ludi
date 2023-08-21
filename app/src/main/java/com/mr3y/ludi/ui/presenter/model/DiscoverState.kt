@@ -11,16 +11,59 @@ data class DiscoverState(
 
 sealed interface DiscoverStateGames {
 
-    data class SuggestedGames(
-        val trendingGames: Result<List<ResourceWrapper<Game>>, Throwable>,
-        val topRatedGames: Result<List<ResourceWrapper<Game>>, Throwable>,
-        val multiplayerGames: Result<List<ResourceWrapper<Game>>, Throwable>,
-        val familyGames: Result<List<ResourceWrapper<Game>>, Throwable>,
-        val realisticGames: Result<List<ResourceWrapper<Game>>, Throwable>
-    ) : DiscoverStateGames
+    data class SuggestedGames(val taggedGamesList: List<TaggedGames>) : DiscoverStateGames
+
     data class SearchQueryBasedGames(
         val games: Result<ResourceWrapper<Map<GameGenre, List<Game>>>, Throwable>
     ) : DiscoverStateGames
+}
+
+sealed interface TaggedGames {
+    val games: Result<List<ResourceWrapper<Game>>, Throwable>
+
+    data class TrendingGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
+
+    data class TopRatedGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
+
+    data class BasedOnFavGenresGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
+
+    data class MultiplayerGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
+
+    data class FreeGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
+
+    data class StoryGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
+
+    data class BoardGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
+
+    data class ESportsGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
+
+    data class RaceGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
+
+    data class PuzzleGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
+
+    data class SoundtrackGames(
+        override val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    ) : TaggedGames
 }
 
 data class DiscoverFiltersState(
