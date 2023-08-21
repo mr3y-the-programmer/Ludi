@@ -12,18 +12,21 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -38,7 +41,6 @@ import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
 import com.mr3y.ludi.ui.presenter.connectivityState
-import com.mr3y.ludi.ui.presenter.groupByGenre
 import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
@@ -46,9 +48,13 @@ import com.mr3y.ludi.ui.presenter.model.Genre
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.Store
+import com.mr3y.ludi.ui.presenter.model.TaggedGames
 import com.mr3y.ludi.ui.presenter.model.actualResource
+import com.mr3y.ludi.ui.presenter.usecases.utils.groupByGenre
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun DiscoverScreen(
@@ -65,6 +71,7 @@ fun DiscoverScreen(
         onUnselectingStore = viewModel::removeFromSelectedStores,
         onSelectingGenre = viewModel::addToSelectedGenres,
         onUnselectingGenre = viewModel::removeFromSelectedGenres,
+        onReachingBottomOfTheSuggestionsList = viewModel::loadNewSuggestedGames,
         modifier = modifier
     )
 }
@@ -80,6 +87,7 @@ fun DiscoverScreen(
     onUnselectingStore: (Store) -> Unit,
     onSelectingGenre: (Genre) -> Unit,
     onUnselectingGenre: (Genre) -> Unit,
+    onReachingBottomOfTheSuggestionsList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var openFiltersSheet by rememberSaveable { mutableStateOf(false) }
@@ -110,7 +118,8 @@ fun DiscoverScreen(
                 is DiscoverStateGames.SuggestedGames -> {
                     AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
                     SuggestedGamesPage(
-                        suggestedGames = discoverState.games
+                        suggestedGames = discoverState.games,
+                        onReachingBottomOfTheList = onReachingBottomOfTheSuggestionsList
                     )
                 }
                 else -> {
@@ -142,6 +151,7 @@ fun DiscoverScreen(
 @Composable
 fun SuggestedGamesPage(
     suggestedGames: DiscoverStateGames.SuggestedGames,
+    onReachingBottomOfTheList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val headersModifier = Modifier
@@ -152,60 +162,75 @@ fun SuggestedGamesPage(
         .fillMaxWidth()
         .background(MaterialTheme.colorScheme.surface)
         .padding(horizontal = 8.dp)
+
+    val listState = rememberLazyListState()
+    var isNewDataBeingLoaded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isNewDataBeingLoaded) {
+        // Avoid displaying loading indicator indefinitely
+        if (isNewDataBeingLoaded) {
+            delay(5_000L)
+            isNewDataBeingLoaded = false
+        }
+    }
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val lastItem = listState.layoutInfo.visibleItemsInfo.last()
+
+            lastItem.index == listState.layoutInfo.totalItemsCount - 1 &&
+                lastItem.offset + lastItem.size == listState.layoutInfo.viewportEndOffset
+        }.distinctUntilChanged()
+            .collect { hasReachedTheEnd ->
+                if (hasReachedTheEnd) {
+                    isNewDataBeingLoaded = true
+                    onReachingBottomOfTheList()
+                }
+            }
+    }
+
     LazyColumn(
+        state = listState,
         modifier = modifier
     ) {
-        item {
-            LudiSectionHeader(text = "Trending", modifier = headersModifier)
+        suggestedGames.taggedGamesList.forEachIndexed { index, taggedGames ->
+            val label = getLabelFor(taggedGames)
+            item {
+                LudiSectionHeader(text = label, modifier = headersModifier)
+            }
+            item {
+                RichInfoGamesSection(
+                    games = taggedGames.games,
+                    modifier = sectionsModifier,
+                    showGenre = true
+                )
+            }
+            if (isNewDataBeingLoaded && index == suggestedGames.taggedGamesList.lastIndex) {
+                item {
+                    Box(
+                        modifier = modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
         }
-        item {
-            RichInfoGamesSection(
-                games = suggestedGames.trendingGames,
-                modifier = sectionsModifier,
-                showGenre = true
-            )
-        }
+    }
+}
 
-        item {
-            LudiSectionHeader(text = "Top rated", modifier = headersModifier)
-        }
-        item {
-            RichInfoGamesSection(
-                games = suggestedGames.topRatedGames,
-                modifier = sectionsModifier,
-                showGenre = true
-            )
-        }
-
-        item {
-            LudiSectionHeader(text = "Multiplayer", modifier = headersModifier)
-        }
-        item {
-            RichInfoGamesSection(
-                games = suggestedGames.multiplayerGames,
-                modifier = sectionsModifier
-            )
-        }
-
-        item {
-            LudiSectionHeader(text = "Family", modifier = headersModifier)
-        }
-        item {
-            RichInfoGamesSection(
-                games = suggestedGames.familyGames,
-                modifier = sectionsModifier
-            )
-        }
-
-        item {
-            LudiSectionHeader(text = "Realistic", modifier = headersModifier)
-        }
-        item {
-            RichInfoGamesSection(
-                games = suggestedGames.realisticGames,
-                modifier = sectionsModifier
-            )
-        }
+private fun getLabelFor(taggedGames: TaggedGames): String {
+    return when (taggedGames) {
+        is TaggedGames.TrendingGames -> "Trending"
+        is TaggedGames.TopRatedGames -> "Top rated"
+        is TaggedGames.MultiplayerGames -> "Multiplayer"
+        is TaggedGames.BasedOnFavGenresGames -> "You might also like"
+        is TaggedGames.FreeGames -> "Free to play"
+        is TaggedGames.StoryGames -> "Story based"
+        is TaggedGames.BoardGames -> "Board"
+        is TaggedGames.ESportsGames -> "ESports"
+        is TaggedGames.RaceGames -> "Race"
+        is TaggedGames.PuzzleGames -> "Puzzle"
+        is TaggedGames.SoundtrackGames -> "SoundTrack"
     }
 }
 
@@ -323,16 +348,29 @@ fun <T> GamesSectionScaffold(
 @Composable
 fun DiscoverScreenPreview() {
     LudiTheme {
+        var initialList by remember {
+            mutableStateOf(
+                listOf(
+                    TaggedGames.TrendingGames(Result.Success(gamesSamples)),
+                    TaggedGames.TopRatedGames(Result.Success(gamesSamples)),
+                    TaggedGames.MultiplayerGames(Result.Success(gamesSamples))
+                )
+            )
+        }
+        var loadNewGames by remember { mutableStateOf(false) }
+        LaunchedEffect(loadNewGames) {
+            if (loadNewGames) {
+                delay(1000)
+                initialList = initialList + listOf(
+                    TaggedGames.FreeGames(Result.Success(gamesSamples)),
+                    TaggedGames.BasedOnFavGenresGames(Result.Success(gamesSamples))
+                )
+            }
+        }
         DiscoverScreen(
             discoverState = DiscoverState(
                 searchQuery = "",
-                games = DiscoverStateGames.SuggestedGames(
-                    trendingGames = Result.Success(gamesSamples),
-                    topRatedGames = Result.Success(gamesSamples),
-                    multiplayerGames = Result.Success(gamesSamples),
-                    familyGames = Result.Success(gamesSamples),
-                    realisticGames = Result.Success(gamesSamples)
-                ),
+                games = DiscoverStateGames.SuggestedGames(taggedGamesList = initialList),
                 filtersState = DiscoverViewModel.InitialFiltersState
             ),
             onUpdatingSearchQueryText = {},
@@ -342,6 +380,7 @@ fun DiscoverScreenPreview() {
             onUnselectingStore = {},
             onSelectingGenre = {},
             onUnselectingGenre = {},
+            onReachingBottomOfTheSuggestionsList = { loadNewGames = true },
             modifier = Modifier.fillMaxSize()
         )
     }
