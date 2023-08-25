@@ -1,6 +1,5 @@
 package com.mr3y.ludi.ui.screens.onboarding
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -54,6 +53,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.focused
+import androidx.compose.ui.semantics.imeAction
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.performImeAction
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -77,10 +84,7 @@ import com.mr3y.ludi.ui.screens.discover.gamesSamples
 import com.mr3y.ludi.ui.theme.LudiTheme
 import com.mr3y.ludi.ui.theme.rating_star
 
-@OptIn(
-    ExperimentalFoundationApi::class,
-    ExperimentalComposeUiApi::class
-)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SelectingFavouriteGamesPage(
     searchQueryText: String,
@@ -103,20 +107,28 @@ fun SelectingFavouriteGamesPage(
         val isInternetConnectionNotAvailable by remember {
             derivedStateOf { connectionState != ConnectionState.Available }
         }
-        Text(
-            text = stringResource(R.string.on_boarding_games_page_title),
-            modifier = Modifier.align(Alignment.End),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.End,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = stringResource(R.string.on_boarding_secondary_text),
-            modifier = Modifier.align(Alignment.End),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyLarge
-        )
+        val label = stringResource(R.string.on_boarding_games_page_title)
+        val secondaryText = stringResource(R.string.on_boarding_secondary_text)
+        Column(
+            verticalArrangement = verticalArrangement,
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier.clearAndSetSemantics {
+                contentDescription = "$label\n$secondaryText"
+            }
+        ) {
+            Text(
+                text = label,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.End,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = secondaryText,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
 
         TextField(
             value = searchQueryText,
@@ -129,7 +141,8 @@ fun SelectingFavouriteGamesPage(
             ),
             leadingIcon = {
                 IconButton(
-                    onClick = { }
+                    onClick = { },
+                    modifier = Modifier.clearAndSetSemantics { }
                 ) {
                     Icon(
                         painter = rememberVectorPainter(image = Icons.Filled.Search),
@@ -141,7 +154,14 @@ fun SelectingFavouriteGamesPage(
             trailingIcon = if (searchQueryText.isNotEmpty()) {
                 {
                     IconButton(
-                        onClick = { onUpdatingSearchQueryText("") }
+                        onClick = { onUpdatingSearchQueryText("") },
+                        modifier = Modifier.clearAndSetSemantics {
+                            contentDescription = "Clear search query"
+                            onClick {
+                                onUpdatingSearchQueryText("")
+                                true
+                            }
+                        }
                     ) {
                         Icon(
                             painter = rememberVectorPainter(image = Icons.Filled.Close),
@@ -159,6 +179,15 @@ fun SelectingFavouriteGamesPage(
                 .clip(RoundedCornerShape(50))
                 .align(Alignment.CenterHorizontally)
                 .shadow(elevation = 8.dp, shape = RoundedCornerShape(50))
+                .semantics {
+                    focused = true
+                    contentDescription = "Search for a specific game"
+                    imeAction = ImeAction.Done
+                    performImeAction {
+                        softwareKeyboard?.hide() ?: return@performImeAction false
+                        true
+                    }
+                }
         )
         AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable, modifier = Modifier.padding(vertical = 8.dp))
         Text(
@@ -282,7 +311,7 @@ private fun GameTileScaffold(
                 selected = selected,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                role = Role.Button,
+                role = Role.Checkbox,
                 onClick = {
                     if (!showPlaceholder) {
                         onToggleSelectingFavouriteGame(
@@ -296,7 +325,13 @@ private fun GameTileScaffold(
                     }
                 }
             )
-            .padding(4.dp),
+            .padding(4.dp)
+            .clearAndSetSemantics {
+                if (title != null && rating != null && rating != 0.0f) {
+                    contentDescription = "$title, Rated: $rating stars"
+                }
+                stateDescription = if (selected) "Remove $title from your favourite games" else "Add $title to your favourite games"
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = MaterialTheme.shapes.small
     ) {
