@@ -7,6 +7,10 @@
     {
       "title": "## 🐛 Bugs",
       "labels": ["bug"]
+    },
+    {
+      "title": "## 🔧 Internals",
+      "labels": ["Tech dept"]
     }
   ],
   "ignore_labels": [
