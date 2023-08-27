@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -59,6 +60,7 @@ import androidx.compose.ui.semantics.focused
 import androidx.compose.ui.semantics.imeAction
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.performImeAction
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
@@ -109,6 +111,7 @@ fun SelectingFavouriteGamesPage(
         }
         val label = stringResource(R.string.on_boarding_games_page_title)
         val secondaryText = stringResource(R.string.on_boarding_secondary_text)
+        val context = LocalContext.current
         Column(
             verticalArrangement = verticalArrangement,
             horizontalAlignment = Alignment.End,
@@ -156,7 +159,7 @@ fun SelectingFavouriteGamesPage(
                     IconButton(
                         onClick = { onUpdatingSearchQueryText("") },
                         modifier = Modifier.clearAndSetSemantics {
-                            contentDescription = "Clear search query"
+                            contentDescription = context.getString(R.string.games_page_clear_search_query_desc)
                             onClick {
                                 onUpdatingSearchQueryText("")
                                 true
@@ -181,7 +184,7 @@ fun SelectingFavouriteGamesPage(
                 .shadow(elevation = 8.dp, shape = RoundedCornerShape(50))
                 .semantics {
                     focused = true
-                    contentDescription = "Search for a specific game"
+                    contentDescription = context.getString(R.string.games_page_search_field_desc)
                     imeAction = ImeAction.Done
                     performImeAction {
                         softwareKeyboard?.hide() ?: return@performImeAction false
@@ -305,6 +308,7 @@ private fun GameTileScaffold(
     onToggleSelectingFavouriteGame: (FavouriteGame) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Card(
         modifier = modifier
             .selectable(
@@ -328,9 +332,10 @@ private fun GameTileScaffold(
             .padding(4.dp)
             .clearAndSetSemantics {
                 if (title != null && rating != null && rating != 0.0f) {
-                    contentDescription = "$title, Rated: $rating stars"
+                    contentDescription = context.getString(R.string.games_page_game_content_desc, title, rating)
                 }
-                stateDescription = if (selected) "Remove $title from your favourite games" else "Add $title to your favourite games"
+                stateDescription = if (selected) context.getString(R.string.games_page_game_on_state_desc, title) else context.getString(R.string.games_page_game_off_state_desc, title)
+                this.selected = selected
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = MaterialTheme.shapes.small

@@ -52,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.stateDescription
@@ -292,13 +293,14 @@ fun AnimatedExtendedFab(
     LaunchedEffect(targetState) {
         currentState = targetState
     }
+    val context = LocalContext.current
     ExtendedFloatingActionButton(
         onClick = { onClick(currentState) },
         modifier = modifier.clearAndSetSemantics {
             stateDescription = when (currentState) {
-                OnboardingFABState.Skip -> "Skip Onboarding and navigate to home screen"
-                OnboardingFABState.Continue -> "Continue"
-                OnboardingFABState.Finish -> "Save my preferences and finish Onboarding"
+                OnboardingFABState.Skip -> context.getString(R.string.on_boarding_fab_state_skip_state_desc)
+                OnboardingFABState.Continue -> context.getString(R.string.on_boarding_fab_state_continue_state_desc)
+                OnboardingFABState.Finish -> context.getString(R.string.on_boarding_fab_state_finish_state_desc)
             }
         },
         shape = RoundedCornerShape(50),

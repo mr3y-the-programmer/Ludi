@@ -30,11 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
@@ -95,6 +98,7 @@ fun GenresPage(
             )
         }
         AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable, modifier = Modifier.padding(vertical = 8.dp))
+        val context = LocalContext.current
         when (allGenres) {
             is Result.Success -> {
                 if (allGenres.data is ResourceWrapper.ActualResource) {
@@ -136,8 +140,10 @@ fun GenresPage(
                                     .animateContentSize()
                                     .padding(8.dp)
                                     .clearAndSetSemantics {
-                                        stateDescription =
-                                            if (genre in selectedGenres) "Unselect genre ${genre.name}" else "Select genre ${genre.name}"
+                                        val stateDesc = if (genre in selectedGenres) R.string.genres_page_genre_on_state_desc else R.string.genres_page_genre_off_state_desc
+                                        stateDescription = context.getString(stateDesc, genre.name)
+                                        selected = genre in selectedGenres
+                                        role = Role.Checkbox
                                     },
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center

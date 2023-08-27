@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
@@ -98,6 +100,7 @@ fun NewsSourceTile(
     selected: Boolean = false,
     onToggleSelection: (NewsDataSource) -> Unit
 ) {
+    val context = LocalContext.current
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -108,7 +111,8 @@ fun NewsSourceTile(
             )
             .padding(8.dp)
             .clearAndSetSemantics {
-                stateDescription = if (selected) "Unfollow ${newsDataSource.name} RSS feed" else "Follow ${newsDataSource.name} RSS feed"
+                stateDescription = if (selected) context.getString(R.string.data_sources_page_data_source_on_state_desc, newsDataSource.name) else context.getString(R.string.data_sources_page_data_source_off_state_desc, newsDataSource.name)
+                this.selected = selected
             },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
