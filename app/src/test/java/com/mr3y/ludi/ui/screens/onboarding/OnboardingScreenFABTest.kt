@@ -14,7 +14,10 @@ import com.mr3y.ludi.ui.screens.getString
 import com.mr3y.ludi.ui.screens.onNodeWithStateDescription
 import com.mr3y.ludi.ui.theme.LudiTheme
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class OnboardingScreenFABTest : BaseRobolectricTest() {
 
     @Test

@@ -7,7 +7,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowLog
 
-@RunWith(RobolectricTestRunner::class)
 open class BaseRobolectricTest {
     @get:Rule
     val composeTestRule = createComposeRule()

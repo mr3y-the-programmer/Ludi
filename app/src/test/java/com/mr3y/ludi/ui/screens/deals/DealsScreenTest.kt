@@ -15,7 +15,10 @@ import com.mr3y.ludi.ui.screens.BaseRobolectricTest
 import com.mr3y.ludi.ui.screens.getString
 import com.mr3y.ludi.ui.theme.LudiTheme
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class DealsScreenTest : BaseRobolectricTest() {
 
     @Test

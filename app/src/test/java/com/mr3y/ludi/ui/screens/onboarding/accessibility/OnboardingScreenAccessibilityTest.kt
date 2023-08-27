@@ -29,7 +29,10 @@ import com.mr3y.ludi.ui.screens.onboarding.OnboardingScreen
 import com.mr3y.ludi.ui.screens.onboarding.onGenre
 import com.mr3y.ludi.ui.theme.LudiTheme
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class OnboardingScreenAccessibilityTest : BaseRobolectricTest() {
 
     @Test
