@@ -10,6 +10,8 @@ import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.screens.BaseRobolectricTest
+import com.mr3y.ludi.ui.screens.getString
+import com.mr3y.ludi.ui.screens.onNodeWithStateDescription
 import com.mr3y.ludi.ui.theme.LudiTheme
 import org.junit.Test
 
