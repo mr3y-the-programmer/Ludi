@@ -154,15 +154,6 @@ fun SuggestedGamesPage(
     onReachingBottomOfTheList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val headersModifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 8.dp)
-
-    val sectionsModifier = Modifier
-        .fillMaxWidth()
-        .background(MaterialTheme.colorScheme.surface)
-        .padding(horizontal = 8.dp)
-
     val listState = rememberLazyListState()
     var isNewDataBeingLoaded by remember { mutableStateOf(false) }
 
@@ -195,12 +186,20 @@ fun SuggestedGamesPage(
         suggestedGames.taggedGamesList.forEachIndexed { index, taggedGames ->
             val label = getLabelFor(taggedGames)
             item {
-                LudiSectionHeader(text = label, modifier = headersModifier)
+                LudiSectionHeader(
+                    text = label,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                )
             }
             item {
                 RichInfoGamesSection(
                     games = taggedGames.games,
-                    modifier = sectionsModifier,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(horizontal = 8.dp),
                     showGenre = true
                 )
             }
