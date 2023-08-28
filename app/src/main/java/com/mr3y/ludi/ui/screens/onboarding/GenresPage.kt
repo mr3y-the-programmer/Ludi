@@ -30,8 +30,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -67,26 +75,39 @@ fun GenresPage(
         val isInternetConnectionNotAvailable by remember {
             derivedStateOf { connectionState != ConnectionState.Available }
         }
-        Text(
-            text = stringResource(R.string.on_boarding_genres_page_title),
-            modifier = Modifier.align(Alignment.End),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.End,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = stringResource(R.string.on_boarding_secondary_text),
-            modifier = Modifier.align(Alignment.End),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyLarge
-        )
+        val label = stringResource(R.string.on_boarding_genres_page_title)
+        val secondaryText = stringResource(R.string.on_boarding_secondary_text)
+        Column(
+            verticalArrangement = verticalArrangement,
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier.clearAndSetSemantics {
+                contentDescription = "$label\n$secondaryText"
+            }
+        ) {
+            Text(
+                text = label,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.End,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = secondaryText,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
         AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable, modifier = Modifier.padding(vertical = 8.dp))
+        val context = LocalContext.current
         when (allGenres) {
             is Result.Success -> {
                 if (allGenres.data is ResourceWrapper.ActualResource) {
                     FlowRow(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .semantics {
+                                isTraversalGroup = true
+                            },
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         allGenres.data.resource.forEach { genre ->
@@ -107,7 +128,7 @@ fun GenresPage(
                                         selected = genre in selectedGenres,
                                         interactionSource = remember { MutableInteractionSource() },
                                         indication = null,
-                                        role = Role.Button,
+                                        role = Role.Checkbox,
                                         onClick = {
                                             if (genre in selectedGenres) {
                                                 onUnselectingGenre(genre)
@@ -117,7 +138,13 @@ fun GenresPage(
                                         }
                                     )
                                     .animateContentSize()
-                                    .padding(8.dp),
+                                    .padding(8.dp)
+                                    .clearAndSetSemantics {
+                                        val stateDesc = if (genre in selectedGenres) R.string.genres_page_genre_on_state_desc else R.string.genres_page_genre_off_state_desc
+                                        stateDescription = context.getString(stateDesc, genre.name)
+                                        selected = genre in selectedGenres
+                                        role = Role.Checkbox
+                                    },
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center
                             ) {

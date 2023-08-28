@@ -35,7 +35,8 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -66,7 +67,6 @@ fun GameCard(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 enabled = game != null,
-                role = Role.Button,
                 onClick = {
                     game?.slug?.let {
                         launchChromeCustomTab(
@@ -77,6 +77,15 @@ fun GameCard(
                     }
                 }
             )
+            .clearAndSetSemantics {
+                val platforms = game?.platformsInfo?.joinToString { it.name }
+                val firstGenreName = game?.genres?.firstOrNull()?.name
+                contentDescription = if (game?.rating == 0.0f) {
+                    context.getString(R.string.discover_page_game_not_rated_content_description, game.name, firstGenreName, platforms)
+                } else {
+                    context.getString(R.string.discover_page_game_rated_content_description, game?.name, firstGenreName, game?.rating, platforms)
+                }
+            }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(

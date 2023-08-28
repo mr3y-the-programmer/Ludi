@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
@@ -19,12 +21,24 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.focused
+import androidx.compose.ui.semantics.imeAction
+import androidx.compose.ui.semantics.performImeAction
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.mr3y.ludi.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun DiscoverTopBar(
     searchQuery: String,
@@ -33,13 +47,15 @@ fun DiscoverTopBar(
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val softwareKeyboard = LocalSoftwareKeyboardController.current
     TopAppBar(
         title = {
             TextField(
                 value = searchQuery,
                 onValueChange = onSearchQueryValueChanged,
                 placeholder = {
-                    Text(text = "What are you looking for?")
+                    Text(text = stringResource(id = R.string.discover_page_search_field_placeholder))
                 },
                 colors = TextFieldDefaults.colors(
                     disabledIndicatorColor = Color.Transparent,
@@ -49,7 +65,8 @@ fun DiscoverTopBar(
                 ),
                 leadingIcon = {
                     IconButton(
-                        onClick = { }
+                        onClick = { },
+                        modifier = Modifier.clearAndSetSemantics { }
                     ) {
                         Icon(
                             painter = rememberVectorPainter(image = Icons.Filled.Search),
@@ -59,9 +76,20 @@ fun DiscoverTopBar(
                     }
                 },
                 shape = RoundedCornerShape(50),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = { softwareKeyboard?.hide() }),
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .fillMaxWidth()
+                    .clearAndSetSemantics {
+                        focused = true
+                        contentDescription = context.getString(R.string.discover_page_search_field_content_description)
+                        imeAction = ImeAction.Search
+                        performImeAction {
+                            softwareKeyboard?.hide() ?: return@performImeAction false
+                            true
+                        }
+                    }
             )
         },
         modifier = modifier,
@@ -69,6 +97,9 @@ fun DiscoverTopBar(
             IconButton(
                 onClick = onCloseClicked,
                 modifier = Modifier.requiredSize(48.dp)
+                    .semantics {
+                        contentDescription = context.getString(R.string.discover_page_filter_icon_content_description)
+                    }
             ) {
                 Icon(
                     painter = rememberVectorPainter(image = Icons.Filled.Tune),

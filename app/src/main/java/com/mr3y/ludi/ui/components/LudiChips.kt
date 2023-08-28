@@ -16,8 +16,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mr3y.ludi.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,10 +33,14 @@ fun LudiFilterChip(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     FilterChip(
         selected = selected,
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.semantics(mergeDescendants = true) {
+            this.selected = selected
+            stateDescription = if (selected) context.getString(R.string.filter_chip_on_state_desc, label) else context.getString(R.string.filter_chip_off_state_desc, label)
+        },
         shape = RoundedCornerShape(50),
         label = {
             Text(
@@ -44,7 +54,8 @@ fun LudiFilterChip(
             {
                 Icon(
                     imageVector = Icons.Filled.Check,
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.clearAndSetSemantics { }
                 )
             }
         } else {

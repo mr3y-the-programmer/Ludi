@@ -16,9 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,20 +48,24 @@ fun NewsSourcesPage(
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {
+        val label = stringResource(R.string.on_boarding_data_sources_page_title)
+        val secondaryText = stringResource(R.string.on_boarding_secondary_text)
         Column(
-            modifier = Modifier.align(Alignment.End)
+            verticalArrangement = verticalArrangement,
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier.clearAndSetSemantics {
+                contentDescription = "$label\n$secondaryText"
+            }
         ) {
             Text(
-                text = stringResource(R.string.on_boarding_data_sources_page_title),
+                text = label,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.End,
-                modifier = Modifier.align(Alignment.End),
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = stringResource(R.string.on_boarding_secondary_text),
-                modifier = Modifier.align(Alignment.End),
+                text = secondaryText,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyLarge
             )
@@ -62,7 +73,11 @@ fun NewsSourcesPage(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics {
+                    isTraversalGroup = true
+                }
         ) {
             allNewsDataSources.forEachIndexed { index, newsDataSource ->
                 NewsSourceTile(
@@ -85,15 +100,20 @@ fun NewsSourceTile(
     selected: Boolean = false,
     onToggleSelection: (NewsDataSource) -> Unit
 ) {
+    val context = LocalContext.current
     Row(
         modifier = modifier
             .fillMaxWidth()
             .selectable(
                 selected,
-                role = Role.Button,
+                role = Role.Checkbox,
                 onClick = { onToggleSelection(newsDataSource) }
             )
-            .padding(8.dp),
+            .padding(8.dp)
+            .clearAndSetSemantics {
+                stateDescription = if (selected) context.getString(R.string.data_sources_page_data_source_on_state_desc, newsDataSource.name) else context.getString(R.string.data_sources_page_data_source_off_state_desc, newsDataSource.name)
+                this.selected = selected
+            },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

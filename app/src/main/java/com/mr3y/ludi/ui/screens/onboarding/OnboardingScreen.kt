@@ -52,7 +52,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -290,9 +293,16 @@ fun AnimatedExtendedFab(
     LaunchedEffect(targetState) {
         currentState = targetState
     }
+    val context = LocalContext.current
     ExtendedFloatingActionButton(
         onClick = { onClick(currentState) },
-        modifier = modifier,
+        modifier = modifier.clearAndSetSemantics {
+            stateDescription = when (currentState) {
+                OnboardingFABState.Skip -> context.getString(R.string.on_boarding_fab_state_skip_state_desc)
+                OnboardingFABState.Continue -> context.getString(R.string.on_boarding_fab_state_continue_state_desc)
+                OnboardingFABState.Finish -> context.getString(R.string.on_boarding_fab_state_finish_state_desc)
+            }
+        },
         shape = RoundedCornerShape(50),
         containerColor = MaterialTheme.colorScheme.primary
     ) {
