@@ -25,9 +25,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,6 +58,7 @@ fun ArticleCardTile(
     modifier: Modifier = Modifier
 ) {
     val article = articleWrapper?.actualResource
+    val context = LocalContext.current
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
@@ -64,10 +67,12 @@ fun ArticleCardTile(
                 indication = null,
                 onClickLabel = null,
                 enabled = articleWrapper is ResourceWrapper.ActualResource,
-                role = Role.Button,
                 onClick = onClick
             )
             .defaultPlaceholder(isVisible = articleWrapper is ResourceWrapper.Placeholder)
+            .clearAndSetSemantics {
+                contentDescription = context.getString(R.string.news_page_article_content_description, article?.title?.text?.removeCDATA(), article?.author, article?.source?.name)
+            }
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)

@@ -57,6 +57,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -111,6 +114,7 @@ fun NewsScreen(
         refreshing = newsState.isRefreshing,
         onRefresh = onRefresh
     )
+    val context = LocalContext.current
     Scaffold(
         modifier = modifier.pullRefresh(state),
         topBar = {
@@ -120,6 +124,9 @@ fun NewsScreen(
                     IconButton(
                         onClick = onTuneClick,
                         modifier = Modifier.requiredSize(48.dp)
+                            .semantics {
+                                contentDescription = context.getString(R.string.news_page_filter_icon_content_description)
+                            }
                     ) {
                         Icon(
                             painter = rememberVectorPainter(image = Icons.Filled.Tune),
@@ -140,7 +147,6 @@ fun NewsScreen(
             )
         }
     ) { contentPadding ->
-        val context = LocalContext.current
         val chromeTabToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
         Box(
             modifier = Modifier
@@ -179,7 +185,7 @@ fun NewsScreen(
                                 imageVector = Icons.Filled.TrendingUp,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.size(36.dp)
+                                modifier = Modifier.size(36.dp).clearAndSetSemantics { }
                             )
                             LudiSectionHeader(
                                 text = "Latest",

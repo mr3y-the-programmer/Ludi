@@ -17,9 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.NewReleaseArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.Title
@@ -38,6 +41,11 @@ fun NewReleaseTile(
     modifier: Modifier = Modifier
 ) {
     val newReleaseArticle = newReleaseArticleWrapper.actualResource
+    val context = LocalContext.current
+    val title = newReleaseArticle?.title?.text?.removePrefix("<![CDATA[ ")?.removeSuffix(" ]]>")
+    val releaseDate = remember(newReleaseArticleWrapper) {
+        newReleaseArticle?.releaseDate?.toLocalDate()?.format(DateTimeFormatter.ISO_LOCAL_DATE)
+    }
     Card(
         shape = MaterialTheme.shapes.small,
         modifier = modifier
@@ -46,10 +54,12 @@ fun NewReleaseTile(
                 indication = null,
                 onClickLabel = null,
                 enabled = newReleaseArticleWrapper is ResourceWrapper.ActualResource,
-                role = Role.Button,
                 onClick = onClick
             )
             .defaultPlaceholder(isVisible = newReleaseArticleWrapper is ResourceWrapper.Placeholder)
+            .clearAndSetSemantics {
+                contentDescription = context.getString(R.string.news_page_new_release_content_description, title, releaseDate)
+            }
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -57,7 +67,7 @@ fun NewReleaseTile(
         ) {
             if (newReleaseArticle != null) {
                 Text(
-                    text = newReleaseArticle.title.text.removePrefix("<![CDATA[ ").removeSuffix(" ]]>"),
+                    text = title ?: "Placeholder",
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Start,
@@ -70,8 +80,7 @@ fun NewReleaseTile(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = newReleaseArticle.releaseDate.toLocalDate()
-                            ?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "N/A",
+                        text = releaseDate ?: "N/A",
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Start,
