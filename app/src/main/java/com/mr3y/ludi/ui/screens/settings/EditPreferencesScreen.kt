@@ -36,14 +36,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
@@ -93,6 +100,7 @@ fun EditPreferencesScreen(
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -108,6 +116,9 @@ fun EditPreferencesScreen(
                     IconButton(
                         onClick = onDoneClick,
                         modifier = Modifier.requiredSize(48.dp)
+                            .semantics(mergeDescendants = true) {
+                                contentDescription = context.getString(R.string.edit_preferences_page_confirm_button_content_description)
+                            }
                     ) {
                         Icon(
                             painter = rememberVectorPainter(image = Icons.Filled.Check),
@@ -137,7 +148,10 @@ fun EditPreferencesScreen(
                 .padding(contentPadding)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 8.dp)
+                .semantics {
+                    isTraversalGroup = true
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -180,13 +194,13 @@ fun NewsSourcesList(
     onUnfollowingNewsDataSource: (NewsDataSource) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     state.allNewsDataSources.forEachIndexed { index, source ->
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .selectable(
                     source in state.followedNewsDataSources,
-                    role = Role.Button,
                     onClick = {
                         if (source in state.followedNewsDataSources) {
                             onUnfollowingNewsDataSource(source)
@@ -195,7 +209,11 @@ fun NewsSourcesList(
                         }
                     }
                 )
-                .padding(8.dp),
+                .padding(8.dp)
+                .clearAndSetSemantics {
+                    stateDescription = if (source in state.followedNewsDataSources) context.getString(R.string.data_sources_page_data_source_on_state_desc, source.name) else context.getString(R.string.data_sources_page_data_source_off_state_desc, source.name)
+                    selected = source in state.followedNewsDataSources
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -233,16 +251,20 @@ fun GamesList(
     onRemovingGameFromFavourites: (FavouriteGame) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     state.favouriteGames.forEachIndexed { index, favouriteGame ->
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .selectable(
                     true,
-                    role = Role.Button,
                     onClick = { onRemovingGameFromFavourites(favouriteGame) }
                 )
-                .padding(8.dp),
+                .padding(8.dp)
+                .clearAndSetSemantics {
+                    contentDescription = context.getString(R.string.edit_preferences_page_game_content_description, favouriteGame.title)
+                    selected = true
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -293,13 +315,13 @@ fun GenresList(
             }
             is ResourceWrapper.ActualResource -> {
                 val genres = state.allGenres.data.resource
+                val context = LocalContext.current
                 genres.forEachIndexed { index, gameGenre ->
                     Row(
                         modifier = modifier
                             .fillMaxWidth()
                             .selectable(
                                 gameGenre in state.favouriteGenres,
-                                role = Role.Button,
                                 onClick = {
                                     if (gameGenre in state.favouriteGenres) {
                                         onRemovingGenreFromFavourites(gameGenre)
@@ -308,7 +330,11 @@ fun GenresList(
                                     }
                                 }
                             )
-                            .padding(8.dp),
+                            .padding(8.dp)
+                            .clearAndSetSemantics {
+                                stateDescription = if (gameGenre in state.favouriteGenres) context.getString(R.string.edit_preferences_page_genre_on_state_desc, gameGenre.name) else context.getString(R.string.edit_preferences_page_genre_off_state_desc, gameGenre.name)
+                                selected = gameGenre in state.favouriteGenres
+                            },
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {

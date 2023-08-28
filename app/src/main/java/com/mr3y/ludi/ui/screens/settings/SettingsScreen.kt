@@ -40,6 +40,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -47,6 +53,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mr3y.ludi.R
 import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.launchChromeCustomTab
 import com.mr3y.ludi.ui.presenter.SettingsViewModel
@@ -89,6 +96,7 @@ fun SettingsScreen(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surface
     ) { contentPadding ->
+        val context = LocalContext.current
         Column(
             modifier = Modifier
                 .padding(contentPadding)
@@ -101,6 +109,9 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .height(IntrinsicSize.Min)
                     .heightIn(min = 56.dp)
+                    .semantics {
+                        isTraversalGroup = true
+                    }
             ) {
                 state.themes.forEach { theme ->
                     Row(
@@ -118,23 +129,34 @@ fun SettingsScreen(
                                         onUpdateTheme(theme)
                                     }
                                 }
-                            ),
+                            )
+                            .semantics(mergeDescendants = true) {
+                                selected = theme == state.selectedTheme
+                                stateDescription = if (theme == state.selectedTheme) {
+                                    context.getString(R.string.settings_page_theme_on_state_desc, theme.label)
+                                } else {
+                                    context.getString(R.string.settings_page_theme_off_state_desc, theme.label)
+                                }
+                            },
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         RadioButton(
                             selected = theme == state.selectedTheme,
-                            onClick = null
+                            onClick = null,
+                            modifier = Modifier.clearAndSetSemantics { }
                         )
                         Text(
                             text = theme.label,
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.onSurface,
-                            textAlign = TextAlign.Start
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.clearAndSetSemantics { }
                         )
                     }
                 }
             }
             Divider()
+            val isRunningOnAPI30OrOlder = Build.VERSION.SDK_INT < 31
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -142,11 +164,18 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .height(IntrinsicSize.Min)
                     .heightIn(min = 56.dp)
+                    .semantics(mergeDescendants = true) {
+                        contentDescription = if (isRunningOnAPI30OrOlder) {
+                            context.getString(R.string.settings_page_dynamic_colors_off_content_description)
+                        } else {
+                            context.getString(R.string.settings_page_dynamic_colors_on_content_description)
+                        }
+                    }
             ) {
-                val isRunningOnAPI30OrOlder = Build.VERSION.SDK_INT < 31
                 if (isRunningOnAPI30OrOlder) {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.clearAndSetSemantics { }
                     ) {
                         SettingsTitle(text = "Dynamic Colors")
                         Text(
@@ -157,12 +186,21 @@ fun SettingsScreen(
                         )
                     }
                 } else {
-                    SettingsTitle(text = "Dynamic Colors")
+                    SettingsTitle(text = "Dynamic Colors", modifier = Modifier.clearAndSetSemantics { })
                 }
                 Switch(
                     checked = state.isUsingDynamicColor ?: true,
                     onCheckedChange = onToggleDynamicColorValue,
-                    enabled = state.isUsingDynamicColor != null && !isRunningOnAPI30OrOlder
+                    enabled = state.isUsingDynamicColor != null && !isRunningOnAPI30OrOlder,
+                    modifier = Modifier.semantics {
+                        if (!isRunningOnAPI30OrOlder) {
+                            stateDescription = if (state.isUsingDynamicColor == null || state.isUsingDynamicColor == true) {
+                                context.getString(R.string.settings_page_dynamic_colors_on_state_desc)
+                            } else {
+                                context.getString(R.string.settings_page_dynamic_colors_off_state_desc)
+                            }
+                        }
+                    }
                 )
             }
             Divider()
@@ -218,6 +256,9 @@ fun SettingsScreen(
                         Column(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.fillMaxWidth()
+                                .semantics {
+                                    isTraversalGroup = true
+                                }
                         ) {
                             CreditedText(
                                 preUrlText = "Games data is provided by ",
@@ -248,7 +289,6 @@ fun SettingsScreen(
                     }
                 )
             }
-            val context = LocalContext.current
             val chromeToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
             Divider()
             SettingsTitle(
@@ -285,7 +325,12 @@ fun CreditedText(
 ) {
     val context = LocalContext.current
     val chromeTabColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
-    Row(modifier = modifier) {
+    Row(
+        modifier = modifier
+            .clearAndSetSemantics {
+                contentDescription = "$preUrlText$urlText"
+            }
+    ) {
         Text(
             text = preUrlText,
             color = MaterialTheme.colorScheme.onSurface
@@ -319,6 +364,7 @@ fun Preference(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -330,6 +376,9 @@ fun Preference(
                 role = Role.Button,
                 onClick = onClick
             )
+            .clearAndSetSemantics {
+                contentDescription = context.getString(R.string.settings_page_preference_content_description, label)
+            }
     ) {
         SettingsTitle(text = label)
         Icon(
