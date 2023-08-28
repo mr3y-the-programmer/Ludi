@@ -23,6 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mr3y.ludi.R
@@ -93,7 +95,10 @@ internal fun FiltersBottomSheet(
                 FlowRow(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .semantics {
+                            isTraversalGroup = true
+                        },
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     dealsFiltersState.allStores.forEach {
@@ -123,7 +128,10 @@ internal fun FiltersBottomSheet(
                 FlowRow(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .semantics {
+                            isTraversalGroup = true
+                        },
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     giveawaysFiltersState.allStores.forEach {
@@ -152,7 +160,10 @@ internal fun FiltersBottomSheet(
                 FlowRow(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .semantics {
+                            isTraversalGroup = true
+                        },
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     giveawaysFiltersState.allPlatforms.forEach {

@@ -37,13 +37,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.mr3y.ludi.R
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 import kotlin.math.max
@@ -163,6 +169,7 @@ fun SegmentedTab(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     Row(
         modifier = modifier
             .fillMaxSize()
@@ -172,7 +179,11 @@ fun SegmentedTab(
                 onClickLabel = null,
                 role = Role.Tab,
                 onClick = onClick
-            ),
+            )
+            .semantics(mergeDescendants = true) {
+                this.selected = selected
+                stateDescription = if (selected) context.getString(R.string.deals_page_tab_on_state_desc, label) else context.getString(R.string.deals_page_tab_off_state_desc, label)
+            },
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -181,7 +192,7 @@ fun SegmentedTab(
                 imageVector = Icons.Filled.Check,
                 contentDescription = null,
                 tint = selectedContentColor,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp).clearAndSetSemantics { }
             )
         }
         Text(

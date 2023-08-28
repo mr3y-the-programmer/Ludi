@@ -25,7 +25,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -33,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Deal
 import com.mr3y.ludi.core.model.GiveawayEntry
 import com.mr3y.ludi.ui.components.defaultPlaceholder
@@ -54,9 +59,21 @@ fun Deal(
     onClick: () -> Unit
 ) {
     val deal = dealWrapper.actualResource
+    val contentDescription = if (deal != null) {
+        stringResource(
+            id = R.string.deals_page_deal_content_description,
+            deal.name,
+            deal.salePriceInUsDollar,
+            deal.normalPriceInUsDollar,
+            deal.savings.toFloat()
+        )
+    } else {
+        null
+    }
     OfferScaffold(
         thumbnailUrl = deal?.thumbnailUrl,
         title = deal?.name,
+        contentDesc = contentDescription,
         modifier = modifier,
         onClick = onClick
     ) {
@@ -120,9 +137,15 @@ fun GamerPowerGameGiveaway(
     onClick: () -> Unit
 ) {
     val giveaway = giveawayWrapper.actualResource
+    val contentDescription = if (giveaway != null) {
+        stringResource(R.string.deals_page_giveaway_content_description, giveaway.title)
+    } else {
+        null
+    }
     OfferScaffold(
         thumbnailUrl = giveaway?.thumbnailUrl,
         title = giveaway?.title,
+        contentDesc = contentDescription,
         modifier = modifier,
         onClick = onClick
     ) {
@@ -174,6 +197,7 @@ private fun durationBetween(start: ZonedDateTime, end: ZonedDateTime): Triple<St
 private fun OfferScaffold(
     thumbnailUrl: String?,
     title: String?,
+    contentDesc: String?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     other: @Composable ColumnScope.() -> Unit
@@ -182,10 +206,15 @@ private fun OfferScaffold(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .padding(8.dp)
-            .clickable(
-                role = Role.Button,
-                onClick = onClick
-            )
+            .clickable(onClick = onClick)
+            .clearAndSetSemantics {
+                if (contentDesc != null) {
+                    contentDescription = contentDesc
+                }
+                if (title != null) {
+                    text = AnnotatedString(title)
+                }
+            }
     ) {
         Row(
             modifier = Modifier

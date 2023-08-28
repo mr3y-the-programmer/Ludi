@@ -43,7 +43,7 @@ class DealsScreenTest : BaseRobolectricTest() {
 
         composeTestRule.onNodeWithText(getString(R.string.giveaways_label)).assertIsDisplayed()
 
-        composeTestRule.onNodeWithText(getString(R.string.deals_search_filter_bar_placeholder)).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(getString(R.string.deals_page_search_field_content_description)).assertIsDisplayed()
 
         // Assert the deals are visible in a scrollable lazy list
         composeTestRule.onNode(hasScrollToIndexAction())
