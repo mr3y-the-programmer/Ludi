@@ -52,20 +52,20 @@ class DiscoverViewModelTest {
         advanceUntilIdle()
 
         expectThat(sut.discoverState.value.searchQuery).isEqualTo("stra")
-        expectThat(sut.discoverState.value.games).isA<DiscoverStateGames.SearchQueryBasedGames>()
+        expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SearchQueryBasedGames>()
 
         sut.addToSelectedPlatforms(Platform(id = 21, label = "Android"))
 
         expectThat(sut.discoverState.value.filtersState.selectedPlatforms).isEqualTo(setOf(Platform(id = 21, label = "Android")))
         expectThat(sut.discoverState.value.searchQuery).isEqualTo("stra")
-        expectThat(sut.discoverState.value.games).isA<DiscoverStateGames.SearchQueryBasedGames>()
+        expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SearchQueryBasedGames>()
 
         sut.addToSelectedStores(Store(id = 4, label = "App store"))
 
         expectThat(sut.discoverState.value.filtersState.selectedStores).isEqualTo(setOf(Store(id = 4, label = "App store")))
         expectThat(sut.discoverState.value.filtersState.selectedPlatforms).isEqualTo(setOf(Platform(id = 21, label = "Android")))
         expectThat(sut.discoverState.value.searchQuery).isEqualTo("stra")
-        expectThat(sut.discoverState.value.games).isA<DiscoverStateGames.SearchQueryBasedGames>()
+        expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SearchQueryBasedGames>()
 
         sut.addToSelectedGenres(Genre(id = 3, label = "Adventure"))
 
@@ -73,7 +73,7 @@ class DiscoverViewModelTest {
         expectThat(sut.discoverState.value.filtersState.selectedStores).isEqualTo(setOf(Store(id = 4, label = "App store")))
         expectThat(sut.discoverState.value.filtersState.selectedPlatforms).isEqualTo(setOf(Platform(id = 21, label = "Android")))
         expectThat(sut.discoverState.value.searchQuery).isEqualTo("stra")
-        expectThat(sut.discoverState.value.games).isA<DiscoverStateGames.SearchQueryBasedGames>()
+        expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SearchQueryBasedGames>()
 
         sut.removeFromSelectedGenres(Genre(id = 3, label = "Adventure"))
         sut.removeFromSelectedPlatforms(Platform(id = 21, label = "Android"))
@@ -86,7 +86,7 @@ class DiscoverViewModelTest {
         expectThat(sut.discoverState.value.filtersState.selectedStores).isEqualTo(emptySet())
         expectThat(sut.discoverState.value.filtersState.selectedPlatforms).isEqualTo(emptySet())
         expectThat(sut.discoverState.value.searchQuery).isEqualTo("")
-        expectThat(sut.discoverState.value.games).isA<DiscoverStateGames.SuggestedGames>()
+        expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SuggestedGames>()
     }
 
     @Test

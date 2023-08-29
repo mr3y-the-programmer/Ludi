@@ -9,11 +9,10 @@ import com.mr3y.ludi.core.model.NewsArticle
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.ReviewArticle
 import com.mr3y.ludi.core.model.Source
+import com.mr3y.ludi.core.model.onSuccess
 import com.mr3y.ludi.core.repository.NewsRepository
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.ui.presenter.model.NewsState
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
-import com.mr3y.ludi.ui.presenter.model.wrapResultResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -55,22 +54,15 @@ class NewsViewModel @Inject constructor(
         _internalState
     ) { sources, _ ->
         val newsResult = viewModelScope.async {
-            newsRepository.getLatestGamingNews(sources).wrapResultResources(
-                transform = { articles -> articles.sortByRecent() }
-            )
+            newsRepository.getLatestGamingNews(sources).onSuccess { articles -> articles.sortByRecent() }
         }
         val reviewsResult = viewModelScope.async {
-            newsRepository.getGamesReviews(sources).wrapResultResources(
-                transform = { articles -> articles.sortByRecent() }
-            )
+            newsRepository.getGamesReviews(sources).onSuccess { articles -> articles.sortByRecent() }
         }
         val newReleasesResult = viewModelScope.async {
-            newsRepository.getGamesNewReleases(sources).wrapResultResources(
-                transform = { articles ->
-                    articles.sortByRecent(desc = false)
-                        .filter { article -> article.releaseDate.isAfter(ZonedDateTime.now()) }
-                }
-            )
+            newsRepository.getGamesNewReleases(sources).onSuccess { articles ->
+                articles.sortByRecent(desc = false).filter { article -> article.releaseDate.isAfter(ZonedDateTime.now()) }
+            }
         }
         val (news, reviews, newReleases) = listOf(
             newsResult,
@@ -80,9 +72,9 @@ class NewsViewModel @Inject constructor(
         _internalState.updateAndGet {
             NewsState(
                 isRefreshing = false,
-                newsFeed = news as Result<List<ResourceWrapper<NewsArticle>>, Throwable>,
-                reviewsFeed = reviews as Result<List<ResourceWrapper<ReviewArticle>>, Throwable>,
-                newReleasesFeed = newReleases as Result<List<ResourceWrapper<NewReleaseArticle>>, Throwable>
+                newsFeed = news as Result<List<NewsArticle>, Throwable>,
+                reviewsFeed = reviews as Result<List<ReviewArticle>, Throwable>,
+                newReleasesFeed = newReleases as Result<List<NewReleaseArticle>, Throwable>
             )
         }
     }.stateIn(
@@ -108,13 +100,9 @@ class NewsViewModel @Inject constructor(
     companion object {
         val InitialNewsState = NewsState(
             isRefreshing = true,
-            newsFeed = Result.Success(placeholders()),
-            reviewsFeed = Result.Success(placeholders()),
-            newReleasesFeed = Result.Success(placeholders())
+            newsFeed = Result.Loading,
+            reviewsFeed = Result.Loading,
+            newReleasesFeed = Result.Loading
         )
-
-        private fun placeholders(size: Int = 8): List<ResourceWrapper.Placeholder> {
-            return buildList { repeat(size) { add(ResourceWrapper.Placeholder) } }
-        }
     }
 }

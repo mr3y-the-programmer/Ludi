@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.mr3y.ludi.core.model.Deal
 import com.mr3y.ludi.core.model.GiveawayEntry
 import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.model.onSuccess
 import com.mr3y.ludi.core.repository.DealsRepository
 import com.mr3y.ludi.core.repository.query.DealsQuery
 import com.mr3y.ludi.core.repository.query.DealsSorting
@@ -20,8 +21,6 @@ import com.mr3y.ludi.ui.presenter.model.DealsState
 import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.ui.presenter.model.GiveawaysFiltersState
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
-import com.mr3y.ludi.ui.presenter.model.wrapResultResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -80,6 +79,7 @@ class DealsViewModel @Inject constructor(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     val dealsState = combine(
         snapshotFlow { searchQuery.value },
         dealsFilterState,
@@ -94,18 +94,16 @@ class DealsViewModel @Inject constructor(
         DealsState(
             searchQuery = updates[0] as String,
             dealsFiltersState = updates[1] as DealsFiltersState,
-            deals = if (isDealsLoading) Initial.deals else (updates[2] as Result<List<Deal>, Throwable>).wrapResultResources(),
+            deals = if (isDealsLoading) Initial.deals else (updates[2] as Result<List<Deal>, Throwable>),
             giveawaysFiltersState = (updates[3] as GiveawaysFiltersState),
             giveaways = if (isGiveawaysLoading) {
                 Initial.giveaways
             } else {
-                (updates[4] as Result<List<GiveawayEntry>, Throwable>).wrapResultResources(
-                    transform = { giveaways ->
-                        giveaways.filter { giveaway ->
-                            giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault())) ?: true
-                        }
+                (updates[4] as Result<List<GiveawayEntry>, Throwable>).onSuccess { giveaways ->
+                    giveaways.filter { giveaway ->
+                        giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault())) ?: true
                     }
-                )
+                }
             }
         )
     }.stateIn(
@@ -242,14 +240,10 @@ class DealsViewModel @Inject constructor(
         )
         val Initial = DealsState(
             "",
-            Result.Success(placeholderList()),
-            Result.Success(placeholderList()),
+            Result.Loading,
+            Result.Loading,
             InitialDealsFiltersState,
             InitialGiveawaysFiltersState
         )
-
-        private fun placeholderList(size: Int = 8): List<ResourceWrapper.Placeholder> {
-            return buildList { repeat(size) { add(ResourceWrapper.Placeholder) } }
-        }
     }
 }

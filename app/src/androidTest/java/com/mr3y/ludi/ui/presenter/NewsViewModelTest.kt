@@ -10,7 +10,6 @@ import com.mr3y.ludi.datastore.model.FollowedNewsDataSource
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.shared.MainDispatcherRule
 import com.mr3y.ludi.ui.datastore.FollowedNewsDataSourceSerializer
-import com.mr3y.ludi.ui.presenter.model.actualResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -95,30 +94,30 @@ class NewsViewModelTest {
 
         sut.newsState.value.newsFeed.data?.let { articles ->
             with(sut) {
-                expectThat(articles.mapNotNull { it.actualResource }.sortByRecent()).isEqualTo(articles.mapNotNull { it.actualResource })
+                expectThat(articles.sortByRecent()).isEqualTo(articles)
             }
             articles.forEach { article ->
-                article.actualResource?.let {
+                article.let {
                     expectThat(it.source).isContainedIn(setOf(Source.GameSpot, Source.GiantBomb, Source.EuroGamer))
                 }
             }
         }
         sut.newsState.value.reviewsFeed.data?.let { articles ->
             with(sut) {
-                expectThat(articles.mapNotNull { it.actualResource }.sortByRecent()).isEqualTo(articles.mapNotNull { it.actualResource })
+                expectThat(articles.sortByRecent()).isEqualTo(articles)
             }
             articles.forEach { article ->
-                article.actualResource?.let {
+                article.let {
                     expectThat(it.source).isContainedIn(setOf(Source.GameSpot, Source.GiantBomb, Source.EuroGamer))
                 }
             }
         }
         sut.newsState.value.newReleasesFeed.data?.let { articles ->
             with(sut) {
-                expectThat(articles.mapNotNull { it.actualResource }.sortByRecent(desc = false)).isEqualTo(articles.mapNotNull { it.actualResource })
+                expectThat(articles.sortByRecent(desc = false)).isEqualTo(articles)
             }
             articles.forEach { article ->
-                article.actualResource?.let {
+                article.let {
                     expectThat(it.source).isContainedIn(setOf(Source.GameSpot, Source.GiantBomb))
                     expectThat(it.releaseDate).isGreaterThan(ZonedDateTime.now())
                 }

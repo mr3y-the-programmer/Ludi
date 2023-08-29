@@ -21,7 +21,6 @@ import com.mr3y.ludi.ui.datastore.FollowedNewsDataSourceSerializer
 import com.mr3y.ludi.ui.datastore.PreferencesKeys
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -113,13 +112,13 @@ class OnBoardingViewModelTest {
         advanceUntilIdle()
 
         val suggestedGames = sut.onboardingState.value.onboardingGames.games
-        expectThat(suggestedGames).isA<Result.Success<List<ResourceWrapper.ActualResource<Game>>>>()
-        suggestedGames as Result.Success<List<ResourceWrapper.ActualResource<Game>>>
+        expectThat(suggestedGames).isA<Result.Success<List<Game>>>()
+        suggestedGames as Result.Success<List<Game>>
         expectThat(suggestedGames.data).isNotEmpty()
         val suggestedGenres = sut.onboardingState.value.allGamingGenres
-        expectThat(suggestedGenres).isA<Result.Success<ResourceWrapper.ActualResource<Set<GameGenre>>>>()
-        suggestedGenres as Result.Success<ResourceWrapper.ActualResource<Set<GameGenre>>>
-        expectThat(suggestedGenres.data.resource).isNotEmpty()
+        expectThat(suggestedGenres).isA<Result.Success<Set<GameGenre>>>()
+        suggestedGenres as Result.Success<Set<GameGenre>>
+        expectThat(suggestedGenres.data).isNotEmpty()
 
         val favouriteGame = FavouriteGame(id = 3498, title = "Grand Theft Auto V", imageUrl = "https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg", rating = 4.47f)
         // make sure the function is idempotent

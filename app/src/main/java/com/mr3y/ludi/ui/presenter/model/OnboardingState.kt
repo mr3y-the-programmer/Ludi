@@ -14,15 +14,15 @@ data class OnboardingState(
     val onboardingGames: OnboardingGames,
     val favouriteGames: List<FavouriteGame>,
     val isUpdatingFavouriteGames: Boolean,
-    val allGamingGenres: Result<ResourceWrapper<Set<GameGenre>>, Throwable>,
+    val allGamingGenres: Result<Set<GameGenre>, Throwable>,
     val selectedGamingGenres: Set<GameGenre>
 )
 
 sealed interface OnboardingGames {
-    val games: Result<List<ResourceWrapper<Game>>, Throwable>
+    val games: Result<List<Game>, Throwable>
 
-    data class SuggestedGames(override val games: Result<List<ResourceWrapper<Game>>, Throwable>) : OnboardingGames
-    data class SearchQueryBasedGames(override val games: Result<List<ResourceWrapper<Game>>, Throwable>) : OnboardingGames
+    data class SuggestedGames(override val games: Result<List<Game>, Throwable>) : OnboardingGames
+    data class SearchQueryBasedGames(override val games: Result<List<Game>, Throwable>) : OnboardingGames
 }
 
 data class NewsDataSource(

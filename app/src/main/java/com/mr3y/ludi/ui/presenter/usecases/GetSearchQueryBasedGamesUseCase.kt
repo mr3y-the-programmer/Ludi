@@ -1,9 +1,6 @@
 package com.mr3y.ludi.ui.presenter.usecases
 
-import com.mr3y.ludi.core.model.Game
-import com.mr3y.ludi.core.model.GameGenre
-import com.mr3y.ludi.core.model.GamesPage
-import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.model.onSuccess
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.GamesQuery
 import com.mr3y.ludi.core.repository.query.GamesSortingCriteria
@@ -11,7 +8,6 @@ import com.mr3y.ludi.ui.presenter.model.Criteria
 import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.ui.presenter.model.Order
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.usecases.utils.groupByGenre
 import javax.inject.Inject
 
@@ -95,15 +91,8 @@ class GetSearchQueryBasedGamesUseCaseImpl @Inject constructor(
             )
         ).let {
             DiscoverStateGames.SearchQueryBasedGames(
-                games = it.groupByGenreAndWrapResources()
+                games = it.onSuccess { gamesPage -> gamesPage.games.groupByGenre() }
             )
-        }
-    }
-
-    private fun Result<GamesPage, Throwable>.groupByGenreAndWrapResources(): Result<ResourceWrapper<Map<GameGenre, List<Game>>>, Throwable> {
-        return when (this) {
-            is Result.Success -> Result.Success(ResourceWrapper.ActualResource(data.games.groupByGenre()))
-            is Result.Error -> this
         }
     }
 }

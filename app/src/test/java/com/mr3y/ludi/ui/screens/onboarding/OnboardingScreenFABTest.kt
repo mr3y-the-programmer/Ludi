@@ -45,7 +45,7 @@ class OnboardingScreenFABTest : BaseRobolectricTest() {
 
         composeTestRule.onNodeWithStateDescription(getString(R.string.on_boarding_fab_state_skip_state_desc)).assertIsDisplayed()
 
-        val randomGenre = FakeAllGenres.data.resource.random()
+        val randomGenre = FakeAllGenres.data.random()
         composeTestRule.onGenre(R.string.genres_page_genre_off_state_desc, randomGenre.name).assertIsDisplayed()
         composeTestRule.onGenre(R.string.genres_page_genre_off_state_desc, randomGenre.name).performClick()
 

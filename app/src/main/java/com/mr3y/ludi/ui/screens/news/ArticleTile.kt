@@ -43,8 +43,6 @@ import com.mr3y.ludi.core.model.NewsArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.Title
 import com.mr3y.ludi.ui.components.defaultPlaceholder
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
-import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 import java.time.Duration
@@ -53,11 +51,10 @@ import kotlin.time.toKotlinDuration
 
 @Composable
 fun ArticleCardTile(
-    articleWrapper: ResourceWrapper<Article>?,
+    article: Article?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val article = articleWrapper?.actualResource
     val context = LocalContext.current
     Card(
         shape = MaterialTheme.shapes.medium,
@@ -66,10 +63,10 @@ fun ArticleCardTile(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClickLabel = null,
-                enabled = articleWrapper is ResourceWrapper.ActualResource,
+                enabled = article != null,
                 onClick = onClick
             )
-            .defaultPlaceholder(isVisible = articleWrapper is ResourceWrapper.Placeholder)
+            .defaultPlaceholder(isVisible = article == null)
             .clearAndSetSemantics {
                 contentDescription = context.getString(R.string.news_page_article_content_description, article?.title?.text?.removeCDATA(), article?.author, article?.source?.name)
             }
@@ -263,7 +260,7 @@ fun LudiContentCardPreview() {
         ) {
             items(samples) {
                 ArticleCardTile(
-                    articleWrapper = ResourceWrapper.ActualResource(it),
+                    article = it,
                     modifier = Modifier
                         .width(width = 248.dp)
                         .height(IntrinsicSize.Min),

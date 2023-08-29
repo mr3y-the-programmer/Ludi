@@ -9,8 +9,8 @@ import com.mr3y.ludi.core.repository.query.GiveawaysSorting
 
 data class DealsState(
     val searchQuery: String,
-    val deals: Result<List<ResourceWrapper<Deal>>, Throwable>,
-    val giveaways: Result<List<ResourceWrapper<GiveawayEntry>>, Throwable>,
+    val deals: Result<List<Deal>, Throwable>,
+    val giveaways: Result<List<GiveawayEntry>, Throwable>,
     val dealsFiltersState: DealsFiltersState,
     val giveawaysFiltersState: GiveawaysFiltersState
 )

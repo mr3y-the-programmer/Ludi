@@ -18,81 +18,78 @@ import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.ui.presenter.model.OnboardingState
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 
 val FakeAllGenres = Result.Success(
-    ResourceWrapper.ActualResource(
-        setOf(
-            GameGenre(
-                id = 1,
-                name = "Action",
-                slug = null,
-                gamesCount = 2000,
-                imageUrl = null
-            ),
-            GameGenre(
-                id = 2,
-                name = "Adventure",
-                slug = null,
-                gamesCount = 2000,
-                imageUrl = null
-            ),
-            GameGenre(
-                id = 3,
-                name = "Arcade",
-                slug = null,
-                gamesCount = 2000,
-                imageUrl = null
-            ),
-            GameGenre(
-                id = 4,
-                name = "Board games",
-                slug = null,
-                gamesCount = 2000,
-                imageUrl = null
-            ),
-            GameGenre(
-                id = 5,
-                name = "Educational",
-                slug = null,
-                gamesCount = 2000,
-                imageUrl = null
-            ),
-            GameGenre(
-                id = 6,
-                name = "Family",
-                slug = null,
-                gamesCount = 2000,
-                imageUrl = null
-            ),
-            GameGenre(
-                id = 7,
-                name = "Indie",
-                slug = null,
-                gamesCount = 2000,
-                imageUrl = null
-            ),
-            GameGenre(
-                id = 8,
-                name = "Massively Multiplayer",
-                slug = null,
-                gamesCount = 2000,
-                imageUrl = null
-            ),
-            GameGenre(
-                id = 9,
-                name = "Racing",
-                slug = null,
-                gamesCount = 2000,
-                imageUrl = null
-            ),
-            GameGenre(
-                id = 10,
-                name = "Simulation",
-                slug = null,
-                gamesCount = 2000,
-                imageUrl = null
-            )
+    setOf(
+        GameGenre(
+            id = 1,
+            name = "Action",
+            slug = null,
+            gamesCount = 2000,
+            imageUrl = null
+        ),
+        GameGenre(
+            id = 2,
+            name = "Adventure",
+            slug = null,
+            gamesCount = 2000,
+            imageUrl = null
+        ),
+        GameGenre(
+            id = 3,
+            name = "Arcade",
+            slug = null,
+            gamesCount = 2000,
+            imageUrl = null
+        ),
+        GameGenre(
+            id = 4,
+            name = "Board games",
+            slug = null,
+            gamesCount = 2000,
+            imageUrl = null
+        ),
+        GameGenre(
+            id = 5,
+            name = "Educational",
+            slug = null,
+            gamesCount = 2000,
+            imageUrl = null
+        ),
+        GameGenre(
+            id = 6,
+            name = "Family",
+            slug = null,
+            gamesCount = 2000,
+            imageUrl = null
+        ),
+        GameGenre(
+            id = 7,
+            name = "Indie",
+            slug = null,
+            gamesCount = 2000,
+            imageUrl = null
+        ),
+        GameGenre(
+            id = 8,
+            name = "Massively Multiplayer",
+            slug = null,
+            gamesCount = 2000,
+            imageUrl = null
+        ),
+        GameGenre(
+            id = 9,
+            name = "Racing",
+            slug = null,
+            gamesCount = 2000,
+            imageUrl = null
+        ),
+        GameGenre(
+            id = 10,
+            name = "Simulation",
+            slug = null,
+            gamesCount = 2000,
+            imageUrl = null
         )
     )
 )
@@ -1258,7 +1255,7 @@ private val fakeGames = listOfNotNull(
     ).toGame()
 )
 
-val FakeOnboardingGames = OnboardingGames.SuggestedGames(Result.Success(fakeGames.map { ResourceWrapper.ActualResource(it) }))
+val FakeOnboardingGames = OnboardingGames.SuggestedGames(Result.Success(fakeGames))
 val FakeSelectedGames = listOf(FavouriteGame(id = 3498, title = "Grand Theft Auto V", imageUrl = "https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg", rating = 4.47f))
 
 val FakeNewsDataSources = listOf(

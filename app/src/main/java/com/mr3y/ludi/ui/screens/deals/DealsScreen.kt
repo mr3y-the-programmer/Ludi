@@ -23,6 +23,7 @@ import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,7 +48,6 @@ import com.mr3y.ludi.ui.presenter.model.DealStore
 import com.mr3y.ludi.ui.presenter.model.DealsState
 import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.ui.presenter.model.GiveawayStore
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
@@ -83,7 +83,7 @@ fun DealsScreen(
     onSelectingGiveawayPlatform: (GiveawayPlatform) -> Unit,
     onUnselectingGiveawayPlatform: (GiveawayPlatform) -> Unit
 ) {
-    var selectedTab by rememberSaveable(Unit) { mutableStateOf(0) }
+    var selectedTab by rememberSaveable(Unit) { mutableIntStateOf(0) }
     val topBarScrollState = rememberKeyedTopAppBarState(input = selectedTab)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topBarScrollState)
     var showFiltersSheet by rememberSaveable(Unit) { mutableStateOf(false) }
@@ -149,15 +149,15 @@ fun DealsScreen(
                             result = dealsState.deals
                         ) {
                             Deal(
-                                dealWrapper = it,
+                                deal = it,
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp)
                                     .fillMaxWidth()
                                     .height(160.dp),
                                 onClick = {
-                                    if (it is ResourceWrapper.ActualResource) {
+                                    if (it != null) {
                                         val dealUrl =
-                                            Uri.parse("https://www.cheapshark.com/redirect?dealID=${it.resource.dealID}")
+                                            Uri.parse("https://www.cheapshark.com/redirect?dealID=${it.dealID}")
                                         launchChromeCustomTab(
                                             context,
                                             dealUrl,
@@ -172,16 +172,16 @@ fun DealsScreen(
                             result = dealsState.giveaways
                         ) {
                             GamerPowerGameGiveaway(
-                                giveawayWrapper = it,
+                                giveaway = it,
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp)
                                     .fillMaxWidth()
                                     .height(120.dp),
                                 onClick = {
-                                    if (it is ResourceWrapper.ActualResource) {
+                                    if (it != null) {
                                         launchChromeCustomTab(
                                             context,
-                                            Uri.parse(it.resource.gamerPowerUrl),
+                                            Uri.parse(it.gamerPowerUrl),
                                             chromeTabToolbarColor
                                         )
                                     }
@@ -252,13 +252,18 @@ fun rememberKeyedLazyListState(
 }
 
 fun <T> LazyListScope.sectionScaffold(
-    result: Result<List<ResourceWrapper<T>>, Throwable>,
-    itemContent: @Composable (ResourceWrapper<T>) -> Unit
+    result: Result<List<T>, Throwable>,
+    itemContent: @Composable (T?) -> Unit
 ) {
     when (result) {
+        is Result.Loading -> { // Show placeholders
+            items(10) { _ ->
+                itemContent(null)
+            }
+        }
         is Result.Success -> {
-            items(result.data) { resourceWrapper ->
-                itemContent(resourceWrapper)
+            items(result.data) { item ->
+                itemContent(item)
             }
         }
         is Result.Error -> {

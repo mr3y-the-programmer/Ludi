@@ -80,7 +80,6 @@ import com.mr3y.ludi.ui.presenter.connectivityState
 import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.OnboardingGames
-import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.screens.discover.gamesSamples
 import com.mr3y.ludi.ui.theme.LudiTheme
@@ -208,10 +207,19 @@ fun SelectingFavouriteGamesPage(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             when (val result = allGames.games) {
+                is Result.Loading -> {
+                    items(10) { _ ->
+                        GameTile(
+                            game = null,
+                            selected = false,
+                            onToggleSelectingFavouriteGame = {},
+                            modifier = Modifier.height(IntrinsicSize.Min)
+                        )
+                    }
+                }
                 is Result.Success -> {
-                    result.data.forEach { gameWrapper ->
-                        val game = gameWrapper.actualResource
-                        val isFavGame = game?.let { FavouriteGame(it.id, it.name, it.imageUrl, it.rating) } in favouriteUserGames
+                    result.data.forEach { game ->
+                        val isFavGame = game.let { FavouriteGame(it.id, it.name, it.imageUrl, it.rating) } in favouriteUserGames
                         if (!isFavGame) {
                             item {
                                 GameTile(
@@ -332,9 +340,17 @@ private fun GameTileScaffold(
             .padding(4.dp)
             .clearAndSetSemantics {
                 if (title != null && rating != null && rating != 0.0f) {
-                    contentDescription = context.getString(R.string.games_page_game_content_desc, title, rating)
+                    contentDescription =
+                        context.getString(R.string.games_page_game_content_desc, title, rating)
                 }
-                stateDescription = if (selected) context.getString(R.string.games_page_game_on_state_desc, title) else context.getString(R.string.games_page_game_off_state_desc, title)
+                stateDescription = if (selected) {
+                    context.getString(
+                        R.string.games_page_game_on_state_desc,
+                        title
+                    )
+                } else {
+                    context.getString(R.string.games_page_game_off_state_desc, title)
+                }
                 this.selected = selected
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
@@ -447,7 +463,7 @@ fun SelectingFavouriteGamesPagePreview() {
 fun GameTilePreview() {
     LudiTheme {
         GameTile(
-            game = gamesSamples.first().actualResource,
+            game = gamesSamples.first(),
             selected = false,
             onToggleSelectingFavouriteGame = {}
         )

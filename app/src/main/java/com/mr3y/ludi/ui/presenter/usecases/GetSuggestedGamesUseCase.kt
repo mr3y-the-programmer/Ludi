@@ -5,15 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.Snapshot
 import com.mr3y.ludi.LudiAppState
 import com.mr3y.ludi.core.model.Game
-import com.mr3y.ludi.core.model.GamesPage
 import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.model.onSuccess
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.GamesQuery
 import com.mr3y.ludi.core.repository.query.GamesSortingCriteria
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.TaggedGames
-import com.mr3y.ludi.ui.presenter.model.wrapResource
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -123,7 +121,7 @@ class GetSuggestedGamesUseCaseImpl @Inject constructor(
         tags: List<Int>? = null,
         metaCriticScores: List<Int>? = null,
         dates: List<String>? = null,
-        result: (Result<List<ResourceWrapper<Game>>, Throwable>) -> T,
+        result: (Result<List<Game>, Throwable>) -> T,
         sortingCriteria: GamesSortingCriteria = GamesSortingCriteria.RatingDescending
     ): T {
         return gamesRepository.queryGames(
@@ -135,7 +133,11 @@ class GetSuggestedGamesUseCaseImpl @Inject constructor(
                 metaCriticScores = metaCriticScores,
                 sortingCriteria = sortingCriteria
             )
-        ).wrapResultResources().let { result(it) }
+        ).onSuccess { gamesPage ->
+            gamesPage.games
+        }.let {
+            result(it)
+        }
     }
 
     private fun updateAndGetLoadedGames(newGames: List<TaggedGames>): DiscoverStateGames.SuggestedGames {
@@ -145,12 +147,5 @@ class GetSuggestedGamesUseCaseImpl @Inject constructor(
             )
         }
         return loadedGames.value!!
-    }
-
-    private fun Result<GamesPage, Throwable>.wrapResultResources(): Result<List<ResourceWrapper<Game>>, Throwable> {
-        return when (this) {
-            is Result.Success -> Result.Success(data.games.map(Game::wrapResource))
-            is Result.Error -> this
-        }
     }
 }
