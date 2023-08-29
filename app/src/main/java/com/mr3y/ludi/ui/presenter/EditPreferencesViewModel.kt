@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Source
+import com.mr3y.ludi.core.model.onSuccess
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSource
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
@@ -18,7 +19,6 @@ import com.mr3y.ludi.ui.presenter.model.EditPreferencesState
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.SupportedNewsDataSources
-import com.mr3y.ludi.ui.presenter.model.wrapResultResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -62,7 +62,7 @@ class EditPreferencesViewModel @Inject constructor(
         }
 
     private val allGenres = flow {
-        emit(gamesRepository.queryGamesGenres().wrapResultResources())
+        emit(gamesRepository.queryGamesGenres().onSuccess { page -> page.genres })
     }
 
     private val userFavGenres = favGenresStore.data

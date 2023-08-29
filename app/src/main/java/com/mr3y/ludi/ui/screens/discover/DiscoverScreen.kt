@@ -46,10 +46,8 @@ import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.ui.presenter.model.Genre
 import com.mr3y.ludi.ui.presenter.model.Platform
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.Store
 import com.mr3y.ludi.ui.presenter.model.TaggedGames
-import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.presenter.usecases.utils.groupByGenre
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
@@ -114,19 +112,19 @@ fun DiscoverScreen(
             val isInternetConnectionNotAvailable by remember {
                 derivedStateOf { connectionState != ConnectionState.Available }
             }
-            when (discoverState.games) {
+            when (discoverState.gamesState) {
                 is DiscoverStateGames.SuggestedGames -> {
                     AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
                     SuggestedGamesPage(
-                        suggestedGames = discoverState.games,
+                        suggestedGames = discoverState.gamesState,
                         onReachingBottomOfTheList = onReachingBottomOfTheSuggestionsList
                     )
                 }
                 else -> {
-                    discoverState.games as DiscoverStateGames.SearchQueryBasedGames
+                    discoverState.gamesState as DiscoverStateGames.SearchQueryBasedGames
                     AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
                     SearchQueryAndFilterPage(
-                        searchResult = discoverState.games.games
+                        searchResult = discoverState.gamesState.games
                     )
                 }
             }
@@ -235,7 +233,7 @@ private fun getLabelFor(taggedGames: TaggedGames): String {
 
 @Composable
 fun SearchQueryAndFilterPage(
-    searchResult: Result<ResourceWrapper<Map<GameGenre, List<Game>>>, Throwable>,
+    searchResult: Result<Map<GameGenre, List<Game>>, Throwable>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -243,44 +241,43 @@ fun SearchQueryAndFilterPage(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         when (searchResult) {
-            is Result.Success -> {
-                if (searchResult.data is ResourceWrapper.ActualResource) {
-                    searchResult.data.resource.forEach { (gameGenre, games) ->
-                        item {
-                            LudiSectionHeader(
-                                text = gameGenre.name,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp)
-                            )
-                        }
-                        item {
-                            LazyRow(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.surface)
-                                    .padding(horizontal = 8.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                items(games) {
-                                    GameCard(
-                                        game = it,
-                                        modifier = Modifier
-                                            .padding(horizontal = 8.dp, vertical = 8.dp)
-                                            .width(200.dp)
-                                            .height(280.dp)
-                                    )
-                                }
-                            }
-                        }
+            is Result.Loading -> {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
-                } else {
+                }
+            }
+            is Result.Success -> {
+                searchResult.data.forEach { (gameGenre, games) ->
                     item {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
+                        LudiSectionHeader(
+                            text = gameGenre.name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp)
+                        )
+                    }
+                    item {
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surface)
+                                .padding(horizontal = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            CircularProgressIndicator()
+                            items(games) {
+                                GameCard(
+                                    game = it,
+                                    modifier = Modifier
+                                        .padding(horizontal = 8.dp, vertical = 8.dp)
+                                        .width(200.dp)
+                                        .height(280.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -298,16 +295,16 @@ fun SearchQueryAndFilterPage(
 
 @Composable
 fun RichInfoGamesSection(
-    games: Result<List<ResourceWrapper<Game>>, Throwable>,
+    games: Result<List<Game>, Throwable>,
     modifier: Modifier = Modifier,
     showGenre: Boolean = false
 ) {
     GamesSectionScaffold(
         gamesResult = games,
         modifier = modifier
-    ) { gameWrapper ->
+    ) { game ->
         GameCard(
-            game = gameWrapper.actualResource,
+            game = game,
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 8.dp)
                 .width(200.dp)
@@ -319,19 +316,24 @@ fun RichInfoGamesSection(
 
 @Composable
 fun <T> GamesSectionScaffold(
-    gamesResult: Result<List<ResourceWrapper<T>>, Throwable>,
+    gamesResult: Result<List<T>, Throwable>,
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(8.dp),
-    itemContent: @Composable (ResourceWrapper<T>) -> Unit
+    itemContent: @Composable (T?) -> Unit
 ) {
     LazyRow(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement
     ) {
         when (gamesResult) {
+            is Result.Loading -> {
+                items(10) { _ ->
+                    itemContent(null)
+                }
+            }
             is Result.Success -> {
-                items(gamesResult.data) { gameWrapper ->
-                    itemContent(gameWrapper)
+                items(gamesResult.data) { game ->
+                    itemContent(game)
                 }
             }
             is Result.Error -> {
@@ -369,7 +371,7 @@ fun DiscoverScreenPreview() {
         DiscoverScreen(
             discoverState = DiscoverState(
                 searchQuery = "",
-                games = DiscoverStateGames.SuggestedGames(taggedGamesList = initialList),
+                gamesState = DiscoverStateGames.SuggestedGames(taggedGamesList = initialList),
                 filtersState = DiscoverViewModel.InitialFiltersState
             ),
             onUpdatingSearchQueryText = {},
@@ -390,7 +392,7 @@ fun DiscoverScreenPreview() {
 fun SearchResultsPagePreview() {
     LudiTheme {
         SearchQueryAndFilterPage(
-            searchResult = Result.Success(ResourceWrapper.ActualResource(gamesSamples.map { it.resource }.groupByGenre())),
+            searchResult = Result.Success(gamesSamples.groupByGenre()),
             modifier = Modifier.fillMaxSize()
         )
     }

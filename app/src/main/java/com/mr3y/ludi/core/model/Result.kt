@@ -3,15 +3,20 @@ package com.mr3y.ludi.core.model
 import com.slack.eithernet.ApiResult
 
 sealed interface Result<out T, out E> {
+    data object Loading : Result<Nothing, Nothing>
     data class Success<T>(val data: T) : Result<T, Nothing>
     data class Error(val exception: Throwable? = null) : Result<Nothing, Throwable>
 }
 
 /**
- * [Success.data] if [Result] is of type [Success]
+ * Allow transforming [Result.Success.data] if [Result] is [Result.Success] or return whatever result is otherwise.
  */
-fun <R, E> Result<R, E>.successOr(fallback: R): R {
-    return (this as? Result.Success)?.data ?: fallback
+inline fun <T, R, E> Result<T, E>.onSuccess(transform: (T) -> R): Result<R, E> {
+    return when (this) {
+        is Result.Loading -> this
+        is Result.Success -> Result.Success(transform(data))
+        is Result.Error -> this
+    }
 }
 
 val <R, E> Result<R, E>.data: R?

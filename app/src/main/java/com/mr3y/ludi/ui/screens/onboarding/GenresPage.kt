@@ -51,14 +51,13 @@ import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.presenter.connectivityState
 import com.mr3y.ludi.ui.presenter.model.ConnectionState
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GenresPage(
-    allGenres: Result<ResourceWrapper<Set<GameGenre>>, Throwable>,
+    allGenres: Result<Set<GameGenre>, Throwable>,
     selectedGenres: Set<GameGenre>,
     onSelectingGenre: (GameGenre) -> Unit,
     onUnselectingGenre: (GameGenre) -> Unit,
@@ -100,83 +99,82 @@ fun GenresPage(
         AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable, modifier = Modifier.padding(vertical = 8.dp))
         val context = LocalContext.current
         when (allGenres) {
+            is Result.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
             is Result.Success -> {
-                if (allGenres.data is ResourceWrapper.ActualResource) {
-                    FlowRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .semantics {
-                                isTraversalGroup = true
-                            },
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        allGenres.data.resource.forEach { genre ->
-                            Row(
-                                modifier = Modifier
-                                    .padding(vertical = 8.dp)
-                                    .border(
-                                        1.dp,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .conditionalBackground(
-                                        predicate = genre in selectedGenres,
-                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                                    )
-                                    .selectable(
-                                        selected = genre in selectedGenres,
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = null,
-                                        role = Role.Checkbox,
-                                        onClick = {
-                                            if (genre in selectedGenres) {
-                                                onUnselectingGenre(genre)
-                                            } else {
-                                                onSelectingGenre(genre)
-                                            }
-                                        }
-                                    )
-                                    .animateContentSize()
-                                    .padding(8.dp)
-                                    .clearAndSetSemantics {
-                                        val stateDesc = if (genre in selectedGenres) R.string.genres_page_genre_on_state_desc else R.string.genres_page_genre_off_state_desc
-                                        stateDescription = context.getString(stateDesc, genre.name)
-                                        selected = genre in selectedGenres
-                                        role = Role.Checkbox
-                                    },
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "\n",
-                                    textAlign = TextAlign.Center
-                                )
-                                Text(
-                                    text = genre.name,
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics {
+                            isTraversalGroup = true
+                        },
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    allGenres.data.forEach { genre ->
+                        Row(
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .border(
+                                    1.dp,
                                     color = MaterialTheme.colorScheme.primary,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.width(IntrinsicSize.Min),
-                                    textAlign = TextAlign.Center
+                                    shape = RoundedCornerShape(8.dp)
                                 )
-                                if (genre in selectedGenres) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.padding(8.dp),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
+                                .clip(RoundedCornerShape(8.dp))
+                                .conditionalBackground(
+                                    predicate = genre in selectedGenres,
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                )
+                                .selectable(
+                                    selected = genre in selectedGenres,
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null,
+                                    role = Role.Checkbox,
+                                    onClick = {
+                                        if (genre in selectedGenres) {
+                                            onUnselectingGenre(genre)
+                                        } else {
+                                            onSelectingGenre(genre)
+                                        }
+                                    }
+                                )
+                                .animateContentSize()
+                                .padding(8.dp)
+                                .clearAndSetSemantics {
+                                    val stateDesc = if (genre in selectedGenres) R.string.genres_page_genre_on_state_desc else R.string.genres_page_genre_off_state_desc
+                                    stateDescription = context.getString(stateDesc, genre.name)
+                                    selected = genre in selectedGenres
+                                    role = Role.Checkbox
+                                },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "\n",
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = genre.name,
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelMedium,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.width(IntrinsicSize.Min),
+                                textAlign = TextAlign.Center
+                            )
+                            if (genre in selectedGenres) {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(8.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
                             }
                         }
-                    }
-                } else {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
                     }
                 }
             }

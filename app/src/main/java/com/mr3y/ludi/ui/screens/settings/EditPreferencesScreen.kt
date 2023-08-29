@@ -62,7 +62,6 @@ import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.EditPreferencesState
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
@@ -303,60 +302,59 @@ fun GenresList(
     onRemovingGenreFromFavourites: (GameGenre) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (state.allGenres is Result.Success) {
-        when (state.allGenres.data) {
-            is ResourceWrapper.Placeholder -> {
-                Box(
-                    modifier = modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+    when (state.allGenres) {
+        is Result.Loading -> {
+            Box(
+                modifier = modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
-            is ResourceWrapper.ActualResource -> {
-                val genres = state.allGenres.data.resource
-                val context = LocalContext.current
-                genres.forEachIndexed { index, gameGenre ->
-                    Row(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                gameGenre in state.favouriteGenres,
-                                onClick = {
-                                    if (gameGenre in state.favouriteGenres) {
-                                        onRemovingGenreFromFavourites(gameGenre)
-                                    } else {
-                                        onAddingGenreToFavourites(gameGenre)
-                                    }
+        }
+        is Result.Success -> {
+            val genres = state.allGenres.data
+            val context = LocalContext.current
+            genres.forEachIndexed { index, gameGenre ->
+                Row(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            gameGenre in state.favouriteGenres,
+                            onClick = {
+                                if (gameGenre in state.favouriteGenres) {
+                                    onRemovingGenreFromFavourites(gameGenre)
+                                } else {
+                                    onAddingGenreToFavourites(gameGenre)
                                 }
-                            )
-                            .padding(8.dp)
-                            .clearAndSetSemantics {
-                                stateDescription = if (gameGenre in state.favouriteGenres) context.getString(R.string.edit_preferences_page_genre_on_state_desc, gameGenre.name) else context.getString(R.string.edit_preferences_page_genre_off_state_desc, gameGenre.name)
-                                selected = gameGenre in state.favouriteGenres
-                            },
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = gameGenre.name,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            textAlign = TextAlign.Start,
-                            style = MaterialTheme.typography.titleLarge
+                            }
                         )
-                        Checkbox(
-                            checked = gameGenre in state.favouriteGenres,
-                            onCheckedChange = null
-                        )
-                    }
-                    if (index != genres.size - 1) {
-                        Divider()
-                    }
+                        .padding(8.dp)
+                        .clearAndSetSemantics {
+                            stateDescription = if (gameGenre in state.favouriteGenres) context.getString(R.string.edit_preferences_page_genre_on_state_desc, gameGenre.name) else context.getString(R.string.edit_preferences_page_genre_off_state_desc, gameGenre.name)
+                            selected = gameGenre in state.favouriteGenres
+                        },
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = gameGenre.name,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Start,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Checkbox(
+                        checked = gameGenre in state.favouriteGenres,
+                        onCheckedChange = null
+                    )
+                }
+                if (index != genres.size - 1) {
+                    Divider()
                 }
             }
         }
-    } else {
-        LudiErrorBox(modifier = modifier.fillMaxWidth())
+        is Result.Error -> {
+            LudiErrorBox(modifier = modifier.fillMaxWidth())
+        }
     }
 }
 
@@ -364,78 +362,76 @@ fun GenresList(
 @Composable
 fun EditPreferencesScreenPreview() {
     val allGenres = Result.Success(
-        ResourceWrapper.ActualResource(
-            setOf(
-                GameGenre(
-                    id = 1,
-                    name = "Action",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 2,
-                    name = "Adventure",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 3,
-                    name = "Arcade",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 4,
-                    name = "Board games",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 5,
-                    name = "Educational",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 6,
-                    name = "Family",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 7,
-                    name = "Indie",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 8,
-                    name = "Massively Multiplayer",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 9,
-                    name = "Racing",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                ),
-                GameGenre(
-                    id = 10,
-                    name = "Simulation",
-                    slug = null,
-                    gamesCount = 2000,
-                    imageUrl = null
-                )
+        setOf(
+            GameGenre(
+                id = 1,
+                name = "Action",
+                slug = null,
+                gamesCount = 2000,
+                imageUrl = null
+            ),
+            GameGenre(
+                id = 2,
+                name = "Adventure",
+                slug = null,
+                gamesCount = 2000,
+                imageUrl = null
+            ),
+            GameGenre(
+                id = 3,
+                name = "Arcade",
+                slug = null,
+                gamesCount = 2000,
+                imageUrl = null
+            ),
+            GameGenre(
+                id = 4,
+                name = "Board games",
+                slug = null,
+                gamesCount = 2000,
+                imageUrl = null
+            ),
+            GameGenre(
+                id = 5,
+                name = "Educational",
+                slug = null,
+                gamesCount = 2000,
+                imageUrl = null
+            ),
+            GameGenre(
+                id = 6,
+                name = "Family",
+                slug = null,
+                gamesCount = 2000,
+                imageUrl = null
+            ),
+            GameGenre(
+                id = 7,
+                name = "Indie",
+                slug = null,
+                gamesCount = 2000,
+                imageUrl = null
+            ),
+            GameGenre(
+                id = 8,
+                name = "Massively Multiplayer",
+                slug = null,
+                gamesCount = 2000,
+                imageUrl = null
+            ),
+            GameGenre(
+                id = 9,
+                name = "Racing",
+                slug = null,
+                gamesCount = 2000,
+                imageUrl = null
+            ),
+            GameGenre(
+                id = 10,
+                name = "Simulation",
+                slug = null,
+                gamesCount = 2000,
+                imageUrl = null
             )
         )
     )

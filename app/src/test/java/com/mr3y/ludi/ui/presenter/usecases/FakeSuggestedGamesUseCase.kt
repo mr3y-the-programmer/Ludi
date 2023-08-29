@@ -1,13 +1,11 @@
 package com.mr3y.ludi.ui.presenter.usecases
 
-import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.GamesQuery
 import com.mr3y.ludi.core.repository.query.GamesSortingCriteria
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.ui.presenter.model.TaggedGames
-import com.mr3y.ludi.ui.presenter.model.wrapResource
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -31,7 +29,8 @@ class FakeSuggestedGamesUseCase(private val gamesRepository: GamesRepository) : 
                 )
             )
             val games = when (gamesResult) {
-                is Result.Success -> Result.Success(gamesResult.data.games.map(Game::wrapResource))
+                is Result.Loading -> gamesResult
+                is Result.Success -> Result.Success(gamesResult.data.games)
                 is Result.Error -> gamesResult
             }
             DiscoverStateGames.SuggestedGames(

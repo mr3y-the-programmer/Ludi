@@ -49,7 +49,7 @@ class DealsScreenTest : BaseRobolectricTest() {
         composeTestRule.onNode(hasScrollToIndexAction())
             .onChildren()
             .onFirst()
-            .assert(hasText(FakeDealSamples.first().resource.name))
+            .assert(hasText(FakeDealSamples.first().name))
 
         composeTestRule.onNodeWithText(getString(R.string.giveaways_label)).performClick()
 
@@ -57,7 +57,7 @@ class DealsScreenTest : BaseRobolectricTest() {
         composeTestRule.onNode(hasScrollToIndexAction())
             .onChildren()
             .onFirst()
-            .assert(hasText(FakeGiveawaysSamples.first().resource.title))
+            .assert(hasText(FakeGiveawaysSamples.first().title))
 
         composeTestRule.onNodeWithContentDescription(getString(R.string.deals_filter_icon_content_description)).performClick()
 
@@ -72,6 +72,6 @@ class DealsScreenTest : BaseRobolectricTest() {
         composeTestRule.onNode(hasScrollToIndexAction())
             .onChildren()
             .onFirst()
-            .assert(hasText(FakeGiveawaysSamples.first().resource.title))
+            .assert(hasText(FakeGiveawaysSamples.first().title))
     }
 }

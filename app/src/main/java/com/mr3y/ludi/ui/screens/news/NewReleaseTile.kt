@@ -27,8 +27,6 @@ import com.mr3y.ludi.core.model.NewReleaseArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.Title
 import com.mr3y.ludi.ui.components.defaultPlaceholder
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
-import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 import java.time.ZonedDateTime
@@ -36,14 +34,13 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun NewReleaseTile(
-    newReleaseArticleWrapper: ResourceWrapper<NewReleaseArticle>,
+    newReleaseArticle: NewReleaseArticle?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val newReleaseArticle = newReleaseArticleWrapper.actualResource
     val context = LocalContext.current
     val title = newReleaseArticle?.title?.text?.removePrefix("<![CDATA[ ")?.removeSuffix(" ]]>")
-    val releaseDate = remember(newReleaseArticleWrapper) {
+    val releaseDate = remember(newReleaseArticle) {
         newReleaseArticle?.releaseDate?.toLocalDate()?.format(DateTimeFormatter.ISO_LOCAL_DATE)
     }
     Card(
@@ -53,12 +50,16 @@ fun NewReleaseTile(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClickLabel = null,
-                enabled = newReleaseArticleWrapper is ResourceWrapper.ActualResource,
+                enabled = newReleaseArticle != null,
                 onClick = onClick
             )
-            .defaultPlaceholder(isVisible = newReleaseArticleWrapper is ResourceWrapper.Placeholder)
+            .defaultPlaceholder(isVisible = newReleaseArticle == null)
             .clearAndSetSemantics {
-                contentDescription = context.getString(R.string.news_page_new_release_content_description, title, releaseDate)
+                contentDescription = context.getString(
+                    R.string.news_page_new_release_content_description,
+                    title,
+                    releaseDate
+                )
             }
     ) {
         Column(
@@ -114,7 +115,7 @@ fun NewReleaseTile(
 fun NewReleasePlaceholderPreview() {
     LudiTheme {
         NewReleaseTile(
-            newReleaseArticleWrapper = ResourceWrapper.Placeholder,
+            newReleaseArticle = null,
             onClick = {},
             modifier = Modifier
                 .padding(16.dp)
@@ -129,14 +130,12 @@ fun NewReleasePlaceholderPreview() {
 fun NewReleasePreview() {
     LudiTheme {
         NewReleaseTile(
-            newReleaseArticleWrapper = ResourceWrapper.ActualResource(
-                NewReleaseArticle(
-                    title = Title.Plain("CAT Interstellar: Episode II"),
-                    description = null,
-                    sourceLinkUrl = "https://www.gamespot.com/games/cat-interstellar-episode-ii/",
-                    releaseDate = ZonedDateTime.now(),
-                    source = Source.GameSpot
-                )
+            newReleaseArticle = NewReleaseArticle(
+                title = Title.Plain("CAT Interstellar: Episode II"),
+                description = null,
+                sourceLinkUrl = "https://www.gamespot.com/games/cat-interstellar-episode-ii/",
+                releaseDate = ZonedDateTime.now(),
+                source = Source.GameSpot
             ),
             onClick = {},
             modifier = Modifier

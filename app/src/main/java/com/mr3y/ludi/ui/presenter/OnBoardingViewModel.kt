@@ -10,10 +10,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.Source
+import com.mr3y.ludi.core.model.onSuccess
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.GamesQuery
 import com.mr3y.ludi.core.repository.query.GamesSortingCriteria
@@ -28,10 +28,7 @@ import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.ui.presenter.model.OnboardingState
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.SupportedNewsDataSources
-import com.mr3y.ludi.ui.presenter.model.wrapResource
-import com.mr3y.ludi.ui.presenter.model.wrapResultResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.SharingStarted
@@ -111,11 +108,7 @@ class OnBoardingViewModel @Inject constructor(
                     genres = favouriteGenres.map { it.id }.takeIf { it.isNotEmpty() }
                 )
             ).let {
-                val result = when (it) {
-                    is Result.Success -> Result.Success(it.data.games.map(Game::wrapResource))
-                    is Result.Error -> Result.Error(it.exception)
-                }
-                OnboardingGames.SuggestedGames(result)
+                OnboardingGames.SuggestedGames(it.onSuccess { page -> page.games })
             }
         }
         gamesRepository.queryGames(
@@ -125,18 +118,15 @@ class OnBoardingViewModel @Inject constructor(
                 sortingCriteria = GamesSortingCriteria.RatingDescending
             )
         ).let {
-            val result = when (it) {
-                is Result.Success -> Result.Success(it.data.games.map(Game::wrapResource))
-                is Result.Error -> Result.Error(it.exception)
-            }
-            OnboardingGames.SearchQueryBasedGames(result)
+            OnboardingGames.SearchQueryBasedGames(it.onSuccess { page -> page.games })
         }
     }
 
     private val allGameGenres = flow {
-        emit(gamesRepository.queryGamesGenres().wrapResultResources())
+        emit(gamesRepository.queryGamesGenres().onSuccess { page -> page.genres })
     }
 
+    @Suppress("UNCHECKED_CAST")
     val onboardingState: StateFlow<OnboardingState> = combine(
         userFollowedNewsSources,
         allOnboardingGames,
@@ -148,7 +138,7 @@ class OnBoardingViewModel @Inject constructor(
         val followedNewsSources = it[0] as List<NewsDataSource>
         val onboardingGames = it[1] as OnboardingGames
         val favouriteGames = it[2] as List<FavouriteGame>
-        val allGenres = it[3] as Result<ResourceWrapper<Set<GameGenre>>, Throwable>
+        val allGenres = it[3] as Result<Set<GameGenre>, Throwable>
         val favouriteGenres = it[4] as List<GameGenre>
         val state = it[5] as OnboardingState
         Snapshot.withMutableSnapshot {
@@ -278,10 +268,10 @@ class OnBoardingViewModel @Inject constructor(
             followedNewsDataSources = emptyList(),
             isUpdatingFollowedNewsDataSources = false,
             searchQuery = "",
-            onboardingGames = OnboardingGames.SuggestedGames(Result.Success(listOf(ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder, ResourceWrapper.Placeholder))),
+            onboardingGames = OnboardingGames.SuggestedGames(Result.Loading),
             favouriteGames = emptyList(),
             isUpdatingFavouriteGames = false,
-            allGamingGenres = Result.Success(ResourceWrapper.Placeholder),
+            allGamingGenres = Result.Loading,
             selectedGamingGenres = emptySet()
         )
     }

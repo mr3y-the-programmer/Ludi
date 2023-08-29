@@ -11,7 +11,6 @@ import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.ui.presenter.model.Genre
 import com.mr3y.ludi.ui.presenter.model.Platform
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
 import com.mr3y.ludi.ui.presenter.model.Store
 import com.mr3y.ludi.ui.presenter.model.TaggedGames
 import com.mr3y.ludi.ui.presenter.usecases.GetSearchQueryBasedGamesUseCase
@@ -62,7 +61,7 @@ class DiscoverViewModel @Inject constructor(
         DiscoverState(
             searchQuery = searchText,
             filtersState = filters,
-            games = games
+            gamesState = games
         )
     }.stateIn(
         viewModelScope,
@@ -157,17 +156,13 @@ class DiscoverViewModel @Inject constructor(
         val Initial = DiscoverState(
             searchQuery = "",
             filtersState = InitialFiltersState,
-            games = DiscoverStateGames.SuggestedGames(
+            gamesState = DiscoverStateGames.SuggestedGames(
                 taggedGamesList = listOf(
-                    TaggedGames.TrendingGames(Result.Success(placeholders())),
-                    TaggedGames.TopRatedGames(Result.Success(placeholders())),
-                    TaggedGames.MultiplayerGames(Result.Success(placeholders()))
+                    TaggedGames.TrendingGames(Result.Loading),
+                    TaggedGames.TopRatedGames(Result.Loading),
+                    TaggedGames.MultiplayerGames(Result.Loading)
                 )
             )
         )
-
-        private fun placeholders(size: Int = 8): List<ResourceWrapper.Placeholder> {
-            return buildList { repeat(size) { add(ResourceWrapper.Placeholder) } }
-        }
     }
 }

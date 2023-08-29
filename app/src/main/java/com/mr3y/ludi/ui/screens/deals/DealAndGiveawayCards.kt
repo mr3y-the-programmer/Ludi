@@ -41,8 +41,6 @@ import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Deal
 import com.mr3y.ludi.core.model.GiveawayEntry
 import com.mr3y.ludi.ui.components.defaultPlaceholder
-import com.mr3y.ludi.ui.presenter.model.ResourceWrapper
-import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 import kotlinx.coroutines.delay
@@ -54,11 +52,10 @@ import kotlin.time.toKotlinDuration
 
 @Composable
 fun Deal(
-    dealWrapper: ResourceWrapper<Deal>,
+    deal: Deal?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    val deal = dealWrapper.actualResource
     val contentDescription = if (deal != null) {
         stringResource(
             id = R.string.deals_page_deal_content_description,
@@ -132,11 +129,10 @@ fun Deal(
 
 @Composable
 fun GamerPowerGameGiveaway(
-    giveawayWrapper: ResourceWrapper<GiveawayEntry>,
+    giveaway: GiveawayEntry?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    val giveaway = giveawayWrapper.actualResource
     val contentDescription = if (giveaway != null) {
         stringResource(R.string.deals_page_giveaway_content_description, giveaway.title)
     } else {
@@ -271,7 +267,7 @@ fun DealPreview() {
 fun GamerPowerGiveawayPreview() {
     LudiTheme {
         GamerPowerGameGiveaway(
-            giveawayWrapper = otherGamesGiveawaysSamples.first(),
+            giveaway = otherGamesGiveawaysSamples.first(),
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()

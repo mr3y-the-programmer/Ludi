@@ -47,7 +47,6 @@ import com.mr3y.ludi.ui.components.LudiSuggestionChip
 import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.defaultPlaceholder
 import com.mr3y.ludi.ui.components.launchChromeCustomTab
-import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
@@ -196,7 +195,7 @@ private fun String.mapPlatformNameToVectorDrawable(): Int? {
 fun RichInfoGameCardPreview() {
     LudiTheme {
         GameCard(
-            game = gamesSamples[2].actualResource,
+            game = gamesSamples[2],
             modifier = Modifier
                 .padding(16.dp)
                 .width(IntrinsicSize.Min)

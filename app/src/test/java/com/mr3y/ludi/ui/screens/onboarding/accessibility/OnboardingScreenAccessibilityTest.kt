@@ -17,7 +17,6 @@ import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.data
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
-import com.mr3y.ludi.ui.presenter.model.actualResource
 import com.mr3y.ludi.ui.screens.BaseRobolectricTest
 import com.mr3y.ludi.ui.screens.getString
 import com.mr3y.ludi.ui.screens.onNodeWithStateDescription
@@ -67,7 +66,7 @@ class OnboardingScreenAccessibilityTest : BaseRobolectricTest() {
 
         composeTestRule.onNodeWithStateDescription(getString(R.string.on_boarding_fab_state_skip_state_desc)).assertIsDisplayed()
 
-        val randomGenre = FakeAllGenres.data.resource.random()
+        val randomGenre = FakeAllGenres.data.random()
         composeTestRule.onGenre(R.string.genres_page_genre_off_state_desc, randomGenre.name).apply {
             assertIsDisplayed()
             assertIsNotSelected()
@@ -119,7 +118,7 @@ class OnboardingScreenAccessibilityTest : BaseRobolectricTest() {
             assert(hasPerformImeAction())
         }
 
-        val randomGame = FakeOnboardingGames.games.data!!.random().actualResource!!
+        val randomGame = FakeOnboardingGames.games.data!!.random()
         composeTestRule.onNodeWithStateDescription(getString(R.string.games_page_game_off_state_desc, randomGame.name)).apply {
             // Ensure the composable is fully visible within the viewport
             onParent().performScrollTo()
