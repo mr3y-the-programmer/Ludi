@@ -42,8 +42,6 @@ import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.launchChromeCustomTab
 import com.mr3y.ludi.ui.presenter.DealsViewModel
-import com.mr3y.ludi.ui.presenter.connectivityState
-import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.DealStore
 import com.mr3y.ludi.ui.presenter.model.DealsState
 import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
@@ -135,11 +133,7 @@ fun DealsScreen(
             ) {
                 val context = LocalContext.current
                 val chromeTabToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
-                val connectionState by connectivityState()
-                val isInternetConnectionNotAvailable by remember {
-                    derivedStateOf { connectionState != ConnectionState.Available }
-                }
-                AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
+                AnimatedNoInternetBanner()
                 LazyColumn(
                     state = listState,
                     verticalArrangement = Arrangement.spacedBy(8.dp)

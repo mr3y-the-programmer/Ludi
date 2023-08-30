@@ -20,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,8 +39,6 @@ import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
-import com.mr3y.ludi.ui.presenter.connectivityState
-import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.ui.presenter.model.Genre
@@ -108,13 +105,9 @@ fun DiscoverScreen(
             modifier = Modifier.padding(contentPadding),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            val connectionState by connectivityState()
-            val isInternetConnectionNotAvailable by remember {
-                derivedStateOf { connectionState != ConnectionState.Available }
-            }
             when (discoverState.gamesState) {
                 is DiscoverStateGames.SuggestedGames -> {
-                    AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
+                    AnimatedNoInternetBanner()
                     SuggestedGamesPage(
                         suggestedGames = discoverState.gamesState,
                         onReachingBottomOfTheList = onReachingBottomOfTheSuggestionsList
@@ -122,7 +115,7 @@ fun DiscoverScreen(
                 }
                 else -> {
                     discoverState.gamesState as DiscoverStateGames.SearchQueryBasedGames
-                    AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
+                    AnimatedNoInternetBanner()
                     SearchQueryAndFilterPage(
                         searchResult = discoverState.gamesState.games
                     )

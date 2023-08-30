@@ -78,8 +78,6 @@ import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.launchChromeCustomTab
 import com.mr3y.ludi.ui.presenter.NewsViewModel
-import com.mr3y.ludi.ui.presenter.connectivityState
-import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.NewsState
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
@@ -158,11 +156,7 @@ fun NewsScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                val connectionState by connectivityState()
-                val isInternetConnectionNotAvailable by remember {
-                    derivedStateOf { connectionState != ConnectionState.Available }
-                }
-                AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
+                AnimatedNoInternetBanner()
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(start = 16.dp)

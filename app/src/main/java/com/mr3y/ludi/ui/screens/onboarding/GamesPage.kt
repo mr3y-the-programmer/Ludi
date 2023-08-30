@@ -38,8 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -76,8 +74,6 @@ import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.defaultPlaceholder
-import com.mr3y.ludi.ui.presenter.connectivityState
-import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.ui.preview.LudiPreview
@@ -104,10 +100,6 @@ fun SelectingFavouriteGamesPage(
         horizontalAlignment = horizontalAlignment
     ) {
         val softwareKeyboard = LocalSoftwareKeyboardController.current
-        val connectionState by connectivityState()
-        val isInternetConnectionNotAvailable by remember {
-            derivedStateOf { connectionState != ConnectionState.Available }
-        }
         val label = stringResource(R.string.on_boarding_games_page_title)
         val secondaryText = stringResource(R.string.on_boarding_secondary_text)
         val context = LocalContext.current
@@ -191,7 +183,7 @@ fun SelectingFavouriteGamesPage(
                     }
                 }
         )
-        AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable, modifier = Modifier.padding(vertical = 8.dp))
+        AnimatedNoInternetBanner(modifier = Modifier.padding(vertical = 8.dp))
         Text(
             text = stringResource(R.string.games_page_suggestions_label),
             style = MaterialTheme.typography.bodyMedium,

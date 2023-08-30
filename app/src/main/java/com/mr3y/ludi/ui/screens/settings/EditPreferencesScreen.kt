@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,8 +56,6 @@ import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.navigation.PreferencesType
 import com.mr3y.ludi.ui.presenter.EditPreferencesViewModel
-import com.mr3y.ludi.ui.presenter.connectivityState
-import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.EditPreferencesState
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
@@ -169,11 +166,7 @@ fun EditPreferencesScreen(
                     )
                 }
                 is EditPreferencesState.FavouriteGenres -> {
-                    val connectionState by connectivityState()
-                    val isInternetConnectionNotAvailable by remember {
-                        derivedStateOf { connectionState != ConnectionState.Available }
-                    }
-                    AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
+                    AnimatedNoInternetBanner()
                     GenresList(
                         state = state,
                         onAddingGenreToFavourites = onAddingGenreToFavourites,
