@@ -34,14 +34,12 @@ fun AnimatedNoInternetBanner(modifier: Modifier = Modifier) {
     val connectionState by connectivityState()
     AnimatedVisibility(
         visible = LocalNoInternetConnectivitySimulation.current || connectionState == ConnectionState.Unavailable,
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.errorContainer),
+        modifier = modifier.fillMaxWidth(),
         enter = slideInVertically { -it },
         exit = slideOutVertically { -it }
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.errorContainer),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
