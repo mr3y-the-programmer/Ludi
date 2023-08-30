@@ -5,12 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -92,7 +91,7 @@ fun DealsScreen(
     }
     val listState = rememberKeyedLazyListState(input = selectedTab)
     Column(
-        modifier = modifier.padding(WindowInsets.statusBars.asPaddingValues())
+        modifier = modifier.statusBarsPadding()
     ) {
         val tabsLabels = listOf(stringResource(R.string.deals_label), stringResource(R.string.giveaways_label))
         SegmentedTabRow(
@@ -123,7 +122,8 @@ fun DealsScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             },
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            contentWindowInsets = WindowInsets(0.dp)
         ) { contentPadding ->
             Column(
                 modifier = Modifier

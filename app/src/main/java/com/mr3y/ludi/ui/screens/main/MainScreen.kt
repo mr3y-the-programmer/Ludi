@@ -1,20 +1,22 @@
 package com.mr3y.ludi.ui.screens.main
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -67,9 +69,13 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     }
                 }
             }
-        },
-        contentWindowInsets = WindowInsets(0.dp)
+        }
     ) { contentPadding ->
-        LudiNavHost(navController = navController, modifier = Modifier.padding(contentPadding))
+        LudiNavHost(
+            navController = navController,
+            modifier = Modifier
+                .padding(contentPadding)
+                .consumeWindowInsets(ScaffoldDefaults.contentWindowInsets.exclude(NavigationBarDefaults.windowInsets))
+        )
     }
 }

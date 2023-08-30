@@ -20,11 +20,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -35,7 +38,9 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -137,7 +142,9 @@ fun OnboardingScreen(
             }
             val scope = rememberCoroutineScope()
             OnboardingBottomBar(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(NavigationBarDefaults.windowInsets),
                 indicatorProgress = indicatorProgress,
                 fabState = fabState,
                 showForwardIcon = pagerState.currentPage != OnboardingPagesCount - 1,
@@ -157,6 +164,7 @@ fun OnboardingScreen(
         Column(
             modifier = Modifier
                 .padding(contentPadding)
+                .consumeWindowInsets(ScaffoldDefaults.contentWindowInsets.exclude(NavigationBarDefaults.windowInsets))
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
