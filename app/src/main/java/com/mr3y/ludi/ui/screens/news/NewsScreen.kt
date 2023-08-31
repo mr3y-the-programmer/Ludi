@@ -1,11 +1,6 @@
 package com.mr3y.ludi.ui.screens.news
 
 import android.net.Uri
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,11 +22,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -47,14 +39,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -82,7 +69,6 @@ import com.mr3y.ludi.ui.presenter.NewsViewModel
 import com.mr3y.ludi.ui.presenter.model.NewsState
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
-import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 
 @Composable
@@ -311,63 +297,36 @@ fun <T : Article> FeedSectionScaffold(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(16.dp),
     itemContent: @Composable (T?) -> Unit
 ) {
-    Box(
-        modifier = modifier
+    LazyRow(
+        modifier = modifier,
+        horizontalArrangement = horizontalArrangement
     ) {
-        val state = rememberLazyListState()
-        val scope = rememberCoroutineScope()
-        LazyRow(
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = horizontalArrangement,
-            state = state
-        ) {
-            when (sectionFeedResult) {
-                is Result.Loading -> {
-                    items(10) { _ ->
-                        itemContent(null)
-                    }
+        when (sectionFeedResult) {
+            is Result.Loading -> {
+                items(10) { _ ->
+                    itemContent(null)
                 }
-                is Result.Success -> {
-                    if (sectionFeedResult.data.isEmpty()) {
-                        item {
-                            Empty(label = onEmptySuccessfulResultLabel, modifier = Modifier.fillMaxWidth())
-                        }
-                    } else {
-                        items(sectionFeedResult.data) { article ->
-                            itemContent(article)
-                        }
-                    }
-                }
-                is Result.Error -> {
+            }
+
+            is Result.Success -> {
+                if (sectionFeedResult.data.isEmpty()) {
                     item {
-                        LudiErrorBox(modifier = Modifier.fillMaxWidth())
+                        Empty(
+                            label = onEmptySuccessfulResultLabel,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                } else {
+                    items(sectionFeedResult.data) { article ->
+                        itemContent(article)
                     }
                 }
             }
-        }
-        val isScrollToStartButtonVisible by remember { derivedStateOf { state.firstVisibleItemIndex > 1 } }
-        AnimatedVisibility(
-            visible = isScrollToStartButtonVisible,
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.BottomStart)
-                .size(56.dp),
-            enter = fadeIn() + slideInHorizontally { -it },
-            exit = fadeOut() + slideOutHorizontally { -it }
-        ) {
-            IconButton(
-                onClick = { scope.launch { state.animateScrollToItem(0) } },
-                modifier = Modifier
-                    .shadow(16.dp, shape = CircleShape)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.background)
-                    .fillMaxSize()
-            ) {
-                Icon(
-                    painter = rememberVectorPainter(image = Icons.Filled.KeyboardArrowLeft),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
+
+            is Result.Error -> {
+                item {
+                    LudiErrorBox(modifier = Modifier.fillMaxWidth())
+                }
             }
         }
     }
