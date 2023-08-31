@@ -27,6 +27,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -58,7 +59,7 @@ class OnBoardingViewModelTest {
     private val testScope = TestScope(testDispatcher)
 
     @get:Rule(order = 2)
-    val mainDispatcherRule = MainDispatcherRule(testDispatcher)
+    val mainDispatcherRule = MainDispatcherRule(StandardTestDispatcher(testDispatcher.scheduler))
 
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources> = DataStoreFactory.create(
         serializer = FollowedNewsDataSourceSerializer,
@@ -115,10 +116,6 @@ class OnBoardingViewModelTest {
         expectThat(suggestedGames).isA<Result.Success<List<Game>>>()
         suggestedGames as Result.Success<List<Game>>
         expectThat(suggestedGames.data).isNotEmpty()
-        val suggestedGenres = sut.onboardingState.value.allGamingGenres
-        expectThat(suggestedGenres).isA<Result.Success<Set<GameGenre>>>()
-        suggestedGenres as Result.Success<Set<GameGenre>>
-        expectThat(suggestedGenres.data).isNotEmpty()
 
         val favouriteGame = FavouriteGame(id = 3498, title = "Grand Theft Auto V", imageUrl = "https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg", rating = 4.47f)
         // make sure the function is idempotent

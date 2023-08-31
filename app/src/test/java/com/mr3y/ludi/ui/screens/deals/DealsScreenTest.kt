@@ -34,7 +34,9 @@ class DealsScreenTest : BaseRobolectricTest() {
                     onSelectingGiveawayStore = {},
                     onUnselectingGiveawayStore = {},
                     onSelectingGiveawayPlatform = {},
-                    onUnselectingGiveawayPlatform = {}
+                    onUnselectingGiveawayPlatform = {},
+                    onRefreshDeals = {},
+                    onRefreshGiveaways = {}
                 )
             }
         }

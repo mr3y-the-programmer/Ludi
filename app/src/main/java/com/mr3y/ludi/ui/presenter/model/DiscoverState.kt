@@ -6,7 +6,8 @@ import com.mr3y.ludi.core.model.Result
 data class DiscoverState(
     val searchQuery: String,
     val filtersState: DiscoverFiltersState,
-    val gamesState: DiscoverStateGames
+    val gamesState: DiscoverStateGames,
+    val isRefreshing: Boolean
 )
 
 sealed interface DiscoverStateGames {

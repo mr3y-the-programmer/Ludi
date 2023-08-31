@@ -16,14 +16,12 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 interface GetSuggestedGamesUseCase {
-    suspend operator fun invoke(): DiscoverStateGames.SuggestedGames
+    suspend operator fun invoke(page: Int): DiscoverStateGames.SuggestedGames
 }
 
 class GetSuggestedGamesUseCaseImpl @Inject constructor(
@@ -33,11 +31,9 @@ class GetSuggestedGamesUseCaseImpl @Inject constructor(
 
     private var loadedGames: MutableState<DiscoverStateGames.SuggestedGames?> = mutableStateOf(null)
 
-    private val _loadedGamesPage = MutableStateFlow(0)
-
-    override suspend operator fun invoke(): DiscoverStateGames.SuggestedGames {
+    override suspend operator fun invoke(page: Int): DiscoverStateGames.SuggestedGames {
         val suggestedGames = coroutineScope {
-            when (_loadedGamesPage.value) {
+            when (page) {
                 0 -> {
                     val trendingGames = async {
                         fetchTaggedGames(
@@ -112,7 +108,6 @@ class GetSuggestedGamesUseCaseImpl @Inject constructor(
                 else -> loadedGames.value!!
             }
         }
-        _loadedGamesPage.update { it + 1 }
         return suggestedGames
     }
 

@@ -16,35 +16,30 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.mr3y.ludi.ui.presenter.connectivityState
+import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
-import kotlinx.coroutines.delay
 
 @Composable
-fun AnimatedNoInternetBanner(
-    visible: Boolean,
-    modifier: Modifier = Modifier
-) {
+fun AnimatedNoInternetBanner(modifier: Modifier = Modifier) {
+    val connectionState by connectivityState()
     AnimatedVisibility(
-        visible = visible,
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.errorContainer),
+        visible = LocalNoInternetConnectivitySimulation.current || connectionState == ConnectionState.Unavailable,
+        modifier = modifier.fillMaxWidth(),
         enter = slideInVertically { -it },
         exit = slideOutVertically { -it }
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.errorContainer),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -67,15 +62,14 @@ fun AnimatedNoInternetBanner(
     }
 }
 
+internal val LocalNoInternetConnectivitySimulation = staticCompositionLocalOf { false }
+
 @LudiPreview
 @Composable
 fun NoInternetBannerPreview() {
     LudiTheme {
-        var visible by remember { mutableStateOf(false) }
-        LaunchedEffect(Unit) {
-            delay(1000L)
-            visible = true
+        CompositionLocalProvider(LocalNoInternetConnectivitySimulation provides true) {
+            AnimatedNoInternetBanner()
         }
-        AnimatedNoInternetBanner(visible = visible)
     }
 }

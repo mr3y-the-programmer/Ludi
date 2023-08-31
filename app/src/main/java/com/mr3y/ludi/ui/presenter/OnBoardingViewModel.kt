@@ -30,16 +30,20 @@ import com.mr3y.ludi.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.ui.presenter.model.OnboardingState
 import com.mr3y.ludi.ui.presenter.model.SupportedNewsDataSources
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -92,12 +96,15 @@ class OnBoardingViewModel @Inject constructor(
 
     private var searchQuery = mutableStateOf("")
 
+    private val refreshingGames = MutableStateFlow(0)
+
     private val allOnboardingGames = combine(
         snapshotFlow { searchQuery.value }
             .debounce(275)
             .distinctUntilChanged(),
-        userFavGenres
-    ) { searchText, favouriteGenres ->
+        userFavGenres,
+        refreshingGames
+    ) { searchText, favouriteGenres, _ ->
         if (searchText.isEmpty()) {
             // Retrieve suggested games
             return@combine gamesRepository.queryGames(
@@ -120,33 +127,30 @@ class OnBoardingViewModel @Inject constructor(
         ).let {
             OnboardingGames.SearchQueryBasedGames(it.onSuccess { page -> page.games })
         }
-    }
+    }.map {
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGames = false, onboardingGames = it) }
+    }.launchIn(viewModelScope)
 
-    private val allGameGenres = flow {
-        emit(gamesRepository.queryGamesGenres().onSuccess { page -> page.genres })
-    }
+    private val refreshingGenres = MutableStateFlow(0)
 
-    @Suppress("UNCHECKED_CAST")
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val allGameGenres = refreshingGenres
+        .mapLatest {
+            gamesRepository.queryGamesGenres().onSuccess { page -> page.genres }
+        }.map {
+            Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGenres = false, allGamingGenres = it) }
+        }.launchIn(viewModelScope)
+
     val onboardingState: StateFlow<OnboardingState> = combine(
         userFollowedNewsSources,
-        allOnboardingGames,
         userFavGames,
-        allGameGenres,
         userFavGenres,
         snapshotFlow { _internalState }
-    ) {
-        val followedNewsSources = it[0] as List<NewsDataSource>
-        val onboardingGames = it[1] as OnboardingGames
-        val favouriteGames = it[2] as List<FavouriteGame>
-        val allGenres = it[3] as Result<Set<GameGenre>, Throwable>
-        val favouriteGenres = it[4] as List<GameGenre>
-        val state = it[5] as OnboardingState
+    ) { followedNewsSources, favouriteGames, favouriteGenres, state ->
         Snapshot.withMutableSnapshot {
             _internalState = state.copy(
                 followedNewsDataSources = followedNewsSources,
-                onboardingGames = onboardingGames,
                 favouriteGames = favouriteGames,
-                allGamingGenres = allGenres,
                 selectedGamingGenres = favouriteGenres.toSet()
             )
         }
@@ -159,7 +163,6 @@ class OnBoardingViewModel @Inject constructor(
         )
 
     fun unFollowNewsDataSource(source: NewsDataSource) {
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFollowedNewsDataSources = true) }
         viewModelScope.launch {
             followedNewsDataSourcesStore.updateData {
                 val sourceIndex = it.newsDataSourceList.indexOf(source.toFollowedNewsDataSource())
@@ -170,12 +173,10 @@ class OnBoardingViewModel @Inject constructor(
                     it
                 }
             }
-            Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFollowedNewsDataSources = false) }
         }
     }
 
     fun followNewsDataSource(source: NewsDataSource) {
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFollowedNewsDataSources = true) }
         viewModelScope.launch {
             followedNewsDataSourcesStore.updateData {
                 val followedNewsDataSource = source.toFollowedNewsDataSource()
@@ -185,7 +186,6 @@ class OnBoardingViewModel @Inject constructor(
                     it
                 }
             }
-            Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFollowedNewsDataSources = false) }
         }
     }
 
@@ -197,7 +197,6 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun addGameToFavourites(game: FavouriteGame) {
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFavouriteGames = true) }
         viewModelScope.launch {
             favGamesStore.updateData {
                 val favouriteGame = game.toUserFavouriteGame()
@@ -207,12 +206,10 @@ class OnBoardingViewModel @Inject constructor(
                     it
                 }
             }
-            Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFavouriteGames = false) }
         }
     }
 
     fun removeGameFromFavourites(game: FavouriteGame) {
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFavouriteGames = true) }
         viewModelScope.launch {
             favGamesStore.updateData {
                 val sourceIndex = it.favGameList.indexOf(game.toUserFavouriteGame())
@@ -223,7 +220,6 @@ class OnBoardingViewModel @Inject constructor(
                     it
                 }
             }
-            Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isUpdatingFavouriteGames = false) }
         }
     }
 
@@ -254,6 +250,16 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    fun refreshGames() {
+        refreshingGames.update { it + 1 }
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGames = true) }
+    }
+
+    fun refreshGenres() {
+        refreshingGenres.update { it + 1 }
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGenres = true) }
+    }
+
     fun completeOnboarding() {
         viewModelScope.launch {
             userPreferences.edit { mutablePreferences ->
@@ -266,12 +272,12 @@ class OnBoardingViewModel @Inject constructor(
         val InitialOnboardingState = OnboardingState(
             allNewsDataSources = SupportedNewsDataSources,
             followedNewsDataSources = emptyList(),
-            isUpdatingFollowedNewsDataSources = false,
             searchQuery = "",
             onboardingGames = OnboardingGames.SuggestedGames(Result.Loading),
+            isRefreshingGames = true,
             favouriteGames = emptyList(),
-            isUpdatingFavouriteGames = false,
             allGamingGenres = Result.Loading,
+            isRefreshingGenres = true,
             selectedGamingGenres = emptySet()
         )
     }

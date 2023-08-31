@@ -13,7 +13,7 @@ class FakeSuggestedGamesUseCase(private val gamesRepository: GamesRepository) : 
 
     private var cache: DiscoverStateGames.SuggestedGames? = null
 
-    override suspend fun invoke(): DiscoverStateGames.SuggestedGames {
+    override suspend fun invoke(page: Int): DiscoverStateGames.SuggestedGames {
         return if (cache != null) {
             cache!!
         } else {

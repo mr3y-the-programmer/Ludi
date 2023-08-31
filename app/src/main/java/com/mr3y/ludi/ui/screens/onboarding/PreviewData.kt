@@ -126,11 +126,11 @@ val PreviewNewsDataSources = listOf(
 val PreviewOnboardingState = OnboardingState(
     allNewsDataSources = PreviewNewsDataSources,
     followedNewsDataSources = emptyList(),
-    isUpdatingFollowedNewsDataSources = false,
     searchQuery = "",
     onboardingGames = PreviewOnboardingGames,
+    isRefreshingGames = true,
     favouriteGames = emptyList(),
-    isUpdatingFavouriteGames = false,
     allGamingGenres = PreviewAllGenres,
+    isRefreshingGenres = false,
     selectedGamingGenres = PreviewSelectedGenres
 )

@@ -32,7 +32,7 @@ fun LudiErrorBox(modifier: Modifier = Modifier) {
                 tint = MaterialTheme.colorScheme.error
             )
             Text(
-                text = "Unexpected Error happened. try to refresh, and see if the problem persists.",
+                text = "Unexpected Error happened. pull to refresh, and see if the problem persists.",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )

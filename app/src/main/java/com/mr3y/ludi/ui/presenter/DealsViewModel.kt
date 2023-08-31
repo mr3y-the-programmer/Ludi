@@ -22,14 +22,12 @@ import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.ui.presenter.model.GiveawaysFiltersState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.time.ZoneId
@@ -37,7 +35,7 @@ import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @HiltViewModel
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+@OptIn(FlowPreview::class)
 class DealsViewModel @Inject constructor(
     private val dealsRepository: DealsRepository
 ) : ViewModel() {
@@ -46,12 +44,16 @@ class DealsViewModel @Inject constructor(
     private val dealsFilterState = MutableStateFlow(InitialDealsFiltersState)
     private val isDealsLoading = MutableStateFlow(false)
 
+    private val _previousRefreshDealsValue = MutableStateFlow(0)
+    private val refreshingDeals = MutableStateFlow(0)
+
     private val deals = combine(
         snapshotFlow { searchQuery.value }
             .debounce(275)
             .distinctUntilChanged(),
-        dealsFilterState
-    ) { searchText, dealsFiltersState ->
+        dealsFilterState,
+        refreshingDeals
+    ) { searchText, dealsFiltersState, _ ->
         isDealsLoading.update { true }
         dealsRepository.queryDeals(
             DealsQuery(
@@ -62,12 +64,15 @@ class DealsViewModel @Inject constructor(
             )
         ).also {
             isDealsLoading.update { false }
+            _previousRefreshDealsValue.update { refreshingDeals.value }
         }
     }
 
     private val isGiveawaysLoading = MutableStateFlow(false)
     private val giveawaysFiltersState = MutableStateFlow(InitialGiveawaysFiltersState)
-    private val gamerPowerGiveaways = giveawaysFiltersState.mapLatest { giveawayFiltersState ->
+    private val _previousRefreshGiveawaysValue = MutableStateFlow(0)
+    private val refreshingGiveaways = MutableStateFlow(0)
+    private val gamerPowerGiveaways = combine(giveawaysFiltersState, refreshingGiveaways) { giveawayFiltersState, _ ->
         isGiveawaysLoading.update { true }
         dealsRepository.queryGiveaways(
             GiveawaysQueryParameters(
@@ -76,6 +81,7 @@ class DealsViewModel @Inject constructor(
             )
         ).also {
             isGiveawaysLoading.update { false }
+            _previousRefreshGiveawaysValue.update { refreshingGiveaways.value }
         }
     }
 
@@ -87,10 +93,18 @@ class DealsViewModel @Inject constructor(
         giveawaysFiltersState,
         gamerPowerGiveaways,
         isDealsLoading,
-        isGiveawaysLoading
+        isGiveawaysLoading,
+        refreshingDeals,
+        _previousRefreshDealsValue,
+        refreshingGiveaways,
+        _previousRefreshGiveawaysValue
     ) { updates ->
         val isDealsLoading = updates[5] as Boolean
         val isGiveawaysLoading = updates[6] as Boolean
+        val refreshingDeals = updates[7] as Int
+        val previousRefreshDeals = updates[8] as Int
+        val refreshingGiveaways = updates[9] as Int
+        val previousRefreshGiveaways = updates[10] as Int
         DealsState(
             searchQuery = updates[0] as String,
             dealsFiltersState = updates[1] as DealsFiltersState,
@@ -104,7 +118,9 @@ class DealsViewModel @Inject constructor(
                         giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault())) ?: true
                     }
                 }
-            }
+            },
+            isRefreshingDeals = refreshingDeals != previousRefreshDeals,
+            isRefreshingGiveaways = refreshingGiveaways != previousRefreshGiveaways
         )
     }.stateIn(
         viewModelScope,
@@ -140,6 +156,14 @@ class DealsViewModel @Inject constructor(
 
     fun removeFromSelectedGiveawayPlatforms(platform: GiveawayPlatform) {
         giveawaysFiltersState.update { it.copy(selectedPlatforms = it.selectedPlatforms - platform) }
+    }
+
+    fun refreshDeals() {
+        refreshingDeals.update { it + 1 }
+    }
+
+    fun refreshGiveaways() {
+        refreshingGiveaways.update { it + 1 }
     }
 
     private fun GiveawaysFiltersState.selectedPlatformsAndStores(): List<com.mr3y.ludi.core.repository.query.GiveawayPlatform>? {
@@ -243,7 +267,9 @@ class DealsViewModel @Inject constructor(
             Result.Loading,
             Result.Loading,
             InitialDealsFiltersState,
-            InitialGiveawaysFiltersState
+            InitialGiveawaysFiltersState,
+            isRefreshingDeals = true,
+            isRefreshingGiveaways = true
         )
     }
 }

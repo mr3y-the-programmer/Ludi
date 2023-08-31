@@ -23,8 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,8 +47,6 @@ import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
-import com.mr3y.ludi.ui.presenter.connectivityState
-import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
@@ -70,10 +66,6 @@ fun GenresPage(
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {
-        val connectionState by connectivityState()
-        val isInternetConnectionNotAvailable by remember {
-            derivedStateOf { connectionState != ConnectionState.Available }
-        }
         val label = stringResource(R.string.on_boarding_genres_page_title)
         val secondaryText = stringResource(R.string.on_boarding_secondary_text)
         Column(
@@ -96,7 +88,7 @@ fun GenresPage(
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-        AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable, modifier = Modifier.padding(vertical = 8.dp))
+        AnimatedNoInternetBanner(modifier = Modifier.padding(vertical = 8.dp))
         val context = LocalContext.current
         when (allGenres) {
             is Result.Loading -> {

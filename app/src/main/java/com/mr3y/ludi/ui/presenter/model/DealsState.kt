@@ -12,7 +12,9 @@ data class DealsState(
     val deals: Result<List<Deal>, Throwable>,
     val giveaways: Result<List<GiveawayEntry>, Throwable>,
     val dealsFiltersState: DealsFiltersState,
-    val giveawaysFiltersState: GiveawaysFiltersState
+    val giveawaysFiltersState: GiveawaysFiltersState,
+    val isRefreshingDeals: Boolean,
+    val isRefreshingGiveaways: Boolean
 )
 
 data class DealsFiltersState(

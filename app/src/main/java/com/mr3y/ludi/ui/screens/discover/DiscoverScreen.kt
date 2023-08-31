@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +14,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -20,7 +25,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,8 +44,6 @@ import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
-import com.mr3y.ludi.ui.presenter.connectivityState
-import com.mr3y.ludi.ui.presenter.model.ConnectionState
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.ui.presenter.model.Genre
@@ -70,11 +72,12 @@ fun DiscoverScreen(
         onSelectingGenre = viewModel::addToSelectedGenres,
         onUnselectingGenre = viewModel::removeFromSelectedGenres,
         onReachingBottomOfTheSuggestionsList = viewModel::loadNewSuggestedGames,
+        onRefresh = viewModel::refresh,
         modifier = modifier
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun DiscoverScreen(
     discoverState: DiscoverState,
@@ -86,12 +89,19 @@ fun DiscoverScreen(
     onSelectingGenre: (Genre) -> Unit,
     onUnselectingGenre: (Genre) -> Unit,
     onReachingBottomOfTheSuggestionsList: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var openFiltersSheet by rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val refreshState = rememberPullRefreshState(
+        refreshing = discoverState.isRefreshing,
+        onRefresh = onRefresh
+    )
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier
+            .pullRefresh(refreshState)
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             DiscoverTopBar(
                 searchQuery = discoverState.searchQuery,
@@ -102,32 +112,40 @@ fun DiscoverScreen(
                     .fillMaxWidth(),
                 scrollBehavior = scrollBehavior
             )
-        }
+        },
+        contentWindowInsets = WindowInsets(0.dp)
     ) { contentPadding ->
-        Column(
-            modifier = Modifier.padding(contentPadding),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Box(
+            modifier = Modifier.padding(contentPadding)
         ) {
-            val connectionState by connectivityState()
-            val isInternetConnectionNotAvailable by remember {
-                derivedStateOf { connectionState != ConnectionState.Available }
-            }
-            when (discoverState.gamesState) {
-                is DiscoverStateGames.SuggestedGames -> {
-                    AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
-                    SuggestedGamesPage(
-                        suggestedGames = discoverState.gamesState,
-                        onReachingBottomOfTheList = onReachingBottomOfTheSuggestionsList
-                    )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                when (discoverState.gamesState) {
+                    is DiscoverStateGames.SuggestedGames -> {
+                        AnimatedNoInternetBanner()
+                        SuggestedGamesPage(
+                            suggestedGames = discoverState.gamesState,
+                            onReachingBottomOfTheList = onReachingBottomOfTheSuggestionsList
+                        )
+                    }
+                    else -> {
+                        discoverState.gamesState as DiscoverStateGames.SearchQueryBasedGames
+                        AnimatedNoInternetBanner()
+                        SearchQueryAndFilterPage(
+                            searchResult = discoverState.gamesState.games
+                        )
+                    }
                 }
-                else -> {
-                    discoverState.gamesState as DiscoverStateGames.SearchQueryBasedGames
-                    AnimatedNoInternetBanner(visible = isInternetConnectionNotAvailable)
-                    SearchQueryAndFilterPage(
-                        searchResult = discoverState.gamesState.games
-                    )
-                }
             }
+            PullRefreshIndicator(
+                refreshing = discoverState.isRefreshing,
+                state = refreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
     if (openFiltersSheet) {
@@ -372,7 +390,8 @@ fun DiscoverScreenPreview() {
             discoverState = DiscoverState(
                 searchQuery = "",
                 gamesState = DiscoverStateGames.SuggestedGames(taggedGamesList = initialList),
-                filtersState = DiscoverViewModel.InitialFiltersState
+                filtersState = DiscoverViewModel.InitialFiltersState,
+                isRefreshing = false
             ),
             onUpdatingSearchQueryText = {},
             onSelectingPlatform = {},
@@ -382,6 +401,7 @@ fun DiscoverScreenPreview() {
             onSelectingGenre = {},
             onUnselectingGenre = {},
             onReachingBottomOfTheSuggestionsList = { loadNewGames = true },
+            onRefresh = {},
             modifier = Modifier.fillMaxSize()
         )
     }

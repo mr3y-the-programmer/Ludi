@@ -37,8 +37,10 @@ class OnboardingScreenFABTest : BaseRobolectricTest() {
                     onUpdatingSearchQueryText = {},
                     onAddingGameToFavourites = {},
                     onRemovingGameFromFavourites = {},
+                    onRefreshingGames = {},
                     onSelectingGenre = { selectedGenres.value = selectedGenres.value + it },
-                    onUnselectingGenre = { selectedGenres.value = selectedGenres.value - it }
+                    onUnselectingGenre = { selectedGenres.value = selectedGenres.value - it },
+                    onRefreshingGenres = {}
                 )
             }
         }
@@ -75,8 +77,10 @@ class OnboardingScreenFABTest : BaseRobolectricTest() {
                     onUpdatingSearchQueryText = {},
                     onAddingGameToFavourites = { selectedGames.value = selectedGames.value + it },
                     onRemovingGameFromFavourites = { selectedGames.value = selectedGames.value - it },
+                    onRefreshingGames = {},
                     onSelectingGenre = { },
-                    onUnselectingGenre = { }
+                    onUnselectingGenre = { },
+                    onRefreshingGenres = {}
                 )
             }
         }
@@ -109,8 +113,10 @@ class OnboardingScreenFABTest : BaseRobolectricTest() {
                     onUpdatingSearchQueryText = {},
                     onAddingGameToFavourites = {},
                     onRemovingGameFromFavourites = {},
+                    onRefreshingGames = {},
                     onSelectingGenre = { },
-                    onUnselectingGenre = { }
+                    onUnselectingGenre = { },
+                    onRefreshingGenres = {}
                 )
             }
         }

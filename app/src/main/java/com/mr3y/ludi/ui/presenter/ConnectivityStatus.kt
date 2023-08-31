@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.callbackFlow
 @Composable
 fun connectivityState(): State<ConnectionState> {
     val context = LocalContext.current
-    return context.connectivityStateAsFlow().collectAsStateWithLifecycle(initialValue = context.currentConnectivityState)
+    return context.connectivityStateAsFlow().collectAsStateWithLifecycle(initialValue = ConnectionState.Undefined)
 }
 
 fun Context.connectivityStateAsFlow() = callbackFlow {
@@ -51,15 +51,6 @@ private fun NetworkCallback(callback: (ConnectionState) -> Unit): ConnectivityMa
         }
     }
 }
-
-/**
- * Network utility to get current state of internet connection
- */
-val Context.currentConnectivityState: ConnectionState
-    get() {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return getCurrentConnectivityState(connectivityManager)
-    }
 
 private fun getCurrentConnectivityState(connectivityManager: ConnectivityManager): ConnectionState {
     val currentDefaultNetwork = connectivityManager.activeNetwork ?: return ConnectionState.Unavailable

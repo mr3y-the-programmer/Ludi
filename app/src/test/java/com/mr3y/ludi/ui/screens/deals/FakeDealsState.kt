@@ -176,5 +176,7 @@ val FakeDealsState = DealsState(
     Result.Success(FakeDealSamples),
     Result.Success(FakeGiveawaysSamples),
     FakeInitialDealsFiltersState,
-    FakeInitialGiveawaysFiltersState
+    FakeInitialGiveawaysFiltersState,
+    isRefreshingDeals = false,
+    isRefreshingGiveaways = false
 )

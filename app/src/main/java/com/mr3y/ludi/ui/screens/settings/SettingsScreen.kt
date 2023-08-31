@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,6 +44,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.selectableGroup
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -94,7 +96,8 @@ fun SettingsScreen(
 ) {
     Scaffold(
         modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentWindowInsets = WindowInsets(0.dp)
     ) { contentPadding ->
         val context = LocalContext.current
         Column(
@@ -111,6 +114,7 @@ fun SettingsScreen(
                     .heightIn(min = 56.dp)
                     .semantics {
                         isTraversalGroup = true
+                        selectableGroup()
                     }
             ) {
                 state.themes.forEach { theme ->
