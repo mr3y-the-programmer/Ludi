@@ -14,6 +14,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -68,11 +72,12 @@ fun DiscoverScreen(
         onSelectingGenre = viewModel::addToSelectedGenres,
         onUnselectingGenre = viewModel::removeFromSelectedGenres,
         onReachingBottomOfTheSuggestionsList = viewModel::loadNewSuggestedGames,
+        onRefresh = viewModel::refresh,
         modifier = modifier
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun DiscoverScreen(
     discoverState: DiscoverState,
@@ -84,12 +89,19 @@ fun DiscoverScreen(
     onSelectingGenre: (Genre) -> Unit,
     onUnselectingGenre: (Genre) -> Unit,
     onReachingBottomOfTheSuggestionsList: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var openFiltersSheet by rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val refreshState = rememberPullRefreshState(
+        refreshing = discoverState.isRefreshing,
+        onRefresh = onRefresh
+    )
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier
+            .pullRefresh(refreshState)
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             DiscoverTopBar(
                 searchQuery = discoverState.searchQuery,
@@ -103,26 +115,37 @@ fun DiscoverScreen(
         },
         contentWindowInsets = WindowInsets(0.dp)
     ) { contentPadding ->
-        Column(
-            modifier = Modifier.padding(contentPadding),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Box(
+            modifier = Modifier.padding(contentPadding)
         ) {
-            when (discoverState.gamesState) {
-                is DiscoverStateGames.SuggestedGames -> {
-                    AnimatedNoInternetBanner()
-                    SuggestedGamesPage(
-                        suggestedGames = discoverState.gamesState,
-                        onReachingBottomOfTheList = onReachingBottomOfTheSuggestionsList
-                    )
-                }
-                else -> {
-                    discoverState.gamesState as DiscoverStateGames.SearchQueryBasedGames
-                    AnimatedNoInternetBanner()
-                    SearchQueryAndFilterPage(
-                        searchResult = discoverState.gamesState.games
-                    )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                when (discoverState.gamesState) {
+                    is DiscoverStateGames.SuggestedGames -> {
+                        AnimatedNoInternetBanner()
+                        SuggestedGamesPage(
+                            suggestedGames = discoverState.gamesState,
+                            onReachingBottomOfTheList = onReachingBottomOfTheSuggestionsList
+                        )
+                    }
+                    else -> {
+                        discoverState.gamesState as DiscoverStateGames.SearchQueryBasedGames
+                        AnimatedNoInternetBanner()
+                        SearchQueryAndFilterPage(
+                            searchResult = discoverState.gamesState.games
+                        )
+                    }
                 }
             }
+            PullRefreshIndicator(
+                refreshing = discoverState.isRefreshing,
+                state = refreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
     if (openFiltersSheet) {
@@ -367,7 +390,8 @@ fun DiscoverScreenPreview() {
             discoverState = DiscoverState(
                 searchQuery = "",
                 gamesState = DiscoverStateGames.SuggestedGames(taggedGamesList = initialList),
-                filtersState = DiscoverViewModel.InitialFiltersState
+                filtersState = DiscoverViewModel.InitialFiltersState,
+                isRefreshing = false
             ),
             onUpdatingSearchQueryText = {},
             onSelectingPlatform = {},
@@ -377,6 +401,7 @@ fun DiscoverScreenPreview() {
             onSelectingGenre = {},
             onUnselectingGenre = {},
             onReachingBottomOfTheSuggestionsList = { loadNewGames = true },
+            onRefresh = {},
             modifier = Modifier.fillMaxSize()
         )
     }

@@ -1,6 +1,8 @@
 package com.mr3y.ludi.ui.presenter
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
@@ -22,6 +24,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -39,39 +43,45 @@ class DiscoverViewModel @Inject constructor(
 
     private val _triggerLoadingNewSuggestedGames = MutableStateFlow(0)
 
+    private val refreshing = MutableStateFlow(0)
+
+    private var _internalState by mutableStateOf(Initial)
+
     private val games = combine(
         snapshotFlow { searchQuery.value }
             .debounce(275)
             .distinctUntilChanged(),
         _filterState,
-        _triggerLoadingNewSuggestedGames
-    ) { searchText, filtersState, _ ->
+        _triggerLoadingNewSuggestedGames,
+        refreshing
+    ) { searchText, filtersState, page, _ ->
         if (searchText.isEmpty() && filtersState == InitialFiltersState) {
-            getSuggestedGamesUseCase()
+            getSuggestedGamesUseCase(page.coerceAtLeast(0))
         } else {
             searchQueryBasedGamesUseCase(searchText, filtersState)
         }
-    }
+    }.map {
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = false, gamesState = it) }
+    }.launchIn(viewModelScope)
 
     val discoverState = combine(
-        snapshotFlow { searchQuery.value },
         _filterState,
-        games
-    ) { searchText, filters, games ->
-        DiscoverState(
-            searchQuery = searchText,
-            filtersState = filters,
-            gamesState = games
-        )
+        snapshotFlow { _internalState }
+    ) { filters, state ->
+        Snapshot.withMutableSnapshot {
+            _internalState = state.copy(filtersState = filters)
+        }
+        _internalState
     }.stateIn(
         viewModelScope,
         SharingStarted.Lazily,
-        Initial
+        _internalState
     )
 
     fun updateSearchQuery(searchQueryText: String) {
         Snapshot.withMutableSnapshot {
             searchQuery.value = searchQueryText
+            _internalState = _internalState.copy(searchQuery = searchQueryText)
         }
     }
 
@@ -101,6 +111,12 @@ class DiscoverViewModel @Inject constructor(
 
     fun loadNewSuggestedGames() {
         _triggerLoadingNewSuggestedGames.update { it + 1 }
+    }
+
+    fun refresh() {
+        refreshing.update { it + 1 }
+        _triggerLoadingNewSuggestedGames.update { 0 }
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = true) }
     }
 
     companion object {
@@ -162,7 +178,8 @@ class DiscoverViewModel @Inject constructor(
                     TaggedGames.TopRatedGames(Result.Loading),
                     TaggedGames.MultiplayerGames(Result.Loading)
                 )
-            )
+            ),
+            isRefreshing = true
         )
     }
 }
