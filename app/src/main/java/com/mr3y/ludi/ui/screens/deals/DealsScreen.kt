@@ -2,6 +2,7 @@ package com.mr3y.ludi.ui.screens.deals
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
@@ -14,6 +15,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -63,11 +69,13 @@ fun DealsScreen(
         onSelectingGiveawayStore = viewModel::addToSelectedGiveawaysStores,
         onUnselectingGiveawayStore = viewModel::removeFromSelectedGiveawaysStores,
         onSelectingGiveawayPlatform = viewModel::addToSelectedGiveawaysPlatforms,
-        onUnselectingGiveawayPlatform = viewModel::removeFromSelectedGiveawayPlatforms
+        onUnselectingGiveawayPlatform = viewModel::removeFromSelectedGiveawayPlatforms,
+        onRefreshDeals = viewModel::refreshDeals,
+        onRefreshGiveaways = viewModel::refreshGiveaways
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun DealsScreen(
     dealsState: DealsState,
@@ -78,7 +86,9 @@ fun DealsScreen(
     onSelectingGiveawayStore: (GiveawayStore) -> Unit,
     onUnselectingGiveawayStore: (GiveawayStore) -> Unit,
     onSelectingGiveawayPlatform: (GiveawayPlatform) -> Unit,
-    onUnselectingGiveawayPlatform: (GiveawayPlatform) -> Unit
+    onUnselectingGiveawayPlatform: (GiveawayPlatform) -> Unit,
+    onRefreshDeals: () -> Unit,
+    onRefreshGiveaways: () -> Unit
 ) {
     var selectedTab by rememberSaveable(Unit) { mutableIntStateOf(0) }
     val topBarScrollState = rememberKeyedTopAppBarState(input = selectedTab)
@@ -108,6 +118,15 @@ fun DealsScreen(
                 onClick = { selectedTab = index }
             )
         }
+        val refreshState = rememberPullRefreshState(
+            refreshing = if (selectedTab == 0) dealsState.isRefreshingDeals else dealsState.isRefreshingGiveaways,
+            onRefresh = {
+                when (selectedTab) {
+                    0 -> onRefreshDeals()
+                    1 -> onRefreshGiveaways()
+                }
+            }
+        )
         Scaffold(
             topBar = {
                 SearchFilterBar(
@@ -122,68 +141,77 @@ fun DealsScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             },
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            modifier = Modifier
+                .pullRefresh(refreshState)
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentWindowInsets = WindowInsets(0.dp)
         ) { contentPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val context = LocalContext.current
-                val chromeTabToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
-                AnimatedNoInternetBanner()
-                LazyColumn(
-                    state = listState,
+            Box(modifier = Modifier.padding(contentPadding)) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    if (selectedTab == 0) {
-                        sectionScaffold(
-                            result = dealsState.deals
-                        ) {
-                            Deal(
-                                deal = it,
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .fillMaxWidth()
-                                    .height(160.dp),
-                                onClick = {
-                                    if (it != null) {
-                                        val dealUrl =
-                                            Uri.parse("https://www.cheapshark.com/redirect?dealID=${it.dealID}")
-                                        launchChromeCustomTab(
-                                            context,
-                                            dealUrl,
-                                            chromeTabToolbarColor
-                                        )
+                    val context = LocalContext.current
+                    val chromeTabToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
+                    AnimatedNoInternetBanner()
+                    LazyColumn(
+                        state = listState,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (selectedTab == 0) {
+                            sectionScaffold(
+                                result = dealsState.deals
+                            ) {
+                                Deal(
+                                    deal = it,
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .fillMaxWidth()
+                                        .height(160.dp),
+                                    onClick = {
+                                        if (it != null) {
+                                            val dealUrl =
+                                                Uri.parse("https://www.cheapshark.com/redirect?dealID=${it.dealID}")
+                                            launchChromeCustomTab(
+                                                context,
+                                                dealUrl,
+                                                chromeTabToolbarColor
+                                            )
+                                        }
                                     }
-                                }
-                            )
-                        }
-                    } else {
-                        sectionScaffold(
-                            result = dealsState.giveaways
-                        ) {
-                            GamerPowerGameGiveaway(
-                                giveaway = it,
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .fillMaxWidth()
-                                    .height(120.dp),
-                                onClick = {
-                                    if (it != null) {
-                                        launchChromeCustomTab(
-                                            context,
-                                            Uri.parse(it.gamerPowerUrl),
-                                            chromeTabToolbarColor
-                                        )
+                                )
+                            }
+                        } else {
+                            sectionScaffold(
+                                result = dealsState.giveaways
+                            ) {
+                                GamerPowerGameGiveaway(
+                                    giveaway = it,
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .fillMaxWidth()
+                                        .height(120.dp),
+                                    onClick = {
+                                        if (it != null) {
+                                            launchChromeCustomTab(
+                                                context,
+                                                Uri.parse(it.gamerPowerUrl),
+                                                chromeTabToolbarColor
+                                            )
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
+                PullRefreshIndicator(
+                    refreshing = if (selectedTab == 0) dealsState.isRefreshingDeals else dealsState.isRefreshingGiveaways,
+                    state = refreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }
@@ -278,7 +306,9 @@ fun DealsScreenPreview() {
                 deals = Result.Success(dealSamples),
                 giveaways = Result.Success(otherGamesGiveawaysSamples),
                 dealsFiltersState = DealsViewModel.InitialDealsFiltersState,
-                giveawaysFiltersState = DealsViewModel.InitialGiveawaysFiltersState
+                giveawaysFiltersState = DealsViewModel.InitialGiveawaysFiltersState,
+                isRefreshingDeals = false,
+                isRefreshingGiveaways = false
             )
         )
     }
@@ -286,6 +316,8 @@ fun DealsScreenPreview() {
         DealsScreen(
             dealsState = dealsState.value,
             modifier = Modifier.fillMaxSize(),
+            {},
+            {},
             {},
             {},
             {},
