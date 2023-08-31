@@ -1267,11 +1267,11 @@ val FakeNewsDataSources = listOf(
 val FakeOnboardingState = OnboardingState(
     allNewsDataSources = FakeNewsDataSources,
     followedNewsDataSources = listOf(FakeNewsDataSources.random()),
-    isUpdatingFollowedNewsDataSources = false,
     searchQuery = "",
     onboardingGames = FakeOnboardingGames,
+    isRefreshingGames = false,
     favouriteGames = FakeSelectedGames,
-    isUpdatingFavouriteGames = false,
     allGamingGenres = FakeAllGenres,
+    isRefreshingGenres = false,
     selectedGamingGenres = FakeSelectedGenres
 )

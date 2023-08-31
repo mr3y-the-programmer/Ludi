@@ -33,8 +33,12 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -94,12 +98,14 @@ fun OnboardingScreen(
         onUpdatingSearchQueryText = viewModel::updateSearchQuery,
         onAddingGameToFavourites = viewModel::addGameToFavourites,
         onRemovingGameFromFavourites = viewModel::removeGameFromFavourites,
+        onRefreshingGames = viewModel::refreshGames,
         onSelectingGenre = viewModel::selectGenre,
-        onUnselectingGenre = viewModel::unselectGenre
+        onUnselectingGenre = viewModel::unselectGenre,
+        onRefreshingGenres = viewModel::refreshGenres
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun OnboardingScreen(
     onboardingState: OnboardingState,
@@ -112,15 +118,31 @@ fun OnboardingScreen(
     onUpdatingSearchQueryText: (String) -> Unit,
     onAddingGameToFavourites: (FavouriteGame) -> Unit,
     onRemovingGameFromFavourites: (FavouriteGame) -> Unit,
+    onRefreshingGames: () -> Unit,
     onSelectingGenre: (GameGenre) -> Unit,
-    onUnselectingGenre: (GameGenre) -> Unit
+    onUnselectingGenre: (GameGenre) -> Unit,
+    onRefreshingGenres: () -> Unit
 ) {
     val pagerState = rememberPagerState(
         pageCount = ::OnboardingPagesCount,
         initialPage = initialPage
     )
+    val refreshState = rememberPullRefreshState(
+        refreshing = when (pagerState.currentPage) {
+            0 -> onboardingState.isRefreshingGenres
+            1 -> onboardingState.isRefreshingGames
+            else -> false
+        },
+        onRefresh = {
+            when (pagerState.currentPage) {
+                0 -> onRefreshingGenres()
+                1 -> onRefreshingGames()
+            }
+        }
+    )
     Scaffold(
         modifier = modifier
+            .pullRefresh(refreshState)
             .fillMaxSize()
             .imePadding(),
         bottomBar = {
@@ -160,80 +182,102 @@ fun OnboardingScreen(
             )
         }
     ) { contentPadding ->
-        val scrollState = rememberScrollState()
-        Column(
+        Box(
             modifier = Modifier
                 .padding(contentPadding)
-                .consumeWindowInsets(ScaffoldDefaults.contentWindowInsets.exclude(NavigationBarDefaults.windowInsets))
+                .consumeWindowInsets(
+                    ScaffoldDefaults.contentWindowInsets.exclude(
+                        NavigationBarDefaults.windowInsets
+                    )
+                )
                 .fillMaxSize()
-                .verticalScroll(scrollState)
         ) {
-            HorizontalPager(
-                state = pagerState,
-                userScrollEnabled = false,
-                modifier = Modifier.fillMaxSize()
-            ) { pageIndex: Int ->
-                val pageModifier = Modifier
-                    .padding(horizontal = 16.dp)
+            val scrollState = rememberScrollState()
+            Column(
+                modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(scrollState)
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    userScrollEnabled = false,
+                    modifier = Modifier.fillMaxSize()
+                ) { pageIndex: Int ->
+                    val pageModifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxSize()
 
-                when (pageIndex) {
-                    0 -> {
-                        AnimatedVisibility(
-                            visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
-                            enter = slideInHorizontally { it } + fadeIn(),
-                            exit = slideOutHorizontally { -it } + fadeOut(),
-                            modifier = pageModifier
-                        ) {
-                            GenresPage(
-                                allGenres = onboardingState.allGamingGenres,
-                                selectedGenres = onboardingState.selectedGamingGenres,
-                                onSelectingGenre = onSelectingGenre,
-                                onUnselectingGenre = onUnselectingGenre,
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
-                            )
+                    when (pageIndex) {
+                        0 -> {
+                            AnimatedVisibility(
+                                visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
+                                enter = slideInHorizontally { it } + fadeIn(),
+                                exit = slideOutHorizontally { -it } + fadeOut(),
+                                modifier = pageModifier
+                            ) {
+                                GenresPage(
+                                    allGenres = onboardingState.allGamingGenres,
+                                    selectedGenres = onboardingState.selectedGamingGenres,
+                                    onSelectingGenre = onSelectingGenre,
+                                    onUnselectingGenre = onUnselectingGenre,
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                )
+                            }
                         }
-                    }
-                    1 -> {
-                        AnimatedVisibility(
-                            visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
-                            enter = slideInHorizontally { it } + fadeIn(),
-                            exit = slideOutHorizontally { -it } + fadeOut(),
-                            modifier = pageModifier
-                        ) {
-                            SelectingFavouriteGamesPage(
-                                searchQueryText = onboardingState.searchQuery,
-                                onUpdatingSearchQueryText = onUpdatingSearchQueryText,
-                                allGames = onboardingState.onboardingGames,
-                                favouriteUserGames = onboardingState.favouriteGames,
-                                onAddingGameToFavourites = onAddingGameToFavourites,
-                                onRemovingGameFromFavourites = onRemovingGameFromFavourites,
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
-                            )
+                        1 -> {
+                            AnimatedVisibility(
+                                visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
+                                enter = slideInHorizontally { it } + fadeIn(),
+                                exit = slideOutHorizontally { -it } + fadeOut(),
+                                modifier = pageModifier
+                            ) {
+                                SelectingFavouriteGamesPage(
+                                    searchQueryText = onboardingState.searchQuery,
+                                    onUpdatingSearchQueryText = onUpdatingSearchQueryText,
+                                    allGames = onboardingState.onboardingGames,
+                                    favouriteUserGames = onboardingState.favouriteGames,
+                                    onAddingGameToFavourites = onAddingGameToFavourites,
+                                    onRemovingGameFromFavourites = onRemovingGameFromFavourites,
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                )
+                            }
                         }
-                    }
-                    2 -> {
-                        AnimatedVisibility(
-                            visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
-                            enter = slideInHorizontally { it } + fadeIn(),
-                            exit = slideOutHorizontally { -it } + fadeOut(),
-                            modifier = pageModifier
-                        ) {
-                            NewsSourcesPage(
-                                allNewsDataSources = onboardingState.allNewsDataSources,
-                                selectedNewsSources = onboardingState.followedNewsDataSources,
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                                onToggleNewsSourceTile = {
-                                    if (it in onboardingState.followedNewsDataSources) {
-                                        onUnselectNewsDataSource(it)
-                                    } else {
-                                        onSelectingNewsDataSource(it)
+                        2 -> {
+                            AnimatedVisibility(
+                                visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
+                                enter = slideInHorizontally { it } + fadeIn(),
+                                exit = slideOutHorizontally { -it } + fadeOut(),
+                                modifier = pageModifier
+                            ) {
+                                NewsSourcesPage(
+                                    allNewsDataSources = onboardingState.allNewsDataSources,
+                                    selectedNewsSources = onboardingState.followedNewsDataSources,
+                                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                                    onToggleNewsSourceTile = {
+                                        if (it in onboardingState.followedNewsDataSources) {
+                                            onUnselectNewsDataSource(it)
+                                        } else {
+                                            onSelectingNewsDataSource(it)
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
+            }
+            if (pagerState.currentPage != 2) {
+                PullRefreshIndicator(
+                    refreshing = when (pagerState.currentPage) {
+                        0 -> onboardingState.isRefreshingGenres
+                        1 -> onboardingState.isRefreshingGames
+                        else -> false
+                    },
+                    state = refreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }
@@ -362,7 +406,9 @@ fun OnboardingScreenPreview() {
             onAddingGameToFavourites = {},
             onRemovingGameFromFavourites = {},
             onSelectingGenre = {},
-            onUnselectingGenre = {}
+            onUnselectingGenre = {},
+            onRefreshingGames = {},
+            onRefreshingGenres = {}
         )
     }
 }

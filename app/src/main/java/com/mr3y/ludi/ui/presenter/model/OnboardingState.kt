@@ -9,12 +9,12 @@ import com.mr3y.ludi.core.model.Source
 data class OnboardingState(
     val allNewsDataSources: List<NewsDataSource>,
     val followedNewsDataSources: List<NewsDataSource>,
-    val isUpdatingFollowedNewsDataSources: Boolean,
     val searchQuery: String,
     val onboardingGames: OnboardingGames,
+    val isRefreshingGames: Boolean,
     val favouriteGames: List<FavouriteGame>,
-    val isUpdatingFavouriteGames: Boolean,
     val allGamingGenres: Result<Set<GameGenre>, Throwable>,
+    val isRefreshingGenres: Boolean,
     val selectedGamingGenres: Set<GameGenre>
 )
 
