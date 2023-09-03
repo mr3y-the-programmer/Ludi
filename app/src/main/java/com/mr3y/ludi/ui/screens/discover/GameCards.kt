@@ -299,10 +299,10 @@ fun GameCard(
                         .background(
                             Brush.verticalGradient(
                                 0.0f to Color.Transparent,
-                                0.1f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
-                                0.3f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
-                                0.5f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.65f),
-                                0.7f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.85f),
+                                0.1f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f),
+                                0.3f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
+                                0.5f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.75f),
+                                0.7f to MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.95f),
                                 0.9f to MaterialTheme.colorScheme.primaryContainer
                             )
                         )
