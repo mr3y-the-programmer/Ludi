@@ -28,9 +28,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mr3y.ludi.ui.components.LudiFilterChip
 import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
-import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.Store
+import com.mr3y.ludi.ui.presenter.model.Tag
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable

@@ -51,9 +51,9 @@ import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
-import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.Store
+import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.TaggedGames
 import com.mr3y.ludi.ui.presenter.usecases.utils.groupByGenre
 import com.mr3y.ludi.ui.preview.LudiPreview

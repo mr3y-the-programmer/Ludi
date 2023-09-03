@@ -11,9 +11,9 @@ import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
-import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.Store
+import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.TaggedGames
 import com.mr3y.ludi.ui.presenter.usecases.GetSearchQueryBasedGamesUseCase
 import com.mr3y.ludi.ui.presenter.usecases.GetSuggestedGamesUseCase

@@ -4,9 +4,9 @@ import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.repository.fixtures.FakeGamesRepository
 import com.mr3y.ludi.shared.MainDispatcherRule
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
-import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.Store
+import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.usecases.FakeSuggestedGamesUseCase
 import com.mr3y.ludi.ui.presenter.usecases.GetSearchQueryBasedGamesUseCaseImpl
 import com.mr3y.ludi.ui.presenter.usecases.utils.groupByGenre
