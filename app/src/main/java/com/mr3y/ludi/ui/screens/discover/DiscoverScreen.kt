@@ -1,6 +1,8 @@
 package com.mr3y.ludi.ui.screens.discover
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -253,6 +255,7 @@ private fun getLabelFor(taggedGames: TaggedGames): String {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchQueryAndFilterPage(
     searchResult: Result<Map<GameGenre, List<Game>>, Throwable>,
@@ -284,7 +287,10 @@ fun SearchQueryAndFilterPage(
                         )
                     }
                     item {
+                        val state = rememberLazyListState()
                         LazyRow(
+                            state = state,
+                            flingBehavior = rememberSnapFlingBehavior(state),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.surface)
@@ -363,6 +369,7 @@ fun RichInfoGamesSection(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T> GamesSectionScaffold(
     gamesResult: Result<List<T>, Throwable>,
@@ -374,6 +381,7 @@ fun <T> GamesSectionScaffold(
     LazyRow(
         modifier = modifier,
         state = state,
+        flingBehavior = rememberSnapFlingBehavior(state),
         horizontalArrangement = horizontalArrangement
     ) {
         when (gamesResult) {
