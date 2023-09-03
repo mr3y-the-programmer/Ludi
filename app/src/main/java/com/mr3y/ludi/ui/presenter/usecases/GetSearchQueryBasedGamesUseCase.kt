@@ -33,7 +33,7 @@ class GetSearchQueryBasedGamesUseCaseImpl @Inject constructor(
                 matchTermsExactly = false,
                 platforms = filters.selectedPlatforms.map { it.id }.takeIf { it.isNotEmpty() },
                 stores = filters.selectedStores.map { it.id }.takeIf { it.isNotEmpty() },
-                genres = filters.selectedGenres.map { it.id }.takeIf { it.isNotEmpty() },
+                tags = filters.selectedTags.map { it.id }.takeIf { it.isNotEmpty() },
                 sortingCriteria = run {
                     val sortingCriteria = filters.sortingCriteria ?: return@run null
                     when (sortingCriteria.criteria) {

@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mr3y.ludi.ui.components.LudiFilterChip
 import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
-import com.mr3y.ludi.ui.presenter.model.Genre
+import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.Store
 
@@ -43,8 +43,8 @@ fun FiltersBottomSheet(
     onUnselectingPlatform: (Platform) -> Unit,
     onSelectingStore: (Store) -> Unit,
     onUnselectingStore: (Store) -> Unit,
-    onSelectingGenre: (Genre) -> Unit,
-    onUnselectingGenre: (Genre) -> Unit
+    onSelectingTag: (Tag) -> Unit,
+    onUnselectingTag: (Tag) -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -136,7 +136,7 @@ fun FiltersBottomSheet(
                 }
             }
             Text(
-                text = "Genres:",
+                text = "Tags:",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -152,16 +152,16 @@ fun FiltersBottomSheet(
                     },
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                filtersState.allGenres.forEach {
+                filtersState.allTags.forEach {
                     LudiFilterChip(
-                        selected = it in filtersState.selectedGenres,
+                        selected = it in filtersState.selectedTags,
                         label = it.label,
                         modifier = chipModifier,
                         onClick = {
-                            if (it in filtersState.selectedGenres) {
-                                onUnselectingGenre(it)
+                            if (it in filtersState.selectedTags) {
+                                onUnselectingTag(it)
                             } else {
-                                onSelectingGenre(it)
+                                onSelectingTag(it)
                             }
                         }
                     )

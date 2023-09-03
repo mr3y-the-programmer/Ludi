@@ -4,7 +4,7 @@ import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.repository.fixtures.FakeGamesRepository
 import com.mr3y.ludi.shared.MainDispatcherRule
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
-import com.mr3y.ludi.ui.presenter.model.Genre
+import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.Store
 import com.mr3y.ludi.ui.presenter.usecases.FakeSuggestedGamesUseCase
@@ -67,22 +67,22 @@ class DiscoverViewModelTest {
         expectThat(sut.discoverState.value.searchQuery).isEqualTo("stra")
         expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SearchQueryBasedGames>()
 
-        sut.addToSelectedGenres(Genre(id = 3, label = "Adventure"))
+        sut.addToSelectedTags(Tag(id = 3, label = "Adventure"))
 
-        expectThat(sut.discoverState.value.filtersState.selectedGenres).isEqualTo(setOf(Genre(id = 3, label = "Adventure")))
+        expectThat(sut.discoverState.value.filtersState.selectedTags).isEqualTo(setOf(Tag(id = 3, label = "Adventure")))
         expectThat(sut.discoverState.value.filtersState.selectedStores).isEqualTo(setOf(Store(id = 4, label = "App store")))
         expectThat(sut.discoverState.value.filtersState.selectedPlatforms).isEqualTo(setOf(Platform(id = 21, label = "Android")))
         expectThat(sut.discoverState.value.searchQuery).isEqualTo("stra")
         expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SearchQueryBasedGames>()
 
-        sut.removeFromSelectedGenres(Genre(id = 3, label = "Adventure"))
+        sut.removeFromSelectedTags(Tag(id = 3, label = "Adventure"))
         sut.removeFromSelectedPlatforms(Platform(id = 21, label = "Android"))
         sut.removeFromSelectedStores(Store(id = 4, label = "App store"))
         sut.updateSearchQuery("")
 
         advanceUntilIdle()
 
-        expectThat(sut.discoverState.value.filtersState.selectedGenres).isEqualTo(emptySet())
+        expectThat(sut.discoverState.value.filtersState.selectedTags).isEqualTo(emptySet())
         expectThat(sut.discoverState.value.filtersState.selectedStores).isEqualTo(emptySet())
         expectThat(sut.discoverState.value.filtersState.selectedPlatforms).isEqualTo(emptySet())
         expectThat(sut.discoverState.value.searchQuery).isEqualTo("")

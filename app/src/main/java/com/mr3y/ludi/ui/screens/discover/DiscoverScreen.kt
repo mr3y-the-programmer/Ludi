@@ -51,7 +51,7 @@ import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
-import com.mr3y.ludi.ui.presenter.model.Genre
+import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.Store
 import com.mr3y.ludi.ui.presenter.model.TaggedGames
@@ -74,8 +74,8 @@ fun DiscoverScreen(
         onUnselectingPlatform = viewModel::removeFromSelectedPlatforms,
         onSelectingStore = viewModel::addToSelectedStores,
         onUnselectingStore = viewModel::removeFromSelectedStores,
-        onSelectingGenre = viewModel::addToSelectedGenres,
-        onUnselectingGenre = viewModel::removeFromSelectedGenres,
+        onSelectingTag = viewModel::addToSelectedTags,
+        onUnselectingTag = viewModel::removeFromSelectedTags,
         onReachingBottomOfTheSuggestionsList = viewModel::loadNewSuggestedGames,
         onRefresh = viewModel::refresh,
         modifier = modifier
@@ -91,8 +91,8 @@ fun DiscoverScreen(
     onUnselectingPlatform: (Platform) -> Unit,
     onSelectingStore: (Store) -> Unit,
     onUnselectingStore: (Store) -> Unit,
-    onSelectingGenre: (Genre) -> Unit,
-    onUnselectingGenre: (Genre) -> Unit,
+    onSelectingTag: (Tag) -> Unit,
+    onUnselectingTag: (Tag) -> Unit,
     onReachingBottomOfTheSuggestionsList: () -> Unit,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier
@@ -163,8 +163,8 @@ fun DiscoverScreen(
             onUnselectingPlatform,
             onSelectingStore,
             onUnselectingStore,
-            onSelectingGenre,
-            onUnselectingGenre
+            onSelectingTag,
+            onUnselectingTag
         )
     }
 }
@@ -439,8 +439,8 @@ fun DiscoverScreenPreview() {
             onUnselectingPlatform = {},
             onSelectingStore = {},
             onUnselectingStore = {},
-            onSelectingGenre = {},
-            onUnselectingGenre = {},
+            onSelectingTag = {},
+            onUnselectingTag = {},
             onReachingBottomOfTheSuggestionsList = { loadNewGames = true },
             onRefresh = {},
             modifier = Modifier.fillMaxSize()
