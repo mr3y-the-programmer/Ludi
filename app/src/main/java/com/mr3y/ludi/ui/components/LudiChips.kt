@@ -67,7 +67,9 @@ fun LudiFilterChip(
 @Composable
 fun LudiSuggestionChip(
     label: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    labelColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    containerColor: Color = MaterialTheme.colorScheme.primaryContainer
 ) {
     SuggestionChip(
         onClick = { },
@@ -75,8 +77,8 @@ fun LudiSuggestionChip(
         shape = RoundedCornerShape(8.dp),
         border = SuggestionChipDefaults.suggestionChipBorder(borderWidth = 0.dp, borderColor = Color.Transparent),
         colors = SuggestionChipDefaults.suggestionChipColors(
-            labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            labelColor = labelColor,
+            containerColor = containerColor
         ),
         label = {
             Text(

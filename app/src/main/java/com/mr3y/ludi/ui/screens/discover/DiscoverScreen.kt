@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -26,6 +28,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -216,6 +219,7 @@ fun SuggestedGamesPage(
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surface)
                         .padding(horizontal = 8.dp),
+                    isTrendingGame = taggedGames is TaggedGames.TrendingGames,
                     showGenre = true
                 )
             }
@@ -314,21 +318,48 @@ fun SearchQueryAndFilterPage(
 @Composable
 fun RichInfoGamesSection(
     games: Result<List<Game>, Throwable>,
+    isTrendingGame: Boolean,
     modifier: Modifier = Modifier,
     showGenre: Boolean = false
 ) {
+    val dominantColorsState = rememberDominantColorsState()
+    val listState = rememberLazyListState()
+    var highlightedItem by remember { mutableIntStateOf(0) }
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            layoutInfo.visibleItemsInfo
+                .firstOrNull { it.offset >= layoutInfo.viewportStartOffset }
+                ?.index ?: 0
+        }.distinctUntilChanged()
+            .collect {
+                highlightedItem = it
+            }
+    }
     GamesSectionScaffold(
         gamesResult = games,
+        state = listState,
         modifier = modifier
-    ) { game ->
-        GameCard(
-            game = game,
-            modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-                .width(200.dp)
-                .height(280.dp),
-            showGenre = showGenre
-        )
+    ) { index, game ->
+        if (isTrendingGame) {
+            TrendingGameCard(
+                game = game,
+                dominantColorsState = dominantColorsState,
+                isHighlighted = index == highlightedItem,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .width(264.dp)
+            )
+        } else {
+            GameCard(
+                game = game,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .width(200.dp)
+                    .height(280.dp),
+                showGenre = showGenre
+            )
+        }
     }
 }
 
@@ -336,22 +367,24 @@ fun RichInfoGamesSection(
 fun <T> GamesSectionScaffold(
     gamesResult: Result<List<T>, Throwable>,
     modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(8.dp),
-    itemContent: @Composable (T?) -> Unit
+    itemContent: @Composable (index: Int, T?) -> Unit
 ) {
     LazyRow(
         modifier = modifier,
+        state = state,
         horizontalArrangement = horizontalArrangement
     ) {
         when (gamesResult) {
             is Result.Loading -> {
-                items(10) { _ ->
-                    itemContent(null)
+                items(10) { index ->
+                    itemContent(index, null)
                 }
             }
             is Result.Success -> {
-                items(gamesResult.data) { game ->
-                    itemContent(game)
+                itemsIndexed(gamesResult.data) { index, game ->
+                    itemContent(index, game)
                 }
             }
             is Result.Error -> {

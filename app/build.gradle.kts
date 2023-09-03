@@ -222,8 +222,12 @@ dependencies {
     implementation(libs.accompanist.placeholder)
     implementation(libs.accompanist.system.ui.controller)
     implementation(libs.compose.html)
+    // Palette
+    implementation(libs.androidx.palette)
     // Chrome custom tabs
     implementation(libs.androidx.browser)
+    // Caching In-memory data
+    implementation(libs.cache4k)
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
     // Instrumented tests
