@@ -11,9 +11,9 @@ import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
-import com.mr3y.ludi.ui.presenter.model.Genre
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.Store
+import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.TaggedGames
 import com.mr3y.ludi.ui.presenter.usecases.GetSearchQueryBasedGamesUseCase
 import com.mr3y.ludi.ui.presenter.usecases.GetSuggestedGamesUseCase
@@ -101,12 +101,12 @@ class DiscoverViewModel @Inject constructor(
         _filterState.update { it.copy(selectedStores = it.selectedStores - store) }
     }
 
-    fun addToSelectedGenres(genre: Genre) {
-        _filterState.update { it.copy(selectedGenres = it.selectedGenres + genre) }
+    fun addToSelectedTags(tag: Tag) {
+        _filterState.update { it.copy(selectedTags = it.selectedTags + tag) }
     }
 
-    fun removeFromSelectedGenres(genre: Genre) {
-        _filterState.update { it.copy(selectedGenres = it.selectedGenres - genre) }
+    fun removeFromSelectedTags(tag: Tag) {
+        _filterState.update { it.copy(selectedTags = it.selectedTags - tag) }
     }
 
     fun loadNewSuggestedGames() {
@@ -147,25 +147,25 @@ class DiscoverViewModel @Inject constructor(
                 Store(id = 11, label = "Epic games")
             ),
             selectedStores = emptySet(),
-            allGenres = setOf(
-                Genre(id = 4, label = "Action"),
-                Genre(id = 51, label = "Indie"),
-                Genre(id = 3, label = "Adventure"),
-                Genre(id = 5, label = "RPG"),
-                Genre(id = 10, label = "Strategy"),
-                Genre(id = 2, label = "Shooter"),
-                Genre(id = 40, label = "Casual"),
-                Genre(id = 14, label = "Simulation"),
-                Genre(id = 7, label = "Puzzle"),
-                Genre(id = 11, label = "Arcade"),
-                Genre(id = 83, label = "Platformer"),
-                Genre(id = 1, label = "Racing"),
-                Genre(id = 15, label = "Sports"),
-                Genre(id = 6, label = "Fighting"),
-                Genre(id = 19, label = "Family"),
-                Genre(id = 59, label = "Massively Multiplayer")
-            ),
-            selectedGenres = emptySet(),
+            allTags = setOf(
+                Tag(id = 83, label = "Puzzle"),
+                Tag(id = 42, label = "Soundtrack"),
+                Tag(id = 1407, label = "Race"),
+                Tag(id = 73, label = "ESports"),
+                Tag(id = 162, label = "Board"),
+                Tag(id = 406, label = "Story"),
+                Tag(id = 79, label = "Free"),
+                Tag(id = 31, label = "Single Player"),
+                Tag(id = 7, label = "Multiplayer"),
+                Tag(id = 397, label = "Online Multiplayer"),
+                Tag(id = 468, label = "Role Playing"),
+                Tag(id = 36, label = "Open World"),
+                Tag(id = 32, label = "Sci-fi"),
+                Tag(id = 45, label = "2D"),
+                Tag(id = 123, label = "Comedy"),
+                Tag(id = 134, label = "Anime")
+            ).toSortedSet(compareBy { it.label }),
+            selectedTags = emptySet(),
             sortingCriteria = null
         )
 

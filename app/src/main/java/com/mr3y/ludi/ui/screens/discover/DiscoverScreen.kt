@@ -1,6 +1,8 @@
 package com.mr3y.ludi.ui.screens.discover
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,8 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -26,6 +30,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -46,9 +51,9 @@ import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
-import com.mr3y.ludi.ui.presenter.model.Genre
 import com.mr3y.ludi.ui.presenter.model.Platform
 import com.mr3y.ludi.ui.presenter.model.Store
+import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.TaggedGames
 import com.mr3y.ludi.ui.presenter.usecases.utils.groupByGenre
 import com.mr3y.ludi.ui.preview.LudiPreview
@@ -69,8 +74,8 @@ fun DiscoverScreen(
         onUnselectingPlatform = viewModel::removeFromSelectedPlatforms,
         onSelectingStore = viewModel::addToSelectedStores,
         onUnselectingStore = viewModel::removeFromSelectedStores,
-        onSelectingGenre = viewModel::addToSelectedGenres,
-        onUnselectingGenre = viewModel::removeFromSelectedGenres,
+        onSelectingTag = viewModel::addToSelectedTags,
+        onUnselectingTag = viewModel::removeFromSelectedTags,
         onReachingBottomOfTheSuggestionsList = viewModel::loadNewSuggestedGames,
         onRefresh = viewModel::refresh,
         modifier = modifier
@@ -86,8 +91,8 @@ fun DiscoverScreen(
     onUnselectingPlatform: (Platform) -> Unit,
     onSelectingStore: (Store) -> Unit,
     onUnselectingStore: (Store) -> Unit,
-    onSelectingGenre: (Genre) -> Unit,
-    onUnselectingGenre: (Genre) -> Unit,
+    onSelectingTag: (Tag) -> Unit,
+    onUnselectingTag: (Tag) -> Unit,
     onReachingBottomOfTheSuggestionsList: () -> Unit,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier
@@ -158,8 +163,8 @@ fun DiscoverScreen(
             onUnselectingPlatform,
             onSelectingStore,
             onUnselectingStore,
-            onSelectingGenre,
-            onUnselectingGenre
+            onSelectingTag,
+            onUnselectingTag
         )
     }
 }
@@ -216,6 +221,7 @@ fun SuggestedGamesPage(
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surface)
                         .padding(horizontal = 8.dp),
+                    isTrendingGame = taggedGames is TaggedGames.TrendingGames,
                     showGenre = true
                 )
             }
@@ -249,6 +255,7 @@ private fun getLabelFor(taggedGames: TaggedGames): String {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchQueryAndFilterPage(
     searchResult: Result<Map<GameGenre, List<Game>>, Throwable>,
@@ -280,7 +287,10 @@ fun SearchQueryAndFilterPage(
                         )
                     }
                     item {
+                        val state = rememberLazyListState()
                         LazyRow(
+                            state = state,
+                            flingBehavior = rememberSnapFlingBehavior(state),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.surface)
@@ -314,44 +324,75 @@ fun SearchQueryAndFilterPage(
 @Composable
 fun RichInfoGamesSection(
     games: Result<List<Game>, Throwable>,
+    isTrendingGame: Boolean,
     modifier: Modifier = Modifier,
     showGenre: Boolean = false
 ) {
+    val dominantColorsState = rememberDominantColorsState()
+    val listState = rememberLazyListState()
+    var highlightedItem by remember { mutableIntStateOf(0) }
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            layoutInfo.visibleItemsInfo
+                .firstOrNull { it.offset >= layoutInfo.viewportStartOffset }
+                ?.index ?: 0
+        }.distinctUntilChanged()
+            .collect {
+                highlightedItem = it
+            }
+    }
     GamesSectionScaffold(
         gamesResult = games,
+        state = listState,
         modifier = modifier
-    ) { game ->
-        GameCard(
-            game = game,
-            modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-                .width(200.dp)
-                .height(280.dp),
-            showGenre = showGenre
-        )
+    ) { index, game ->
+        if (isTrendingGame) {
+            TrendingGameCard(
+                game = game,
+                dominantColorsState = dominantColorsState,
+                isHighlighted = index == highlightedItem,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .width(264.dp)
+            )
+        } else {
+            GameCard(
+                game = game,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .width(200.dp)
+                    .height(280.dp),
+                showGenre = showGenre
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T> GamesSectionScaffold(
     gamesResult: Result<List<T>, Throwable>,
     modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(8.dp),
-    itemContent: @Composable (T?) -> Unit
+    itemContent: @Composable (index: Int, T?) -> Unit
 ) {
     LazyRow(
         modifier = modifier,
+        state = state,
+        flingBehavior = rememberSnapFlingBehavior(state),
         horizontalArrangement = horizontalArrangement
     ) {
         when (gamesResult) {
             is Result.Loading -> {
-                items(10) { _ ->
-                    itemContent(null)
+                items(10) { index ->
+                    itemContent(index, null)
                 }
             }
             is Result.Success -> {
-                items(gamesResult.data) { game ->
-                    itemContent(game)
+                itemsIndexed(gamesResult.data) { index, game ->
+                    itemContent(index, game)
                 }
             }
             is Result.Error -> {
@@ -398,8 +439,8 @@ fun DiscoverScreenPreview() {
             onUnselectingPlatform = {},
             onSelectingStore = {},
             onUnselectingStore = {},
-            onSelectingGenre = {},
-            onUnselectingGenre = {},
+            onSelectingTag = {},
+            onUnselectingTag = {},
             onReachingBottomOfTheSuggestionsList = { loadNewGames = true },
             onRefresh = {},
             modifier = Modifier.fillMaxSize()

@@ -73,8 +73,8 @@ data class DiscoverFiltersState(
     val selectedPlatforms: Set<Platform>,
     val allStores: Set<Store>,
     val selectedStores: Set<Store>,
-    val allGenres: Set<Genre>,
-    val selectedGenres: Set<Genre>,
+    val allTags: Set<Tag>,
+    val selectedTags: Set<Tag>,
     val sortingCriteria: SortingCriteria?
 )
 
@@ -88,7 +88,7 @@ data class Store(
     val label: String
 )
 
-data class Genre(
+data class Tag(
     val id: Int,
     val label: String
 )
