@@ -174,7 +174,7 @@ fun DealsScreen(
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
                                         .fillMaxWidth()
-                                        .height(160.dp),
+                                        .height(IntrinsicSize.Min),
                                     onClick = {
                                         if (it != null) {
                                             val dealUrl =
@@ -197,7 +197,7 @@ fun DealsScreen(
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
                                         .fillMaxWidth()
-                                        .height(120.dp),
+                                        .height(IntrinsicSize.Min),
                                     onClick = {
                                         if (it != null) {
                                             launchChromeCustomTab(
