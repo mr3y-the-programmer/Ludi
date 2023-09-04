@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -68,7 +69,12 @@ fun ArticleCardTile(
             )
             .defaultPlaceholder(isVisible = article == null)
             .clearAndSetSemantics {
-                contentDescription = context.getString(R.string.news_page_article_content_description, article?.title?.text?.removeCDATA(), article?.author, article?.source?.name)
+                contentDescription = context.getString(
+                    R.string.news_page_article_content_description,
+                    article?.title?.text?.removeCDATA(),
+                    article?.author,
+                    article?.source?.name
+                )
             }
     ) {
         Column(
@@ -93,6 +99,18 @@ fun ArticleCardTile(
                     .padding(bottom = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                if (article != null) {
+                    Text(
+                        text = article.source.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Start,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.CenterStart
@@ -129,53 +147,42 @@ fun ArticleCardTile(
                 }
                 if (article != null) {
                     Row(
-                        horizontalArrangement = if (article.author != null || article.publicationDate != null) Arrangement.SpaceBetween else Arrangement.End,
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = if (article.author == null && article.publicationDate != null) Arrangement.End else Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        if (article.author != null || article.publicationDate != null) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                article.author?.let {
-                                    Text(
-                                        text = it.removeCDATA(),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        textAlign = TextAlign.Start,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                }
-                                article.publicationDate?.let {
-                                    val durationSincePubDate = Duration.between(it.toLocalDateTime(), ZonedDateTime.now().toLocalDateTime()).toKotlinDuration()
-                                    val timePassed = when {
-                                        durationSincePubDate.inWholeDays > 0 -> "${durationSincePubDate.inWholeDays}d"
-                                        durationSincePubDate.inWholeHours > 0 -> "${durationSincePubDate.inWholeHours}h"
-                                        durationSincePubDate.inWholeMinutes > 0 -> "${durationSincePubDate.inWholeMinutes}m"
-                                        else -> stringResource(R.string.now)
-                                    }
-                                    Text(
-                                        text = timePassed,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        textAlign = TextAlign.Start,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                                    )
-                                }
-                            }
+                        article.author?.let {
+                            Text(
+                                text = it.removeCDATA(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Start,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.alignByBaseline()
+                            )
                         }
-                        Text(
-                            text = article.source.name,
-                            style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Start,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.Bold
-                        )
+                        article.publicationDate?.let {
+                            val durationSincePubDate = Duration.between(
+                                it.toLocalDateTime(),
+                                ZonedDateTime.now().toLocalDateTime()
+                            ).toKotlinDuration()
+                            val timePassed = when {
+                                durationSincePubDate.inWholeDays > 0 -> "${durationSincePubDate.inWholeDays}d"
+                                durationSincePubDate.inWholeHours > 0 -> "${durationSincePubDate.inWholeHours}h"
+                                durationSincePubDate.inWholeMinutes > 0 -> "${durationSincePubDate.inWholeMinutes}m"
+                                else -> stringResource(R.string.now)
+                            }
+                            Text(
+                                text = timePassed,
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Start,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                modifier = Modifier.alignByBaseline().sizeIn(minWidth = 24.dp, minHeight = 24.dp)
+                            )
+                        }
                     }
                 }
             }
