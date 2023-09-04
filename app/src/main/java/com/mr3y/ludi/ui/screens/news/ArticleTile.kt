@@ -147,7 +147,7 @@ fun ArticleCardTile(
                 }
                 if (article != null) {
                     Row(
-                        horizontalArrangement = if(article.author == null && article.publicationDate != null) Arrangement.End else Arrangement.SpaceBetween,
+                        horizontalArrangement = if (article.author == null && article.publicationDate != null) Arrangement.End else Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -158,7 +158,8 @@ fun ArticleCardTile(
                                 textAlign = TextAlign.Start,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.alignByBaseline()
                             )
                         }
                         article.publicationDate?.let {
@@ -179,7 +180,7 @@ fun ArticleCardTile(
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                                modifier = Modifier.sizeIn(minWidth = 24.dp, minHeight = 24.dp)
+                                modifier = Modifier.alignByBaseline().sizeIn(minWidth = 24.dp, minHeight = 24.dp)
                             )
                         }
                     }
