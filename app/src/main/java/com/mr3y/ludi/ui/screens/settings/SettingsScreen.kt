@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -123,6 +124,7 @@ fun SettingsScreen(
                         modifier = Modifier
                             .padding(vertical = 8.dp)
                             .fillMaxWidth()
+                            .heightIn(min = 48.dp)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
@@ -142,12 +144,12 @@ fun SettingsScreen(
                                     context.getString(R.string.settings_page_theme_off_state_desc, theme.label)
                                 }
                             },
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         RadioButton(
                             selected = theme == state.selectedTheme,
                             onClick = null,
-                            modifier = Modifier.clearAndSetSemantics { }
+                            modifier = Modifier.size(48.dp).clearAndSetSemantics { }
                         )
                         Text(
                             text = theme.label,
@@ -179,7 +181,7 @@ fun SettingsScreen(
                 if (isRunningOnAPI30OrOlder) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.clearAndSetSemantics { }
+                        modifier = Modifier.weight(1f).clearAndSetSemantics { }
                     ) {
                         SettingsTitle(text = "Dynamic Colors")
                         Text(
@@ -190,13 +192,13 @@ fun SettingsScreen(
                         )
                     }
                 } else {
-                    SettingsTitle(text = "Dynamic Colors", modifier = Modifier.clearAndSetSemantics { })
+                    SettingsTitle(text = "Dynamic Colors", modifier = Modifier.weight(1f).clearAndSetSemantics { })
                 }
                 Switch(
                     checked = state.isUsingDynamicColor ?: true,
                     onCheckedChange = onToggleDynamicColorValue,
                     enabled = state.isUsingDynamicColor != null && !isRunningOnAPI30OrOlder,
-                    modifier = Modifier.semantics {
+                    modifier = Modifier.size(48.dp).semantics {
                         if (!isRunningOnAPI30OrOlder) {
                             stateDescription = if (state.isUsingDynamicColor == null || state.isUsingDynamicColor == true) {
                                 context.getString(R.string.settings_page_dynamic_colors_on_state_desc)
@@ -356,7 +358,7 @@ fun CreditedText(
                     )
                 }
             ),
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
     }
@@ -384,7 +386,7 @@ fun Preference(
                 contentDescription = context.getString(R.string.settings_page_preference_content_description, label)
             }
     ) {
-        SettingsTitle(text = label)
+        SettingsTitle(text = label, modifier = Modifier.weight(1f))
         Icon(
             imageVector = Icons.Filled.ArrowForward,
             contentDescription = null,
