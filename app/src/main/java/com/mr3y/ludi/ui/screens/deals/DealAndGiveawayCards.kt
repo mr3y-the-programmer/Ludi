@@ -2,13 +2,11 @@ package com.mr3y.ludi.ui.screens.deals
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,7 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -92,34 +92,34 @@ fun Deal(
                     text = salePrice,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
+                    modifier = Modifier.alignByBaseline()
                 )
 
                 val normalPrice = buildAnnotatedString {
                     withStyle(
                         style = MaterialTheme.typography.titleLarge.toSpanStyle().copy(
                             textDecoration = TextDecoration.LineThrough,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
                     ) {
                         append(deal.normalPriceInUsDollar.toString())
                     }
-                    withStyle(style = MaterialTheme.typography.titleSmall.toSpanStyle().copy(color = MaterialTheme.colorScheme.onSurfaceVariant)) {
+                    withStyle(style = MaterialTheme.typography.titleSmall.toSpanStyle().copy(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f))) {
                         append('$')
                     }
                 }
                 Text(
                     text = normalPrice,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.alignByBaseline()
                 )
             }
             Text(
                 text = "You save: ${deal.savings.roundToInt()}%",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis
             )
@@ -143,6 +143,7 @@ fun GamerPowerGameGiveaway(
         title = giveaway?.title,
         contentDesc = contentDescription,
         modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         onClick = onClick
     ) {
         if (giveaway != null) {
@@ -163,20 +164,14 @@ fun GamerPowerGameGiveaway(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Box {
-                Text(
-                    text = "\n\n\n",
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = "${giveaway.users} users have claimed this giveaway",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 3,
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            Text(
+                text = "${giveaway.users} users have claimed this giveaway",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                maxLines = 2,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -195,6 +190,7 @@ private fun OfferScaffold(
     title: String?,
     contentDesc: String?,
     modifier: Modifier = Modifier,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
     onClick: () -> Unit,
     other: @Composable ColumnScope.() -> Unit
 ) {
@@ -212,31 +208,36 @@ private fun OfferScaffold(
                 }
             }
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .defaultPlaceholder(isVisible = title == null),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AsyncImage(
                 model = thumbnailUrl,
+                placeholder = painterResource(id = R.drawable.placeholder),
+                error = painterResource(id = R.drawable.placeholder),
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f),
+                    .fillMaxWidth()
+                    .aspectRatio(1.5f),
                 contentDescription = null,
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.FillBounds,
+                filterQuality = FilterQuality.Medium
             )
             if (title != null) {
                 Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 8.dp)
+                        .padding(bottom = 8.dp),
+                    verticalArrangement = verticalArrangement
                 ) {
                     Text(
                         text = title,
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
+                        maxLines = 2,
                         textAlign = TextAlign.Start,
                         overflow = TextOverflow.Ellipsis
                     )
