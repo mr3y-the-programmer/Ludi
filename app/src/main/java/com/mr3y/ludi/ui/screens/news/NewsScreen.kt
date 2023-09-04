@@ -1,7 +1,9 @@
 package com.mr3y.ludi.ui.screens.news
 
 import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.TrendingUp
@@ -289,6 +292,7 @@ fun LazyListScope.NewReleasesSection(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T : Article> FeedSectionScaffold(
     sectionFeedResult: Result<List<T>, Throwable>,
@@ -297,7 +301,10 @@ fun <T : Article> FeedSectionScaffold(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(16.dp),
     itemContent: @Composable (T?) -> Unit
 ) {
+    val state = rememberLazyListState()
     LazyRow(
+        state = state,
+        flingBehavior = rememberSnapFlingBehavior(lazyListState = state),
         modifier = modifier,
         horizontalArrangement = horizontalArrangement
     ) {
