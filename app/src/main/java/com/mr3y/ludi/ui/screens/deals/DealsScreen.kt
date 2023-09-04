@@ -1,6 +1,8 @@
 package com.mr3y.ludi.ui.screens.deals
 
 import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -75,7 +77,11 @@ fun DealsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterialApi::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 fun DealsScreen(
     dealsState: DealsState,
@@ -156,6 +162,7 @@ fun DealsScreen(
                     AnimatedNoInternetBanner()
                     LazyColumn(
                         state = listState,
+                        flingBehavior = rememberSnapFlingBehavior(listState),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         if (selectedTab == 0) {
