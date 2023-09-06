@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -131,7 +132,11 @@ fun SelectingFavouriteGamesPage(
                 disabledIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent
+                errorIndicatorColor = Color.Transparent,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp),
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp),
+                errorContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp),
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp)
             ),
             leadingIcon = {
                 IconButton(
