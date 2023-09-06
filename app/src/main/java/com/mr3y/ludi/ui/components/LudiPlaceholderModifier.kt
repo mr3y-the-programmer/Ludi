@@ -4,9 +4,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.placeholder
-import com.google.accompanist.placeholder.material.shimmer
+import io.github.fornewid.placeholder.foundation.PlaceholderHighlight
+import io.github.fornewid.placeholder.material3.placeholder
+import io.github.fornewid.placeholder.material3.shimmer
 
 fun Modifier.defaultPlaceholder(
     isVisible: Boolean,

@@ -67,8 +67,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.fade
+import io.github.fornewid.placeholder.foundation.PlaceholderHighlight
+import io.github.fornewid.placeholder.material3.fade
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.Result
