@@ -14,5 +14,5 @@ abstract class RSSFeedDataSourcesModule {
 
     @Binds
     @Singleton
-    abstract fun DefaultRSSFeedDataSource.bindRSSFeedDataSource(): RSSFeedDataSource
+    abstract fun bindRSSFeedDataSource(impl: DefaultRSSFeedDataSource): RSSFeedDataSource
 }
