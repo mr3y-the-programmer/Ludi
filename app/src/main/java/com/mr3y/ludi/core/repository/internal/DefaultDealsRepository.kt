@@ -1,5 +1,6 @@
 package com.mr3y.ludi.core.repository.internal
 
+import com.mr3y.ludi.core.CrashReporting
 import com.mr3y.ludi.core.model.Deal
 import com.mr3y.ludi.core.model.GiveawayEntry
 import com.mr3y.ludi.core.model.Result
@@ -21,14 +22,15 @@ import javax.inject.Inject
 
 class DefaultDealsRepository @Inject constructor(
     private val cheapSharkDataSource: CheapSharkDataSource,
-    private val gamerPowerDataSource: GamerPowerDataSource
+    private val gamerPowerDataSource: GamerPowerDataSource,
+    private val crashReporting: CrashReporting
 ) : DealsRepository {
 
     override suspend fun queryDeals(queryParameters: DealsQueryParameters): Result<List<Deal>, Throwable> {
         val fullUrl = buildDealsFullUrl(endpointUrl = "$CheapSharkBaseUrl/deals", queryParameters)
         return when (val result = cheapSharkDataSource.queryLatestDeals(fullUrl)) {
             is ApiResult.Success -> Result.Success(result.value.map(CheapSharkDeal::toDeal))
-            is ApiResult.Failure -> result.toCoreErrorResult()
+            is ApiResult.Failure -> result.toCoreErrorResult().also { reportExceptions(it, "Error occurred while querying deals with query $queryParameters") }
         }
     }
 
@@ -40,7 +42,13 @@ class DefaultDealsRepository @Inject constructor(
         }
         return when (val result = gamerPowerDataSource.queryLatestGiveaways(fullUrl)) {
             is ApiResult.Success -> Result.Success(result.value.map(GamerPowerGiveawayEntry::toGiveawayEntry))
-            is ApiResult.Failure -> result.toCoreErrorResult()
+            is ApiResult.Failure -> result.toCoreErrorResult().also { reportExceptions(it, "Error occurred while querying giveaways with query $queryParameters") }
+        }
+    }
+
+    private fun reportExceptions(result: Result.Error, message: String?) {
+        if (result.exception != null) {
+            crashReporting.recordException(result.exception, message)
         }
     }
 

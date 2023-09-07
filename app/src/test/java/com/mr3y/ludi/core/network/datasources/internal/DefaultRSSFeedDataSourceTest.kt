@@ -2,6 +2,7 @@ package com.mr3y.ludi.core.network.datasources.internal
 
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import com.mr3y.ludi.core.FakeCrashReporting
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.network.fixtures.TestLogger
@@ -111,7 +112,7 @@ class DefaultRSSFeedDataSourceTest {
         @JvmStatic
         @BeforeClass
         fun setUp() {
-            sut = DefaultRSSFeedDataSource(rssParser, TestLogger)
+            sut = DefaultRSSFeedDataSource(rssParser, TestLogger, FakeCrashReporting())
         }
     }
 }
