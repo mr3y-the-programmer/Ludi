@@ -219,8 +219,8 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.coil)
-    implementation(libs.accompanist.placeholder)
     implementation(libs.accompanist.system.ui.controller)
+    implementation(libs.fornewid.placeholder)
     implementation(libs.compose.html)
     // Palette
     implementation(libs.androidx.palette)

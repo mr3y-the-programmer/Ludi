@@ -18,13 +18,13 @@ abstract class RepositoriesModule {
 
     @Binds
     @Singleton
-    abstract fun DefaultNewsRepository.bindNewsRepository(): NewsRepository
+    abstract fun bindNewsRepository(impl: DefaultNewsRepository): NewsRepository
 
     @Binds
     @Singleton
-    abstract fun DefaultGamesRepository.bindGamesRepository(): GamesRepository
+    abstract fun bindGamesRepository(impl: DefaultGamesRepository): GamesRepository
 
     @Binds
     @Singleton
-    abstract fun DefaultDealsRepository.bindDealsRepository(): DealsRepository
+    abstract fun bindDealsRepository(impl: DefaultDealsRepository): DealsRepository
 }

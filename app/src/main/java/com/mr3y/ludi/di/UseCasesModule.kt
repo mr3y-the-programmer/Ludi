@@ -16,9 +16,9 @@ abstract class UseCasesModule {
 
     @Binds
     @Singleton
-    abstract fun GetSuggestedGamesUseCaseImpl.bindSuggestedGamesUseCase(): GetSuggestedGamesUseCase
+    abstract fun bindSuggestedGamesUseCase(impl: GetSuggestedGamesUseCaseImpl): GetSuggestedGamesUseCase
 
     @Binds
     @Singleton
-    abstract fun GetSearchQueryBasedGamesUseCaseImpl.bindSearchQueryBasedGamesUseCase(): GetSearchQueryBasedGamesUseCase
+    abstract fun bindSearchQueryBasedGamesUseCase(impl: GetSearchQueryBasedGamesUseCaseImpl): GetSearchQueryBasedGamesUseCase
 }
