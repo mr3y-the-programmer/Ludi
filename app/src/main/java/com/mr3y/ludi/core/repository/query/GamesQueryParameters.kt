@@ -78,6 +78,7 @@ internal fun buildGamesFullUrl(endpointUrl: String, queryParameters: GamesQueryP
         }
         if (queryParameters.pageSize != null) {
             append("page_size=${queryParameters.pageSize}&")
+
         }
         if (queryParameters.searchQuery != null) {
             append("search=${queryParameters.searchQuery}&")
