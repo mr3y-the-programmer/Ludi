@@ -67,8 +67,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import io.github.fornewid.placeholder.foundation.PlaceholderHighlight
-import io.github.fornewid.placeholder.material3.fade
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.Result
@@ -81,6 +79,8 @@ import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.screens.discover.gamesSamples
 import com.mr3y.ludi.ui.theme.LudiTheme
 import com.mr3y.ludi.ui.theme.rating_star
+import io.github.fornewid.placeholder.foundation.PlaceholderHighlight
+import io.github.fornewid.placeholder.material3.fade
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
