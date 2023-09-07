@@ -1,6 +1,7 @@
 package com.mr3y.ludi.core.network.datasources.internal
 
 import co.touchlab.kermit.Logger
+import com.mr3y.ludi.core.CrashReporting
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.network.datasources.RSSFeedDataSource
@@ -11,7 +12,8 @@ import javax.inject.Inject
 
 class DefaultRSSFeedDataSource @Inject constructor(
     private val parser: Parser,
-    private val logger: Logger
+    private val logger: Logger,
+    private val crashReporting: CrashReporting
 ) : RSSFeedDataSource {
 
     override suspend fun fetchNewsFeed(source: Source): Result<List<Article>, Throwable>? {
@@ -42,7 +44,9 @@ class DefaultRSSFeedDataSource @Inject constructor(
                 logger.d(e) { "Cancelled fetching rss feed from $url Coroutine!" }
                 throw e
             }
-            logger.e(e) { "Error occurred while trying to fetch rss feed from $url" }
+            val errorMessage = "Error occurred while trying to fetch rss feed from $url"
+            logger.e(e) { errorMessage }
+            crashReporting.recordException(e, errorMessage)
             Result.Error(e)
         }
     }

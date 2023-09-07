@@ -1,5 +1,6 @@
 package com.mr3y.ludi.core.repository.internal
 
+import com.mr3y.ludi.core.CrashReporting
 import com.mr3y.ludi.core.model.GamesGenresPage
 import com.mr3y.ludi.core.model.GamesPage
 import com.mr3y.ludi.core.model.Result
@@ -14,7 +15,8 @@ import com.slack.eithernet.ApiResult
 import javax.inject.Inject
 
 class DefaultGamesRepository @Inject constructor(
-    private val rawgDataSource: RAWGDataSource
+    private val rawgDataSource: RAWGDataSource,
+    private val crashReporting: CrashReporting
 ) : GamesRepository {
 
     override suspend fun queryGames(queryParameters: GamesQueryParameters): Result<GamesPage, Throwable> {
@@ -24,7 +26,11 @@ class DefaultGamesRepository @Inject constructor(
                 Result.Success(result.value.toGamesPage())
             }
             is ApiResult.Failure -> {
-                result.toCoreErrorResult()
+                val errorResult = result.toCoreErrorResult()
+                if (errorResult.exception != null) {
+                    crashReporting.recordException(errorResult.exception, logMessage = "Error occurred while querying RAWG Games with query $queryParameters")
+                }
+                errorResult
             }
         }
     }
@@ -35,7 +41,11 @@ class DefaultGamesRepository @Inject constructor(
                 Result.Success(result.value.toGamesGenresPage())
             }
             is ApiResult.Failure -> {
-                result.toCoreErrorResult()
+                val errorResult = result.toCoreErrorResult()
+                if (errorResult.exception != null) {
+                    crashReporting.recordException(errorResult.exception, logMessage = "Error occurred while querying RAWG game Genres")
+                }
+                errorResult
             }
         }
     }
