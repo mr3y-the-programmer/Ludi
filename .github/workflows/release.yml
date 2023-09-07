@@ -80,4 +80,4 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "./app/build/outputs/apk/release/app-release.apk"
-          body: "${{ steps.build_changelog.outputs.changelog }}"
+          body: ${{ steps.build_changelog.outputs.changelog }}
