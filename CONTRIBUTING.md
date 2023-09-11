@@ -1,7 +1,6 @@
 ## Development Setup:
 - You need JDK 17 or higher.
-- You need Gradle 8.2+.
-- Go to https://rawg.io/apidocs to Optain your API key.
+- Go to https://rawg.io/apidocs to Obtain your API key.
 - Add `RAWG_API_KEY=<YOUR_API_KEY>` to local.properties file, and replace `<YOUR_API_KEY>` with your obtained API key.
 - Run `./gradlew generateNonAndroidBuildConfig`.
 
