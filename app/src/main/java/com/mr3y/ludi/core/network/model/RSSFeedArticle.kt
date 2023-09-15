@@ -10,10 +10,8 @@ import com.prof.rssparser.Article
 
 fun Article.toNewsArticle(source: Source): NewsArticle? {
     return NewsArticle(
-        id = null,
         title = Title.Plain(title ?: return null),
         description = description?.let { MarkupText(it) },
-        thumbnailUrl = null,
         source = source,
         sourceLinkUrl = link ?: return null,
         content = content?.let { MarkupText(it) },
