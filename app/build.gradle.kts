@@ -238,7 +238,6 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.strikt)
     testImplementation(libs.turbine)
-    testImplementation(libs.mockk)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.compose.ui.test.junit4)
