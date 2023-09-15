@@ -8,6 +8,7 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.mr3y.ludi.core.CrashReporting
 import com.mr3y.ludi.core.internal.CrashlyticsReporting
+import com.mr3y.ludi.core.internal.KermitLogger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +23,12 @@ object LoggingModule {
     @Provides
     fun provideLoggerInstance(): Logger {
         return Logger(config = loggerConfigInit(platformLogWriter()))
+    }
+
+    @Singleton
+    @Provides
+    fun provideKermitLoggerInstance(kermitLogger: Logger): com.mr3y.ludi.core.Logger {
+        return KermitLogger(delegatingLogger = kermitLogger)
     }
 
     @Singleton

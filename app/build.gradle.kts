@@ -245,7 +245,6 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(testFixtures(libs.eithernet))
     testImplementation(libs.mockwebserver)
-    testImplementation(libs.kermit.test)
 
     // Instrumented tests: jUnit rules and runners
 

@@ -125,7 +125,7 @@ class DefaultRSSFeedDataSourceTest {
         @JvmStatic
         @BeforeClass
         fun setUp() {
-            sut = DefaultRSSFeedDataSource(rssParser, TestLogger, FakeCrashReporting())
+            sut = DefaultRSSFeedDataSource(rssParser, TestLogger(), FakeCrashReporting())
         }
     }
 }

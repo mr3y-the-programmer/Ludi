@@ -1,6 +1,6 @@
 package com.mr3y.ludi.core.repository.internal
 
-import co.touchlab.kermit.Logger
+import com.mr3y.ludi.core.Logger
 import com.mr3y.ludi.core.model.Article
 import com.mr3y.ludi.core.model.NewReleaseArticle
 import com.mr3y.ludi.core.model.NewsArticle

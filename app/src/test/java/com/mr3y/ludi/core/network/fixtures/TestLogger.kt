@@ -1,39 +1,41 @@
 package com.mr3y.ludi.core.network.fixtures
 
-import co.touchlab.kermit.ExperimentalKermitApi
-import co.touchlab.kermit.LogWriter
-import co.touchlab.kermit.Logger
-import co.touchlab.kermit.Severity
-import co.touchlab.kermit.TestConfig
-import co.touchlab.kermit.TestLogWriter
+import com.mr3y.ludi.core.Logger
 
-@OptIn(ExperimentalKermitApi::class)
-fun logger(severity: Severity = Severity.Verbose, logWriter: LogWriter? = null): Logger {
-    return Logger(
-        config = TestConfig(
-            minSeverity = severity,
-            logWriterList = listOf(logWriter ?: TestLogWriter(loggable = severity))
-        )
-    )
-}
-
-@OptIn(ExperimentalKermitApi::class)
-val TestLogger = Logger(
-    config = TestConfig(
-        minSeverity = Severity.Verbose,
-        logWriterList = listOf(PrintlnLogWriter())
-    )
-)
-
-class PrintlnLogWriter : LogWriter() {
+class TestLogger : Logger {
 
     private val _logs = mutableListOf<String>()
     val logs: List<String>
         get() = _logs
 
-    override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
-        _logs += message
-        if (throwable != null) println("$message $throwable") else println(message)
+    override fun d(throwable: Throwable?, tag: String, message: () -> String) {
+        val evaluatedMessage = message()
+        _logs += evaluatedMessage
+        println("$tag: $evaluatedMessage")
+    }
+
+    override fun i(throwable: Throwable?, tag: String, message: () -> String) {
+        val evaluatedMessage = message()
+        _logs += evaluatedMessage
+        println("$tag: $evaluatedMessage")
+    }
+
+    override fun e(throwable: Throwable?, tag: String, message: () -> String) {
+        val evaluatedMessage = message()
+        _logs += evaluatedMessage
+        println("$tag: $evaluatedMessage - $throwable")
+    }
+
+    override fun v(throwable: Throwable?, tag: String, message: () -> String) {
+        val evaluatedMessage = message()
+        _logs += evaluatedMessage
+        println("$tag: $evaluatedMessage")
+    }
+
+    override fun w(throwable: Throwable?, tag: String, message: () -> String) {
+        val evaluatedMessage = message()
+        _logs += evaluatedMessage
+        println("$tag: $evaluatedMessage - $throwable")
     }
 
     fun reset() {
