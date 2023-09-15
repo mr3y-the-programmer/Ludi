@@ -2,43 +2,51 @@ package com.mr3y.ludi.core.network.datasources.internal
 
 import co.touchlab.kermit.Logger
 import com.mr3y.ludi.core.CrashReporting
+import com.mr3y.ludi.core.model.Article
+import com.mr3y.ludi.core.model.NewReleaseArticle
+import com.mr3y.ludi.core.model.NewsArticle
 import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.model.ReviewArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.network.datasources.RSSFeedDataSource
-import com.prof.rssparser.Article
-import com.prof.rssparser.Parser
+import com.mr3y.ludi.core.network.rssparser.Parser
 import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
 
+@Suppress("UNCHECKED_CAST")
 class DefaultRSSFeedDataSource @Inject constructor(
     private val parser: Parser,
     private val logger: Logger,
     private val crashReporting: CrashReporting
 ) : RSSFeedDataSource {
 
-    override suspend fun fetchNewsFeed(source: Source): Result<List<Article>, Throwable>? {
+    override suspend fun fetchNewsFeed(source: Source): Result<List<NewsArticle>, Throwable>? {
         logger.d { "Fetching ${source.name} News Feed" }
         val url = supportedNewsFeedDataSources.entries.firstOrNull { it.key == source }?.value ?: return null
-        return fetchFeedFromUrl(url)
+        return fetchFeedFromUrl(url, source, Type.News) as Result<List<NewsArticle>, Throwable>
     }
 
-    override suspend fun fetchReviewsFeed(source: Source): Result<List<Article>, Throwable>? {
+    override suspend fun fetchReviewsFeed(source: Source): Result<List<ReviewArticle>, Throwable>? {
         logger.d { "Fetching ${source.name} Reviews Feed" }
         val url = supportedReviewsFeedDataSources.entries.firstOrNull { it.key == source }?.value ?: return null
-        return fetchFeedFromUrl(url)
+        return fetchFeedFromUrl(url, source, Type.Reviews) as Result<List<ReviewArticle>, Throwable>
     }
 
-    override suspend fun fetchNewReleasesFeed(source: Source): Result<List<Article>, Throwable>? {
+    override suspend fun fetchNewReleasesFeed(source: Source): Result<List<NewReleaseArticle>, Throwable>? {
         logger.d { "Fetching ${source.name} New releases Feed" }
         val url = supportedNewReleasesFeedDataSources.entries.firstOrNull { it.key == source }?.value ?: return null
-        return fetchFeedFromUrl(url)
+        return fetchFeedFromUrl(url, source, Type.NewReleases) as Result<List<NewReleaseArticle>, Throwable>
     }
 
-    private suspend fun fetchFeedFromUrl(url: String): Result<List<Article>, Throwable> {
+    private suspend fun fetchFeedFromUrl(url: String, source: Source, type: Type): Result<List<Article>, Throwable> {
         return try {
-            parser.getChannel(url)
-                .articles
-                .let { Result.Success(it) }
+            when (type) {
+                Type.News -> parser.parseNewsArticlesAtUrl(url, source)
+                Type.Reviews -> parser.parseReviewArticlesAtUrl(url, source)
+                Type.NewReleases -> parser.parseNewReleaseArticlesAtUrl(url, source)
+            }.let {
+                Result.Success(it.filterNotNull())
+            }
         } catch (e: Exception) {
             if (e is CancellationException) {
                 logger.d(e) { "Cancelled fetching rss feed from $url Coroutine!" }
@@ -49,6 +57,12 @@ class DefaultRSSFeedDataSource @Inject constructor(
             crashReporting.recordException(e, errorMessage)
             Result.Error(e)
         }
+    }
+
+    private enum class Type {
+        News,
+        Reviews,
+        NewReleases
     }
 
     companion object {

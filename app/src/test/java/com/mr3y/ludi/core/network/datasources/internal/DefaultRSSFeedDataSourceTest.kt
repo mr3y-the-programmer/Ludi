@@ -3,14 +3,15 @@ package com.mr3y.ludi.core.network.datasources.internal
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import com.mr3y.ludi.core.FakeCrashReporting
+import com.mr3y.ludi.core.model.NewReleaseArticle
+import com.mr3y.ludi.core.model.NewsArticle
 import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.core.model.ReviewArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.network.fixtures.TestLogger
-import com.prof.rssparser.Article
-import com.prof.rssparser.Parser
-import io.mockk.coEvery
-import io.mockk.mockk
+import com.mr3y.ludi.core.network.rssparser.FakeRSSParser
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,6 +20,7 @@ import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNull
 
+@Suppress("UNCHECKED_CAST")
 @RunWith(TestParameterInjector::class)
 class DefaultRSSFeedDataSourceTest {
 
@@ -29,15 +31,17 @@ class DefaultRSSFeedDataSourceTest {
             return@runTest
         }
         // given a mocked request with sample data
-        coEvery { rssParser.getChannel(url) } returns RSSFeedSamples.NewsFeed.channel
+        rssParser.setNewsArticlesAtUrl(url) {
+            RSSFeedSamples.NewsFeed.articles as List<NewsArticle>
+        }
 
         // when trying to fetch rss feed
         val result = sut.fetchNewsFeed(source)
 
         // then assert we got the sample data parsed & transformed to our typed model
-        expectThat(result).isA<Result.Success<List<Article>>>()
+        expectThat(result).isA<Result.Success<List<NewsArticle>>>()
         result as Result.Success
-        expectThat(result.data).isEqualTo(RSSFeedSamples.NewsFeed.expectedArticles)
+        expectThat(result.data).isEqualTo(RSSFeedSamples.NewsFeed.articles as List<NewsArticle>)
     }
 
     @Test
@@ -47,15 +51,17 @@ class DefaultRSSFeedDataSourceTest {
             return@runTest
         }
         // given a mocked request with sample data
-        coEvery { rssParser.getChannel(url) } returns RSSFeedSamples.ReviewsFeed.channel
+        rssParser.setReviewArticlesAtUrl(url) {
+            RSSFeedSamples.ReviewsFeed.articles as List<ReviewArticle>
+        }
 
         // when trying to fetch rss feed
         val result = sut.fetchReviewsFeed(source)
 
         // then assert we got the sample data parsed & transformed to our typed model
-        expectThat(result).isA<Result.Success<List<Article>>>()
+        expectThat(result).isA<Result.Success<List<ReviewArticle>>>()
         result as Result.Success
-        expectThat(result.data).isEqualTo(RSSFeedSamples.ReviewsFeed.expectedArticles)
+        expectThat(result.data).isEqualTo(RSSFeedSamples.ReviewsFeed.articles as List<ReviewArticle>)
     }
 
     @Test
@@ -65,21 +71,23 @@ class DefaultRSSFeedDataSourceTest {
             return@runTest
         }
         // given a mocked request with sample data
-        coEvery { rssParser.getChannel(url) } returns RSSFeedSamples.NewReleasesFeed.channel
+        rssParser.setNewReleaseArticlesAtUrl(url) {
+            RSSFeedSamples.NewReleasesFeed.articles as List<NewReleaseArticle>
+        }
 
         // when trying to fetch rss feed
         val result = sut.fetchNewReleasesFeed(source)
 
         // then assert we got the sample data parsed & transformed to our typed model
-        expectThat(result).isA<Result.Success<List<Article>>>()
+        expectThat(result).isA<Result.Success<List<NewReleaseArticle>>>()
         result as Result.Success
-        expectThat(result.data).isEqualTo(RSSFeedSamples.NewReleasesFeed.expectedArticles)
+        expectThat(result.data).isEqualTo(RSSFeedSamples.NewReleasesFeed.articles as List<NewReleaseArticle>)
     }
 
     @Test
     fun `when fetching RSS Feed fails expect Result#Error`(@TestParameter source: Source) = runTest {
         // Assuming there is a failure while trying to fetch rss feed
-        coEvery { rssParser.getChannel(any()) } throws Exception()
+        rssParser.simulateFailure()
 
         // when trying to fetch rss feed
         val result1 = sut.fetchNewsFeed(source)
@@ -104,10 +112,15 @@ class DefaultRSSFeedDataSourceTest {
         }
     }
 
+    @After
+    fun cleanup() {
+        rssParser.reset()
+    }
+
     companion object {
 
         private lateinit var sut: DefaultRSSFeedDataSource
-        private val rssParser = mockk<Parser>()
+        private val rssParser = FakeRSSParser()
 
         @JvmStatic
         @BeforeClass
