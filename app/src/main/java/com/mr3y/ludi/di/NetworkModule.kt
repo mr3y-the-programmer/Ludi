@@ -3,6 +3,7 @@ package com.mr3y.ludi.di
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.mr3y.ludi.core.network.interceptors.RAWGAPIKeyInterceptor
+import com.mr3y.ludi.core.network.rssparser.internal.DefaultParser
 import com.prof.rssparser.Parser
 import com.slack.eithernet.ApiResultCallAdapterFactory
 import com.slack.eithernet.ApiResultConverterFactory
@@ -23,11 +24,17 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRssParserInstance(@ApplicationContext context: Context): Parser {
+    fun provideThirdPartyRssParserInstance(@ApplicationContext context: Context): Parser {
         return Parser.Builder()
             .context(context)
             .cacheExpirationMillis(8L * 60L * 60L * 1000L)
             .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideInternalRssParserInstance(parser: Parser): com.mr3y.ludi.core.network.rssparser.Parser {
+        return DefaultParser(parser)
     }
 
     @Provides

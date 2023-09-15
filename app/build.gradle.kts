@@ -238,7 +238,6 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.strikt)
     testImplementation(libs.turbine)
-    testImplementation(libs.mockk)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.compose.ui.test.junit4)
@@ -246,7 +245,6 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(testFixtures(libs.eithernet))
     testImplementation(libs.mockwebserver)
-    testImplementation(libs.kermit.test)
 
     // Instrumented tests: jUnit rules and runners
 

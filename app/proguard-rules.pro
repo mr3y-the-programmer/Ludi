@@ -20,13 +20,12 @@
 # debugging stack traces.
 -keepattributes SourceFile,LineNumberTable
 
--assumenosideeffects class co.touchlab.kermit.Logger {
-    public final *** v(...);
-    public final *** d(...);
-    public final *** e(...);
-    public final *** a(...);
-    public final *** i(...);
-    public final *** w(...);
+-assumenosideeffects class com.mr3y.ludi.core.internal.KermitLogger {
+    public *** v(...);
+    public *** d(...);
+    public *** e(...);
+    public *** i(...);
+    public *** w(...);
 }
 
 -keepclasseswithmembernames class com.mr3y.ludi.datastore.model.** { *; }
