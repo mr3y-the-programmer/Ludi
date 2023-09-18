@@ -201,6 +201,10 @@ dependencies {
     // Network
     implementation(libs.rss.parser)
     implementation(libs.retrofit)
+    implementation(libs.ktor.core)
+    implementation(libs.ktor.okhttp)
+    implementation(libs.ktor.content.negotation)
+    implementation(libs.ktor.kotlinx.serialization)
     implementation(libs.kotlinx.serialization)
     implementation(libs.eithernet)
     implementation(libs.kotlinx.serialization.converter)
@@ -245,6 +249,7 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(testFixtures(libs.eithernet))
     testImplementation(libs.mockwebserver)
+    testImplementation(libs.ktor.client.mock)
 
     // Instrumented tests: jUnit rules and runners
 

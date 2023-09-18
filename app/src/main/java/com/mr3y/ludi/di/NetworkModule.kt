@@ -1,21 +1,20 @@
 package com.mr3y.ludi.di
 
 import android.content.Context
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.mr3y.ludi.core.network.interceptors.RAWGAPIKeyInterceptor
+import com.mr3y.ludi.BuildConfig
 import com.mr3y.ludi.core.network.rssparser.internal.DefaultParser
 import com.prof.rssparser.Parser
-import com.slack.eithernet.ApiResultCallAdapterFactory
-import com.slack.eithernet.ApiResultConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.api.createClientPlugin
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Module
@@ -45,19 +44,21 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkhttpClient(): OkHttpClient {
-        return OkHttpClient.Builder().addInterceptor(RAWGAPIKeyInterceptor()).build()
-    }
-
-    @Singleton
-    @Provides
-    fun provideRetrofitInstance(okHttpClient: OkHttpClient, jsonInstance: Json): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://www.mmobomb.com/api1/")
-            .client(okHttpClient)
-            .addConverterFactory(ApiResultConverterFactory)
-            .addCallAdapterFactory(ApiResultCallAdapterFactory)
-            .addConverterFactory(jsonInstance.asConverterFactory("application/json".toMediaType()))
-            .build()
+    fun provideKtorClientInstance(jsonInstance: Json): HttpClient {
+        val rawgApiInterceptorPlugin = createClientPlugin("RAWGAPIKeyInterceptor") {
+            onRequest { request, _ ->
+                if (request.url.toString().contains("api.rawg.io")) {
+                    request.url {
+                        parameters.append("key", BuildConfig.RAWG_API_KEY)
+                    }
+                }
+            }
+        }
+        return HttpClient(OkHttp) {
+            install(rawgApiInterceptorPlugin)
+            install(ContentNegotiation) {
+                json(jsonInstance)
+            }
+        }
     }
 }
