@@ -31,8 +31,8 @@
 -keepclasseswithmembernames class com.mr3y.ludi.datastore.model.** { *; }
 
 # TODO: remove these rules once https://github.com/square/retrofit/issues/3751 is solved.
--keep,allowobfuscation,allowshrinking interface retrofit2.Call
--keep,allowobfuscation,allowshrinking class retrofit2.Response
+#-keep,allowobfuscation,allowshrinking interface retrofit2.Call
+#-keep,allowobfuscation,allowshrinking class retrofit2.Response
 
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 

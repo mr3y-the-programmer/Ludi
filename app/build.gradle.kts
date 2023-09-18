@@ -200,14 +200,11 @@ dependencies {
 
     // Network
     implementation(libs.rss.parser)
-    implementation(libs.retrofit)
     implementation(libs.ktor.core)
     implementation(libs.ktor.okhttp)
     implementation(libs.ktor.content.negotation)
     implementation(libs.ktor.kotlinx.serialization)
     implementation(libs.kotlinx.serialization)
-    implementation(libs.eithernet)
-    implementation(libs.kotlinx.serialization.converter)
 
     // Arch Components
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -247,8 +244,6 @@ dependencies {
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.test.parameter.injector)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(testFixtures(libs.eithernet))
-    testImplementation(libs.mockwebserver)
     testImplementation(libs.ktor.client.mock)
 
     // Instrumented tests: jUnit rules and runners
