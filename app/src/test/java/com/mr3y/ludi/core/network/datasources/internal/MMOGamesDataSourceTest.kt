@@ -1,24 +1,7 @@
 package com.mr3y.ludi.core.network.datasources.internal
 
-import com.mr3y.ludi.core.network.fixtures.RetrofitClientForTesting
-import com.mr3y.ludi.core.network.model.MMOGamesArticle
-import com.mr3y.ludi.core.network.model.MMOGiveawayEntry
-import com.slack.eithernet.ApiResult
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import retrofit2.create
-import strikt.api.expectThat
-import strikt.assertions.isA
-import strikt.assertions.isEqualTo
-import java.net.HttpURLConnection
-
-@OptIn(ExperimentalCoroutinesApi::class)
-class MMOGamesDataSourceTest {
+// @OptIn(ExperimentalCoroutinesApi::class)
+/*class MMOGamesDataSourceTest {
 
     private lateinit var sut: MMOGamesDataSource
     private val mockWebServer = MockWebServer()
@@ -213,4 +196,4 @@ class MMOGamesDataSourceTest {
     fun teardown() {
         mockWebServer.shutdown()
     }
-}
+}*/

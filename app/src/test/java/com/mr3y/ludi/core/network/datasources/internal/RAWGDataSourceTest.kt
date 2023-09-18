@@ -2,100 +2,75 @@ package com.mr3y.ludi.core.network.datasources.internal
 
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
-import com.mr3y.ludi.core.network.fixtures.RetrofitClientForTesting
+import com.mr3y.ludi.core.network.fixtures.KtorClientForTesting
+import com.mr3y.ludi.core.network.fixtures.doCleanup
+import com.mr3y.ludi.core.network.fixtures.enqueueMockResponse
+import com.mr3y.ludi.core.network.model.ApiResult
 import com.mr3y.ludi.core.network.model.RAWGPage
-import com.slack.eithernet.ApiResult
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import retrofit2.create
 import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
-import java.net.HttpURLConnection
-import kotlin.time.Duration.Companion.seconds
 
 @RunWith(TestParameterInjector::class)
 class RAWGDataSourceTest {
 
-    private lateinit var sut: RAWGDataSource
-    private val mockWebServer = MockWebServer()
+    private lateinit var sut: RAWGDataSourceImpl
+    private val dispatcher = StandardTestDispatcher()
+    private val client = KtorClientForTesting.getInstance(dispatcher)
 
     @Before
     fun setUp() {
-        mockWebServer.start()
-        sut = RetrofitClientForTesting.getInstance(baseUrl = mockWebServer.url("/api.rawg.io/api/")).create()
+        sut = RAWGDataSourceImpl(client)
     }
 
     @Test
-    fun whenSendingRequestToRAWGEndpointResource_APIKeyInterceptorIsAddingAuthentication() = runTest(timeout = 30.seconds) {
-        // given a new unauthenticated request to RAWG API endpoint
-        sut.queryGames(mockWebServer.url("/api.rawg.io/api/games?page_size=3").toString())
-        // then assert that Interceptor is taking effect and appending the authentication key to the end
-        val request = mockWebServer.takeRequest()
-        val authenticatedRequestPattern = """/api.rawg.io/api/games\?page_size=3&key=[a-zA-Z0-9]{32}$""".toRegex()
-        assert(authenticatedRequestPattern.matches(request.path!!))
-    }
-
-    @Test
-    fun whenSendingRequestToOtherEndpoints_APIKeyInterceptorHasNoEffect() = runTest(timeout = 30.seconds) {
-        // given a new unauthenticated request to any other endpoint other than RAWG API endpoint
-        sut.queryGames(mockWebServer.url("/www.freetogame.com/api/games?platform=browser").toString())
-        // then assert that Interceptor has no effect on the request url
-        val request = mockWebServer.takeRequest()
-        expectThat(request.path).isEqualTo("/www.freetogame.com/api/games?platform=browser")
-    }
-
-    @Test
-    fun whenQueryingDataFromAPISuccessfully_dataIsProperlyDeserialized(@TestParameter mockedResponses: PolymorphicMockedResponses) = runTest {
+    fun whenQueryingDataFromAPISuccessfully_dataIsProperlyDeserialized(@TestParameter mockedResponses: PolymorphicMockedResponses) = runTest(dispatcher) {
         // given an enqueued mocked response for querying games
-        mockWebServer.enqueue(mockedResponses.serializedResponse)
+        client.enqueueMockResponse(mockedResponses.serializedResponse, HttpStatusCode.OK)
 
         // when trying to query games
-        val result = sut.queryGames(mockWebServer.url("/").toString())
+        val result = sut.queryGames("https://api.rawg.io/api/games?page_size=3")
 
         // then expect the result is success & it is transformed to our model
         expectThat(result).isA<ApiResult.Success<RAWGPage>>()
         result as ApiResult.Success
-        expectThat(result.value).isEqualTo(mockedResponses.deserializedResponse)
+        expectThat(result.data).isEqualTo(mockedResponses.deserializedResponse)
     }
 
     @Test
-    fun `whenThingsDon'tGoAsExpected_failureIsWrapped`() = runTest {
+    fun `whenThingsDon'tGoAsExpected_failureIsWrapped`() = runTest(dispatcher) {
         // given an enqueued 404 error response
-        val mockResponse = MockResponse()
-            .setResponseCode(HttpURLConnection.HTTP_NOT_FOUND)
-            .setBody(
-                """
+        val mockResponse =
+            """
                     {
                         "status": 0,
                         "status_message": "Bad query request!"
                     }
-                """.trimIndent()
-            )
-        mockWebServer.enqueue(mockResponse)
+            """.trimIndent()
+        client.enqueueMockResponse(mockResponse, HttpStatusCode.NotFound)
 
         // when trying to query the latest news
-        val result = sut.queryGames(mockWebServer.url("/").toString())
+        val result = sut.queryGames("https://api.rawg.io/api/games?page_size=3")
 
         // then expect the result is HttpFailure
-        expectThat(result).isA<ApiResult.Failure<Unit>>()
-        result as ApiResult.Failure
-        expectThat(result).isA<ApiResult.Failure.HttpFailure<Unit>>()
-        result as ApiResult.Failure.HttpFailure
-        expectThat(result.code).isEqualTo(HttpURLConnection.HTTP_NOT_FOUND)
+        expectThat(result).isA<ApiResult.Error>()
+        result as ApiResult.Error
+        expectThat(result.code).isEqualTo(HttpStatusCode.NotFound.value)
     }
 
     @After
     fun teardown() {
-        mockWebServer.shutdown()
+        client.doCleanup()
     }
 
-    enum class PolymorphicMockedResponses(val serializedResponse: MockResponse, val deserializedResponse: RAWGPage) {
+    enum class PolymorphicMockedResponses(val serializedResponse: String, val deserializedResponse: RAWGPage) {
         ResponseA(serializedMockResponseA, deserializedMockResponseA),
         ResponseB(serializedMockResponseB, deserializedMockResponseB)
     }

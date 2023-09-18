@@ -7,6 +7,7 @@ import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.toCoreErrorResult
 import com.mr3y.ludi.core.network.datasources.internal.CheapSharkDataSource
 import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSource
+import com.mr3y.ludi.core.network.model.ApiResult
 import com.mr3y.ludi.core.network.model.CheapSharkDeal
 import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry
 import com.mr3y.ludi.core.network.model.toDeal
@@ -17,7 +18,6 @@ import com.mr3y.ludi.core.repository.query.GiveawaysQueryParameters
 import com.mr3y.ludi.core.repository.query.buildDealsFullUrl
 import com.mr3y.ludi.core.repository.query.buildGiveawaysFullUrl
 import com.mr3y.ludi.core.repository.query.isValid
-import com.slack.eithernet.ApiResult
 import javax.inject.Inject
 
 class DefaultDealsRepository @Inject constructor(
@@ -29,8 +29,8 @@ class DefaultDealsRepository @Inject constructor(
     override suspend fun queryDeals(queryParameters: DealsQueryParameters): Result<List<Deal>, Throwable> {
         val fullUrl = buildDealsFullUrl(endpointUrl = "$CheapSharkBaseUrl/deals", queryParameters)
         return when (val result = cheapSharkDataSource.queryLatestDeals(fullUrl)) {
-            is ApiResult.Success -> Result.Success(result.value.map(CheapSharkDeal::toDeal))
-            is ApiResult.Failure -> result.toCoreErrorResult().also { reportExceptions(it, "Error occurred while querying deals with query $queryParameters") }
+            is ApiResult.Success -> Result.Success(result.data.map(CheapSharkDeal::toDeal))
+            is ApiResult.Error -> result.toCoreErrorResult().also { reportExceptions(it, "Error occurred while querying deals with query $queryParameters") }
         }
     }
 
@@ -41,8 +41,8 @@ class DefaultDealsRepository @Inject constructor(
             "$GamerPowerBaseUrl/giveaways"
         }
         return when (val result = gamerPowerDataSource.queryLatestGiveaways(fullUrl)) {
-            is ApiResult.Success -> Result.Success(result.value.map(GamerPowerGiveawayEntry::toGiveawayEntry))
-            is ApiResult.Failure -> result.toCoreErrorResult().also { reportExceptions(it, "Error occurred while querying giveaways with query $queryParameters") }
+            is ApiResult.Success -> Result.Success(result.data.map(GamerPowerGiveawayEntry::toGiveawayEntry))
+            is ApiResult.Error -> result.toCoreErrorResult().also { reportExceptions(it, "Error occurred while querying giveaways with query $queryParameters") }
         }
     }
 
