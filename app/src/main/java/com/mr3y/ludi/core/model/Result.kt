@@ -1,6 +1,6 @@
 package com.mr3y.ludi.core.model
 
-import com.slack.eithernet.ApiResult
+import com.mr3y.ludi.core.network.model.ApiResult
 
 sealed interface Result<out T, out E> {
     data object Loading : Result<Nothing, Nothing>
@@ -25,11 +25,6 @@ val <R, E> Result<R, E>.data: R?
 val <R, E> Result<R, E>.exception: Throwable?
     get() = (this as? Result.Error)?.exception
 
-fun <E : Any> ApiResult.Failure<E>.toCoreErrorResult(): Result.Error {
-    return when (this) {
-        is ApiResult.Failure.NetworkFailure -> Result.Error(error)
-        is ApiResult.Failure.HttpFailure -> Result.Error()
-        is ApiResult.Failure.ApiFailure -> Result.Error()
-        is ApiResult.Failure.UnknownFailure -> Result.Error(error)
-    }
+fun ApiResult.Error.toCoreErrorResult(): Result.Error {
+    return Result.Error(throwable)
 }

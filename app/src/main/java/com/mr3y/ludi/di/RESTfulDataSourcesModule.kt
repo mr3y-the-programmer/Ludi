@@ -1,15 +1,16 @@
 package com.mr3y.ludi.di
 
 import com.mr3y.ludi.core.network.datasources.internal.CheapSharkDataSource
+import com.mr3y.ludi.core.network.datasources.internal.CheapSharkDataSourceImpl
 import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSource
-import com.mr3y.ludi.core.network.datasources.internal.MMOGamesDataSource
+import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSourceImpl
 import com.mr3y.ludi.core.network.datasources.internal.RAWGDataSource
+import com.mr3y.ludi.core.network.datasources.internal.RAWGDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
-import retrofit2.create
+import io.ktor.client.HttpClient
 import javax.inject.Singleton
 
 @Module
@@ -18,25 +19,19 @@ object RESTfulDataSourcesModule {
 
     @Singleton
     @Provides
-    fun provideMMOGamesDataSourceInstance(retrofit: Retrofit): MMOGamesDataSource {
-        return retrofit.create()
+    fun provideRAWGDataSourceInstance(client: HttpClient): RAWGDataSource {
+        return RAWGDataSourceImpl(client)
     }
 
     @Singleton
     @Provides
-    fun provideRAWGDataSourceInstance(retrofit: Retrofit): RAWGDataSource {
-        return retrofit.create()
+    fun provideCheapSharkDataSourceInstance(client: HttpClient): CheapSharkDataSource {
+        return CheapSharkDataSourceImpl(client)
     }
 
     @Singleton
     @Provides
-    fun provideCheapSharkDataSourceInstance(retrofit: Retrofit): CheapSharkDataSource {
-        return retrofit.create()
-    }
-
-    @Singleton
-    @Provides
-    fun provideGamerPowerDataSourceInstance(retrofit: Retrofit): GamerPowerDataSource {
-        return retrofit.create()
+    fun provideGamerPowerDataSourceInstance(client: HttpClient): GamerPowerDataSource {
+        return GamerPowerDataSourceImpl(client)
     }
 }

@@ -1,38 +1,36 @@
 package com.mr3y.ludi.core.network.datasources.internal
 
-import com.mr3y.ludi.core.network.fixtures.RetrofitClientForTesting
+import com.mr3y.ludi.core.network.fixtures.KtorClientForTesting
+import com.mr3y.ludi.core.network.fixtures.doCleanup
+import com.mr3y.ludi.core.network.fixtures.enqueueMockResponse
+import com.mr3y.ludi.core.network.model.ApiResult
 import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry
 import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntryStatus
-import com.slack.eithernet.ApiResult
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import retrofit2.create
 import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
-import java.net.HttpURLConnection
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class GamerPowerDataSourceTest {
 
-    private lateinit var sut: GamerPowerDataSource
-    private val mockWebServer = MockWebServer()
+    private lateinit var sut: GamerPowerDataSourceImpl
+    private val dispatcher = StandardTestDispatcher()
+    private val client = KtorClientForTesting.getInstance(dispatcher)
 
     @Before
     fun setUp() {
-        mockWebServer.start()
-        sut = RetrofitClientForTesting.getInstance(baseUrl = mockWebServer.url("/")).create()
+        sut = GamerPowerDataSourceImpl(client)
     }
 
     @Test
-    fun whenQueryingDataFromAPISuccessfully_dataIsProperlyDeserialized() = runTest {
+    fun whenQueryingDataFromAPISuccessfully_dataIsProperlyDeserialized() = runTest(dispatcher) {
         // given an enqueued mocked response for querying giveaways
-        val serializedResponse = MockResponse().setBody(
+        val serializedResponse =
             """
                 [
                   {
@@ -91,8 +89,8 @@ class GamerPowerDataSourceTest {
                   }
                 ]
             """.trimIndent()
-        )
-        mockWebServer.enqueue(serializedResponse)
+
+        client.enqueueMockResponse(serializedResponse, HttpStatusCode.OK)
         val expectedResponse = listOf(
             GamerPowerGiveawayEntry(
                 2301,
@@ -148,42 +146,37 @@ class GamerPowerDataSourceTest {
         )
 
         // when trying to query latest giveaways
-        val result = sut.queryLatestGiveaways(mockWebServer.url("/").toString())
+        val result = sut.queryLatestGiveaways("https://www.gamerpower.com/api/giveaways")
 
         // then expect the result is success & it is transformed to our model
         expectThat(result).isA<ApiResult.Success<List<GamerPowerGiveawayEntry>>>()
         result as ApiResult.Success
-        expectThat(result.value).isEqualTo(expectedResponse)
+        expectThat(result.data).isEqualTo(expectedResponse)
     }
 
     @Test
-    fun `whenThingsDon'tGoAsExpected_failureIsWrapped`() = runTest {
+    fun `whenThingsDon'tGoAsExpected_failureIsWrapped`() = runTest(dispatcher) {
         // given an enqueued 404 error response
-        val mockResponse = MockResponse()
-            .setResponseCode(HttpURLConnection.HTTP_NOT_FOUND)
-            .setBody(
-                """
+        val mockResponse =
+            """
                     {
                         "status": 0,
                         "status_message": "Bad query request!"
                     }
-                """.trimIndent()
-            )
-        mockWebServer.enqueue(mockResponse)
+            """.trimIndent()
+        client.enqueueMockResponse(mockResponse, HttpStatusCode.NotFound)
 
         // when trying to query the latest giveaways
-        val result = sut.queryLatestGiveaways(mockWebServer.url("/").toString())
+        val result = sut.queryLatestGiveaways("https://www.gamerpower.com/api/giveaways")
 
         // then expect the result is HttpFailure
-        expectThat(result).isA<ApiResult.Failure<Unit>>()
-        result as ApiResult.Failure
-        expectThat(result).isA<ApiResult.Failure.HttpFailure<Unit>>()
-        result as ApiResult.Failure.HttpFailure
-        expectThat(result.code).isEqualTo(HttpURLConnection.HTTP_NOT_FOUND)
+        expectThat(result).isA<ApiResult.Error>()
+        result as ApiResult.Error
+        expectThat(result.code).isEqualTo(HttpStatusCode.NotFound.value)
     }
 
     @After
     fun teardown() {
-        mockWebServer.shutdown()
+        client.doCleanup()
     }
 }

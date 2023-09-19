@@ -12,11 +12,9 @@ import com.mr3y.ludi.core.network.model.RAWGStoreProperties
 import com.mr3y.ludi.core.network.model.ShallowRAWGPlatformInfo
 import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfo
 import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfoWithId
-import okhttp3.mockwebserver.MockResponse
 
-val serializedMockResponseA = MockResponse()
-    .setBody(
-        """{
+val serializedMockResponseA =
+    """{
     "count": 886906,
     "next": "https://api.rawg.io/api/games?key=b10a96c96f124283b10cf6f1aa18f973&page=2&page_size=3",
     "previous": null,
@@ -1795,8 +1793,7 @@ val serializedMockResponseA = MockResponse()
         "stores"
     ]
 }
-        """.trimIndent()
-    )
+    """.trimIndent()
 
 val deserializedMockResponseA = RAWGPage(
     count = 886906,
@@ -2940,9 +2937,8 @@ val deserializedMockResponseA = RAWGPage(
     )
 )
 
-val serializedMockResponseB = MockResponse()
-    .setBody(
-        """
+val serializedMockResponseB =
+    """
             {
                 "count": 149,
                 "next": "https://api.rawg.io/api/games?dates=2019-09-01%2C2019-09-30&key=b10a96c96f124283b10cf6f1aa18f973&page=2&page_size=3&platforms=18%2C1%2C7",
@@ -4526,8 +4522,7 @@ val serializedMockResponseB = MockResponse()
                 ],
                 "user_platforms": false
             }
-        """.trimIndent()
-    )
+    """.trimIndent()
 
 val deserializedMockResponseB = RAWGPage(
     count = 149,
