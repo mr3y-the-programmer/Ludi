@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -38,16 +40,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.hilt.getScreenModel
 import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiSectionHeader
+import com.mr3y.ludi.ui.navigation.BottomBarTab
 import com.mr3y.ludi.ui.presenter.DiscoverViewModel
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
@@ -61,10 +67,26 @@ import com.mr3y.ludi.ui.theme.LudiTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 
+object DiscoverScreenTab : Screen, BottomBarTab {
+    override val key: ScreenKey
+        get() = "discover"
+
+    override val label: String
+        get() = "Discover"
+    override val icon: ImageVector
+        get() = Icons.Outlined.Search
+
+    @Composable
+    override fun Content() {
+        val screenModel = getScreenModel<DiscoverViewModel>()
+        DiscoverScreen(viewModel = screenModel)
+    }
+}
+
 @Composable
 fun DiscoverScreen(
     modifier: Modifier = Modifier,
-    viewModel: DiscoverViewModel = hiltViewModel()
+    viewModel: DiscoverViewModel
 ) {
     val discoverState by viewModel.discoverState.collectAsStateWithLifecycle()
     DiscoverScreen(

@@ -8,8 +8,8 @@ import androidx.compose.runtime.snapshots.Snapshot
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.coroutineScope
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.Source
@@ -29,7 +29,6 @@ import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.ui.presenter.model.OnboardingState
 import com.mr3y.ludi.ui.presenter.model.SupportedNewsDataSources
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,7 +48,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-@HiltViewModel
 @OptIn(FlowPreview::class)
 class OnBoardingViewModel @Inject constructor(
     private val gamesRepository: GamesRepository,
@@ -57,7 +55,7 @@ class OnBoardingViewModel @Inject constructor(
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>,
     private val favGenresStore: DataStore<UserFavouriteGenres>,
     private val userPreferences: DataStore<Preferences>
-) : ViewModel() {
+) : ScreenModel {
 
     private val userFollowedNewsSources = followedNewsDataSourcesStore.data
         .catch {
@@ -129,7 +127,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }.map {
         Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGames = false, onboardingGames = it) }
-    }.launchIn(viewModelScope)
+    }.launchIn(coroutineScope)
 
     private val refreshingGenres = MutableStateFlow(0)
 
@@ -139,7 +137,7 @@ class OnBoardingViewModel @Inject constructor(
             gamesRepository.queryGamesGenres().onSuccess { page -> page.genres }
         }.map {
             Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGenres = false, allGamingGenres = it) }
-        }.launchIn(viewModelScope)
+        }.launchIn(coroutineScope)
 
     val onboardingState: StateFlow<OnboardingState> = combine(
         userFollowedNewsSources,
@@ -157,13 +155,13 @@ class OnBoardingViewModel @Inject constructor(
         _internalState
     }
         .stateIn(
-            viewModelScope,
+            coroutineScope,
             SharingStarted.Lazily,
             _internalState
         )
 
     fun unFollowNewsDataSource(source: NewsDataSource) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             followedNewsDataSourcesStore.updateData {
                 val sourceIndex = it.newsDataSourceList.indexOf(source.toFollowedNewsDataSource())
                 // guard against cases where the user follows the source, and then unfollows it immediately after a few milliseconds.
@@ -177,7 +175,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun followNewsDataSource(source: NewsDataSource) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             followedNewsDataSourcesStore.updateData {
                 val followedNewsDataSource = source.toFollowedNewsDataSource()
                 if (followedNewsDataSource.type !in it.newsDataSourceList.map { source -> source.type }) {
@@ -197,7 +195,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun addGameToFavourites(game: FavouriteGame) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             favGamesStore.updateData {
                 val favouriteGame = game.toUserFavouriteGame()
                 if (favouriteGame !in it.favGameList) {
@@ -210,7 +208,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun removeGameFromFavourites(game: FavouriteGame) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             favGamesStore.updateData {
                 val sourceIndex = it.favGameList.indexOf(game.toUserFavouriteGame())
                 // guard against cases where the user adds the game to favourites, and then removes it immediately after a few milliseconds.
@@ -224,7 +222,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun selectGenre(genre: GameGenre) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             favGenresStore.updateData {
                 val favouriteGenre = genre.toUserFavouriteGenre()
                 if (favouriteGenre !in it.favGenreList) {
@@ -237,7 +235,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun unselectGenre(genre: GameGenre) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             favGenresStore.updateData {
                 val sourceIndex = it.favGenreList.indexOf(genre.toUserFavouriteGenre())
                 // guard against cases where the user adds the genre to favourites, and then removes it immediately after a few milliseconds.
@@ -261,7 +259,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun completeOnboarding() {
-        viewModelScope.launch {
+        coroutineScope.launch {
             userPreferences.edit { mutablePreferences ->
                 mutablePreferences[PreferencesKeys.OnBoardingScreenKey] = false
             }

@@ -1,9 +1,9 @@
 package com.mr3y.ludi.ui.presenter
 
 import androidx.datastore.core.DataStore
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.onSuccess
@@ -19,7 +19,9 @@ import com.mr3y.ludi.ui.presenter.model.EditPreferencesState
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.SupportedNewsDataSources
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -28,18 +30,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class EditPreferencesViewModel @Inject constructor(
+class EditPreferencesViewModel @AssistedInject constructor(
     private val gamesRepository: GamesRepository,
     private val favGamesStore: DataStore<UserFavouriteGames>,
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>,
     private val favGenresStore: DataStore<UserFavouriteGenres>,
-    private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
-
-    private val preferencesType: PreferencesType = checkNotNull(savedStateHandle["type"])
+    @Assisted private val preferencesType: PreferencesType
+) : ScreenModel {
 
     private val userFollowedNewsSources = followedNewsDataSourcesStore.data
         .catch {
@@ -95,13 +93,13 @@ class EditPreferencesViewModel @Inject constructor(
             PreferencesType.Games -> EditPreferencesState.FavouriteGames(games)
         }
     }.stateIn(
-        viewModelScope,
+        coroutineScope,
         SharingStarted.Lazily,
         InitialState
     )
 
     fun unFollowNewsDataSource(source: NewsDataSource) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             followedNewsDataSourcesStore.updateData {
                 val sourceIndex = it.newsDataSourceList.indexOf(source.toFollowedNewsDataSource())
                 // guard against cases where the user follows the source, and then unfollows it immediately after a few milliseconds.
@@ -115,7 +113,7 @@ class EditPreferencesViewModel @Inject constructor(
     }
 
     fun followNewsDataSource(source: NewsDataSource) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             followedNewsDataSourcesStore.updateData {
                 val followedNewsDataSource = source.toFollowedNewsDataSource()
                 if (followedNewsDataSource.type !in it.newsDataSourceList.map { source -> source.type }) {
@@ -128,7 +126,7 @@ class EditPreferencesViewModel @Inject constructor(
     }
 
     fun removeGameFromFavourites(game: FavouriteGame) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             favGamesStore.updateData {
                 val sourceIndex = it.favGameList.indexOf(game.toUserFavouriteGame())
                 // guard against cases where the user adds the game to favourites, and then removes it immediately after a few milliseconds.
@@ -142,7 +140,7 @@ class EditPreferencesViewModel @Inject constructor(
     }
 
     fun addToSelectedGenres(genre: GameGenre) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             favGenresStore.updateData {
                 val favouriteGenre = genre.toUserFavouriteGenre()
                 if (favouriteGenre !in it.favGenreList) {
@@ -155,7 +153,7 @@ class EditPreferencesViewModel @Inject constructor(
     }
 
     fun removeFromSelectedGenres(genre: GameGenre) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             favGenresStore.updateData {
                 val sourceIndex = it.favGenreList.indexOf(genre.toUserFavouriteGenre())
                 // guard against cases where the user adds the genre to favourites, and then removes it immediately after a few milliseconds.
@@ -166,6 +164,11 @@ class EditPreferencesViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+        fun create(preferencesType: PreferencesType): EditPreferencesViewModel
     }
 
     companion object {

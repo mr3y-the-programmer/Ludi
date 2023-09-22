@@ -29,6 +29,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.outlined.Upcoming
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -45,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -52,8 +54,12 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Article
 import com.mr3y.ludi.core.model.MarkupText
@@ -68,17 +74,42 @@ import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiSectionHeader
 import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.launchChromeCustomTab
+import com.mr3y.ludi.ui.navigation.BottomBarTab
+import com.mr3y.ludi.ui.navigation.PreferencesType
 import com.mr3y.ludi.ui.presenter.NewsViewModel
 import com.mr3y.ludi.ui.presenter.model.NewsState
 import com.mr3y.ludi.ui.preview.LudiPreview
+import com.mr3y.ludi.ui.screens.settings.EditPreferencesScreen
 import com.mr3y.ludi.ui.theme.LudiTheme
 import java.time.ZonedDateTime
+
+object NewsScreenTab : Screen, BottomBarTab {
+
+    override val key: ScreenKey
+        get() = "news"
+
+    override val label: String
+        get() = "News"
+    override val icon: ImageVector
+        get() = Icons.Outlined.Upcoming
+
+    @Composable
+    override fun Content() {
+        val screenModel = getScreenModel<NewsViewModel>()
+        val navigator = LocalNavigator.currentOrThrow
+
+        NewsScreen(
+            onTuneClick = { navigator.push(EditPreferencesScreen(PreferencesType.NewsDataSources)) },
+            viewModel = screenModel
+        )
+    }
+}
 
 @Composable
 fun NewsScreen(
     onTuneClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: NewsViewModel = hiltViewModel()
+    viewModel: NewsViewModel
 ) {
     val newsState by viewModel.newsState.collectAsStateWithLifecycle()
     NewsScreen(

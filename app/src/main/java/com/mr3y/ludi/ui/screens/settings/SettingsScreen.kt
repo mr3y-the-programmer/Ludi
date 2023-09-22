@@ -22,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -54,16 +56,45 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mr3y.ludi.R
 import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.launchChromeCustomTab
+import com.mr3y.ludi.ui.navigation.BottomBarTab
+import com.mr3y.ludi.ui.navigation.PreferencesType
 import com.mr3y.ludi.ui.presenter.SettingsViewModel
 import com.mr3y.ludi.ui.presenter.model.SettingsState
 import com.mr3y.ludi.ui.presenter.model.Theme
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
+
+object SettingsScreenTab : Screen, BottomBarTab {
+
+    override val key: ScreenKey
+        get() = "settings"
+    override val label: String
+        get() = "Settings"
+    override val icon: ImageVector
+        get() = Icons.Outlined.Settings
+
+    @Composable
+    override fun Content() {
+        val screenModel = getScreenModel<SettingsViewModel>()
+        val navigator = LocalNavigator.currentOrThrow
+
+        SettingsScreen(
+            onFollowedNewsDataSourcesClick = { navigator.push(EditPreferencesScreen(PreferencesType.NewsDataSources)) },
+            onFavouriteGamesClick = { navigator.push(EditPreferencesScreen(PreferencesType.Games)) },
+            onFavouriteGenresClick = { navigator.push(EditPreferencesScreen(PreferencesType.Genres)) },
+            viewModel = screenModel
+        )
+    }
+}
 
 @Composable
 fun SettingsScreen(
@@ -71,7 +102,7 @@ fun SettingsScreen(
     onFavouriteGamesClick: () -> Unit,
     onFavouriteGenresClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel
 ) {
     val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
     SettingsScreen(
@@ -139,9 +170,15 @@ fun SettingsScreen(
                             .semantics(mergeDescendants = true) {
                                 selected = theme == state.selectedTheme
                                 stateDescription = if (theme == state.selectedTheme) {
-                                    context.getString(R.string.settings_page_theme_on_state_desc, theme.label)
+                                    context.getString(
+                                        R.string.settings_page_theme_on_state_desc,
+                                        theme.label
+                                    )
                                 } else {
-                                    context.getString(R.string.settings_page_theme_off_state_desc, theme.label)
+                                    context.getString(
+                                        R.string.settings_page_theme_off_state_desc,
+                                        theme.label
+                                    )
                                 }
                             },
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -149,7 +186,9 @@ fun SettingsScreen(
                         RadioButton(
                             selected = theme == state.selectedTheme,
                             onClick = null,
-                            modifier = Modifier.size(48.dp).clearAndSetSemantics { }
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clearAndSetSemantics { }
                         )
                         Text(
                             text = theme.label,
@@ -181,7 +220,9 @@ fun SettingsScreen(
                 if (isRunningOnAPI30OrOlder) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.weight(1f).clearAndSetSemantics { }
+                        modifier = Modifier
+                            .weight(1f)
+                            .clearAndSetSemantics { }
                     ) {
                         SettingsTitle(text = "Dynamic Colors")
                         Text(
@@ -192,21 +233,29 @@ fun SettingsScreen(
                         )
                     }
                 } else {
-                    SettingsTitle(text = "Dynamic Colors", modifier = Modifier.weight(1f).clearAndSetSemantics { })
+                    SettingsTitle(
+                        text = "Dynamic Colors",
+                        modifier = Modifier
+                            .weight(1f)
+                            .clearAndSetSemantics { }
+                    )
                 }
                 Switch(
                     checked = state.isUsingDynamicColor ?: true,
                     onCheckedChange = onToggleDynamicColorValue,
                     enabled = state.isUsingDynamicColor != null && !isRunningOnAPI30OrOlder,
-                    modifier = Modifier.size(48.dp).semantics {
-                        if (!isRunningOnAPI30OrOlder) {
-                            stateDescription = if (state.isUsingDynamicColor == null || state.isUsingDynamicColor == true) {
-                                context.getString(R.string.settings_page_dynamic_colors_on_state_desc)
-                            } else {
-                                context.getString(R.string.settings_page_dynamic_colors_off_state_desc)
+                    modifier = Modifier
+                        .size(48.dp)
+                        .semantics {
+                            if (!isRunningOnAPI30OrOlder) {
+                                stateDescription =
+                                    if (state.isUsingDynamicColor == null || state.isUsingDynamicColor == true) {
+                                        context.getString(R.string.settings_page_dynamic_colors_on_state_desc)
+                                    } else {
+                                        context.getString(R.string.settings_page_dynamic_colors_off_state_desc)
+                                    }
                             }
                         }
-                    }
                 )
             }
             Divider()
@@ -261,7 +310,8 @@ fun SettingsScreen(
                     text = {
                         Column(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .semantics {
                                     isTraversalGroup = true
                                 }
@@ -383,7 +433,8 @@ fun Preference(
                 onClick = onClick
             )
             .clearAndSetSemantics {
-                contentDescription = context.getString(R.string.settings_page_preference_content_description, label)
+                contentDescription =
+                    context.getString(R.string.settings_page_preference_content_description, label)
             }
     ) {
         SettingsTitle(text = label, modifier = Modifier.weight(1f))

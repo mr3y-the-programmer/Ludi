@@ -67,8 +67,9 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getScreenModel
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.ui.presenter.OnBoardingViewModel
@@ -82,10 +83,18 @@ import kotlinx.coroutines.launch
 
 const val OnboardingPagesCount = 3
 
+object OnboardingScreen : Screen {
+    @Composable
+    override fun Content() {
+        val screenModel = getScreenModel<OnBoardingViewModel>()
+        OnboardingScreen(modifier = Modifier.fillMaxSize(), viewModel = screenModel)
+    }
+}
+
 @Composable
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
-    viewModel: OnBoardingViewModel = hiltViewModel()
+    viewModel: OnBoardingViewModel
 ) {
     val onboardingState by viewModel.onboardingState.collectAsStateWithLifecycle()
     OnboardingScreen(

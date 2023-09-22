@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.coroutineScope
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
 import com.mr3y.ludi.ui.presenter.model.DiscoverState
@@ -17,7 +17,6 @@ import com.mr3y.ludi.ui.presenter.model.Tag
 import com.mr3y.ludi.ui.presenter.model.TaggedGames
 import com.mr3y.ludi.ui.presenter.usecases.GetSearchQueryBasedGamesUseCase
 import com.mr3y.ludi.ui.presenter.usecases.GetSuggestedGamesUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,11 +30,10 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
-@HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val getSuggestedGamesUseCase: GetSuggestedGamesUseCase,
     private val searchQueryBasedGamesUseCase: GetSearchQueryBasedGamesUseCase
-) : ViewModel() {
+) : ScreenModel {
 
     private var searchQuery = mutableStateOf("")
 
@@ -62,7 +60,7 @@ class DiscoverViewModel @Inject constructor(
         }
     }.map {
         Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = false, gamesState = it) }
-    }.launchIn(viewModelScope)
+    }.launchIn(coroutineScope)
 
     val discoverState = combine(
         _filterState,
@@ -73,7 +71,7 @@ class DiscoverViewModel @Inject constructor(
         }
         _internalState
     }.stateIn(
-        viewModelScope,
+        coroutineScope,
         SharingStarted.Lazily,
         _internalState
     )
