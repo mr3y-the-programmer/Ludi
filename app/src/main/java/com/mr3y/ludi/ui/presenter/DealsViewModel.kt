@@ -3,8 +3,8 @@ package com.mr3y.ludi.ui.presenter
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.coroutineScope
 import com.mr3y.ludi.core.model.Deal
 import com.mr3y.ludi.core.model.GiveawayEntry
 import com.mr3y.ludi.core.model.Result
@@ -21,7 +21,6 @@ import com.mr3y.ludi.ui.presenter.model.DealsState
 import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.ui.presenter.model.GiveawaysFiltersState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,11 +33,10 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
-@HiltViewModel
 @OptIn(FlowPreview::class)
 class DealsViewModel @Inject constructor(
     private val dealsRepository: DealsRepository
-) : ViewModel() {
+) : ScreenModel {
 
     private val searchQuery = mutableStateOf("")
     private val dealsFilterState = MutableStateFlow(InitialDealsFiltersState)
@@ -123,7 +121,7 @@ class DealsViewModel @Inject constructor(
             isRefreshingGiveaways = refreshingGiveaways != previousRefreshGiveaways
         )
     }.stateIn(
-        viewModelScope,
+        coroutineScope,
         SharingStarted.Lazily,
         Initial
     )

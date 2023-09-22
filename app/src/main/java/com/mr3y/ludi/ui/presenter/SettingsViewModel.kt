@@ -4,13 +4,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.coroutineScope
 import com.mr3y.ludi.ui.datastore.PreferencesKeys.DynamicColorKey
 import com.mr3y.ludi.ui.datastore.PreferencesKeys.SelectedThemeKey
 import com.mr3y.ludi.ui.presenter.model.SettingsState
 import com.mr3y.ludi.ui.presenter.model.Theme
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -18,10 +17,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val userPreferences: DataStore<Preferences>
-) : ViewModel() {
+) : ScreenModel {
 
     val settingsState = userPreferences.data
         .catch {
@@ -37,13 +35,13 @@ class SettingsViewModel @Inject constructor(
                 isUsingDynamicColor = isUsingDynamicColor
             )
         }.stateIn(
-            viewModelScope,
+            coroutineScope,
             SharingStarted.Lazily,
             Initial
         )
 
     fun setAppTheme(theme: Theme) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             userPreferences.edit { mutablePreferences ->
                 mutablePreferences[SelectedThemeKey] = theme.name
             }
@@ -51,7 +49,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun enableUsingDynamicColor(enabled: Boolean) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             userPreferences.edit { mutablePreferences ->
                 mutablePreferences[DynamicColorKey] = enabled
             }

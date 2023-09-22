@@ -47,8 +47,11 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.GameGenre
@@ -63,13 +66,26 @@ import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
-@Suppress("UNUSED_PARAMETER")
+data class EditPreferencesScreen(val type: PreferencesType) : Screen {
+    @Composable
+    override fun Content() {
+        val screenModel = getScreenModel<EditPreferencesViewModel, EditPreferencesViewModel.Factory> { factory ->
+            factory.create(type)
+        }
+        val navigator = LocalNavigator.currentOrThrow
+
+        EditPreferencesScreen(
+            onDoneClick = { navigator.pop() },
+            viewModel = screenModel
+        )
+    }
+}
+
 @Composable
 fun EditPreferencesScreen(
-    type: PreferencesType,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EditPreferencesViewModel = hiltViewModel()
+    viewModel: EditPreferencesViewModel
 ) {
     val editPreferencesState by viewModel.editPreferencesState.collectAsStateWithLifecycle()
     EditPreferencesScreen(
@@ -112,9 +128,11 @@ fun EditPreferencesScreen(
                 actions = {
                     IconButton(
                         onClick = onDoneClick,
-                        modifier = Modifier.requiredSize(48.dp)
+                        modifier = Modifier
+                            .requiredSize(48.dp)
                             .semantics(mergeDescendants = true) {
-                                contentDescription = context.getString(R.string.edit_preferences_page_confirm_button_content_description)
+                                contentDescription =
+                                    context.getString(R.string.edit_preferences_page_confirm_button_content_description)
                             }
                     ) {
                         Icon(
@@ -205,7 +223,18 @@ fun NewsSourcesList(
                 )
                 .padding(8.dp)
                 .clearAndSetSemantics {
-                    stateDescription = if (source in state.followedNewsDataSources) context.getString(R.string.data_sources_page_data_source_on_state_desc, source.name) else context.getString(R.string.data_sources_page_data_source_off_state_desc, source.name)
+                    stateDescription =
+                        if (source in state.followedNewsDataSources) {
+                            context.getString(
+                                R.string.data_sources_page_data_source_on_state_desc,
+                                source.name
+                            )
+                        } else {
+                            context.getString(
+                                R.string.data_sources_page_data_source_off_state_desc,
+                                source.name
+                            )
+                        }
                     selected = source in state.followedNewsDataSources
                 },
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -257,7 +286,10 @@ fun GamesList(
                 )
                 .padding(8.dp)
                 .clearAndSetSemantics {
-                    contentDescription = context.getString(R.string.edit_preferences_page_game_content_description, favouriteGame.title)
+                    contentDescription = context.getString(
+                        R.string.edit_preferences_page_game_content_description,
+                        favouriteGame.title
+                    )
                     selected = true
                 },
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -327,7 +359,18 @@ fun GenresList(
                         )
                         .padding(8.dp)
                         .clearAndSetSemantics {
-                            stateDescription = if (gameGenre in state.favouriteGenres) context.getString(R.string.edit_preferences_page_genre_on_state_desc, gameGenre.name) else context.getString(R.string.edit_preferences_page_genre_off_state_desc, gameGenre.name)
+                            stateDescription =
+                                if (gameGenre in state.favouriteGenres) {
+                                    context.getString(
+                                        R.string.edit_preferences_page_genre_on_state_desc,
+                                        gameGenre.name
+                                    )
+                                } else {
+                                    context.getString(
+                                        R.string.edit_preferences_page_genre_off_state_desc,
+                                        gameGenre.name
+                                    )
+                                }
                             selected = gameGenre in state.favouriteGenres
                         },
                     horizontalArrangement = Arrangement.SpaceBetween,

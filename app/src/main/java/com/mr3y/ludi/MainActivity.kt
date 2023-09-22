@@ -16,9 +16,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import cafe.adriel.voyager.navigator.Navigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.mr3y.ludi.ui.presenter.model.Theme
-import com.mr3y.ludi.ui.screens.main.MainScreen
+import com.mr3y.ludi.ui.screens.home.HomeScreen
 import com.mr3y.ludi.ui.screens.onboarding.OnboardingScreen
 import com.mr3y.ludi.ui.theme.LudiTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,9 +74,9 @@ class MainActivity : ComponentActivity() {
                     dynamicColor = userPreferences!!.useDynamicColor
                 ) {
                     if (userPreferences!!.showOnBoardingScreen) {
-                        OnboardingScreen(modifier = Modifier.fillMaxSize())
+                        Navigator(screen = OnboardingScreen)
                     } else {
-                        MainScreen(modifier = Modifier.fillMaxSize())
+                        HomeScreen(modifier = Modifier.fillMaxSize())
                     }
                 }
             }

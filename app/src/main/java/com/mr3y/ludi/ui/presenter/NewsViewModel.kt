@@ -1,8 +1,8 @@
 package com.mr3y.ludi.ui.presenter
 
 import androidx.datastore.core.DataStore
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.coroutineScope
 import com.mr3y.ludi.core.model.Article
 import com.mr3y.ludi.core.model.NewReleaseArticle
 import com.mr3y.ludi.core.model.NewsArticle
@@ -13,7 +13,6 @@ import com.mr3y.ludi.core.model.onSuccess
 import com.mr3y.ludi.core.repository.NewsRepository
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.ui.presenter.model.NewsState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -29,12 +28,11 @@ import kotlinx.coroutines.flow.updateAndGet
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
-@HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class NewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository,
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>
-) : ViewModel() {
+) : ScreenModel {
 
     private val followedNewsDataSources = followedNewsDataSourcesStore.data
         .catch {
@@ -53,13 +51,13 @@ class NewsViewModel @Inject constructor(
         followedNewsDataSources,
         _internalState
     ) { sources, _ ->
-        val newsResult = viewModelScope.async {
+        val newsResult = coroutineScope.async {
             newsRepository.getLatestGamingNews(sources).onSuccess { articles -> articles.sortByRecent() }
         }
-        val reviewsResult = viewModelScope.async {
+        val reviewsResult = coroutineScope.async {
             newsRepository.getGamesReviews(sources).onSuccess { articles -> articles.sortByRecent() }
         }
-        val newReleasesResult = viewModelScope.async {
+        val newReleasesResult = coroutineScope.async {
             newsRepository.getGamesNewReleases(sources).onSuccess { articles ->
                 articles.sortByRecent(desc = false).filter { article -> article.releaseDate.isAfter(ZonedDateTime.now()) }
             }
@@ -78,7 +76,7 @@ class NewsViewModel @Inject constructor(
             )
         }
     }.stateIn(
-        viewModelScope,
+        coroutineScope,
         SharingStarted.Lazily,
         _internalState.value
     )

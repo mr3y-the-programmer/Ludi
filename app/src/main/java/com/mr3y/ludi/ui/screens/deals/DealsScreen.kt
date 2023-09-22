@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -36,18 +38,22 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.hilt.getScreenModel
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.ui.components.launchChromeCustomTab
+import com.mr3y.ludi.ui.navigation.BottomBarTab
 import com.mr3y.ludi.ui.presenter.DealsViewModel
 import com.mr3y.ludi.ui.presenter.model.DealStore
 import com.mr3y.ludi.ui.presenter.model.DealsState
@@ -56,10 +62,27 @@ import com.mr3y.ludi.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.ui.preview.LudiPreview
 import com.mr3y.ludi.ui.theme.LudiTheme
 
+object DealsScreenTab : Screen, BottomBarTab {
+
+    override val key: ScreenKey
+        get() = "deals"
+
+    override val label: String
+        get() = "Deals"
+    override val icon: ImageVector
+        get() = Icons.Outlined.LocalOffer
+
+    @Composable
+    override fun Content() {
+        val screenModel = getScreenModel<DealsViewModel>()
+        DealsScreen(viewModel = screenModel)
+    }
+}
+
 @Composable
 fun DealsScreen(
     modifier: Modifier = Modifier,
-    viewModel: DealsViewModel = hiltViewModel()
+    viewModel: DealsViewModel
 ) {
     val dealsState by viewModel.dealsState.collectAsStateWithLifecycle()
     DealsScreen(
