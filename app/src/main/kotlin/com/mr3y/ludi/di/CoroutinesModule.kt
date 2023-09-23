@@ -16,11 +16,6 @@ import javax.inject.Singleton
 @Qualifier
 annotation class ApplicationScope
 
-@Retention(AnnotationRetention.RUNTIME)
-@MustBeDocumented
-@Qualifier
-annotation class DefaultDispatcher
-
 @Module
 @InstallIn(SingletonComponent::class)
 object CoroutinesModule {
@@ -30,11 +25,5 @@ object CoroutinesModule {
     @Provides
     fun providesApplicationCoroutineScope(): CoroutineScope {
         return CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    }
-
-    @Provides
-    @DefaultDispatcher
-    fun provideDefaultDispatcher(): CoroutineDispatcher {
-        return Dispatchers.Default
     }
 }
