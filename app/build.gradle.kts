@@ -8,9 +8,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.gradle.buildconfig.plugin)
     alias(libs.plugins.protobuf)
     alias(libs.plugins.ktlint.plugin)
@@ -42,7 +41,7 @@ android {
         minSdk = 26
         targetSdk = 33
 
-        testInstrumentationRunner = "com.mr3y.ludi.runner.CustomTestRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -172,15 +171,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.splash.screen)
 
-    // Hilt Dependency Injection
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-    // Hilt and instrumented tests.
-    androidTestImplementation(libs.hilt.android.testing)
-    kaptAndroidTest(libs.hilt.android.compiler)
-    // Hilt and Robolectric tests.
-    testImplementation(libs.hilt.android.testing)
-    kaptTest(libs.hilt.android.compiler)
+    // kotlin-inject Dependency Injection
+    implementation(libs.kotlin.inject.runtime)
+    ksp(libs.kotlin.inject.ksp)
 
     // Logging
     implementation(libs.kermit)
@@ -209,7 +202,6 @@ dependencies {
     // Arch Components
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.voyager.hilt)
     implementation(libs.voyager.navigator)
     implementation(libs.voyager.transitions)
 

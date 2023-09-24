@@ -3,29 +3,23 @@ package com.mr3y.ludi.di
 import android.content.Context
 import com.mr3y.ludi.BuildConfig
 import com.mr3y.ludi.core.network.rssparser.internal.DefaultParser
+import com.mr3y.ludi.di.annotations.Singleton
 import com.prof.rssparser.Parser
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@Module
-@InstallIn(SingletonComponent::class)
-object NetworkModule {
+interface NetworkComponent {
 
     @Singleton
     @Provides
-    fun provideThirdPartyRssParserInstance(@ApplicationContext context: Context): Parser {
+    fun provideThirdPartyRssParserInstance(applicationContext: Context): Parser {
         return Parser.Builder()
-            .context(context)
+            .context(applicationContext)
             .cacheExpirationMillis(8L * 60L * 60L * 1000L)
             .build()
     }

@@ -27,10 +27,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @OptIn(FlowPreview::class)
-class DiscoverViewModel @Inject constructor(
+@Inject
+class DiscoverViewModel(
     private val getSuggestedGamesUseCase: GetSuggestedGamesUseCase,
     private val searchQueryBasedGamesUseCase: GetSearchQueryBasedGamesUseCase
 ) : ScreenModel {

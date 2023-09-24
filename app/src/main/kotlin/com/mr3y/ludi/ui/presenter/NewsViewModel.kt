@@ -25,11 +25,12 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
+import me.tatarka.inject.annotations.Inject
 import java.time.ZonedDateTime
-import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class NewsViewModel @Inject constructor(
+@Inject
+class NewsViewModel(
     private val newsRepository: NewsRepository,
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>
 ) : ScreenModel {

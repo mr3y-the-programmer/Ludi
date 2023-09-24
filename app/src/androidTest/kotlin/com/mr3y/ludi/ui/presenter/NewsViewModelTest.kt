@@ -10,8 +10,6 @@ import com.mr3y.ludi.datastore.model.FollowedNewsDataSource
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.shared.MainDispatcherRule
 import com.mr3y.ludi.ui.datastore.FollowedNewsDataSourceSerializer
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -32,21 +30,17 @@ import strikt.assertions.isEqualTo
 import strikt.assertions.isGreaterThan
 import java.time.ZonedDateTime
 
-@HiltAndroidTest
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class NewsViewModelTest {
 
     @get:Rule(order = 0)
-    var hiltRule = HiltAndroidRule(this)
-
-    @get:Rule(order = 1)
     val tempFolder = TemporaryFolder()
 
     private val testDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
     private val testScope = TestScope(testDispatcher)
 
-    @get:Rule(order = 2)
+    @get:Rule(order = 1)
     val mainDispatcherRule = MainDispatcherRule(testDispatcher)
 
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources> = DataStoreFactory.create(
@@ -59,7 +53,6 @@ class NewsViewModelTest {
 
     @Before
     fun setUp() {
-        hiltRule.inject()
         sut = NewsViewModel(
             newsRepository = FakeNewsRepository(),
             followedNewsDataSourcesStore = followedNewsDataSourcesStore

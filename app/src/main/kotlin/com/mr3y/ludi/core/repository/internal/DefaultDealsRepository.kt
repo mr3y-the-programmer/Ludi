@@ -18,9 +18,10 @@ import com.mr3y.ludi.core.repository.query.GiveawaysQueryParameters
 import com.mr3y.ludi.core.repository.query.buildDealsFullUrl
 import com.mr3y.ludi.core.repository.query.buildGiveawaysFullUrl
 import com.mr3y.ludi.core.repository.query.isValid
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class DefaultDealsRepository @Inject constructor(
+@Inject
+class DefaultDealsRepository(
     private val cheapSharkDataSource: CheapSharkDataSource,
     private val gamerPowerDataSource: GamerPowerDataSource,
     private val crashReporting: CrashReporting

@@ -1,5 +1,7 @@
 package com.mr3y.ludi
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,23 +18,34 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.viewModelFactory
 import cafe.adriel.voyager.navigator.Navigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.mr3y.ludi.di.ApplicationComponent
+import com.mr3y.ludi.di.ScreenModelsComponent
 import com.mr3y.ludi.ui.presenter.model.Theme
 import com.mr3y.ludi.ui.screens.home.HomeScreen
 import com.mr3y.ludi.ui.screens.onboarding.OnboardingScreen
 import com.mr3y.ludi.ui.theme.LudiTheme
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainActivityViewModel by viewModels()
+    internal lateinit var component: MainActivityComponent
+
+    private val viewModel: MainActivityViewModel by viewModels {
+        viewModelFactory {
+            addInitializer(MainActivityViewModel::class) { component.viewModel() }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        component = MainActivityComponent::class.create(this)
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
         lifecycleScope.launch {
             viewModel.preferences.flowWithLifecycle(lifecycle, Lifecycle.State.CREATED).collect { userPreferences ->
@@ -83,3 +96,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+@Component
+abstract class MainActivityComponent(
+    @get:Provides val activity: Activity,
+    @Component val parent: ApplicationComponent = ApplicationComponent.from(activity)
+) : ScreenModelsComponent {
+    abstract val viewModel: () -> MainActivityViewModel
+}
+
+val Context.activityComponent
+    get() = (this as MainActivity).component

@@ -1,10 +1,11 @@
 package com.mr3y.ludi.core.internal
 
 import com.mr3y.ludi.core.Logger
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import co.touchlab.kermit.Logger as DelegatingLogger
 
-class KermitLogger @Inject constructor(
+@Inject
+class KermitLogger(
     private val delegatingLogger: DelegatingLogger
 ) : Logger {
 

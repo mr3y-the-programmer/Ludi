@@ -12,9 +12,10 @@ import com.mr3y.ludi.core.network.model.toGamesPage
 import com.mr3y.ludi.core.repository.GamesRepository
 import com.mr3y.ludi.core.repository.query.GamesQueryParameters
 import com.mr3y.ludi.core.repository.query.buildGamesFullUrl
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class DefaultGamesRepository @Inject constructor(
+@Inject
+class DefaultGamesRepository(
     private val rawgDataSource: RAWGDataSource,
     private val crashReporting: CrashReporting
 ) : GamesRepository {

@@ -3,7 +3,6 @@ package com.mr3y.ludi.ui.presenter
 import androidx.datastore.core.DataStore
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.onSuccess
@@ -19,9 +18,6 @@ import com.mr3y.ludi.ui.presenter.model.EditPreferencesState
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.ui.presenter.model.SupportedNewsDataSources
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -30,8 +26,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-class EditPreferencesViewModel @AssistedInject constructor(
+@Inject
+class EditPreferencesViewModel(
     private val gamesRepository: GamesRepository,
     private val favGamesStore: DataStore<UserFavouriteGames>,
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>,
@@ -164,11 +163,6 @@ class EditPreferencesViewModel @AssistedInject constructor(
                 }
             }
         }
-    }
-
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
-        fun create(preferencesType: PreferencesType): EditPreferencesViewModel
     }
 
     companion object {

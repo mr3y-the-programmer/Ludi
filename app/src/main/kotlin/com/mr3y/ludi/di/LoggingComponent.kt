@@ -9,15 +9,10 @@ import com.google.firebase.ktx.Firebase
 import com.mr3y.ludi.core.CrashReporting
 import com.mr3y.ludi.core.internal.CrashlyticsReporting
 import com.mr3y.ludi.core.internal.KermitLogger
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.mr3y.ludi.di.annotations.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@Module
-@InstallIn(SingletonComponent::class)
-object LoggingModule {
+interface LoggingComponent {
 
     @Singleton
     @Provides

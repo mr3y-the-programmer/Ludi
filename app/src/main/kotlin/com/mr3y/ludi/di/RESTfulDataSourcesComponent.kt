@@ -6,31 +6,26 @@ import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSource
 import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSourceImpl
 import com.mr3y.ludi.core.network.datasources.internal.RAWGDataSource
 import com.mr3y.ludi.core.network.datasources.internal.RAWGDataSourceImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import com.mr3y.ludi.di.annotations.Singleton
 import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@Module
-@InstallIn(SingletonComponent::class)
-object RESTfulDataSourcesModule {
+interface RESTfulDataSourcesComponent {
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideRAWGDataSourceInstance(client: HttpClient): RAWGDataSource {
         return RAWGDataSourceImpl(client)
     }
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideCheapSharkDataSourceInstance(client: HttpClient): CheapSharkDataSource {
         return CheapSharkDataSourceImpl(client)
     }
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideGamerPowerDataSourceInstance(client: HttpClient): GamerPowerDataSource {
         return GamerPowerDataSourceImpl(client)
     }

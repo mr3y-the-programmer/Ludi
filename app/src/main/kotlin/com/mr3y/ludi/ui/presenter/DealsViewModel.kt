@@ -29,12 +29,13 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import me.tatarka.inject.annotations.Inject
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
-class DealsViewModel @Inject constructor(
+@Inject
+class DealsViewModel(
     private val dealsRepository: DealsRepository
 ) : ScreenModel {
 

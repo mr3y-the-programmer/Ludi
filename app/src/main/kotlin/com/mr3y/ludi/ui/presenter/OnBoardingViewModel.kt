@@ -44,12 +44,13 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
-class OnBoardingViewModel @Inject constructor(
+@Inject
+class OnBoardingViewModel(
     private val gamesRepository: GamesRepository,
     private val favGamesStore: DataStore<UserFavouriteGames>,
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>,
