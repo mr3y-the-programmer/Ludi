@@ -43,7 +43,7 @@ android {
         minSdk = 26
         targetSdk = 33
 
-        testInstrumentationRunner = "com.mr3y.ludi.runner.CustomTestRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }

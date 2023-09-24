@@ -21,8 +21,6 @@ import com.mr3y.ludi.ui.datastore.FollowedNewsDataSourceSerializer
 import com.mr3y.ludi.ui.datastore.PreferencesKeys
 import com.mr3y.ludi.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.ui.presenter.model.NewsDataSource
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
@@ -44,21 +42,17 @@ import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotEmpty
 
-@HiltAndroidTest
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class OnBoardingViewModelTest {
 
     @get:Rule(order = 0)
-    var hiltRule = HiltAndroidRule(this)
-
-    @get:Rule(order = 1)
     val tempFolder = TemporaryFolder()
 
     private val testDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
     private val testScope = TestScope(testDispatcher)
 
-    @get:Rule(order = 2)
+    @get:Rule(order = 1)
     val mainDispatcherRule = MainDispatcherRule(StandardTestDispatcher(testDispatcher.scheduler))
 
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources> = DataStoreFactory.create(
@@ -85,7 +79,6 @@ class OnBoardingViewModelTest {
 
     @Before
     fun setUp() {
-        hiltRule.inject()
         sut = OnBoardingViewModel(
             gamesRepository = FakeGamesRepository(),
             favGamesStore = favGamesStore,
