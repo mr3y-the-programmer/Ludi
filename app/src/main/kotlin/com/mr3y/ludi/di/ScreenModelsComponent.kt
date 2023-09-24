@@ -12,7 +12,7 @@ import me.tatarka.inject.annotations.IntoMap
 import me.tatarka.inject.annotations.Provides
 import kotlin.reflect.KClass
 
-interface ScreenModelsModule {
+interface ScreenModelsComponent {
     val screenModels: Map<KClass<out ScreenModel>, () -> ScreenModel>
 
     @Provides

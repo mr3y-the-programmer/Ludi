@@ -2,6 +2,7 @@ package com.mr3y.ludi.di
 
 import android.content.Context
 import com.mr3y.ludi.LudiApplication
+import com.mr3y.ludi.di.annotations.Singleton
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -9,14 +10,14 @@ import me.tatarka.inject.annotations.Provides
 @Singleton
 abstract class ApplicationComponent(
     @get:Provides val applicationContext: Context
-) : CoroutinesModule,
-    DataStoreModule,
-    LoggingModule,
-    NetworkModule,
-    RepositoriesModule,
-    RESTfulDataSourcesModule,
-    RSSFeedDataSourcesModule,
-    UseCasesModule {
+) : CoroutinesComponent,
+    DataStoreComponent,
+    LoggingComponent,
+    NetworkComponent,
+    RepositoriesComponent,
+    RESTfulDataSourcesComponent,
+    RSSFeedDataSourcesComponent,
+    UseCasesComponent {
 
     companion object {
         fun from(context: Context): ApplicationComponent {

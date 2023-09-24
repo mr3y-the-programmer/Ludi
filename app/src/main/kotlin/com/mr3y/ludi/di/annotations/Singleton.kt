@@ -1,4 +1,4 @@
-package com.mr3y.ludi.di
+package com.mr3y.ludi.di.annotations
 
 import me.tatarka.inject.annotations.Scope
 

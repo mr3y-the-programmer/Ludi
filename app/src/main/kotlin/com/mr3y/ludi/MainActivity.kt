@@ -22,7 +22,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import cafe.adriel.voyager.navigator.Navigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.mr3y.ludi.di.ApplicationComponent
-import com.mr3y.ludi.di.ScreenModelsModule
+import com.mr3y.ludi.di.ScreenModelsComponent
 import com.mr3y.ludi.ui.presenter.model.Theme
 import com.mr3y.ludi.ui.screens.home.HomeScreen
 import com.mr3y.ludi.ui.screens.onboarding.OnboardingScreen
@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
 abstract class MainActivityComponent(
     @get:Provides val activity: Activity,
     @Component val parent: ApplicationComponent = ApplicationComponent.from(activity)
-) : ScreenModelsModule {
+) : ScreenModelsComponent {
     abstract val viewModel: () -> MainActivityViewModel
 }
 

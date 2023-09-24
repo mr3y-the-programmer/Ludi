@@ -9,9 +9,10 @@ import com.google.firebase.ktx.Firebase
 import com.mr3y.ludi.core.CrashReporting
 import com.mr3y.ludi.core.internal.CrashlyticsReporting
 import com.mr3y.ludi.core.internal.KermitLogger
+import com.mr3y.ludi.di.annotations.Singleton
 import me.tatarka.inject.annotations.Provides
 
-interface LoggingModule {
+interface LoggingComponent {
 
     @Singleton
     @Provides

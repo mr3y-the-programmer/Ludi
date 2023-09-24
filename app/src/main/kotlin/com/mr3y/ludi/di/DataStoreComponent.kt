@@ -10,12 +10,13 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.datastore.model.UserFavouriteGames
 import com.mr3y.ludi.datastore.model.UserFavouriteGenres
+import com.mr3y.ludi.di.annotations.Singleton
 import com.mr3y.ludi.ui.datastore.FavouriteGamesSerializer
 import com.mr3y.ludi.ui.datastore.FavouriteGenresSerializer
 import com.mr3y.ludi.ui.datastore.FollowedNewsDataSourceSerializer
 import me.tatarka.inject.annotations.Provides
 
-interface DataStoreModule {
+interface DataStoreComponent {
 
     @Provides
     @Singleton

@@ -6,10 +6,11 @@ import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSource
 import com.mr3y.ludi.core.network.datasources.internal.GamerPowerDataSourceImpl
 import com.mr3y.ludi.core.network.datasources.internal.RAWGDataSource
 import com.mr3y.ludi.core.network.datasources.internal.RAWGDataSourceImpl
+import com.mr3y.ludi.di.annotations.Singleton
 import io.ktor.client.HttpClient
 import me.tatarka.inject.annotations.Provides
 
-interface RESTfulDataSourcesModule {
+interface RESTfulDataSourcesComponent {
 
     @Provides
     @Singleton

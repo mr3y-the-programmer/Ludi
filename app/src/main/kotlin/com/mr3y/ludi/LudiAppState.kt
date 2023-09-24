@@ -3,7 +3,7 @@ package com.mr3y.ludi
 import androidx.datastore.core.DataStore
 import com.mr3y.ludi.datastore.model.UserFavouriteGenres
 import com.mr3y.ludi.di.ApplicationScope
-import com.mr3y.ludi.di.Singleton
+import com.mr3y.ludi.di.annotations.Singleton
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
