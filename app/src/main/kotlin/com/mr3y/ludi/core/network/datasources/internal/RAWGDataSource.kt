@@ -7,7 +7,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.http.isSuccess
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 interface RAWGDataSource {
 
@@ -16,7 +16,8 @@ interface RAWGDataSource {
     suspend fun queryGamesGenres(url: String): ApiResult<RAWGGenresPage>
 }
 
-class RAWGDataSourceImpl @Inject constructor(
+@Inject
+class RAWGDataSourceImpl(
     private val client: HttpClient
 ) : RAWGDataSource {
     override suspend fun queryGames(url: String): ApiResult<RAWGPage> {

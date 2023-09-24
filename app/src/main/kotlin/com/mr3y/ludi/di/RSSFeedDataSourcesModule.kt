@@ -2,17 +2,11 @@ package com.mr3y.ludi.di
 
 import com.mr3y.ludi.core.network.datasources.RSSFeedDataSource
 import com.mr3y.ludi.core.network.datasources.internal.DefaultRSSFeedDataSource
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class RSSFeedDataSourcesModule {
+interface RSSFeedDataSourcesModule {
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindRSSFeedDataSource(impl: DefaultRSSFeedDataSource): RSSFeedDataSource
+    fun DefaultRSSFeedDataSource.bind(): RSSFeedDataSource = this
 }

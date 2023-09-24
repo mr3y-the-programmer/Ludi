@@ -13,10 +13,11 @@ import com.mr3y.ludi.core.repository.NewsRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @Suppress("UNCHECKED_CAST")
-class DefaultNewsRepository @Inject constructor(
+@Inject
+class DefaultNewsRepository(
     private val rssFeedDataSource: RSSFeedDataSource,
     private val logger: Logger
 ) : NewsRepository {

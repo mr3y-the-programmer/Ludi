@@ -49,13 +49,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.GameGenre
 import com.mr3y.ludi.core.model.Result
+import com.mr3y.ludi.di.getScreenModel
 import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.navigation.PreferencesType
@@ -69,9 +69,7 @@ import com.mr3y.ludi.ui.theme.LudiTheme
 data class EditPreferencesScreen(val type: PreferencesType) : Screen {
     @Composable
     override fun Content() {
-        val screenModel = getScreenModel<EditPreferencesViewModel, EditPreferencesViewModel.Factory> { factory ->
-            factory.create(type)
-        }
+        val screenModel = getScreenModel<EditPreferencesViewModel, PreferencesType>(arg1 = type)
         val navigator = LocalNavigator.currentOrThrow
 
         EditPreferencesScreen(

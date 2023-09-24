@@ -16,15 +16,16 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import me.tatarka.inject.annotations.Inject
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 
 interface GetSuggestedGamesUseCase {
     suspend operator fun invoke(page: Int): DiscoverStateGames.SuggestedGames
 }
 
-class GetSuggestedGamesUseCaseImpl @Inject constructor(
+@Inject
+class GetSuggestedGamesUseCaseImpl(
     private val gamesRepository: GamesRepository,
     private val appState: LudiAppState
 ) : GetSuggestedGamesUseCase {

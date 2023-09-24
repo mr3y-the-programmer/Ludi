@@ -1,29 +1,18 @@
 package com.mr3y.ludi.di
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import javax.inject.Qualifier
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@Retention(AnnotationRetention.RUNTIME)
-@MustBeDocumented
-@Qualifier
-annotation class ApplicationScope
+@JvmInline
+value class ApplicationScope(val value: CoroutineScope)
 
-@Module
-@InstallIn(SingletonComponent::class)
-object CoroutinesModule {
+interface CoroutinesModule {
 
     @Singleton
-    @ApplicationScope
     @Provides
-    fun providesApplicationCoroutineScope(): CoroutineScope {
-        return CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    fun providesApplicationCoroutineScope(): ApplicationScope {
+        return ApplicationScope(CoroutineScope(SupervisorJob() + Dispatchers.IO))
     }
 }

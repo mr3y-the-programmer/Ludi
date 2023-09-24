@@ -11,10 +11,11 @@ import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.network.datasources.RSSFeedDataSource
 import com.mr3y.ludi.core.network.rssparser.Parser
 import kotlinx.coroutines.CancellationException
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @Suppress("UNCHECKED_CAST")
-class DefaultRSSFeedDataSource @Inject constructor(
+@Inject
+class DefaultRSSFeedDataSource(
     private val parser: Parser,
     private val logger: Logger,
     private val crashReporting: CrashReporting

@@ -13,47 +13,40 @@ import com.mr3y.ludi.datastore.model.UserFavouriteGenres
 import com.mr3y.ludi.ui.datastore.FavouriteGamesSerializer
 import com.mr3y.ludi.ui.datastore.FavouriteGenresSerializer
 import com.mr3y.ludi.ui.datastore.FollowedNewsDataSourceSerializer
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@Module
-@InstallIn(SingletonComponent::class)
-object DataStoreModule {
+interface DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideFavouriteGamesDataStore(@ApplicationContext context: Context): DataStore<UserFavouriteGames> {
+    fun provideFavouriteGamesDataStore(applicationContext: Context): DataStore<UserFavouriteGames> {
         return DataStoreFactory.create(
             serializer = FavouriteGamesSerializer,
-            produceFile = { context.dataStoreFile("fav_games.pb") }
+            produceFile = { applicationContext.dataStoreFile("fav_games.pb") }
         )
     }
 
     @Provides
     @Singleton
-    fun provideFollowedNewsSourcesDataStore(@ApplicationContext context: Context): DataStore<FollowedNewsDataSources> {
+    fun provideFollowedNewsSourcesDataStore(applicationContext: Context): DataStore<FollowedNewsDataSources> {
         return DataStoreFactory.create(
             serializer = FollowedNewsDataSourceSerializer,
-            produceFile = { context.dataStoreFile("followed_news_sources.pb") }
+            produceFile = { applicationContext.dataStoreFile("followed_news_sources.pb") }
         )
     }
 
     @Provides
     @Singleton
-    fun provideFavouriteGenresDataStore(@ApplicationContext context: Context): DataStore<UserFavouriteGenres> {
+    fun provideFavouriteGenresDataStore(applicationContext: Context): DataStore<UserFavouriteGenres> {
         return DataStoreFactory.create(
             serializer = FavouriteGenresSerializer,
-            produceFile = { context.dataStoreFile("fav_genres.pb") }
+            produceFile = { applicationContext.dataStoreFile("fav_genres.pb") }
         )
     }
 
     @Provides
     @Singleton
-    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create { context.preferencesDataStoreFile("ludi_user") }
+    fun providePreferencesDataStore(applicationContext: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create { applicationContext.preferencesDataStoreFile("ludi_user") }
     }
 }

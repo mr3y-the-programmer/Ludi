@@ -15,9 +15,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class SettingsViewModel @Inject constructor(
+@Inject
+class SettingsViewModel(
     private val userPreferences: DataStore<Preferences>
 ) : ScreenModel {
 

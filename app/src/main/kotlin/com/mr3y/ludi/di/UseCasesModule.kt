@@ -4,21 +4,15 @@ import com.mr3y.ludi.ui.presenter.usecases.GetSearchQueryBasedGamesUseCase
 import com.mr3y.ludi.ui.presenter.usecases.GetSearchQueryBasedGamesUseCaseImpl
 import com.mr3y.ludi.ui.presenter.usecases.GetSuggestedGamesUseCase
 import com.mr3y.ludi.ui.presenter.usecases.GetSuggestedGamesUseCaseImpl
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class UseCasesModule {
+interface UseCasesModule {
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindSuggestedGamesUseCase(impl: GetSuggestedGamesUseCaseImpl): GetSuggestedGamesUseCase
+    fun GetSuggestedGamesUseCaseImpl.bind(): GetSuggestedGamesUseCase = this
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindSearchQueryBasedGamesUseCase(impl: GetSearchQueryBasedGamesUseCaseImpl): GetSearchQueryBasedGamesUseCase
+    fun GetSearchQueryBasedGamesUseCaseImpl.bind(): GetSearchQueryBasedGamesUseCase = this
 }

@@ -9,9 +9,10 @@ import com.mr3y.ludi.core.model.Title
 import com.mr3y.ludi.core.network.model.toZonedDateTime
 import com.mr3y.ludi.core.network.rssparser.Parser
 import com.prof.rssparser.Article
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-internal class DefaultParser @Inject constructor(
+@Inject
+internal class DefaultParser(
     private val parser: com.prof.rssparser.Parser
 ) : Parser {
     override suspend fun parseNewsArticlesAtUrl(url: String, source: Source): List<NewsArticle?> {

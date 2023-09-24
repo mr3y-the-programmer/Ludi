@@ -57,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
-import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mr3y.ludi.R
@@ -69,6 +68,7 @@ import com.mr3y.ludi.core.model.Result
 import com.mr3y.ludi.core.model.ReviewArticle
 import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.Title
+import com.mr3y.ludi.di.getScreenModel
 import com.mr3y.ludi.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.ui.components.LudiErrorBox
 import com.mr3y.ludi.ui.components.LudiSectionHeader

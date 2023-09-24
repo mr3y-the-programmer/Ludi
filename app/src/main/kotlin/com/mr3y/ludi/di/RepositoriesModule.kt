@@ -6,25 +6,19 @@ import com.mr3y.ludi.core.repository.NewsRepository
 import com.mr3y.ludi.core.repository.internal.DefaultDealsRepository
 import com.mr3y.ludi.core.repository.internal.DefaultGamesRepository
 import com.mr3y.ludi.core.repository.internal.DefaultNewsRepository
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class RepositoriesModule {
+interface RepositoriesModule {
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindNewsRepository(impl: DefaultNewsRepository): NewsRepository
+    fun DefaultNewsRepository.bind(): NewsRepository = this
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindGamesRepository(impl: DefaultGamesRepository): GamesRepository
+    fun DefaultGamesRepository.bind(): GamesRepository = this
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindDealsRepository(impl: DefaultDealsRepository): DealsRepository
+    fun DefaultDealsRepository.bind(): DealsRepository = this
 }

@@ -6,14 +6,15 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.http.isSuccess
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 interface GamerPowerDataSource {
 
     suspend fun queryLatestGiveaways(url: String): ApiResult<List<GamerPowerGiveawayEntry>>
 }
 
-class GamerPowerDataSourceImpl @Inject constructor(
+@Inject
+class GamerPowerDataSourceImpl(
     private val client: HttpClient
 ) : GamerPowerDataSource {
     override suspend fun queryLatestGiveaways(url: String): ApiResult<List<GamerPowerGiveawayEntry>> {

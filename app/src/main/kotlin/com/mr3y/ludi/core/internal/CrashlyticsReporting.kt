@@ -2,9 +2,10 @@ package com.mr3y.ludi.core.internal
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mr3y.ludi.core.CrashReporting
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class CrashlyticsReporting @Inject constructor(
+@Inject
+class CrashlyticsReporting(
     private val crashlytics: FirebaseCrashlytics
 ) : CrashReporting {
 

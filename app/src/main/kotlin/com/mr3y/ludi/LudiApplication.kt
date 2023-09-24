@@ -1,7 +1,12 @@
 package com.mr3y.ludi
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import com.mr3y.ludi.di.ApplicationComponent
+import com.mr3y.ludi.di.create
 
-@HiltAndroidApp
-class LudiApplication : Application()
+class LudiApplication : Application() {
+
+    val component: ApplicationComponent by lazy(LazyThreadSafetyMode.NONE) {
+        ApplicationComponent::class.create(this)
+    }
+}

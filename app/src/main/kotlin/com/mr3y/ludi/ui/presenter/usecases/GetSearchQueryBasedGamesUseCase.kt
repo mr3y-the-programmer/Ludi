@@ -9,7 +9,7 @@ import com.mr3y.ludi.ui.presenter.model.DiscoverFiltersState
 import com.mr3y.ludi.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.ui.presenter.model.Order
 import com.mr3y.ludi.ui.presenter.usecases.utils.groupByGenre
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 interface GetSearchQueryBasedGamesUseCase {
     suspend operator fun invoke(
@@ -18,7 +18,8 @@ interface GetSearchQueryBasedGamesUseCase {
     ): DiscoverStateGames.SearchQueryBasedGames
 }
 
-class GetSearchQueryBasedGamesUseCaseImpl @Inject constructor(
+@Inject
+class GetSearchQueryBasedGamesUseCaseImpl(
     private val gamesRepository: GamesRepository
 ) : GetSearchQueryBasedGamesUseCase {
 
