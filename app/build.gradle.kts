@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.gradle.buildconfig.plugin)
@@ -175,6 +176,8 @@ dependencies {
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation(libs.kotlin.inject.runtime)
+    ksp(libs.kotlin.inject.ksp)
     // Hilt and instrumented tests.
     androidTestImplementation(libs.hilt.android.testing)
     kaptAndroidTest(libs.hilt.android.compiler)
