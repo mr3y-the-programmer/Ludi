@@ -8,12 +8,13 @@ import com.mr3y.ludi.core.model.Source
 import com.mr3y.ludi.core.model.Title
 import com.mr3y.ludi.core.network.model.toZonedDateTime
 import com.mr3y.ludi.core.network.rssparser.Parser
-import com.prof.rssparser.Article
+import com.prof18.rssparser.model.RssItem
+import com.prof18.rssparser.RssParser
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 internal class DefaultParser(
-    private val parser: com.prof.rssparser.Parser
+    private val parser: RssParser
 ) : Parser {
     override suspend fun parseNewsArticlesAtUrl(url: String, source: Source): List<NewsArticle?> {
         return fetchArticlesAt(url).map { it.toNewsArticle(source) }
@@ -27,9 +28,9 @@ internal class DefaultParser(
         return fetchArticlesAt(url).map { it.toNewReleaseArticle(source) }
     }
 
-    private suspend inline fun fetchArticlesAt(url: String) = parser.getChannel(url).articles
+    private suspend inline fun fetchArticlesAt(url: String) = parser.getRssChannel(url).items
 
-    private fun Article.toNewsArticle(source: Source): NewsArticle? {
+    private fun RssItem.toNewsArticle(source: Source): NewsArticle? {
         return NewsArticle(
             title = Title.Plain(title ?: return null),
             description = description?.let { MarkupText(it) },
@@ -42,7 +43,7 @@ internal class DefaultParser(
         )
     }
 
-    private fun Article.toNewReleaseArticle(source: Source): NewReleaseArticle? {
+    private fun RssItem.toNewReleaseArticle(source: Source): NewReleaseArticle? {
         return NewReleaseArticle(
             title = Title.Plain(title ?: return null),
             description = description?.let { MarkupText(it) },
@@ -52,7 +53,7 @@ internal class DefaultParser(
         )
     }
 
-    private fun Article.toReviewArticle(source: Source): ReviewArticle? {
+    private fun RssItem.toReviewArticle(source: Source): ReviewArticle? {
         return ReviewArticle(
             title = Title.Plain(title ?: return null),
             description = description?.let { MarkupText(it) },
