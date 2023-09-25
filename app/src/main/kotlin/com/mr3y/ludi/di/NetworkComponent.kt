@@ -1,10 +1,10 @@
 package com.mr3y.ludi.di
 
-import android.content.Context
 import com.mr3y.ludi.BuildConfig
+import com.mr3y.ludi.core.network.rssparser.Parser
 import com.mr3y.ludi.core.network.rssparser.internal.DefaultParser
 import com.mr3y.ludi.di.annotations.Singleton
-import com.prof.rssparser.Parser
+import com.prof18.rssparser.RssParser
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.api.createClientPlugin
@@ -17,16 +17,13 @@ interface NetworkComponent {
 
     @Singleton
     @Provides
-    fun provideThirdPartyRssParserInstance(applicationContext: Context): Parser {
-        return Parser.Builder()
-            .context(applicationContext)
-            .cacheExpirationMillis(8L * 60L * 60L * 1000L)
-            .build()
+    fun provideThirdPartyRssParserInstance(): RssParser {
+        return RssParser()
     }
 
     @Singleton
     @Provides
-    fun provideInternalRssParserInstance(parser: Parser): com.mr3y.ludi.core.network.rssparser.Parser {
+    fun provideInternalRssParserInstance(parser: RssParser): Parser {
         return DefaultParser(parser)
     }
 
