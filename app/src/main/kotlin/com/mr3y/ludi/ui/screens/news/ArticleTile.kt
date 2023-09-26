@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +37,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.ireward.htmlcompose.HtmlText
+import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.ui.material3.RichText
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Article
 import com.mr3y.ludi.core.model.MarkupText
@@ -137,9 +139,14 @@ fun ArticleCardTile(
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyLarge
                     )
-                    val markupText = (article?.description?.text ?: article?.content?.text)?.removeCDATA()
-                    HtmlText(
-                        text = markupText ?: "No description available",
+                    val richState = rememberRichTextState()
+                    LaunchedEffect(article) {
+                        val markupText = (article?.description?.text ?: article?.content?.text)?.removeCDATA()
+                        richState.setHtml(markupText ?: "No description available")
+                    }
+                    RichText(
+                        state = richState,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                         maxLines = 6,
                         overflow = TextOverflow.Ellipsis
@@ -180,7 +187,9 @@ fun ArticleCardTile(
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                                modifier = Modifier.alignByBaseline().sizeIn(minWidth = 24.dp, minHeight = 24.dp)
+                                modifier = Modifier
+                                    .alignByBaseline()
+                                    .sizeIn(minWidth = 24.dp, minHeight = 24.dp)
                             )
                         }
                     }
