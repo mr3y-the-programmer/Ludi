@@ -167,6 +167,7 @@ protobuf {
 dependencies {
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
+    implementation(libs.views.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.splash.screen)
