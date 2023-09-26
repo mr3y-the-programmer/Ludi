@@ -167,6 +167,7 @@ protobuf {
 dependencies {
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
+    implementation(libs.views.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.splash.screen)
@@ -215,7 +216,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.accompanist.system.ui.controller)
     implementation(libs.fornewid.placeholder)
-    implementation(libs.compose.html)
+    implementation(libs.compose.richeditor)
     // Palette
     implementation(libs.androidx.palette)
     // Chrome custom tabs
