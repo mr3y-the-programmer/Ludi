@@ -350,7 +350,6 @@ fun RichInfoGamesSection(
     modifier: Modifier = Modifier,
     showGenre: Boolean = false
 ) {
-    val dominantColorsState = rememberDominantColorsState()
     val listState = rememberLazyListState()
     var highlightedItem by remember { mutableIntStateOf(0) }
     LaunchedEffect(listState) {
@@ -372,7 +371,6 @@ fun RichInfoGamesSection(
         if (isTrendingGame) {
             TrendingGameCard(
                 game = game,
-                dominantColorsState = dominantColorsState,
                 isHighlighted = index == highlightedItem,
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 8.dp)

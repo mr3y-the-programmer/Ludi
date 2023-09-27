@@ -43,6 +43,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -52,7 +56,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.request.ImageRequest
+import com.kmpalette.rememberDominantColorState
 import com.mr3y.ludi.R
 import com.mr3y.ludi.core.model.Game
 import com.mr3y.ludi.ui.components.LudiSuggestionChip
@@ -65,26 +73,41 @@ import com.mr3y.ludi.ui.theme.LudiTheme
 @Composable
 fun TrendingGameCard(
     game: Game?,
-    dominantColorsState: DominantColorsState?,
     isHighlighted: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var dominantColors: DominantColors? by remember { mutableStateOf(null) }
-    val overlayColor by animateColorAsState(
-        targetValue = when (dominantColorsState) {
-            null -> MaterialTheme.colorScheme.primaryContainer
-            else -> dominantColors?.color ?: dominantColorsState.defaultColor
+    val surfaceColor = MaterialTheme.colorScheme.surfaceVariant
+    val dominantColorState = rememberDominantColorState(
+        defaultColor = MaterialTheme.colorScheme.primaryContainer,
+        defaultOnColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        cacheSize = 24,
+        isColorValid = { dominantColor ->
+            // TODO: validate colors based on swatch.bodyTextColor instead of the exposed Swatch.rgb
+            dominantColor.contrastAgainst(surfaceColor) >= MinContrastRatio
         },
-        animationSpec = spring(stiffness = Spring.StiffnessLow),
-        label = "AnimatedOverlayColor"
+        builder = {
+            // Clear any built-in filters. We want the unfiltered dominant color
+            clearFilters()
+            // We reduce the maximum color count down to 8
+            .maximumColorCount(8)
+        }
     )
-    val textOnOverlayColor by animateColorAsState(
-        targetValue = when (dominantColorsState) {
-            null -> MaterialTheme.colorScheme.onPrimaryContainer
-            else -> dominantColors?.onColor ?: dominantColorsState.defaultOnColor
-        },
+    var bitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+    LaunchedEffect(bitmap) {
+        val temp = bitmap
+        if (temp != null) {
+            dominantColorState.updateFrom(temp)
+        }
+    }
+    val animatedDominantColor by animateColorAsState(
+        targetValue = dominantColorState.color,
         animationSpec = spring(stiffness = Spring.StiffnessLow),
-        label = "AnimatedTextOnOverlayColor"
+        label = "AnimatedDominantColor"
+    )
+    val animatedOnDominantColor by animateColorAsState(
+        targetValue = dominantColorState.onColor,
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        label = "AnimatedOnDominantColor"
     )
     val scale by animateFloatAsState(
         targetValue = if (isHighlighted) 1f else 0.85f,
@@ -135,8 +158,21 @@ fun TrendingGameCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
+            val imageUrl = game?.screenshots?.firstOrNull()?.imageUrl ?: game?.imageUrl
             AsyncImage(
-                model = game?.screenshots?.firstOrNull()?.imageUrl ?: game?.imageUrl,
+                model = ImageRequest.Builder(context)
+                    .data(imageUrl)
+                    // Set a custom memory cache key to avoid overwriting the displayed image in the cache
+                    .memoryCacheKey("$imageUrl.palette")
+                    .build(),
+                onState = { state ->
+                    when(state) {
+                        is AsyncImagePainter.State.Success -> {
+                            bitmap = state.result.drawable.toBitmap().asImageBitmap()
+                        }
+                        else -> {}
+                    }
+                },
                 modifier = Modifier
                     .fillMaxSize()
                     .defaultPlaceholder(game == null),
@@ -146,17 +182,14 @@ fun TrendingGameCard(
             game?.genres?.firstOrNull()?.name?.let {
                 LudiSuggestionChip(
                     label = it,
-                    containerColor = overlayColor,
-                    labelColor = textOnOverlayColor,
+                    containerColor = animatedDominantColor,
+                    labelColor = animatedOnDominantColor,
                     modifier = Modifier
                         .padding(16.dp)
                         .align(Alignment.TopEnd)
                 )
             }
             if (game != null) {
-                LaunchedEffect(Unit) {
-                    dominantColors = dominantColorsState?.extractDominantColorsFrom(context, game.imageUrl)
-                }
                 Row(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -164,11 +197,11 @@ fun TrendingGameCard(
                         .background(
                             Brush.verticalGradient(
                                 0.0f to Color.Transparent,
-                                0.1f to overlayColor.copy(alpha = 0.35f),
-                                0.3f to overlayColor.copy(alpha = 0.55f),
-                                0.5f to overlayColor.copy(alpha = 0.75f),
-                                0.7f to overlayColor.copy(alpha = 0.95f),
-                                0.9f to overlayColor
+                                0.1f to animatedDominantColor.copy(alpha = 0.35f),
+                                0.3f to animatedDominantColor.copy(alpha = 0.55f),
+                                0.5f to animatedDominantColor.copy(alpha = 0.75f),
+                                0.7f to animatedDominantColor.copy(alpha = 0.95f),
+                                0.9f to animatedDominantColor
                             )
                         )
                         .padding(16.dp)
@@ -191,7 +224,7 @@ fun TrendingGameCard(
                         Text(
                             text = game.name,
                             style = MaterialTheme.typography.titleLarge,
-                            color = textOnOverlayColor,
+                            color = animatedOnDominantColor,
                             textAlign = TextAlign.Start,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
@@ -207,7 +240,7 @@ fun TrendingGameCard(
                             Icon(
                                 painter = rememberVectorPainter(image = Icons.Filled.Star),
                                 contentDescription = null,
-                                tint = textOnOverlayColor,
+                                tint = animatedOnDominantColor,
                                 modifier = Modifier.size(24.dp)
                             )
 
@@ -215,7 +248,7 @@ fun TrendingGameCard(
                                 text = game.rating.toString().takeIf { it != "0.0" } ?: "N/A",
                                 style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.Center,
-                                color = textOnOverlayColor
+                                color = animatedOnDominantColor
                             )
                         }
                     }
@@ -366,6 +399,17 @@ fun GameCard(
     }
 }
 
+private fun Color.contrastAgainst(background: Color): Float {
+    val fg = if (alpha < 1f) compositeOver(background) else this
+
+    val fgLuminance = fg.luminance() + 0.05f
+    val bgLuminance = background.luminance() + 0.05f
+
+    return maxOf(fgLuminance, bgLuminance) / minOf(fgLuminance, bgLuminance)
+}
+
+private const val MinContrastRatio = 3f
+
 private fun String.mapPlatformNameToVectorDrawable(): Int? {
     return when {
         contains("playstation", ignoreCase = true) -> R.drawable.playstation
@@ -385,7 +429,6 @@ fun TrendingGameCardPreview() {
     LudiTheme {
         TrendingGameCard(
             game = gamesSamples[1],
-            dominantColorsState = null,
             isHighlighted = true,
             modifier = Modifier
                 .background(Color.White)
