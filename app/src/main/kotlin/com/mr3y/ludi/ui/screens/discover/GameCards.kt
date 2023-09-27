@@ -1,7 +1,10 @@
 package com.mr3y.ludi.ui.screens.discover
 
 import android.net.Uri
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -79,6 +82,7 @@ fun TrendingGameCard(
         defaultOnColor = MaterialTheme.colorScheme.onPrimaryContainer,
         cacheSize = 24,
         isColorValid = { dominantColor ->
+            // TODO: validate colors based on swatch.bodyTextColor instead of the exposed Swatch.rgb
             dominantColor.contrastAgainst(surfaceColor) >= MinContrastRatio
         },
         builder = {
@@ -95,6 +99,16 @@ fun TrendingGameCard(
             dominantColorState.updateFrom(temp)
         }
     }
+    val animatedDominantColor by animateColorAsState(
+        targetValue = dominantColorState.color,
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        label = "AnimatedDominantColor"
+    )
+    val animatedOnDominantColor by animateColorAsState(
+        targetValue = dominantColorState.onColor,
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        label = "AnimatedOnDominantColor"
+    )
     val scale by animateFloatAsState(
         targetValue = if (isHighlighted) 1f else 0.85f,
         animationSpec = tween(),
@@ -168,8 +182,8 @@ fun TrendingGameCard(
             game?.genres?.firstOrNull()?.name?.let {
                 LudiSuggestionChip(
                     label = it,
-                    containerColor = dominantColorState.color,
-                    labelColor = dominantColorState.onColor,
+                    containerColor = animatedDominantColor,
+                    labelColor = animatedOnDominantColor,
                     modifier = Modifier
                         .padding(16.dp)
                         .align(Alignment.TopEnd)
@@ -183,11 +197,11 @@ fun TrendingGameCard(
                         .background(
                             Brush.verticalGradient(
                                 0.0f to Color.Transparent,
-                                0.1f to dominantColorState.color.copy(alpha = 0.35f),
-                                0.3f to dominantColorState.color.copy(alpha = 0.55f),
-                                0.5f to dominantColorState.color.copy(alpha = 0.75f),
-                                0.7f to dominantColorState.color.copy(alpha = 0.95f),
-                                0.9f to dominantColorState.color
+                                0.1f to animatedDominantColor.copy(alpha = 0.35f),
+                                0.3f to animatedDominantColor.copy(alpha = 0.55f),
+                                0.5f to animatedDominantColor.copy(alpha = 0.75f),
+                                0.7f to animatedDominantColor.copy(alpha = 0.95f),
+                                0.9f to animatedDominantColor
                             )
                         )
                         .padding(16.dp)
@@ -210,7 +224,7 @@ fun TrendingGameCard(
                         Text(
                             text = game.name,
                             style = MaterialTheme.typography.titleLarge,
-                            color = dominantColorState.onColor,
+                            color = animatedOnDominantColor,
                             textAlign = TextAlign.Start,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
@@ -226,7 +240,7 @@ fun TrendingGameCard(
                             Icon(
                                 painter = rememberVectorPainter(image = Icons.Filled.Star),
                                 contentDescription = null,
-                                tint = dominantColorState.onColor,
+                                tint = animatedOnDominantColor,
                                 modifier = Modifier.size(24.dp)
                             )
 
@@ -234,7 +248,7 @@ fun TrendingGameCard(
                                 text = game.rating.toString().takeIf { it != "0.0" } ?: "N/A",
                                 style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.Center,
-                                color = dominantColorState.onColor
+                                color = animatedOnDominantColor
                             )
                         }
                     }
