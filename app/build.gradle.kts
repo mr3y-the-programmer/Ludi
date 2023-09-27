@@ -218,7 +218,7 @@ dependencies {
     implementation(libs.fornewid.placeholder)
     implementation(libs.compose.richeditor)
     // Palette
-    implementation(libs.androidx.palette)
+    implementation(libs.kmpalette.core)
     // Chrome custom tabs
     implementation(libs.androidx.browser)
     // Caching In-memory data
