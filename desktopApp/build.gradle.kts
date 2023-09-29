@@ -1,8 +1,24 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 plugins {
-    alias(libs.plugins.kotlin.jvm)
-//    alias(libs.plugins.compose.multiplatform)
-    application
+    kotlin("multiplatform")
     id("org.jetbrains.compose")
+}
+
+kotlin {
+    jvm {
+        jvmToolchain(17)
+        withJava()
+    }
+    sourceSets {
+        val jvmMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(compose.desktop.common)
+                implementation(project(":shared"))
+            }
+        }
+    }
 }
 
 dependencies {
@@ -20,6 +36,14 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-application {
-    mainClass.set("MainKt")
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "com.mr3y.ludi.desktopApp"
+            packageVersion = "1.0.0"
+        }
+    }
 }
