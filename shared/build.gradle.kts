@@ -9,6 +9,7 @@ plugins {
     id("org.jetbrains.compose")
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.wire)
     alias(libs.plugins.gradle.buildconfig.plugin)
 }
 
@@ -37,6 +38,7 @@ kotlin {
     }
 
     sourceSets {
+        @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
         val commonMain by getting {
             dependencies {
                 // Logging
@@ -52,14 +54,26 @@ kotlin {
                 implementation(libs.ktor.kotlinx.serialization)
                 implementation(libs.kotlinx.serialization)
 
+                // Datastore
+                implementation(libs.datastore.core)
+                implementation(libs.datastore.preferences.core)
+
                 // UI
                 implementation(compose.ui)
                 implementation(compose.material3)
                 implementation(compose.material)
                 implementation(compose.materialIconsExtended)
+                implementation(compose.components.resources)
                 implementation(compose.foundation)
                 implementation(compose.compiler.auto)
                 implementation(compose.runtime)
+
+                // Annotations
+                implementation(libs.androidx.annotations)
+
+                // Resources (e.g strings)
+                implementation(libs.lyricist.core)
+                implementation(libs.lyricist.processor)
             }
         }
         val commonTest by getting {
@@ -80,6 +94,11 @@ kotlin {
                 // Crash reporting
                 implementation(libs.firebase.crashlytics)
                 implementation(libs.firebase.analytics)
+                // lifecycle
+                implementation(libs.androidx.lifecycle.runtime.compose)
+                // Coil
+                implementation(libs.coil)
+                implementation(libs.androidx.core.ktx)
             }
         }
 
@@ -88,16 +107,26 @@ kotlin {
                 // Crash reporting
                 implementation(libs.bugsnag)
 
+                // IO
+                implementation(libs.okio)
+
                 // UI
                 implementation(compose.desktop.common)
+                implementation(libs.compose.imageloader)
             }
         }
+    }
+}
+
+wire {
+    kotlin {
     }
 }
 
 android {
     compileSdk = 34
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -133,11 +162,23 @@ buildConfig {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
+    if(name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
+}
+
+kotlin.sourceSets.commonMain {
+    kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+}
+
 dependencies {
     // Kotlin mpp plugin doesn't support adding `platform()` yet, so, we add it at top-level here.
     implementation(platform(libs.firebase.bom))
     // https://github.com/google/ksp/pull/1021, https://github.com/Foso/Ktorfit/blob/master/example/MultiplatformExample/shared/build.gradle.kts
+    // Note that kspCommonMainKotlinMetadata is incompatible with configuration caching, disable cc before running this task.
     add("kspCommonMainMetadata", libs.kotlin.inject.ksp)
+    add("kspCommonMainMetadata", libs.lyricist.processor)
     add("kspDesktop", libs.kotlin.inject.ksp)
     add("kspDesktopTest", libs.kotlin.inject.ksp)
     add("kspAndroid", libs.kotlin.inject.ksp)
