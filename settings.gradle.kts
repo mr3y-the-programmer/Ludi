@@ -22,6 +22,12 @@ pluginManagement {
         id("org.jetbrains.compose").version(composeVersion)
     }
 }
+buildscript {
+    // Workaround for: https://github.com/Splitties/refreshVersions/issues/707
+    dependencies {
+        classpath("com.squareup.okio:okio:3.6.0")
+    }
+}
 plugins {
     id("de.fayard.refreshVersions")
 }

@@ -36,6 +36,10 @@
 
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
+# Wire
+-keep class com.squareup.wire.** { *; }
+-keep class com.mr3y.ludi.datastore.model.** { *; }
+
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 -renamesourcefileattribute SourceFile

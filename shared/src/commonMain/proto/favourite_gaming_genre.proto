@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "com.mr3y.ludi.datastore.model";
+option java_multiple_files = true;
+
+message UserFavouriteGenre {
+  int32 id = 1;
+  string name = 2;
+  string imageUrl = 3;
+  int64 gamesCount = 4;
+  string slug = 5;
+}

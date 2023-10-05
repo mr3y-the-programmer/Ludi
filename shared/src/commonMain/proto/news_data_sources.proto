@@ -1,0 +1,9 @@
+syntax = "proto3";
+import "news_data_source.proto";
+
+option java_package = "com.mr3y.ludi.datastore.model";
+option java_multiple_files = true;
+
+message FollowedNewsDataSources {
+  repeated FollowedNewsDataSource newsDataSource = 1;
+}
