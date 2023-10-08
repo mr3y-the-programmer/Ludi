@@ -57,6 +57,7 @@ kotlin {
                 // Datastore
                 implementation(libs.datastore.core)
                 implementation(libs.datastore.preferences.core)
+                implementation(libs.okio)
 
                 // UI
                 implementation(compose.ui)
@@ -67,6 +68,13 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.compiler.auto)
                 implementation(compose.runtime)
+                implementation(libs.compose.richeditor)
+                // Palette
+                implementation(libs.kmpalette.core)
+
+                // Navigation
+                implementation(libs.voyager.navigator)
+                implementation(libs.voyager.transitions)
 
                 // Annotations
                 implementation(libs.androidx.annotations)
@@ -99,6 +107,8 @@ kotlin {
                 // Coil
                 implementation(libs.coil)
                 implementation(libs.androidx.core.ktx)
+                // Chrome custom tabs
+                implementation(libs.androidx.browser)
             }
         }
 
@@ -106,9 +116,6 @@ kotlin {
             dependencies {
                 // Crash reporting
                 implementation(libs.bugsnag)
-
-                // IO
-                implementation(libs.okio)
 
                 // UI
                 implementation(compose.desktop.common)
@@ -151,16 +158,24 @@ android {
 buildConfig {
     packageName("com.mr3y.ludi.shared")
     sourceSets.named<BuildConfigSourceSet>("desktopMain") {
-        val key = if (System.getenv("CI").toBoolean()) {
-            System.getenv("BUGSNAG_API_KEY")
-        } else {
-            val properties = Properties()
-            properties.load(FileInputStream(rootProject.file("local.properties")))
-            properties.getProperty("BUGSNAG_API_KEY")
-        }
-        buildConfigField("String", "BUGSNAG_API_KEY", "\"$key\"")
+        val value = getValueOfKey("BUGSNAG_API_KEY")
+        buildConfigField("String", "BUGSNAG_API_KEY", "\"$value\"")
+    }
+    // CommonMain
+    sourceSets.named<BuildConfigSourceSet>("main") {
+        val value = getValueOfKey("RAWG_API_KEY")
+        buildConfigField("String", "RAWG_API_KEY", "\"$value\"")
     }
 }
+
+fun getValueOfKey(key: String) =
+    if (System.getenv("CI").toBoolean()) {
+        System.getenv(key)
+    } else {
+        val properties = Properties()
+        properties.load(FileInputStream(rootProject.file("local.properties")))
+        properties.getProperty(key)
+    }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
     if(name != "kspCommonMainKotlinMetadata") {
