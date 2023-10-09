@@ -1,5 +1,7 @@
 package com.mr3y.ludi.shared.di
 
+import com.mr3y.ludi.shared.LudiSharedState
+
 interface SharedApplicationComponent :
     CoroutinesComponent,
     DataStoreComponent,
@@ -10,5 +12,5 @@ interface SharedApplicationComponent :
     RSSFeedDataSourcesComponent,
     UseCasesComponent
 {
-
+    val appState: LudiSharedState
 }

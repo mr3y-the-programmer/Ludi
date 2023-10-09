@@ -30,3 +30,5 @@ actual fun colorScheme(
         }
     }
 }
+
+actual fun isDynamicColorSupported() = true

@@ -8,3 +8,5 @@ expect fun colorScheme(
     isDarkTheme: Boolean,
     useDynamicColors: Boolean
 ): ColorScheme
+
+expect fun isDynamicColorSupported(): Boolean

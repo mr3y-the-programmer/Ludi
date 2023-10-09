@@ -23,11 +23,9 @@ actual fun SettingsScreen(
         onFavouriteGamesClick = onFavouriteGamesClick,
         onFavouriteGenresClick = onFavouriteGenresClick,
         onUpdateTheme = viewModel::setAppTheme,
-        onToggleDynamicColorValue = viewModel::enableUsingDynamicColor,
+        onToggleDynamicColorValue = {},
         onOpenUrl = ::openUrlInBrowser
     )
 }
-
-actual fun isDynamicColorSupportedByPlatform(): Boolean = false
 
 actual fun isDynamicColorEnabled(): Boolean = false

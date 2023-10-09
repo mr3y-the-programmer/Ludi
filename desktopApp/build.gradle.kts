@@ -42,7 +42,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.mr3y.ludi.desktopApp"
+            packageName = "com.mr3y.ludi.desktop"
             packageVersion = "1.0.0"
         }
     }

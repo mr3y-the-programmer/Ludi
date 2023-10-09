@@ -12,6 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mr3y.ludi.shared.ui.components.chromeCustomTabToolbarColor
 import com.mr3y.ludi.shared.ui.components.launchChromeCustomTab
 import com.mr3y.ludi.shared.ui.presenter.SettingsViewModel
+import com.mr3y.ludi.shared.ui.theme.isDynamicColorSupported
 
 @Composable
 actual fun SettingsScreen(
@@ -38,9 +39,7 @@ actual fun SettingsScreen(
     )
 }
 
-actual fun isDynamicColorSupportedByPlatform(): Boolean = true
-
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
 actual fun isDynamicColorEnabled(): Boolean {
-    return isDynamicColorSupportedByPlatform() && Build.VERSION.SDK_INT >= 31
+    return isDynamicColorSupported() && Build.VERSION.SDK_INT >= 31
 }
