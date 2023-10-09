@@ -22,6 +22,7 @@ import okio.Path
 
 interface DataStoreComponent {
 
+    @get:Provides
     val dataStoreParentDir: Path
 
     @Provides
