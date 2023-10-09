@@ -1,4 +1,5 @@
 import com.github.gmazzo.gradle.plugins.BuildConfigSourceSet
+import de.fayard.refreshVersions.core.versionFor
 import java.io.FileInputStream
 import java.util.Properties
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -99,9 +100,6 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                // Crash reporting
-                implementation(libs.firebase.crashlytics)
-                implementation(libs.firebase.analytics)
                 // lifecycle
                 implementation(libs.androidx.lifecycle.runtime.compose)
                 // Coil
@@ -152,6 +150,10 @@ android {
         shaders = false
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion = versionFor(AndroidX.Compose.compiler)
+    }
+
     namespace = "com.mr3y.ludi.shared"
 }
 
@@ -190,8 +192,14 @@ kotlin.sourceSets.commonMain {
 dependencies {
     // Kotlin mpp plugin doesn't support adding `platform()` yet, so, we add it at top-level here.
     implementation(platform(libs.firebase.bom))
+    val excludeAndroidxDataStore = Action<ExternalModuleDependency> {
+        // Crashlytics depend on datastore v1.0 but we're using v1.1
+        exclude(group = "androidx.datastore", module = "datastore-preferences")
+    }
+    // Android Crash reporting
+    implementation(libs.firebase.crashlytics, excludeAndroidxDataStore)
+    implementation(libs.firebase.analytics)
     // https://github.com/google/ksp/pull/1021, https://github.com/Foso/Ktorfit/blob/master/example/MultiplatformExample/shared/build.gradle.kts
-    // Note that kspCommonMainKotlinMetadata is incompatible with configuration caching, disable cc before running this task.
     add("kspCommonMainMetadata", libs.kotlin.inject.ksp)
     add("kspCommonMainMetadata", libs.lyricist.processor)
     add("kspDesktop", libs.kotlin.inject.ksp)
