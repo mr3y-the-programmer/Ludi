@@ -64,6 +64,7 @@ import com.mr3y.ludi.shared.ui.navigation.PreferencesType
 import com.mr3y.ludi.shared.ui.presenter.SettingsViewModel
 import com.mr3y.ludi.shared.ui.presenter.model.SettingsState
 import com.mr3y.ludi.shared.ui.presenter.model.Theme
+import com.mr3y.ludi.shared.ui.theme.isDynamicColorSupported
 
 object SettingsScreenTab : Screen, BottomBarTab {
 
@@ -177,7 +178,7 @@ fun SettingsScreen(
                 }
             }
             Divider()
-            if (isDynamicColorSupportedByPlatform()) {
+            if (isDynamicColorSupported()) {
                 val isEnabled = isDynamicColorEnabled()
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -349,8 +350,6 @@ fun SettingsScreen(
         }
     }
 }
-
-expect fun isDynamicColorSupportedByPlatform(): Boolean
 
 expect fun isDynamicColorEnabled(): Boolean
 

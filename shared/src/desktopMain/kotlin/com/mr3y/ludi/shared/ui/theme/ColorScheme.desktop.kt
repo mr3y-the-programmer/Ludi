@@ -14,3 +14,5 @@ actual fun colorScheme(
         LightColorScheme
     }
 }
+
+actual fun isDynamicColorSupported() = false
