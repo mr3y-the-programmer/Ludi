@@ -174,7 +174,7 @@ fun ArticleCardTile(
                             )
                         }
                         article.publicationDate?.let {
-                            val durationSincePubDate = durationTillNow(it)
+                            val durationSincePubDate = Duration.between(it, ZonedDateTime.now()).toKotlinDuration()
                             val timePassed = when {
                                 durationSincePubDate.inWholeDays > 0 -> "${durationSincePubDate.inWholeDays}d"
                                 durationSincePubDate.inWholeHours > 0 -> "${durationSincePubDate.inWholeHours}h"
@@ -199,7 +199,5 @@ fun ArticleCardTile(
         }
     }
 }
-
-expect fun durationTillNow(first: com.mr3y.ludi.shared.core.time.ZonedDateTime): kotlin.time.Duration
 
 private fun String.removeCDATA() = removePrefix("<![CDATA[ ").removeSuffix(" ]]>")

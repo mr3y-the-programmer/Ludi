@@ -53,15 +53,14 @@ class NewsViewModel(
         _internalState
     ) { sources, _ ->
         val newsResult = coroutineScope.async {
-            newsRepository.getLatestGamingNews(sources).onSuccess { articles -> articles/*.sortByRecent()*/ }
+            newsRepository.getLatestGamingNews(sources).onSuccess { articles -> articles.sortByRecent() }
         }
         val reviewsResult = coroutineScope.async {
-            newsRepository.getGamesReviews(sources).onSuccess { articles -> articles/*.sortByRecent()*/ }
+            newsRepository.getGamesReviews(sources).onSuccess { articles -> articles.sortByRecent() }
         }
         val newReleasesResult = coroutineScope.async {
             newsRepository.getGamesNewReleases(sources).onSuccess { articles ->
-//                articles.sortByRecent(desc = false).filter { article -> article.releaseDate.isAfter(ZonedDateTime.now()) }
-                articles
+                articles.filter { article -> article.releaseDate.isAfter(ZonedDateTime.now()) }.sortByRecent(desc = false)
             }
         }
         val (news, reviews, newReleases) = listOf(
@@ -72,9 +71,9 @@ class NewsViewModel(
         _internalState.updateAndGet {
             NewsState(
                 isRefreshing = false,
-                newsFeed = news as Result<List<NewsArticle>, Throwable>,
-                reviewsFeed = reviews as Result<List<ReviewArticle>, Throwable>,
-                newReleasesFeed = newReleases as Result<List<NewReleaseArticle>, Throwable>
+                newsFeed = news as Result<Set<NewsArticle>, Throwable>,
+                reviewsFeed = reviews as Result<Set<ReviewArticle>, Throwable>,
+                newReleasesFeed = newReleases as Result<Set<NewReleaseArticle>, Throwable>
             )
         }
     }.stateIn(
@@ -87,15 +86,14 @@ class NewsViewModel(
         _internalState.update { it.copy(isRefreshing = true) }
     }
 
-//    internal fun <T : Article> Iterable<T>.sortByRecent(desc: Boolean = true): Iterable<T> {
-//        return sortedWith(
-//            if (desc) {
-//                compareByDescending<T> { it.publicationDate }.thenByDescending { it.title.text }
-//            } else {
-//                compareBy<T> { it.publicationDate }.thenBy { it.title.text }
-//            }
-//        )
-//    }
+    internal fun <T : Article> Iterable<T>.sortByRecent(desc: Boolean = true): Set<T> {
+        val comparator = if (desc) {
+            compareByDescending<T> { it.publicationDate }.thenByDescending { it.title.text }
+        } else {
+            compareBy<T> { it.publicationDate }.thenBy { it.title.text }
+        }
+        return toSortedSet(comparator)
+    }
 
     companion object {
         val InitialNewsState = NewsState(

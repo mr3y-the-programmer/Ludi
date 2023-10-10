@@ -15,7 +15,7 @@ import com.mr3y.ludi.shared.core.repository.query.DealsSorting
 import com.mr3y.ludi.shared.core.repository.query.DealsSortingDirection
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysQueryParameters
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysSorting
-import com.mr3y.ludi.shared.core.time.ZonedDateTime
+import java.time.ZonedDateTime
 import com.mr3y.ludi.shared.ui.presenter.model.DealStore
 import com.mr3y.ludi.shared.ui.presenter.model.DealsFiltersState
 import com.mr3y.ludi.shared.ui.presenter.model.DealsState
@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
+import java.time.ZoneId
 
 @OptIn(FlowPreview::class)
 @Inject
@@ -112,7 +113,7 @@ class DealsViewModel(
                 Initial.giveaways
             } else {
                 (updates[4] as Result<List<GiveawayEntry>, Throwable>).onSuccess { giveaways ->
-                    giveaways.filter { giveaway -> giveaway.endDateTime?.isInFuture() ?: true }
+                    giveaways.filter { giveaway -> giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault())) ?: true }
                 }
             },
             isRefreshingDeals = refreshingDeals != previousRefreshDeals,
@@ -269,5 +270,3 @@ class DealsViewModel(
         )
     }
 }
-
-expect fun ZonedDateTime.isInFuture(): Boolean
