@@ -26,8 +26,6 @@ import com.mr3y.ludi.shared.core.model.NewReleaseArticle
 import com.mr3y.ludi.shared.core.model.Source
 import com.mr3y.ludi.shared.core.model.Title
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
-import java.time.LocalDate
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -103,5 +101,3 @@ fun NewReleaseTile(
         }
     }
 }
-
-expect fun com.mr3y.ludi.shared.core.time.ZonedDateTime.toLocalDate(): LocalDate

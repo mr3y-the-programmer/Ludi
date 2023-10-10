@@ -1,6 +1,6 @@
 package com.mr3y.ludi.shared.core.model
 
-import com.mr3y.ludi.shared.core.time.ZonedDateTime
+import java.time.ZonedDateTime
 
 sealed interface Article {
     val title: Title

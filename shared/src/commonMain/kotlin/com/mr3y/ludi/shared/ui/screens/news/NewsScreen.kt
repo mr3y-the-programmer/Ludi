@@ -73,7 +73,6 @@ import com.mr3y.ludi.shared.ui.navigation.PreferencesType
 import com.mr3y.ludi.shared.ui.presenter.NewsViewModel
 import com.mr3y.ludi.shared.ui.presenter.model.NewsState
 import com.mr3y.ludi.shared.ui.screens.settings.EditPreferencesScreen
-import java.time.ZonedDateTime
 
 object NewsScreenTab : Screen, BottomBarTab {
 
@@ -266,7 +265,7 @@ fun NewsScreen(
 }
 
 fun LazyListScope.NewReleasesSection(
-    newReleases: Result<List<NewReleaseArticle>, Throwable>,
+    newReleases: Result<Set<NewReleaseArticle>, Throwable>,
     itemContent: @Composable (NewReleaseArticle?) -> Unit
 ) {
     when (newReleases) {
@@ -282,7 +281,7 @@ fun LazyListScope.NewReleasesSection(
                     Empty(label = strings.news_no_releases_to_show, modifier = Modifier.fillMaxWidth())
                 }
             } else {
-                items(newReleases.data) { newReleaseArticle ->
+                items(newReleases.data.toList()) { newReleaseArticle ->
                     itemContent(newReleaseArticle)
                 }
             }
@@ -298,7 +297,7 @@ fun LazyListScope.NewReleasesSection(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T : Article> FeedSectionScaffold(
-    sectionFeedResult: Result<List<T>, Throwable>,
+    sectionFeedResult: Result<Set<T>, Throwable>,
     onEmptySuccessfulResultLabel: String,
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(16.dp),
@@ -327,7 +326,7 @@ fun <T : Article> FeedSectionScaffold(
                         )
                     }
                 } else {
-                    items(sectionFeedResult.data) { article ->
+                    items(sectionFeedResult.data.toList()) { article ->
                         itemContent(article)
                     }
                 }

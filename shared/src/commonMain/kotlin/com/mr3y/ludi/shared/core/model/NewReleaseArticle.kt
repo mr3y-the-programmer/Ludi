@@ -1,6 +1,6 @@
 package com.mr3y.ludi.shared.core.model
 
-import com.mr3y.ludi.shared.core.time.ZonedDateTime
+import java.time.ZonedDateTime
 
 data class NewReleaseArticle(
     override val title: Title,

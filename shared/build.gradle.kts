@@ -30,7 +30,7 @@ kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     targetHierarchy.custom {
         common {
-            // A shared sourceSet for (Jvm + Android) common implementations/dependencies such as Okhttp, java.time API
+            // A shared sourceSet for (Jvm + Android) common implementations/dependencies such as Okhttp
             group("desktopAndroid") {
                 withAndroidTarget()
                 withJvm()
