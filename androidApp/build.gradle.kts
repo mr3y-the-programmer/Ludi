@@ -177,12 +177,18 @@ dependencies {
     implementation(libs.kotlin.inject.runtime)
     ksp(libs.kotlin.inject.ksp)
 
+    implementation(project(":shared"))
+
     // Logging
     implementation(libs.kermit)
 
     // Crashlytics
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
+    val excludeAndroidxDataStore = Action<ExternalModuleDependency> {
+        // Crashlytics depend on datastore v1.0 but we're using v1.1
+        exclude(group = "androidx.datastore", module = "datastore-preferences")
+    }
+    implementation(libs.firebase.crashlytics, excludeAndroidxDataStore)
     implementation(libs.firebase.analytics)
 
     // Leak Canary
