@@ -87,7 +87,12 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation(libs.junit)
+                implementation(libs.strikt)
+                implementation(libs.turbine)
+                implementation(libs.test.parameter.injector)
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.ktor.client.mock)
             }
         }
 
@@ -107,6 +112,18 @@ kotlin {
                 implementation(libs.androidx.core.ktx)
                 // Chrome custom tabs
                 implementation(libs.androidx.browser)
+            }
+        }
+
+        val androidInstrumentedTest by getting {
+            dependencies {
+                implementation(libs.androidx.compose.ui.test.junit4)
+                implementation(libs.androidx.test.core)
+                implementation(libs.androidx.test.ext.junit)
+                implementation(libs.androidx.test.runner)
+                implementation(libs.strikt)
+                implementation(libs.turbine)
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
 
@@ -140,6 +157,8 @@ android {
 
     defaultConfig {
         minSdk = 26
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
