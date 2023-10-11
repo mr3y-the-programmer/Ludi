@@ -10,9 +10,6 @@ plugins {
     kotlin("android")
     id("org.jetbrains.compose")
     alias(libs.plugins.kotlin.ksp)
-    alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.gradle.buildconfig.plugin)
-    alias(libs.plugins.protobuf)
     alias(libs.plugins.ktlint.plugin)
     alias(libs.plugins.spotless.plugin)
     alias(libs.plugins.firebase.crashlytics)
@@ -131,128 +128,34 @@ spotless {
     lineEndings = LineEnding.PLATFORM_NATIVE // or any other except GIT_ATTRIBUTES
 }
 
-buildConfig {
-    packageName("com.mr3y.ludi")
-    val key = if (System.getenv("CI").toBoolean()) {
-        System.getenv("RAWG_API_KEY")
-    } else {
-        val properties = Properties()
-        properties.load(FileInputStream(rootProject.file("local.properties")))
-        properties.getProperty("RAWG_API_KEY")
-    }
-    buildConfigField("String", "RAWG_API_KEY", "\"$key\"")
-}
-
-protobuf {
-    protoc {
-        artifact = libs.protobuf.protoc.get().toString()
-    }
-
-    // Generates the java Protobuf-lite code for the Protobufs in this project. See
-    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
-    // for more information.
-    generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                val java by registering {
-                    option("lite")
-                }
-                val kotlin by registering {
-                    option("lite")
-                }
-            }
-        }
-    }
-}
-
 dependencies {
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.views.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.splash.screen)
 
-    // kotlin-inject Dependency Injection
-    implementation(libs.kotlin.inject.runtime)
-    ksp(libs.kotlin.inject.ksp)
-
     implementation(project(":shared"))
-
-    // Logging
-    implementation(libs.kermit)
-
-    // Crashlytics
-    implementation(platform(libs.firebase.bom))
-    val excludeAndroidxDataStore = Action<ExternalModuleDependency> {
-        // Crashlytics depend on datastore v1.0 but we're using v1.1
-        exclude(group = "androidx.datastore", module = "datastore-preferences")
-    }
-    implementation(libs.firebase.crashlytics, excludeAndroidxDataStore)
-    implementation(libs.firebase.analytics)
 
     // Leak Canary
     debugImplementation(libs.leakcanary)
 
-    // Datastore
-    implementation(libs.datastore)
-    implementation(libs.datastore.preferences)
-    implementation(libs.protobuf.kotlinlite)
-
-    // Network
-    implementation(libs.rss.parser)
-    implementation(libs.ktor.core)
-    implementation(libs.ktor.okhttp)
-    implementation(libs.ktor.content.negotation)
-    implementation(libs.ktor.kotlinx.serialization)
-    implementation(libs.kotlinx.serialization)
-
-    // Arch Components
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.voyager.navigator)
-    implementation(libs.voyager.transitions)
-
     // Compose
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.material.icons.extended)
-    implementation(libs.coil)
+    implementation(compose.ui)
+    implementation(compose.preview)
+    implementation(compose.runtime)
+    implementation(compose.foundation)
     implementation(libs.accompanist.system.ui.controller)
-    implementation(libs.fornewid.placeholder)
-    implementation(libs.compose.richeditor)
-    // Palette
-    implementation(libs.kmpalette.core)
-    // Chrome custom tabs
-    implementation(libs.androidx.browser)
-    // Caching In-memory data
-    implementation(libs.cache4k)
+
     // Tooling
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    // Instrumented tests
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(compose.uiTooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // Local tests: jUnit, coroutines, Android runner
     testImplementation(libs.junit)
-    testImplementation(libs.strikt)
-    testImplementation(libs.turbine)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.compose.ui.test.junit4)
-    testImplementation(libs.test.parameter.injector)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.ktor.client.mock)
-
-    // Instrumented tests: jUnit rules and runners
-
-    androidTestImplementation(libs.androidx.test.core)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.strikt)
-    androidTestImplementation(libs.turbine)
-    androidTestImplementation(libs.kotlinx.coroutines.test)
 }
