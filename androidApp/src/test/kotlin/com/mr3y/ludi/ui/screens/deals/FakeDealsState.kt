@@ -1,20 +1,20 @@
 package com.mr3y.ludi.ui.screens.deals
 
-import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.network.model.CheapSharkDeal
-import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntry
-import com.mr3y.ludi.core.network.model.GamerPowerGiveawayEntryStatus
-import com.mr3y.ludi.core.network.model.toDeal
-import com.mr3y.ludi.core.network.model.toGiveawayEntry
-import com.mr3y.ludi.core.repository.query.DealsSorting
-import com.mr3y.ludi.core.repository.query.DealsSortingDirection
-import com.mr3y.ludi.core.repository.query.GiveawaysSorting
-import com.mr3y.ludi.ui.presenter.model.DealStore
-import com.mr3y.ludi.ui.presenter.model.DealsFiltersState
-import com.mr3y.ludi.ui.presenter.model.DealsState
-import com.mr3y.ludi.ui.presenter.model.GiveawayPlatform
-import com.mr3y.ludi.ui.presenter.model.GiveawayStore
-import com.mr3y.ludi.ui.presenter.model.GiveawaysFiltersState
+import com.mr3y.ludi.shared.core.model.Result
+import com.mr3y.ludi.shared.core.network.model.CheapSharkDeal
+import com.mr3y.ludi.shared.core.network.model.GamerPowerGiveawayEntry
+import com.mr3y.ludi.shared.core.network.model.GamerPowerGiveawayEntryStatus
+import com.mr3y.ludi.shared.core.network.model.toDeal
+import com.mr3y.ludi.shared.core.network.model.toGiveawayEntry
+import com.mr3y.ludi.shared.core.repository.query.DealsSorting
+import com.mr3y.ludi.shared.core.repository.query.DealsSortingDirection
+import com.mr3y.ludi.shared.core.repository.query.GiveawaysSorting
+import com.mr3y.ludi.shared.ui.presenter.model.DealStore
+import com.mr3y.ludi.shared.ui.presenter.model.DealsFiltersState
+import com.mr3y.ludi.shared.ui.presenter.model.DealsState
+import com.mr3y.ludi.shared.ui.presenter.model.GiveawayPlatform
+import com.mr3y.ludi.shared.ui.presenter.model.GiveawayStore
+import com.mr3y.ludi.shared.ui.presenter.model.GiveawaysFiltersState
 
 val FakeInitialDealsFiltersState = DealsFiltersState(
     currentPage = 0,

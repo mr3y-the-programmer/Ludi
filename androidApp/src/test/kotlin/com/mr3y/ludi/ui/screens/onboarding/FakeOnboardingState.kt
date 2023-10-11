@@ -1,23 +1,22 @@
 package com.mr3y.ludi.ui.screens.onboarding
 
-import com.mr3y.ludi.R
-import com.mr3y.ludi.core.model.GameGenre
-import com.mr3y.ludi.core.model.Result
-import com.mr3y.ludi.core.model.Source
-import com.mr3y.ludi.core.network.model.DetailedRAWGPlatformInfo
-import com.mr3y.ludi.core.network.model.RAWGGameGenre
-import com.mr3y.ludi.core.network.model.RAWGGameScreenshot
-import com.mr3y.ludi.core.network.model.RAWGGameTag
-import com.mr3y.ludi.core.network.model.RAWGPlatformProperties
-import com.mr3y.ludi.core.network.model.RAWGPlatformRequirements
-import com.mr3y.ludi.core.network.model.RAWGShallowGame
-import com.mr3y.ludi.core.network.model.RAWGStoreProperties
-import com.mr3y.ludi.core.network.model.ShallowRAWGStoreInfoWithId
-import com.mr3y.ludi.core.network.model.toGame
-import com.mr3y.ludi.ui.presenter.model.FavouriteGame
-import com.mr3y.ludi.ui.presenter.model.NewsDataSource
-import com.mr3y.ludi.ui.presenter.model.OnboardingGames
-import com.mr3y.ludi.ui.presenter.model.OnboardingState
+import com.mr3y.ludi.shared.core.model.GameGenre
+import com.mr3y.ludi.shared.core.model.Result
+import com.mr3y.ludi.shared.core.model.Source
+import com.mr3y.ludi.shared.core.network.model.DetailedRAWGPlatformInfo
+import com.mr3y.ludi.shared.core.network.model.RAWGGameGenre
+import com.mr3y.ludi.shared.core.network.model.RAWGGameScreenshot
+import com.mr3y.ludi.shared.core.network.model.RAWGGameTag
+import com.mr3y.ludi.shared.core.network.model.RAWGPlatformProperties
+import com.mr3y.ludi.shared.core.network.model.RAWGPlatformRequirements
+import com.mr3y.ludi.shared.core.network.model.RAWGShallowGame
+import com.mr3y.ludi.shared.core.network.model.RAWGStoreProperties
+import com.mr3y.ludi.shared.core.network.model.ShallowRAWGStoreInfoWithId
+import com.mr3y.ludi.shared.core.network.model.toGame
+import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
+import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
+import com.mr3y.ludi.shared.ui.presenter.model.OnboardingGames
+import com.mr3y.ludi.shared.ui.presenter.model.OnboardingState
 
 val FakeAllGenres = Result.Success(
     setOf(
@@ -1259,9 +1258,9 @@ val FakeOnboardingGames = OnboardingGames.SuggestedGames(Result.Success(fakeGame
 val FakeSelectedGames = listOf(FavouriteGame(id = 3498, title = "Grand Theft Auto V", imageUrl = "https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg", rating = 4.47f))
 
 val FakeNewsDataSources = listOf(
-    NewsDataSource("Game spot", R.drawable.game_spot_logo, Source.GameSpot),
-    NewsDataSource("Giant bomb", R.drawable.giant_bomb_logo, Source.GiantBomb),
-    NewsDataSource("IGN", R.drawable.ign_logo, Source.IGN)
+    NewsDataSource("Game spot", "game_spot_logo.xml", Source.GameSpot),
+    NewsDataSource("Giant bomb", "giant_bomb_logo.xml", Source.GiantBomb),
+    NewsDataSource("IGN", "ign_logo.xml", Source.IGN)
 )
 
 val FakeOnboardingState = OnboardingState(
