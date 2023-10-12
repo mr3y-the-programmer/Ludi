@@ -148,6 +148,7 @@ dependencies {
     implementation(compose.runtime)
     implementation(compose.foundation)
     implementation(libs.accompanist.system.ui.controller)
+    implementation(libs.voyager.navigator)
 
     // Tooling
     debugImplementation(compose.uiTooling)
