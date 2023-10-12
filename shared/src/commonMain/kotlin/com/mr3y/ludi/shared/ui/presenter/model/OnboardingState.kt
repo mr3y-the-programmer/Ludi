@@ -1,6 +1,8 @@
 package com.mr3y.ludi.shared.ui.presenter.model
 
-import androidx.annotation.DrawableRes
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSource
+import com.mr3y.ludi.datastore.model.UserFavouriteGame
+import com.mr3y.ludi.datastore.model.UserFavouriteGenre
 import com.mr3y.ludi.shared.core.model.Game
 import com.mr3y.ludi.shared.core.model.GameGenre
 import com.mr3y.ludi.shared.core.model.Result
@@ -28,9 +30,12 @@ sealed interface OnboardingGames {
 data class NewsDataSource(
     val name: String,
     val iconResName: String,
-    val type: Source,
-    @DrawableRes val drawableId: Int? = null // This field exists for backward compatibility with current users' stored preferences
+    val type: Source
 )
+
+internal fun NewsDataSource.toFollowedNewsDataSource(): FollowedNewsDataSource {
+    return FollowedNewsDataSource(name = name, drawableId = 0, type = type.name)
+}
 
 data class FavouriteGame(
     val id: Long,
@@ -38,3 +43,12 @@ data class FavouriteGame(
     val imageUrl: String,
     val rating: Float
 )
+
+internal fun FavouriteGame.toUserFavouriteGame(): UserFavouriteGame {
+    return UserFavouriteGame(id = id, name = title, thumbnailUrl = imageUrl, rating = rating)
+}
+
+internal fun GameGenre.toUserFavouriteGenre(): UserFavouriteGenre {
+    return UserFavouriteGenre(id = id, name = name, imageUrl = imageUrl ?: "", slug = slug ?: "", gamesCount = gamesCount ?: 0L)
+}
+
