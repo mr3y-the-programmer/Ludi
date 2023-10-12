@@ -142,6 +142,10 @@ dependencies {
     // Leak Canary
     debugImplementation(libs.leakcanary)
 
+    // Firebase expects those dependencies to be present in classpath or otherwise it crashes at runtime.
+    implementation(libs.datastore)
+    implementation(libs.datastore.preferences)
+
     // Compose
     implementation(compose.ui)
     implementation(compose.preview)

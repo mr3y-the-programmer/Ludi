@@ -13,6 +13,8 @@ import com.mr3y.ludi.shared.di.annotations.Singleton
 import com.mr3y.ludi.shared.ui.datastore.FavouriteGamesSerializer
 import com.mr3y.ludi.shared.ui.datastore.FavouriteGenresSerializer
 import com.mr3y.ludi.shared.ui.datastore.FollowedNewsDataSourceSerializer
+import com.mr3y.ludi.shared.ui.datastore.ProtoDataStoreMutator
+import com.mr3y.ludi.shared.ui.datastore.internal.DefaultProtoDataStoreMutator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -69,4 +71,8 @@ interface DataStoreComponent {
             scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
         )
     }
+
+    @Provides
+    @Singleton
+    fun DefaultProtoDataStoreMutator.bind(): ProtoDataStoreMutator = this
 }
