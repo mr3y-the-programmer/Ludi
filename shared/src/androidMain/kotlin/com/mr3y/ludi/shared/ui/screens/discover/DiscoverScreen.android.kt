@@ -21,6 +21,7 @@ actual fun DiscoverScreen(
     val tabToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
     DiscoverScreen(
         discoverState = discoverState,
+        searchQuery = viewModel.searchQuery.value,
         onUpdatingSearchQueryText = viewModel::updateSearchQuery,
         onSelectingPlatform = viewModel::addToSelectedPlatforms,
         onUnselectingPlatform = viewModel::removeFromSelectedPlatforms,

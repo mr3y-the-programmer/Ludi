@@ -81,6 +81,7 @@ expect fun DealsScreen(modifier: Modifier = Modifier, viewModel: DealsViewModel)
 @Composable
 fun DealsScreen(
     dealsState: DealsState,
+    searchQuery: String,
     modifier: Modifier = Modifier,
     onUpdateSearchQuery: (String) -> Unit,
     onSelectingDealStore: (DealStore) -> Unit,
@@ -134,7 +135,7 @@ fun DealsScreen(
         Scaffold(
             topBar = {
                 SearchFilterBar(
-                    searchQuery = dealsState.searchQuery,
+                    searchQuery = searchQuery,
                     onSearchQueryValueChanged = onUpdateSearchQuery,
                     onFilterClicked = { showFiltersSheet = !showFiltersSheet },
                     showSearchBar = selectedTab == 0,

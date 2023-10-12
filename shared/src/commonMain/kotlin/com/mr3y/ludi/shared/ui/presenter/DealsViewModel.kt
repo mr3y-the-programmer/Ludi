@@ -39,7 +39,7 @@ class DealsViewModel(
     private val dealsRepository: DealsRepository
 ) : ScreenModel {
 
-    private val searchQuery = mutableStateOf("")
+    val searchQuery = mutableStateOf("")
     private val dealsFilterState = MutableStateFlow(InitialDealsFiltersState)
     private val isDealsLoading = MutableStateFlow(false)
 
@@ -86,7 +86,6 @@ class DealsViewModel(
 
     @Suppress("UNCHECKED_CAST")
     val dealsState = combine(
-        snapshotFlow { searchQuery.value },
         dealsFilterState,
         deals,
         giveawaysFiltersState,
@@ -98,21 +97,20 @@ class DealsViewModel(
         refreshingGiveaways,
         _previousRefreshGiveawaysValue
     ) { updates ->
-        val isDealsLoading = updates[5] as Boolean
-        val isGiveawaysLoading = updates[6] as Boolean
-        val refreshingDeals = updates[7] as Int
-        val previousRefreshDeals = updates[8] as Int
-        val refreshingGiveaways = updates[9] as Int
-        val previousRefreshGiveaways = updates[10] as Int
+        val isDealsLoading = updates[4] as Boolean
+        val isGiveawaysLoading = updates[5] as Boolean
+        val refreshingDeals = updates[6] as Int
+        val previousRefreshDeals = updates[7] as Int
+        val refreshingGiveaways = updates[8] as Int
+        val previousRefreshGiveaways = updates[9] as Int
         DealsState(
-            searchQuery = updates[0] as String,
-            dealsFiltersState = updates[1] as DealsFiltersState,
-            deals = if (isDealsLoading) Initial.deals else (updates[2] as Result<List<Deal>, Throwable>),
-            giveawaysFiltersState = (updates[3] as GiveawaysFiltersState),
+            dealsFiltersState = updates[0] as DealsFiltersState,
+            deals = if (isDealsLoading) Initial.deals else (updates[1] as Result<List<Deal>, Throwable>),
+            giveawaysFiltersState = (updates[2] as GiveawaysFiltersState),
             giveaways = if (isGiveawaysLoading) {
                 Initial.giveaways
             } else {
-                (updates[4] as Result<List<GiveawayEntry>, Throwable>).onSuccess { giveaways ->
+                (updates[3] as Result<List<GiveawayEntry>, Throwable>).onSuccess { giveaways ->
                     giveaways.filter { giveaway -> giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault())) ?: true }
                 }
             },
@@ -260,7 +258,6 @@ class DealsViewModel(
             sortingCriteria = GiveawaysSorting.Popularity
         )
         val Initial = DealsState(
-            "",
             Result.Loading,
             Result.Loading,
             InitialDealsFiltersState,

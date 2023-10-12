@@ -94,7 +94,7 @@ class OnBoardingViewModel(
 
     private var _internalState by mutableStateOf(InitialOnboardingState)
 
-    private var searchQuery = mutableStateOf("")
+    val searchQuery = mutableStateOf("")
 
     private val refreshingGames = MutableStateFlow(0)
 
@@ -177,7 +177,6 @@ class OnBoardingViewModel(
     fun updateSearchQuery(searchQueryText: String) {
         Snapshot.withMutableSnapshot {
             searchQuery.value = searchQueryText
-            _internalState = _internalState.copy(searchQuery = searchQueryText)
         }
     }
 
@@ -227,7 +226,6 @@ class OnBoardingViewModel(
         val InitialOnboardingState = OnboardingState(
             allNewsDataSources = SupportedNewsDataSources,
             followedNewsDataSources = emptyList(),
-            searchQuery = "",
             onboardingGames = OnboardingGames.SuggestedGames(Result.Loading),
             isRefreshingGames = true,
             favouriteGames = emptyList(),
