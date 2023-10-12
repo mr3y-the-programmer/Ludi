@@ -47,6 +47,7 @@ class OnboardingScreenAccessibilityTest : BaseRobolectricTest() {
                 strings = LocalStrings.current
                 OnboardingScreen(
                     onboardingState = FakeOnboardingState.copy(selectedGamingGenres = selectedGenres.value),
+                    searchQuery = "",
                     initialPage = 0,
                     onSkipButtonClicked = { /*TODO*/ },
                     onFinishButtonClicked = { /*TODO*/ },
@@ -98,6 +99,7 @@ class OnboardingScreenAccessibilityTest : BaseRobolectricTest() {
                 strings = LocalStrings.current
                 OnboardingScreen(
                     onboardingState = FakeOnboardingState.copy(favouriteGames = selectedGames.value, selectedGamingGenres = emptySet()),
+                    searchQuery = "",
                     initialPage = 1,
                     onSkipButtonClicked = { /*TODO*/ },
                     onFinishButtonClicked = { /*TODO*/ },
@@ -160,6 +162,7 @@ class OnboardingScreenAccessibilityTest : BaseRobolectricTest() {
                 strings = LocalStrings.current
                 OnboardingScreen(
                     onboardingState = FakeOnboardingState.copy(followedNewsDataSources = selectedSources.value),
+                    searchQuery = "",
                     initialPage = 2,
                     onSkipButtonClicked = { /*TODO*/ },
                     onFinishButtonClicked = { /*TODO*/ },

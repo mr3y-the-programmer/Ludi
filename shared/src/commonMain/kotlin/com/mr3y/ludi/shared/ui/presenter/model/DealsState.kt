@@ -8,7 +8,6 @@ import com.mr3y.ludi.shared.core.repository.query.DealsSortingDirection
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysSorting
 
 data class DealsState(
-    val searchQuery: String,
     val deals: Result<List<Deal>, Throwable>,
     val giveaways: Result<List<GiveawayEntry>, Throwable>,
     val dealsFiltersState: DealsFiltersState,

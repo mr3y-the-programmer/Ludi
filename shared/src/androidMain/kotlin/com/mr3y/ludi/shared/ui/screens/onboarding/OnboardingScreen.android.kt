@@ -14,6 +14,7 @@ actual fun OnboardingScreen(
     val onboardingState by viewModel.onboardingState.collectAsStateWithLifecycle()
     OnboardingScreen(
         modifier = modifier,
+        searchQuery = viewModel.searchQuery.value,
         onboardingState = onboardingState,
         onSkipButtonClicked = viewModel::completeOnboarding,
         onFinishButtonClicked = viewModel::completeOnboarding,

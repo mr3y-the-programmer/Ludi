@@ -15,6 +15,7 @@ actual fun DiscoverScreen(
     val discoverState by viewModel.discoverState.collectAsState()
     DiscoverScreen(
         discoverState = discoverState,
+        searchQuery = viewModel.searchQuery.value,
         onUpdatingSearchQueryText = viewModel::updateSearchQuery,
         onSelectingPlatform = viewModel::addToSelectedPlatforms,
         onUnselectingPlatform = viewModel::removeFromSelectedPlatforms,

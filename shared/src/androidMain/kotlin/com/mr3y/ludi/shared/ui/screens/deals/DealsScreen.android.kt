@@ -22,6 +22,7 @@ actual fun DealsScreen(
     val tabToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
     DealsScreen(
         dealsState = dealsState,
+        searchQuery = viewModel.searchQuery.value,
         modifier = modifier.statusBarsPadding(),
         onUpdateSearchQuery = viewModel::updateSearchQuery,
         onSelectingDealStore = viewModel::addToSelectedDealsStores,

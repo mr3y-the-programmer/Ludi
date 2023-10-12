@@ -11,7 +11,6 @@ import com.mr3y.ludi.shared.core.model.Source
 data class OnboardingState(
     val allNewsDataSources: List<NewsDataSource>,
     val followedNewsDataSources: List<NewsDataSource>,
-    val searchQuery: String,
     val onboardingGames: OnboardingGames,
     val isRefreshingGames: Boolean,
     val favouriteGames: List<FavouriteGame>,

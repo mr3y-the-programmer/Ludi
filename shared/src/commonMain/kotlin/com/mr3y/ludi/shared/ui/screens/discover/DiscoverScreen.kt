@@ -60,7 +60,6 @@ import com.mr3y.ludi.shared.ui.presenter.model.Platform
 import com.mr3y.ludi.shared.ui.presenter.model.Store
 import com.mr3y.ludi.shared.ui.presenter.model.Tag
 import com.mr3y.ludi.shared.ui.presenter.model.TaggedGames
-import com.mr3y.ludi.shared.ui.presenter.usecases.utils.groupByGenre
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -87,6 +86,7 @@ expect fun DiscoverScreen(modifier: Modifier = Modifier, viewModel: DiscoverView
 @Composable
 fun DiscoverScreen(
     discoverState: DiscoverState,
+    searchQuery: String,
     onUpdatingSearchQueryText: (String) -> Unit,
     onSelectingPlatform: (Platform) -> Unit,
     onUnselectingPlatform: (Platform) -> Unit,
@@ -111,7 +111,7 @@ fun DiscoverScreen(
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             DiscoverTopBar(
-                searchQuery = discoverState.searchQuery,
+                searchQuery = searchQuery,
                 onSearchQueryValueChanged = onUpdatingSearchQueryText,
                 onCloseClicked = { openFiltersSheet = !openFiltersSheet },
                 modifier = Modifier

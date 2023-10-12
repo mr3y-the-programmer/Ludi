@@ -51,20 +51,20 @@ class DiscoverViewModelTest {
 
         advanceUntilIdle()
 
-        expectThat(sut.discoverState.value.searchQuery).isEqualTo("stra")
+        expectThat(sut.searchQuery.value).isEqualTo("stra")
         expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SearchQueryBasedGames>()
 
         sut.addToSelectedPlatforms(Platform(id = 21, label = "Android"))
 
         expectThat(sut.discoverState.value.filtersState.selectedPlatforms).isEqualTo(setOf(Platform(id = 21, label = "Android")))
-        expectThat(sut.discoverState.value.searchQuery).isEqualTo("stra")
+        expectThat(sut.searchQuery.value).isEqualTo("stra")
         expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SearchQueryBasedGames>()
 
         sut.addToSelectedStores(Store(id = 4, label = "App store"))
 
         expectThat(sut.discoverState.value.filtersState.selectedStores).isEqualTo(setOf(Store(id = 4, label = "App store")))
         expectThat(sut.discoverState.value.filtersState.selectedPlatforms).isEqualTo(setOf(Platform(id = 21, label = "Android")))
-        expectThat(sut.discoverState.value.searchQuery).isEqualTo("stra")
+        expectThat(sut.searchQuery.value).isEqualTo("stra")
         expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SearchQueryBasedGames>()
 
         sut.addToSelectedTags(Tag(id = 3, label = "Adventure"))
@@ -72,7 +72,7 @@ class DiscoverViewModelTest {
         expectThat(sut.discoverState.value.filtersState.selectedTags).isEqualTo(setOf(Tag(id = 3, label = "Adventure")))
         expectThat(sut.discoverState.value.filtersState.selectedStores).isEqualTo(setOf(Store(id = 4, label = "App store")))
         expectThat(sut.discoverState.value.filtersState.selectedPlatforms).isEqualTo(setOf(Platform(id = 21, label = "Android")))
-        expectThat(sut.discoverState.value.searchQuery).isEqualTo("stra")
+        expectThat(sut.searchQuery.value).isEqualTo("stra")
         expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SearchQueryBasedGames>()
 
         sut.removeFromSelectedTags(Tag(id = 3, label = "Adventure"))
@@ -85,7 +85,7 @@ class DiscoverViewModelTest {
         expectThat(sut.discoverState.value.filtersState.selectedTags).isEqualTo(emptySet())
         expectThat(sut.discoverState.value.filtersState.selectedStores).isEqualTo(emptySet())
         expectThat(sut.discoverState.value.filtersState.selectedPlatforms).isEqualTo(emptySet())
-        expectThat(sut.discoverState.value.searchQuery).isEqualTo("")
+        expectThat(sut.searchQuery.value).isEqualTo("")
         expectThat(sut.discoverState.value.gamesState).isA<DiscoverStateGames.SuggestedGames>()
     }
 

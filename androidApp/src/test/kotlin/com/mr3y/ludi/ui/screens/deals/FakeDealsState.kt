@@ -172,7 +172,6 @@ val FakeGiveawaysSamples = listOf(
 )
 
 val FakeDealsState = DealsState(
-    "",
     Result.Success(FakeDealSamples),
     Result.Success(FakeGiveawaysSamples),
     FakeInitialDealsFiltersState,

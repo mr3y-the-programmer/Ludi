@@ -36,7 +36,7 @@ class DiscoverViewModel(
     private val searchQueryBasedGamesUseCase: GetSearchQueryBasedGamesUseCase
 ) : ScreenModel {
 
-    private var searchQuery = mutableStateOf("")
+    val searchQuery = mutableStateOf("")
 
     private val _filterState = MutableStateFlow(InitialFiltersState)
 
@@ -80,7 +80,6 @@ class DiscoverViewModel(
     fun updateSearchQuery(searchQueryText: String) {
         Snapshot.withMutableSnapshot {
             searchQuery.value = searchQueryText
-            _internalState = _internalState.copy(searchQuery = searchQueryText)
         }
     }
 
@@ -169,7 +168,6 @@ class DiscoverViewModel(
         )
 
         val Initial = DiscoverState(
-            searchQuery = "",
             filtersState = InitialFiltersState,
             gamesState = DiscoverStateGames.SuggestedGames(
                 taggedGamesList = listOf(

@@ -73,7 +73,6 @@ import com.mr3y.ludi.shared.ui.presenter.OnBoardingViewModel
 import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.shared.ui.presenter.model.OnboardingState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val OnboardingPagesCount = 3
@@ -96,6 +95,7 @@ expect fun OnboardingScreen(
 @Composable
 fun OnboardingScreen(
     onboardingState: OnboardingState,
+    searchQuery: String,
     modifier: Modifier = Modifier,
     initialPage: Int = 0,
     onSkipButtonClicked: () -> Unit,
@@ -219,7 +219,7 @@ fun OnboardingScreen(
                                 modifier = pageModifier
                             ) {
                                 SelectingFavouriteGamesPage(
-                                    searchQueryText = onboardingState.searchQuery,
+                                    searchQueryText = searchQuery,
                                     onUpdatingSearchQueryText = onUpdatingSearchQueryText,
                                     allGames = onboardingState.onboardingGames,
                                     favouriteUserGames = onboardingState.favouriteGames,

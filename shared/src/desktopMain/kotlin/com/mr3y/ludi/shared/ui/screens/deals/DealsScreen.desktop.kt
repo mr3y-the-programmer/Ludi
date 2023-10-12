@@ -15,6 +15,7 @@ actual fun DealsScreen(
     val dealsState by viewModel.dealsState.collectAsState()
     DealsScreen(
         dealsState = dealsState,
+        searchQuery = viewModel.searchQuery.value,
         modifier = modifier,
         onUpdateSearchQuery = viewModel::updateSearchQuery,
         onSelectingDealStore = viewModel::addToSelectedDealsStores,

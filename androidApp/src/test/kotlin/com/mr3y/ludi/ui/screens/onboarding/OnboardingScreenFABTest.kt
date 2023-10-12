@@ -35,6 +35,7 @@ class OnboardingScreenFABTest : BaseRobolectricTest() {
                 OnboardingScreen(
                     initialPage = 0,
                     onboardingState = FakeOnboardingState.copy(selectedGamingGenres = selectedGenres.value),
+                    searchQuery = "",
                     onSkipButtonClicked = { /*TODO*/ },
                     onFinishButtonClicked = { /*TODO*/ },
                     onSelectingNewsDataSource = {},
@@ -77,6 +78,7 @@ class OnboardingScreenFABTest : BaseRobolectricTest() {
                 OnboardingScreen(
                     initialPage = 1,
                     onboardingState = FakeOnboardingState.copy(favouriteGames = selectedGames.value),
+                    searchQuery = "",
                     onSkipButtonClicked = { /*TODO*/ },
                     onFinishButtonClicked = { /*TODO*/ },
                     onSelectingNewsDataSource = {},
@@ -115,6 +117,7 @@ class OnboardingScreenFABTest : BaseRobolectricTest() {
                 OnboardingScreen(
                     initialPage = 2,
                     onboardingState = FakeOnboardingState.copy(followedNewsDataSources = selectedSources.value),
+                    searchQuery = "",
                     onSkipButtonClicked = { },
                     onFinishButtonClicked = { },
                     onSelectingNewsDataSource = { selectedSources.value = selectedSources.value + it },

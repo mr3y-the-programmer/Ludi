@@ -5,7 +5,6 @@ import com.mr3y.ludi.shared.core.model.GameGenre
 import com.mr3y.ludi.shared.core.model.Result
 
 data class DiscoverState(
-    val searchQuery: String,
     val filtersState: DiscoverFiltersState,
     val gamesState: DiscoverStateGames,
     val isRefreshing: Boolean

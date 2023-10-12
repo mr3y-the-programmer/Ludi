@@ -34,6 +34,7 @@ class DealsScreenTest : BaseRobolectricTest() {
                 strings = LocalStrings.current
                 DealsScreen(
                     dealsState = FakeDealsState,
+                    searchQuery = "",
                     onUpdateSearchQuery = {},
                     onSelectingDealStore = {},
                     onUnselectingDealStore = {},
