@@ -207,7 +207,8 @@ fun OnboardingScreen(
                                     selectedGenres = onboardingState.selectedGamingGenres,
                                     onSelectingGenre = onSelectingGenre,
                                     onUnselectingGenre = onUnselectingGenre,
-                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
                         }
@@ -225,7 +226,8 @@ fun OnboardingScreen(
                                     favouriteUserGames = onboardingState.favouriteGames,
                                     onAddingGameToFavourites = onAddingGameToFavourites,
                                     onRemovingGameFromFavourites = onRemovingGameFromFavourites,
-                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
                         }
@@ -246,7 +248,8 @@ fun OnboardingScreen(
                                         } else {
                                             onSelectingNewsDataSource(it)
                                         }
-                                    }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
                         }

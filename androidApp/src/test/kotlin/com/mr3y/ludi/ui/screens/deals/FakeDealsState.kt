@@ -177,5 +177,7 @@ val FakeDealsState = DealsState(
     FakeInitialDealsFiltersState,
     FakeInitialGiveawaysFiltersState,
     isRefreshingDeals = false,
-    isRefreshingGiveaways = false
+    isRefreshingGiveaways = false,
+    selectedTab = 0,
+    showFilters = false
 )

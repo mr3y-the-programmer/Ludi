@@ -84,6 +84,10 @@ class DealsViewModel(
         }
     }
 
+    private val selectedTab = MutableStateFlow(Initial.selectedTab)
+
+    private val showFilters = MutableStateFlow(Initial.showFilters)
+
     @Suppress("UNCHECKED_CAST")
     val dealsState = combine(
         dealsFilterState,
@@ -95,7 +99,9 @@ class DealsViewModel(
         refreshingDeals,
         _previousRefreshDealsValue,
         refreshingGiveaways,
-        _previousRefreshGiveawaysValue
+        _previousRefreshGiveawaysValue,
+        selectedTab,
+        showFilters
     ) { updates ->
         val isDealsLoading = updates[4] as Boolean
         val isGiveawaysLoading = updates[5] as Boolean
@@ -103,6 +109,8 @@ class DealsViewModel(
         val previousRefreshDeals = updates[7] as Int
         val refreshingGiveaways = updates[8] as Int
         val previousRefreshGiveaways = updates[9] as Int
+        val selectedTabIndex = updates[10] as Int
+        val isFiltersShown = updates[11] as Boolean
         DealsState(
             dealsFiltersState = updates[0] as DealsFiltersState,
             deals = if (isDealsLoading) Initial.deals else (updates[1] as Result<List<Deal>, Throwable>),
@@ -115,7 +123,9 @@ class DealsViewModel(
                 }
             },
             isRefreshingDeals = refreshingDeals != previousRefreshDeals,
-            isRefreshingGiveaways = refreshingGiveaways != previousRefreshGiveaways
+            isRefreshingGiveaways = refreshingGiveaways != previousRefreshGiveaways,
+            selectedTab = selectedTabIndex,
+            showFilters = isFiltersShown
         )
     }.stateIn(
         coroutineScope,
@@ -159,6 +169,14 @@ class DealsViewModel(
 
     fun refreshGiveaways() {
         refreshingGiveaways.update { it + 1 }
+    }
+
+    fun selectTab(tabIndex: Int) {
+        selectedTab.update { tabIndex }
+    }
+
+    fun toggleFilters() {
+        showFilters.update { !it }
     }
 
     private fun GiveawaysFiltersState.selectedPlatformsAndStores(): List<com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform>? {
@@ -263,7 +281,9 @@ class DealsViewModel(
             InitialDealsFiltersState,
             InitialGiveawaysFiltersState,
             isRefreshingDeals = true,
-            isRefreshingGiveaways = true
+            isRefreshingGiveaways = true,
+            selectedTab = 0,
+            showFilters = false
         )
     }
 }

@@ -43,7 +43,7 @@ fun DiscoverTopBar(
     searchQuery: String,
     onSearchQueryValueChanged: (String) -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
-    onCloseClicked: () -> Unit,
+    onTuneClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val strings = LocalStrings.current
@@ -94,7 +94,7 @@ fun DiscoverTopBar(
         modifier = modifier,
         actions = {
             IconButton(
-                onClick = onCloseClicked,
+                onClick = onTuneClicked,
                 modifier = Modifier.requiredSize(48.dp)
                     .semantics {
                         contentDescription = strings.discover_page_filter_icon_content_description

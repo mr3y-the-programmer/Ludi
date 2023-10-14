@@ -72,6 +72,8 @@ kotlin {
                 implementation(libs.compose.richeditor)
                 // Palette
                 implementation(libs.kmpalette.core)
+                // Material3 WindowSizeClass
+                implementation(libs.material3.windowsizeclass)
 
                 // Navigation
                 implementation(libs.voyager.navigator)

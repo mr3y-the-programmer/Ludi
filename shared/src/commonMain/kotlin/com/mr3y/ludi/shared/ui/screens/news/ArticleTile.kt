@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -94,7 +95,7 @@ fun ArticleCardTile(
                  },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .aspectRatio(3f / 2f),
                 contentDescription = null,
                 contentScale = if (imageLoaded) ContentScale.Crop else ContentScale.FillBounds
             )

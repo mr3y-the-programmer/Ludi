@@ -33,6 +33,8 @@ actual fun DealsScreen(
         onUnselectingGiveawayPlatform = viewModel::removeFromSelectedGiveawayPlatforms,
         onRefreshDeals = viewModel::refreshDeals,
         onRefreshGiveaways = viewModel::refreshGiveaways,
+        onSelectTab = viewModel::selectTab,
+        onToggleFilters = viewModel::toggleFilters,
         onOpenUrl = { url ->
             launchChromeCustomTab(context, Uri.parse(url), tabToolbarColor)
         }

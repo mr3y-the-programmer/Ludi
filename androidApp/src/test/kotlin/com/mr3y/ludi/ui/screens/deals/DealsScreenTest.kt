@@ -29,11 +29,13 @@ class DealsScreenTest : BaseRobolectricTest() {
     fun deals_launches_state_is_saved_and_survives_config_changes() {
         val restorationTester = StateRestorationTester(composeTestRule)
         var strings: LudiStrings? by mutableStateOf(null)
+        var selectedTab by mutableStateOf(0)
+        var showFilters by mutableStateOf(false)
         restorationTester.setContent {
             LudiTheme {
                 strings = LocalStrings.current
                 DealsScreen(
-                    dealsState = FakeDealsState,
+                    dealsState = FakeDealsState.copy(selectedTab = selectedTab, showFilters = showFilters),
                     searchQuery = "",
                     onUpdateSearchQuery = {},
                     onSelectingDealStore = {},
@@ -44,6 +46,8 @@ class DealsScreenTest : BaseRobolectricTest() {
                     onUnselectingGiveawayPlatform = {},
                     onRefreshDeals = {},
                     onRefreshGiveaways = {},
+                    onSelectTab = { selectedTab = it },
+                    onToggleFilters = { showFilters = !showFilters },
                     onOpenUrl = {},
                 )
             }
