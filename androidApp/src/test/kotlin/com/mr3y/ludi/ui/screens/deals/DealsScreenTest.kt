@@ -1,5 +1,8 @@
 package com.mr3y.ludi.ui.screens.deals
 
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,6 +17,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import cafe.adriel.lyricist.LocalStrings
+import com.mr3y.ludi.shared.ui.adaptive.LocalWindowSizeClass
 import com.mr3y.ludi.shared.ui.resources.LudiStrings
 import com.mr3y.ludi.shared.ui.screens.deals.DealsScreen
 import com.mr3y.ludi.ui.screens.BaseRobolectricTest
@@ -25,6 +29,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class DealsScreenTest : BaseRobolectricTest() {
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @Test
     fun deals_launches_state_is_saved_and_survives_config_changes() {
         val restorationTester = StateRestorationTester(composeTestRule)
@@ -33,23 +38,25 @@ class DealsScreenTest : BaseRobolectricTest() {
         var showFilters by mutableStateOf(false)
         restorationTester.setContent {
             LudiTheme {
-                strings = LocalStrings.current
-                DealsScreen(
-                    dealsState = FakeDealsState.copy(selectedTab = selectedTab, showFilters = showFilters),
-                    searchQuery = "",
-                    onUpdateSearchQuery = {},
-                    onSelectingDealStore = {},
-                    onUnselectingDealStore = {},
-                    onSelectingGiveawayStore = {},
-                    onUnselectingGiveawayStore = {},
-                    onSelectingGiveawayPlatform = {},
-                    onUnselectingGiveawayPlatform = {},
-                    onRefreshDeals = {},
-                    onRefreshGiveaways = {},
-                    onSelectTab = { selectedTab = it },
-                    onToggleFilters = { showFilters = !showFilters },
-                    onOpenUrl = {},
-                )
+                CompositionLocalProvider(LocalWindowSizeClass provides calculateWindowSizeClass()) {
+                    strings = LocalStrings.current
+                    DealsScreen(
+                        dealsState = FakeDealsState.copy(selectedTab = selectedTab, showFilters = showFilters),
+                        searchQuery = "",
+                        onUpdateSearchQuery = {},
+                        onSelectingDealStore = {},
+                        onUnselectingDealStore = {},
+                        onSelectingGiveawayStore = {},
+                        onUnselectingGiveawayStore = {},
+                        onSelectingGiveawayPlatform = {},
+                        onUnselectingGiveawayPlatform = {},
+                        onRefreshDeals = {},
+                        onRefreshGiveaways = {},
+                        onSelectTab = { selectedTab = it },
+                        onToggleFilters = { showFilters = !showFilters },
+                        onOpenUrl = {},
+                    )
+                }
             }
         }
 
