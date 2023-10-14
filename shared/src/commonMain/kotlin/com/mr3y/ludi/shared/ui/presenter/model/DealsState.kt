@@ -12,6 +12,8 @@ data class DealsState(
     val giveaways: Result<List<GiveawayEntry>, Throwable>,
     val dealsFiltersState: DealsFiltersState,
     val giveawaysFiltersState: GiveawaysFiltersState,
+    val selectedTab: Int,
+    val showFilters: Boolean,
     val isRefreshingDeals: Boolean,
     val isRefreshingGiveaways: Boolean
 )

@@ -68,7 +68,7 @@ fun GenresPage(
         Column(
             verticalArrangement = verticalArrangement,
             horizontalAlignment = Alignment.End,
-            modifier = Modifier.clearAndSetSemantics {
+            modifier = Modifier.fillMaxWidth().clearAndSetSemantics {
                 contentDescription = "$label\n$secondaryText"
             }
         ) {

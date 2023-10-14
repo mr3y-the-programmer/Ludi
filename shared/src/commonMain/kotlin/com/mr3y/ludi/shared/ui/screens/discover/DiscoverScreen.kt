@@ -99,7 +99,7 @@ fun DiscoverScreen(
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var openFiltersSheet by rememberSaveable { mutableStateOf(false) }
+    var openFilters by rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val refreshState = rememberPullRefreshState(
         refreshing = discoverState.isRefreshing,
@@ -113,7 +113,7 @@ fun DiscoverScreen(
             DiscoverTopBar(
                 searchQuery = searchQuery,
                 onSearchQueryValueChanged = onUpdatingSearchQueryText,
-                onCloseClicked = { openFiltersSheet = !openFiltersSheet },
+                onTuneClicked = { openFilters = !openFilters },
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .fillMaxWidth(),
@@ -157,12 +157,10 @@ fun DiscoverScreen(
             )
         }
     }
-    if (openFiltersSheet) {
-        FiltersBottomSheet(
-            filtersState = discoverState.filtersState,
-            modifier = Modifier.fillMaxWidth(),
-            onDismissRequest = { openFiltersSheet = false },
-            onCloseClicked = { openFiltersSheet = false },
+    if (openFilters) {
+        Filters(
+            discoverState.filtersState,
+            onDismiss = { openFilters = false },
             onSelectingPlatform,
             onUnselectingPlatform,
             onSelectingStore,
