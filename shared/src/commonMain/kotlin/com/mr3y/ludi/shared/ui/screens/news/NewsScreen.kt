@@ -57,13 +57,8 @@ import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mr3y.ludi.shared.core.model.Article
-import com.mr3y.ludi.shared.core.model.MarkupText
 import com.mr3y.ludi.shared.core.model.NewReleaseArticle
-import com.mr3y.ludi.shared.core.model.NewsArticle
 import com.mr3y.ludi.shared.core.model.Result
-import com.mr3y.ludi.shared.core.model.ReviewArticle
-import com.mr3y.ludi.shared.core.model.Source
-import com.mr3y.ludi.shared.core.model.Title
 import com.mr3y.ludi.shared.di.getScreenModel
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.shared.ui.components.LudiErrorBox

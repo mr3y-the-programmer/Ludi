@@ -31,7 +31,7 @@ interface DataStoreComponent {
     @Singleton
     fun provideFavouriteGamesDataStore(dataStoreParentDir: Path): DataStore<UserFavouriteGames> {
         return DataStoreFactory.create(
-            storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FavouriteGamesSerializer, producePath = { dataStoreParentDir.resolve("datastore").resolve("fav_games.pb")}),
+            storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FavouriteGamesSerializer, producePath = { dataStoreParentDir.resolve("datastore").resolve("fav_games.pb") }),
             corruptionHandler = null,
             migrations = emptyList(),
             scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -42,7 +42,7 @@ interface DataStoreComponent {
     @Singleton
     fun provideFollowedNewsSourcesDataStore(dataStoreParentDir: Path): DataStore<FollowedNewsDataSources> {
         return DataStoreFactory.create(
-            storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FollowedNewsDataSourceSerializer, producePath = { dataStoreParentDir.resolve("datastore").resolve("followed_news_sources.pb")}),
+            storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FollowedNewsDataSourceSerializer, producePath = { dataStoreParentDir.resolve("datastore").resolve("followed_news_sources.pb") }),
             corruptionHandler = null,
             migrations = emptyList(),
             scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -53,12 +53,11 @@ interface DataStoreComponent {
     @Singleton
     fun provideFavouriteGenresDataStore(dataStoreParentDir: Path): DataStore<UserFavouriteGenres> {
         return DataStoreFactory.create(
-            storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FavouriteGenresSerializer, producePath = { dataStoreParentDir.resolve("datastore").resolve("fav_genres.pb")}),
+            storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FavouriteGenresSerializer, producePath = { dataStoreParentDir.resolve("datastore").resolve("fav_genres.pb") }),
             corruptionHandler = null,
             migrations = emptyList(),
             scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
         )
-
     }
 
     @Provides

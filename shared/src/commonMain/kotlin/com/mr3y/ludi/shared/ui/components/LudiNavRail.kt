@@ -32,7 +32,7 @@ fun LudiNavigationRail(
     Surface(
         color = containerColor,
         contentColor = contentColor,
-        modifier = modifier,
+        modifier = modifier
     ) {
         Column(
             Modifier

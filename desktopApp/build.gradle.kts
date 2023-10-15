@@ -3,6 +3,8 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose")
+    alias(libs.plugins.ktlint.plugin)
+    alias(libs.plugins.spotless.plugin)
 }
 
 kotlin {
@@ -21,8 +23,19 @@ kotlin {
     }
 }
 
-dependencies {
+spotless {
+    format("misc") {
+        // define the files to apply `misc` to
+        target(listOf("**/*.gradle", "*.md", ".gitignore"))
 
+        // define the steps to apply to those files
+        trimTrailingWhitespace()
+        indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
+        endWithNewline()
+    }
+}
+
+dependencies {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {

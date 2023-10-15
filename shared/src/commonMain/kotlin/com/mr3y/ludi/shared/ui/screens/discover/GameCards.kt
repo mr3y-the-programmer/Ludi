@@ -82,8 +82,8 @@ fun TrendingGameCard(
         builder = {
             // Clear any built-in filters. We want the unfiltered dominant color
             clearFilters()
-            // We reduce the maximum color count down to 8
-            .maximumColorCount(8)
+                // We reduce the maximum color count down to 8
+                .maximumColorCount(8)
         }
     )
     var bitmap by remember { mutableStateOf<ImageBitmap?>(null) }
@@ -140,7 +140,7 @@ fun TrendingGameCard(
             AsyncImage(
                 url = imageUrl,
                 onState = { state ->
-                    when(state) {
+                    when (state) {
                         is State.Success -> {
                             bitmap = state.result.bitmap
                         }

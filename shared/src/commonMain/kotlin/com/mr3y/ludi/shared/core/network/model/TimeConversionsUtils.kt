@@ -1,9 +1,9 @@
 package com.mr3y.ludi.shared.core.network.model
 
-import java.time.ZonedDateTime
 import java.text.ParsePosition
 import java.time.Instant
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 

@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.isSpecified
 public fun PlaceholderDefaults.color(
     backgroundColor: Color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(backgroundColor),
-    contentAlpha: Float = 0.1f,
+    contentAlpha: Float = 0.1f
 ): Color = contentColor.copy(contentAlpha).compositeOver(backgroundColor)
 
 /**
@@ -43,7 +43,7 @@ public fun PlaceholderDefaults.color(
 @Composable
 public fun PlaceholderDefaults.fadeHighlightColor(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    alpha: Float = 0.3f,
+    alpha: Float = 0.3f
 ): Color = backgroundColor.copy(alpha = alpha)
 
 /**
@@ -57,7 +57,7 @@ public fun PlaceholderDefaults.fadeHighlightColor(
 @Composable
 public fun PlaceholderDefaults.shimmerHighlightColor(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    alpha: Float = 0.75f,
+    alpha: Float = 0.75f
 ): Color {
     return backgroundColor.copy(alpha = alpha)
 }
@@ -72,10 +72,10 @@ public fun PlaceholderDefaults.shimmerHighlightColor(
  */
 @Composable
 public fun PlaceholderHighlight.Companion.fade(
-    animationSpec: InfiniteRepeatableSpec<Float> = PlaceholderDefaults.fadeAnimationSpec,
+    animationSpec: InfiniteRepeatableSpec<Float> = PlaceholderDefaults.fadeAnimationSpec
 ): PlaceholderHighlight = PlaceholderHighlight.fade(
     highlightColor = PlaceholderDefaults.fadeHighlightColor(),
-    animationSpec = animationSpec,
+    animationSpec = animationSpec
 )
 
 /**
@@ -94,11 +94,11 @@ public fun PlaceholderHighlight.Companion.fade(
 @Composable
 public fun PlaceholderHighlight.Companion.shimmer(
     animationSpec: InfiniteRepeatableSpec<Float> = PlaceholderDefaults.shimmerAnimationSpec,
-    @FloatRange(from = 0.0, to = 1.0) progressForMaxAlpha: Float = 0.6f,
+    @FloatRange(from = 0.0, to = 1.0) progressForMaxAlpha: Float = 0.6f
 ): PlaceholderHighlight = PlaceholderHighlight.shimmer(
     highlightColor = PlaceholderDefaults.shimmerHighlightColor(),
     animationSpec = animationSpec,
-    progressForMaxAlpha = progressForMaxAlpha,
+    progressForMaxAlpha = progressForMaxAlpha
 )
 
 /**
@@ -137,7 +137,7 @@ public fun Modifier.placeholder(
     shape: Shape? = null,
     highlight: PlaceholderHighlight? = null,
     placeholderFadeTransitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Float> = { spring() },
-    contentFadeTransitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Float> = { spring() },
+    contentFadeTransitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Float> = { spring() }
 ): Modifier = composed {
     Modifier.placeholder(
         visible = visible,
@@ -145,6 +145,6 @@ public fun Modifier.placeholder(
         shape = shape ?: MaterialTheme.shapes.small,
         highlight = highlight,
         placeholderFadeTransitionSpec = placeholderFadeTransitionSpec,
-        contentFadeTransitionSpec = contentFadeTransitionSpec,
+        contentFadeTransitionSpec = contentFadeTransitionSpec
     )
 }

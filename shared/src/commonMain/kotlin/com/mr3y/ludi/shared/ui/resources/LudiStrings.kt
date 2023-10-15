@@ -58,5 +58,5 @@ data class LudiStrings(
     val now: String,
     val news_no_releases_to_show: String,
     val news_no_news_to_show: String,
-    val news_no_reviews_to_show: String,
+    val news_no_reviews_to_show: String
 )

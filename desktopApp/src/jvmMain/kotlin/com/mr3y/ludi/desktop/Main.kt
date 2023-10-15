@@ -8,8 +8,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.mr3y.ludi.shared.App
-import com.mr3y.ludi.shared.di.HostWindowComponent
 import com.mr3y.ludi.shared.di.DesktopApplicationComponent
+import com.mr3y.ludi.shared.di.HostWindowComponent
 import com.mr3y.ludi.shared.di.LocalHostWindowComponent
 import com.mr3y.ludi.shared.di.create
 import com.mr3y.ludi.shared.ui.presenter.model.Theme

@@ -70,12 +70,12 @@ import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.shared.ui.components.AsyncImage
 import com.mr3y.ludi.shared.ui.components.LudiErrorBox
+import com.mr3y.ludi.shared.ui.components.placeholder.PlaceholderHighlight
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
+import com.mr3y.ludi.shared.ui.components.placeholder.fade
 import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.shared.ui.theme.rating_star
-import com.mr3y.ludi.shared.ui.components.placeholder.PlaceholderHighlight
-import com.mr3y.ludi.shared.ui.components.placeholder.fade
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

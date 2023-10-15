@@ -3,6 +3,7 @@ package com.mr3y.ludi.shared.ui.presenter
 import androidx.datastore.core.DataStore
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
+import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.shared.core.model.Article
 import com.mr3y.ludi.shared.core.model.NewReleaseArticle
 import com.mr3y.ludi.shared.core.model.NewsArticle
@@ -11,7 +12,6 @@ import com.mr3y.ludi.shared.core.model.ReviewArticle
 import com.mr3y.ludi.shared.core.model.Source
 import com.mr3y.ludi.shared.core.model.onSuccess
 import com.mr3y.ludi.shared.core.repository.NewsRepository
-import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.shared.ui.presenter.model.NewsState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async

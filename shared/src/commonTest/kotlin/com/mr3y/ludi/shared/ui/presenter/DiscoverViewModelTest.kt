@@ -1,8 +1,8 @@
 package com.mr3y.ludi.shared.ui.presenter
 
+import com.mr3y.ludi.shared.MainDispatcherRule
 import com.mr3y.ludi.shared.core.model.Game
 import com.mr3y.ludi.shared.core.repository.fixtures.FakeGamesRepository
-import com.mr3y.ludi.shared.MainDispatcherRule
 import com.mr3y.ludi.shared.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.shared.ui.presenter.model.Platform
 import com.mr3y.ludi.shared.ui.presenter.model.Store

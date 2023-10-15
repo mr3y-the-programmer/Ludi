@@ -5,10 +5,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -23,8 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
 import com.mr3y.ludi.shared.core.model.NewReleaseArticle
-import com.mr3y.ludi.shared.core.model.Source
-import com.mr3y.ludi.shared.core.model.Title
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import java.time.format.DateTimeFormatter
 

@@ -15,7 +15,6 @@ import com.mr3y.ludi.shared.core.repository.query.DealsSorting
 import com.mr3y.ludi.shared.core.repository.query.DealsSortingDirection
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysQueryParameters
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysSorting
-import java.time.ZonedDateTime
 import com.mr3y.ludi.shared.ui.presenter.model.DealStore
 import com.mr3y.ludi.shared.ui.presenter.model.DealsFiltersState
 import com.mr3y.ludi.shared.ui.presenter.model.DealsState
@@ -32,6 +31,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
 import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @OptIn(FlowPreview::class)
 @Inject
