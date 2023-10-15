@@ -37,13 +37,36 @@ java {
 }
 
 compose.desktop {
+    sourceSets["main"].resources.srcDirs("src/jvmMain/resources")
     application {
         mainClass = "MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.mr3y.ludi.desktop"
-            packageVersion = "1.0.0"
+
+            description = "Ludi is a Kotlin Multiplatform (Android + Desktop) app to demonstrate best practices & using modern technologies to develop high quality apps"
+            copyright = "Apache License Version 2.0"
+            vendor = "https://github.com/mr3y-the-programmer"
+
+            buildTypes.release.proguard {
+                isEnabled.set(true)
+                configurationFiles.from("proguard-rules.pro")
+            }
+            windows {
+                shortcut = true
+                menu = true
+                menuGroup = "Ludi"
+                iconFile.set(file("src/jvmMain/resources/icon_light.xml"))
+            }
+            macOS {
+                bundleID = "com.mr3y.ludi"
+                packageName = "com.mr3y.ludi.desktop"
+                iconFile.set(file("src/jvmMain/resources/icon_light.xml"))
+            }
+            linux {
+                iconFile.set(file("src/jvmMain/resources/icon_light.xml"))
+            }
         }
     }
 }
