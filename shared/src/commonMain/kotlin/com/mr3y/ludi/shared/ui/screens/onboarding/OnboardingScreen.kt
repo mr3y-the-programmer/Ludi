@@ -1,6 +1,5 @@
 package com.mr3y.ludi.shared.ui.screens.onboarding
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
@@ -50,7 +49,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -355,7 +353,7 @@ fun AnimatedExtendedFab(
             },
             label = "AnimatedFABPreview"
         ) { currState ->
-            val label = when(currState) {
+            val label = when (currState) {
                 OnboardingFABState.Skip -> strings.on_boarding_fab_state_skip
                 OnboardingFABState.Continue -> strings.on_boarding_fab_state_continue
                 OnboardingFABState.Finish -> strings.on_boarding_fab_state_finish

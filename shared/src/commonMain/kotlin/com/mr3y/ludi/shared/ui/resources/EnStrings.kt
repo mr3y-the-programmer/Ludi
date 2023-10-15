@@ -10,7 +10,7 @@ val EnLudiStrings = LudiStrings(
     genres_page_genre_off_state_desc = { "Select genre $it" },
     games_page_clear_search_query_desc = "Clear search query",
     games_page_search_field_desc = "Search for a specific game",
-    games_page_game_content_desc = { name, rate ->  "$name, Rated: ${rate.roundToTwoDecimalDigits()} stars" },
+    games_page_game_content_desc = { name, rate -> "$name, Rated: ${rate.roundToTwoDecimalDigits()} stars" },
     games_page_game_on_state_desc = { "Remove $it from your favourite games" },
     games_page_game_off_state_desc = { "Add $it to your favourite games" },
     data_sources_page_data_source_on_state_desc = { "Unfollow $it RSS feed" },
@@ -61,5 +61,5 @@ val EnLudiStrings = LudiStrings(
     now = "now",
     news_no_releases_to_show = "No New Releases to show",
     news_no_news_to_show = "No New News to show",
-    news_no_reviews_to_show = "No New Reviews to show",
+    news_no_reviews_to_show = "No New Reviews to show"
 )

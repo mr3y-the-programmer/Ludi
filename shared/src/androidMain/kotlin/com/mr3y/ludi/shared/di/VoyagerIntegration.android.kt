@@ -23,8 +23,8 @@ actual inline fun <reified T : ScreenModel> Screen.getScreenModel(
         val model = screenModels[T::class]?.invoke()
             ?: error(
                 "${T::class} not found in kotlin-inject graph.\nPlease, check if you have a Multibinding " +
-                        "declaration to your ScreenModel using @IntoMap with " +
-                        "key ${T::class.qualifiedName}::class)"
+                    "declaration to your ScreenModel using @IntoMap with " +
+                    "key ${T::class.qualifiedName}::class)"
             )
         model as T
     }
@@ -45,7 +45,7 @@ actual inline fun <reified T : ScreenModel, reified P> Screen.getScreenModel(
             else -> {
                 error(
                     "${T::class.java} not found in kotlin-inject graph.\nPlease, make sure that you've declared your assisted ScreenModel " +
-                            "in kotlin-inject graph"
+                        "in kotlin-inject graph"
                 )
             }
         }

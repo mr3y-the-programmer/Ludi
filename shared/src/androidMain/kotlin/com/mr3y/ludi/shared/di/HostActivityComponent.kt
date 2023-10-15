@@ -8,6 +8,4 @@ import me.tatarka.inject.annotations.Provides
 abstract class HostActivityComponent(
     @get:Provides val activity: Activity,
     @Component val parent: AndroidApplicationComponent
-) : ScreenModelsComponent {
-
-}
+) : ScreenModelsComponent

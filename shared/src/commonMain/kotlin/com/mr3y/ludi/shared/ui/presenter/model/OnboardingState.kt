@@ -50,4 +50,3 @@ internal fun FavouriteGame.toUserFavouriteGame(): UserFavouriteGame {
 internal fun GameGenre.toUserFavouriteGenre(): UserFavouriteGenre {
     return UserFavouriteGenre(id = id, name = name, imageUrl = imageUrl ?: "", slug = slug ?: "", gamesCount = gamesCount ?: 0L)
 }
-

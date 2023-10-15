@@ -9,8 +9,6 @@ import me.tatarka.inject.annotations.Provides
 abstract class HostWindowComponent(
     @get:Provides val window: ComposeWindow,
     @Component val parent: DesktopApplicationComponent
-) : ScreenModelsComponent {
-
-}
+) : ScreenModelsComponent
 
 val LocalHostWindowComponent = staticCompositionLocalOf<HostWindowComponent> { error("HostWindowComponent isn't provided!") }

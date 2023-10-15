@@ -34,14 +34,14 @@ actual fun AsyncImage(
             .build(),
         contentDescription = contentDescription,
         transform = { state ->
-            when(state) {
+            when (state) {
                 is AsyncImagePainter.State.Loading -> AsyncImagePainter.State.Loading(painter = placeholder)
                 is AsyncImagePainter.State.Error -> AsyncImagePainter.State.Error(painter = error, result = state.result)
                 else -> state
             }
         },
         onState = { coilState ->
-            when(coilState) {
+            when (coilState) {
                 is AsyncImagePainter.State.Empty -> onState?.invoke(State.Empty)
                 is AsyncImagePainter.State.Loading -> onState?.invoke(State.Loading(coilState.painter))
                 is AsyncImagePainter.State.Success -> onState?.invoke(State.Success(painter = coilState.painter, result = coilState.result.toOurSuccessResult()))

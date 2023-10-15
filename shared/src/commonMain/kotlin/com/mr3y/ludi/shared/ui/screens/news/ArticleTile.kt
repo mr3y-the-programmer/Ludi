@@ -1,21 +1,15 @@
 package com.mr3y.ludi.shared.ui.screens.news
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,10 +32,6 @@ import cafe.adriel.lyricist.LocalStrings
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import com.mr3y.ludi.shared.core.model.Article
-import com.mr3y.ludi.shared.core.model.MarkupText
-import com.mr3y.ludi.shared.core.model.NewsArticle
-import com.mr3y.ludi.shared.core.model.Source
-import com.mr3y.ludi.shared.core.model.Title
 import com.mr3y.ludi.shared.ui.components.AsyncImage
 import com.mr3y.ludi.shared.ui.components.State
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
@@ -92,7 +82,7 @@ fun ArticleCardTile(
                     if (state is State.Success) {
                         imageLoaded = true
                     }
-                 },
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(3f / 2f),

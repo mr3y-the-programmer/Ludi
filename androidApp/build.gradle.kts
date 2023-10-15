@@ -1,4 +1,3 @@
-import com.diffplug.spotless.LineEnding
 import de.fayard.refreshVersions.core.versionFor
 import java.io.FileInputStream
 import java.time.Instant
@@ -9,7 +8,6 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("org.jetbrains.compose")
-    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.ktlint.plugin)
     alias(libs.plugins.spotless.plugin)
     alias(libs.plugins.firebase.crashlytics)
@@ -124,8 +122,6 @@ spotless {
         indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
         endWithNewline()
     }
-    // Workaround Config cache problem until https://github.com/diffplug/spotless/issues/1644 is fixed.
-    lineEndings = LineEnding.PLATFORM_NATIVE // or any other except GIT_ATTRIBUTES
 }
 
 dependencies {

@@ -14,11 +14,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import com.seiko.imageloader.LocalImageLoader
-import com.seiko.imageloader.component.keyer.Keyer
 import com.seiko.imageloader.model.ImageEvent
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageResult
-import com.seiko.imageloader.option.Options
 import com.seiko.imageloader.rememberImageAction
 import com.seiko.imageloader.rememberImageActionPainter
 import com.seiko.imageloader.toPainter
@@ -51,7 +49,7 @@ actual fun AsyncImage(
         snapshotFlow { imageAction }
             .onStart { onState?.invoke(State.Empty) }
             .collect { action ->
-                when(action) {
+                when (action) {
                     is ImageEvent -> onState?.invoke(State.Loading(placeholder))
                     is ImageResult.Bitmap -> {
                         val bitmap = action.bitmap
@@ -73,10 +71,14 @@ actual fun AsyncImage(
             filterQuality,
             placeholderPainter = if (placeholder != null) {
                 { remember { placeholder } }
-            } else null,
+            } else {
+                null
+            },
             errorPainter = if (error != null) {
                 { remember { error } }
-            } else null
+            } else {
+                null
+            }
         ),
         contentDescription = contentDescription,
         contentScale = contentScale,

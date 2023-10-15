@@ -34,12 +34,12 @@ sealed interface State {
 
     data class Success(
         override val painter: Painter,
-        val result: SuccessResult,
+        val result: SuccessResult
     ) : State
 
     data class Error(
         override val painter: Painter?,
-        val result: ErrorResult,
+        val result: ErrorResult
     ) : State
 }
 

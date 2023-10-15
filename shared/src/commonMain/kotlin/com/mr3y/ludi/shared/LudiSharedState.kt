@@ -42,7 +42,7 @@ class LudiSharedState(
                 userFavouriteGenresIds = ids
             }
         }.launchIn(appScope.value) // trigger flow collection as long as application scope is still active, so, we can
-        // continuously react to user preferences changes.
+    // continuously react to user preferences changes.
 
     val preferences = userPreferences.data
         .catch {
@@ -59,7 +59,6 @@ class LudiSharedState(
             SharingStarted.WhileSubscribed(5000),
             null
         )
-
 }
 
 data class UserPreferences(

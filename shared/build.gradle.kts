@@ -1,13 +1,15 @@
 import com.github.gmazzo.gradle.plugins.BuildConfigSourceSet
 import de.fayard.refreshVersions.core.versionFor
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import java.io.FileInputStream
 import java.util.Properties
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
     id("org.jetbrains.compose")
+    alias(libs.plugins.ktlint.plugin)
+    alias(libs.plugins.spotless.plugin)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.wire)
@@ -147,6 +149,18 @@ wire {
     }
 }
 
+spotless {
+    format("misc") {
+        // define the files to apply `misc` to
+        target(listOf("**/*.gradle", "*.md", ".gitignore"))
+
+        // define the steps to apply to those files
+        trimTrailingWhitespace()
+        indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
+        endWithNewline()
+    }
+}
+
 android {
     compileSdk = 34
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -201,8 +215,20 @@ fun getValueOfKey(key: String) =
     }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
-    if(name != "kspCommonMainKotlinMetadata") {
+    if (name != "kspCommonMainKotlinMetadata") {
         dependsOn("kspCommonMainKotlinMetadata")
+    }
+}
+
+tasks.named("runKtlintFormatOverCommonMainSourceSet").configure {
+    dependsOn("kspCommonMainKotlinMetadata")
+}
+
+ktlint {
+    filter {
+        exclude {
+            it.file.path.contains("build")
+        }
     }
 }
 

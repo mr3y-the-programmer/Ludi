@@ -4,10 +4,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.okio.OkioStorage
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.mr3y.ludi.shared.core.model.Source
-import com.mr3y.ludi.shared.core.model.data
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSource
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
+import com.mr3y.ludi.shared.core.model.Source
+import com.mr3y.ludi.shared.core.model.data
 import com.mr3y.ludi.shared.ui.datastore.FollowedNewsDataSourceSerializer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect

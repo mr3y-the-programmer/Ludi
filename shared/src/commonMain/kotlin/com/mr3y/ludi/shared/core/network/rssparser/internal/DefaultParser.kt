@@ -8,8 +8,8 @@ import com.mr3y.ludi.shared.core.model.Source
 import com.mr3y.ludi.shared.core.model.Title
 import com.mr3y.ludi.shared.core.network.model.toZonedDateTime
 import com.mr3y.ludi.shared.core.network.rssparser.Parser
-import com.prof18.rssparser.model.RssItem
 import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.model.RssItem
 import me.tatarka.inject.annotations.Inject
 
 @Inject

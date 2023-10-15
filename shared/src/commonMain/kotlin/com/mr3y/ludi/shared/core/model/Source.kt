@@ -20,7 +20,7 @@ enum class Source {
 }
 
 internal fun mapTypeToIconRes(type: Source): String {
-    return when(type) {
+    return when (type) {
         Source.GiantBomb -> "giant_bomb_logo.xml"
         Source.GameSpot -> "game_spot_logo.xml"
         Source.IGN -> "ign_logo.xml"

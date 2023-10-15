@@ -1,3 +1,4 @@
+// ktlint-disable filename
 package com.mr3y.ludi.shared.ui.resources
 
 import java.math.RoundingMode

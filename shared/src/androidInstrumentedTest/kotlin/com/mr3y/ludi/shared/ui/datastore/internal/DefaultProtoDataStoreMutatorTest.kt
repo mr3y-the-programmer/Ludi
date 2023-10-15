@@ -41,19 +41,19 @@ class DefaultProtoDataStoreMutatorTest {
     private val testScope = TestScope(testDispatcher)
 
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources> = DataStoreFactory.create(
-        storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FollowedNewsDataSourceSerializer, producePath = { tempFolder.newFolder().toOkioPath().resolve("datastore").resolve("followed_news_sources.pb")}),
+        storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FollowedNewsDataSourceSerializer, producePath = { tempFolder.newFolder().toOkioPath().resolve("datastore").resolve("followed_news_sources.pb") }),
         corruptionHandler = null,
         migrations = emptyList(),
         scope = testScope
     )
     private val favGamesStore: DataStore<UserFavouriteGames> = DataStoreFactory.create(
-        storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FavouriteGamesSerializer, producePath = { tempFolder.newFolder().toOkioPath().resolve("datastore").resolve("fav_games.pb")}),
+        storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FavouriteGamesSerializer, producePath = { tempFolder.newFolder().toOkioPath().resolve("datastore").resolve("fav_games.pb") }),
         corruptionHandler = null,
         migrations = emptyList(),
         scope = testScope
     )
     private val favGenresStore: DataStore<UserFavouriteGenres> = DataStoreFactory.create(
-        storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FavouriteGenresSerializer, producePath = { tempFolder.newFolder().toOkioPath().resolve("datastore").resolve("fav_genres.pb")}),
+        storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FavouriteGenresSerializer, producePath = { tempFolder.newFolder().toOkioPath().resolve("datastore").resolve("fav_genres.pb") }),
         corruptionHandler = null,
         migrations = emptyList(),
         scope = testScope

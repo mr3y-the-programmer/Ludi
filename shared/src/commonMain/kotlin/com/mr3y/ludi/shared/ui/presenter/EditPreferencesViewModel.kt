@@ -2,14 +2,14 @@ package com.mr3y.ludi.shared.ui.presenter
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
-import com.mr3y.ludi.shared.core.model.GameGenre
-import com.mr3y.ludi.shared.core.model.Source
-import com.mr3y.ludi.shared.core.model.onSuccess
-import com.mr3y.ludi.shared.core.repository.GamesRepository
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.datastore.model.UserFavouriteGames
 import com.mr3y.ludi.datastore.model.UserFavouriteGenres
+import com.mr3y.ludi.shared.core.model.GameGenre
+import com.mr3y.ludi.shared.core.model.Source
 import com.mr3y.ludi.shared.core.model.mapTypeToIconRes
+import com.mr3y.ludi.shared.core.model.onSuccess
+import com.mr3y.ludi.shared.core.repository.GamesRepository
 import com.mr3y.ludi.shared.ui.datastore.ProtoDataStoreMutator
 import com.mr3y.ludi.shared.ui.navigation.PreferencesType
 import com.mr3y.ludi.shared.ui.presenter.model.EditPreferencesState

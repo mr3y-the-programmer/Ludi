@@ -15,7 +15,7 @@ import me.tatarka.inject.annotations.Inject
 class DefaultProtoDataStoreMutator(
     private val favGamesStore: DataStore<UserFavouriteGames>,
     private val followedNewsDataSourcesStore: DataStore<FollowedNewsDataSources>,
-    private val favGenresStore: DataStore<UserFavouriteGenres>,
+    private val favGenresStore: DataStore<UserFavouriteGenres>
 ) : ProtoDataStoreMutator {
 
     override val followedNewsDataSources: Flow<FollowedNewsDataSources> = followedNewsDataSourcesStore.data
