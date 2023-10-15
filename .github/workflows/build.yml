@@ -12,6 +12,7 @@ concurrency:
 
 env:
   RAWG_API_KEY: ${{ secrets.RAWG_API_KEY }}
+  BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
 
 jobs:
   build:
@@ -38,10 +39,10 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug packageDistributionForCurrentOS --stacktrace
 
       - name: Run local tests
-        run: ./gradlew testDebug --stacktrace
+        run: ./gradlew testDebug desktopTest --stacktrace
 
       - name: Apply ktlint formatting to (.kt/s) files.
         run: ./gradlew ktlintFormat --stacktrace
@@ -57,18 +58,20 @@ jobs:
           message: Apply style formatting
           push: true
 
-      - name: Upload build outputs (APKs)
+      - name: Upload build outputs (APKs & Desktop binaries)
         uses: actions/upload-artifact@v3
         with:
           name: build-outputs
-          path: ./app/build/outputs
+          path: |
+            **/build/outputs/*
+            **/build/compose/*
 
       - name: Upload build reports
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: build-reports
-          path: ./app/build/reports
+          path: ./**/build/reports
 
   androidTest:
     runs-on: macos-latest # enables hardware acceleration in the virtual machine
@@ -112,4 +115,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-reports-${{ matrix.api-level }}
-          path: ./app/build/reports
+          path: ./**/build/reports

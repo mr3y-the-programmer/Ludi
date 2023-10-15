@@ -42,13 +42,13 @@ jobs:
 
       - name: Add Play console release notes for beta track
         run: |
-          mkdir -p ~/app/src/main/play/release-notes/en-US
-          echo "${{ steps.build_changelog.outputs.changelog }}" >> ~/app/src/main/play/release-notes/en-US/beta.txt
+          mkdir -p ~/androidApp/src/main/play/release-notes/en-US
+          echo "${{ steps.build_changelog.outputs.changelog }}" >> ~/androidApp/src/main/play/release-notes/en-US/beta.txt
 
       - name: Configure Keystore
         shell: bash
         run: |
-          echo '${{ secrets.KEYSTORE_FILE }}' | base64 -d > ./app/ludi_keystore.jks
+          echo '${{ secrets.KEYSTORE_FILE }}' | base64 -d > ./androidApp/ludi_keystore.jks
           echo "storeFile=./ludi_keystore.jks" >> keystore.properties
           echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> keystore.properties
           echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> keystore.properties
@@ -75,9 +75,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: app-release
-          path: ./app/build/outputs/apk/release/app-release.apk
+          path: ./androidApp/build/outputs/apk/release/androidApp-release.apk
 
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "./app/build/outputs/apk/release/app-release.apk"
+          artifacts: "./androidApp/build/outputs/apk/release/androidApp-release.apk"
           body: ${{ steps.build_changelog.outputs.changelog }}

@@ -60,7 +60,7 @@ compose.desktop {
 
             description = "Ludi is a Kotlin Multiplatform (Android + Desktop) app to demonstrate best practices & using modern technologies to develop high quality apps"
             copyright = "Apache License Version 2.0"
-            vendor = "https://github.com/mr3y-the-programmer"
+            vendor = "mr3y-the-programmer"
 
             buildTypes.release.proguard {
                 isEnabled.set(true)
@@ -70,15 +70,16 @@ compose.desktop {
                 shortcut = true
                 menu = true
                 menuGroup = "Ludi"
-                iconFile.set(file("src/jvmMain/resources/icon_light.xml"))
+                iconFile.set(file("src/jvmMain/resources/icon_light.ico"))
             }
             macOS {
                 bundleID = "com.mr3y.ludi"
                 packageName = "com.mr3y.ludi.desktop"
+                // TODO: provide .icns icon
                 iconFile.set(file("src/jvmMain/resources/icon_light.xml"))
             }
             linux {
-                iconFile.set(file("src/jvmMain/resources/icon_light.xml"))
+                iconFile.set(file("src/jvmMain/resources/icon_light.png"))
             }
         }
     }
