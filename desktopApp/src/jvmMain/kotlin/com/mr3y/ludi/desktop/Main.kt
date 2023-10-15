@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.mr3y.ludi.shared.App
@@ -19,7 +20,8 @@ fun main() {
         val preferences by appComponent.appState.preferences.collectAsState()
         Window(
             title = "Ludi",
-            onCloseRequest = ::exitApplication
+            onCloseRequest = ::exitApplication,
+            icon = painterResource("icon_light.xml")
         ) {
             val windowComponent = HostWindowComponent::class.create(window, appComponent)
             CompositionLocalProvider(
