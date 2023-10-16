@@ -8,8 +8,7 @@ pluginManagement {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
     plugins {
-        id("de.fayard.refreshVersions") version "0.60.2"
-////                                # available:"0.60.3"
+        id("de.fayard.refreshVersions") version "0.60.3"
         val kotlinVersion = extra["kotlin.version"] as String
         val agpVersion = extra["agp.version"] as String
         val composeVersion = extra["compose.version"] as String
