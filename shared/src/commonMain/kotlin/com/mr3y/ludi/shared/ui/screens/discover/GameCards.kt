@@ -75,9 +75,8 @@ fun TrendingGameCard(
         defaultColor = MaterialTheme.colorScheme.primaryContainer,
         defaultOnColor = MaterialTheme.colorScheme.onPrimaryContainer,
         cacheSize = 24,
-        isColorValid = { dominantColor ->
-            // TODO: validate colors based on swatch.bodyTextColor instead of the exposed Swatch.rgb
-            dominantColor.contrastAgainst(surfaceColor) >= MinContrastRatio
+        isSwatchValid = { swatch ->
+            Color(swatch.bodyTextColor).contrastAgainst(surfaceColor) >= MinContrastRatio
         },
         builder = {
             // Clear any built-in filters. We want the unfiltered dominant color
