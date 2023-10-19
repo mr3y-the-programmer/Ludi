@@ -9,7 +9,6 @@ interface SharedApplicationComponent :
     NetworkComponent,
     RepositoriesComponent,
     RESTfulDataSourcesComponent,
-    RSSFeedDataSourcesComponent,
-    UseCasesComponent {
+    RSSFeedDataSourcesComponent {
     val appState: LudiSharedState
 }

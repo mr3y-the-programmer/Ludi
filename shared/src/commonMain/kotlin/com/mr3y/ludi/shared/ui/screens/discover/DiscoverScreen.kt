@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,8 +16,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -31,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,11 +47,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import app.cash.paging.LoadStateError
+import app.cash.paging.LoadStateLoading
+import app.cash.paging.LoadStateNotLoading
+import app.cash.paging.compose.LazyPagingItems
+import app.cash.paging.compose.collectAsLazyPagingItems
+import app.cash.paging.compose.itemContentType
+import app.cash.paging.compose.itemKey
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
 import com.mr3y.ludi.shared.core.model.Game
-import com.mr3y.ludi.shared.core.model.GameGenre
-import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.di.getScreenModel
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.shared.ui.components.LudiErrorBox
@@ -60,7 +69,6 @@ import com.mr3y.ludi.shared.ui.presenter.model.Platform
 import com.mr3y.ludi.shared.ui.presenter.model.Store
 import com.mr3y.ludi.shared.ui.presenter.model.Tag
 import com.mr3y.ludi.shared.ui.presenter.model.TaggedGames
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 object DiscoverScreenTab : Screen, BottomBarTab {
@@ -94,16 +102,19 @@ fun DiscoverScreen(
     onUnselectingStore: (Store) -> Unit,
     onSelectingTag: (Tag) -> Unit,
     onUnselectingTag: (Tag) -> Unit,
-    onReachingBottomOfTheSuggestionsList: () -> Unit,
     onRefresh: () -> Unit,
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var openFilters by rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var refresh by rememberSaveable(Unit) { mutableIntStateOf(0) }
     val refreshState = rememberPullRefreshState(
         refreshing = discoverState.isRefreshing,
-        onRefresh = onRefresh
+        onRefresh = {
+            onRefresh() // notify ViewModel to update state
+            refresh++
+        }
     )
     Scaffold(
         modifier = modifier
@@ -135,15 +146,16 @@ fun DiscoverScreen(
                         SuggestedGamesPage(
                             suggestedGames = discoverState.gamesState,
                             onOpenUrl = onOpenUrl,
-                            onReachingBottomOfTheList = onReachingBottomOfTheSuggestionsList
+                            refreshSignal = refresh
                         )
                     }
                     else -> {
                         discoverState.gamesState as DiscoverStateGames.SearchQueryBasedGames
                         AnimatedNoInternetBanner()
                         SearchQueryAndFilterPage(
-                            searchResult = discoverState.gamesState.games,
-                            onOpenUrl = onOpenUrl
+                            searchResultsGames = discoverState.gamesState,
+                            onOpenUrl = onOpenUrl,
+                            refreshSignal = refresh
                         )
                     }
                 }
@@ -174,44 +186,80 @@ fun DiscoverScreen(
 @Composable
 fun SuggestedGamesPage(
     suggestedGames: DiscoverStateGames.SuggestedGames,
-    onReachingBottomOfTheList: () -> Unit,
     onOpenUrl: (url: String) -> Unit,
+    refreshSignal: Int,
     modifier: Modifier = Modifier
 ) {
-    val listState = rememberLazyListState()
-    var isNewDataBeingLoaded by remember { mutableStateOf(false) }
-
-    LaunchedEffect(isNewDataBeingLoaded) {
-        // Avoid displaying loading indicator indefinitely
-        if (isNewDataBeingLoaded) {
-            delay(5_000L)
-            isNewDataBeingLoaded = false
-        }
-    }
-    LaunchedEffect(listState) {
-        snapshotFlow {
-            val lastItem = listState.layoutInfo.visibleItemsInfo.last()
-
-            lastItem.index == listState.layoutInfo.totalItemsCount - 1 &&
-                lastItem.offset + lastItem.size == listState.layoutInfo.viewportEndOffset
-        }.distinctUntilChanged()
-            .collect { hasReachedTheEnd ->
-                if (hasReachedTheEnd) {
-                    isNewDataBeingLoaded = true
-                    onReachingBottomOfTheList()
-                }
-            }
-    }
-
     LazyColumn(
-        state = listState,
         modifier = modifier
     ) {
-        suggestedGames.taggedGamesList.forEachIndexed { index, taggedGames ->
-            val label = getLabelFor(taggedGames)
+        item {
+            LudiSectionHeader(
+                text = "Trending",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            RichInfoGamesSection(
+                games = suggestedGames.trendingGames.collectAsLazyPagingItems(),
+                onOpenUrl = onOpenUrl,
+                refreshSignal = refreshSignal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                isTrendingGame = true,
+                showGenre = true
+            )
+        }
+        item {
+            LudiSectionHeader(
+                text = "Top rated",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            RichInfoGamesSection(
+                games = suggestedGames.topRatedGames.collectAsLazyPagingItems(),
+                onOpenUrl = onOpenUrl,
+                refreshSignal = refreshSignal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                isTrendingGame = false,
+                showGenre = true
+            )
+        }
+        item {
+            LudiSectionHeader(
+                text = "Multiplayer",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            RichInfoGamesSection(
+                games = suggestedGames.multiplayerGames.collectAsLazyPagingItems(),
+                onOpenUrl = onOpenUrl,
+                refreshSignal = refreshSignal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                isTrendingGame = false,
+                showGenre = true
+            )
+        }
+        if (suggestedGames.favGenresBasedGames != null) {
             item {
                 LudiSectionHeader(
-                    text = label,
+                    text = "You might also like",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
@@ -219,26 +267,164 @@ fun SuggestedGamesPage(
             }
             item {
                 RichInfoGamesSection(
-                    games = taggedGames.games,
+                    games = suggestedGames.favGenresBasedGames.collectAsLazyPagingItems(),
                     onOpenUrl = onOpenUrl,
+                    refreshSignal = refreshSignal,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surface)
                         .padding(horizontal = 8.dp),
-                    isTrendingGame = taggedGames is TaggedGames.TrendingGames,
+                    isTrendingGame = false,
                     showGenre = true
                 )
             }
-            if (isNewDataBeingLoaded && index == suggestedGames.taggedGamesList.lastIndex) {
-                item {
-                    Box(
-                        modifier = modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-            }
+        }
+        item {
+            LudiSectionHeader(
+                text = "Free to play",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            RichInfoGamesSection(
+                games = suggestedGames.freeGames.collectAsLazyPagingItems(),
+                onOpenUrl = onOpenUrl,
+                refreshSignal = refreshSignal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                isTrendingGame = false,
+                showGenre = true
+            )
+        }
+        item {
+            LudiSectionHeader(
+                text = "Story based",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            RichInfoGamesSection(
+                games = suggestedGames.storyGames.collectAsLazyPagingItems(),
+                onOpenUrl = onOpenUrl,
+                refreshSignal = refreshSignal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                isTrendingGame = false,
+                showGenre = true
+            )
+        }
+        item {
+            LudiSectionHeader(
+                text = "Board",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            RichInfoGamesSection(
+                games = suggestedGames.boardGames.collectAsLazyPagingItems(),
+                onOpenUrl = onOpenUrl,
+                refreshSignal = refreshSignal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                isTrendingGame = false,
+                showGenre = true
+            )
+        }
+        item {
+            LudiSectionHeader(
+                text = "ESports",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            RichInfoGamesSection(
+                games = suggestedGames.eSportsGames.collectAsLazyPagingItems(),
+                onOpenUrl = onOpenUrl,
+                refreshSignal = refreshSignal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                isTrendingGame = false,
+                showGenre = true
+            )
+        }
+        item {
+            LudiSectionHeader(
+                text = "Race",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            RichInfoGamesSection(
+                games = suggestedGames.raceGames.collectAsLazyPagingItems(),
+                onOpenUrl = onOpenUrl,
+                refreshSignal = refreshSignal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                isTrendingGame = false,
+                showGenre = true
+            )
+        }
+        item {
+            LudiSectionHeader(
+                text = "Puzzle",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            RichInfoGamesSection(
+                games = suggestedGames.puzzleGames.collectAsLazyPagingItems(),
+                onOpenUrl = onOpenUrl,
+                refreshSignal = refreshSignal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                isTrendingGame = false,
+                showGenre = true
+            )
+        }
+        item {
+            LudiSectionHeader(
+                text = "SoundTrack",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            RichInfoGamesSection(
+                games = suggestedGames.soundtrackGames.collectAsLazyPagingItems(),
+                onOpenUrl = onOpenUrl,
+                refreshSignal = refreshSignal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp),
+                isTrendingGame = false,
+                showGenre = true
+            )
         }
     }
 }
@@ -259,69 +445,95 @@ private fun getLabelFor(taggedGames: TaggedGames): String {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchQueryAndFilterPage(
-    searchResult: Result<Map<GameGenre, List<Game>>, Throwable>,
+    searchResultsGames: DiscoverStateGames.SearchQueryBasedGames,
     onOpenUrl: (url: String) -> Unit,
+    refreshSignal: Int,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    val games = searchResultsGames.games.collectAsLazyPagingItems()
+    LaunchedEffect(refreshSignal) {
+        if (refreshSignal > 0) {
+            games.refresh()
+        }
+    }
+    SideEffect {
+        if (games.loadState.refresh is LoadStateError || games.loadState.append is LoadStateError) {
+            games.retry()
+        }
+    }
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(180.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(16.dp),
+        modifier = modifier
     ) {
-        when (searchResult) {
-            is Result.Loading -> {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+        if (games.loadState.refresh is LoadStateLoading) {
+            item(
+                span = {
+                    GridItemSpan(maxLineSpan)
+                }
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
-            is Result.Success -> {
-                searchResult.data.forEach { (gameGenre, games) ->
-                    item {
-                        LudiSectionHeader(
-                            text = gameGenre.name,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp)
-                        )
-                    }
-                    item {
-                        val state = rememberLazyListState()
-                        LazyRow(
-                            state = state,
-                            flingBehavior = rememberSnapFlingBehavior(state),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surface)
-                                .padding(horizontal = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(games) {
-                                GameCard(
-                                    game = it,
-                                    onOpenUrl = onOpenUrl,
-                                    modifier = Modifier
-                                        .padding(horizontal = 8.dp, vertical = 8.dp)
-                                        .width(200.dp)
-                                        .height(280.dp)
-                                )
-                            }
-                        }
-                    }
+        }
+
+        if (games.loadState.refresh is LoadStateNotLoading) {
+            items(
+                count = games.itemCount,
+                key = games.itemKey { it.id },
+                contentType = games.itemContentType { it }
+            ) { index ->
+                GameCard(
+                    game = games[index],
+                    onOpenUrl = onOpenUrl,
+                    showGenre = true,
+                    modifier = Modifier
+                        .width(90.dp)
+                        .height(280.dp)
+                )
+            }
+        }
+
+        if (games.loadState.refresh is LoadStateError) {
+            item(
+                span = {
+                    GridItemSpan(maxLineSpan)
+                }
+            ) {
+                LudiErrorBox(modifier = Modifier.fillMaxWidth())
+            }
+        }
+
+        if (games.loadState.append is LoadStateLoading) {
+            item(
+                span = {
+                    GridItemSpan(maxLineSpan)
+                }
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
-            is Result.Error -> {
-                item {
-                    LudiErrorBox(
-                        modifier = Modifier.fillMaxWidth()
-                    )
+        }
+
+        if (games.loadState.append is LoadStateError) {
+            item(
+                span = {
+                    GridItemSpan(maxLineSpan)
                 }
+            ) {
+                LudiErrorBox(modifier = Modifier.fillMaxWidth())
             }
         }
     }
@@ -329,9 +541,10 @@ fun SearchQueryAndFilterPage(
 
 @Composable
 fun RichInfoGamesSection(
-    games: Result<List<Game>, Throwable>,
+    games: LazyPagingItems<Game>,
     isTrendingGame: Boolean,
     onOpenUrl: (url: String) -> Unit,
+    refreshSignal: Int,
     modifier: Modifier = Modifier,
     showGenre: Boolean = false
 ) {
@@ -348,8 +561,18 @@ fun RichInfoGamesSection(
                 highlightedItem = it
             }
     }
+    LaunchedEffect(refreshSignal) {
+        if (refreshSignal > 0) {
+            games.refresh()
+        }
+    }
+    SideEffect {
+        if (games.loadState.refresh is LoadStateError || games.loadState.append is LoadStateError) {
+            games.retry()
+        }
+    }
     GamesSectionScaffold(
-        gamesResult = games,
+        games = games,
         state = listState,
         modifier = modifier
     ) { index, game ->
@@ -378,12 +601,12 @@ fun RichInfoGamesSection(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun <T> GamesSectionScaffold(
-    gamesResult: Result<List<T>, Throwable>,
+fun GamesSectionScaffold(
+    games: LazyPagingItems<Game>,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(8.dp),
-    itemContent: @Composable (index: Int, T?) -> Unit
+    itemContent: @Composable (index: Int, Game?) -> Unit
 ) {
     LazyRow(
         modifier = modifier,
@@ -391,21 +614,37 @@ fun <T> GamesSectionScaffold(
         flingBehavior = rememberSnapFlingBehavior(state),
         horizontalArrangement = horizontalArrangement
     ) {
-        when (gamesResult) {
-            is Result.Loading -> {
-                items(10) { index ->
-                    itemContent(index, null)
-                }
+        if (games.loadState.refresh is LoadStateLoading) {
+            items(10) { index ->
+                itemContent(index, null)
             }
-            is Result.Success -> {
-                itemsIndexed(gamesResult.data) { index, game ->
-                    itemContent(index, game)
-                }
+        }
+
+        if (games.loadState.refresh is LoadStateNotLoading) {
+            items(
+                count = games.itemCount,
+                key = games.itemKey { it.id },
+                contentType = games.itemContentType { it }
+            ) { index ->
+                itemContent(index, games[index])
             }
-            is Result.Error -> {
-                item {
-                    LudiErrorBox(modifier = Modifier.fillMaxWidth())
-                }
+        }
+
+        if (games.loadState.refresh is LoadStateError) {
+            item {
+                LudiErrorBox(modifier = Modifier.fillMaxWidth())
+            }
+        }
+
+        if (games.loadState.append is LoadStateLoading) {
+            items(10) { index ->
+                itemContent(index, null)
+            }
+        }
+
+        if (games.loadState.append is LoadStateError) {
+            item {
+                LudiErrorBox(modifier = Modifier.fillMaxWidth())
             }
         }
     }

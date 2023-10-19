@@ -57,6 +57,10 @@ kotlin {
                 implementation(libs.ktor.kotlinx.serialization)
                 implementation(libs.kotlinx.serialization)
 
+                // Paging
+                implementation(libs.paging.common)
+                implementation(libs.paging.compose)
+
                 // Datastore
                 implementation(libs.datastore.core)
                 implementation(libs.datastore.preferences.core)
@@ -97,6 +101,7 @@ kotlin {
                 implementation(libs.test.parameter.injector)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.ktor.client.mock)
+                implementation(libs.paging.testing)
             }
         }
 
