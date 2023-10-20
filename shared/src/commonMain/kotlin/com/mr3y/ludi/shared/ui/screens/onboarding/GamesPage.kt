@@ -39,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -64,6 +65,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import app.cash.paging.LoadStateError
+import app.cash.paging.LoadStateLoading
+import app.cash.paging.LoadStateNotLoading
+import app.cash.paging.compose.collectAsLazyPagingItems
+import app.cash.paging.compose.itemContentType
+import app.cash.paging.compose.itemKey
 import cafe.adriel.lyricist.LocalStrings
 import com.mr3y.ludi.shared.core.model.Game
 import com.mr3y.ludi.shared.core.model.Result
@@ -86,6 +93,7 @@ fun SelectingFavouriteGamesPage(
     favouriteUserGames: List<FavouriteGame>,
     onAddingGameToFavourites: (FavouriteGame) -> Unit,
     onRemovingGameFromFavourites: (FavouriteGame) -> Unit,
+    refreshSignal: Int,
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start
@@ -190,6 +198,12 @@ fun SelectingFavouriteGamesPage(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Start
         )
+        val games = allGames.games.collectAsLazyPagingItems()
+        LaunchedEffect(refreshSignal) {
+            if (refreshSignal > 0) {
+                games.refresh()
+            }
+        }
         LazyHorizontalStaggeredGrid(
             rows = StaggeredGridCells.Adaptive(minSize = 64.dp),
             modifier = Modifier
@@ -198,36 +212,52 @@ fun SelectingFavouriteGamesPage(
             horizontalItemSpacing = 8.dp,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            when (val result = allGames.games) {
-                is Result.Loading -> {
-                    items(10) { _ ->
+            if (games.loadState.refresh is LoadStateLoading) {
+                items(10) { _ ->
+                    GameTile(
+                        game = null,
+                        selected = false,
+                        onToggleSelectingFavouriteGame = {},
+                        modifier = Modifier.height(IntrinsicSize.Min)
+                    )
+                }
+            }
+            if (games.loadState.refresh is LoadStateNotLoading) {
+                items(
+                    count = games.itemCount,
+                    key = games.itemKey { it.id },
+                    contentType = games.itemContentType { it }
+                ) { index ->
+                    val game = games[index]
+                    val isFavGame = game?.let { FavouriteGame(it.id, it.name, it.imageUrl, it.rating) } in favouriteUserGames
+                    if (!isFavGame) {
                         GameTile(
-                            game = null,
+                            game = game,
                             selected = false,
-                            onToggleSelectingFavouriteGame = {},
+                            onToggleSelectingFavouriteGame = { onAddingGameToFavourites(it) },
                             modifier = Modifier.height(IntrinsicSize.Min)
                         )
                     }
                 }
-                is Result.Success -> {
-                    result.data.forEach { game ->
-                        val isFavGame = game.let { FavouriteGame(it.id, it.name, it.imageUrl, it.rating) } in favouriteUserGames
-                        if (!isFavGame) {
-                            item {
-                                GameTile(
-                                    game = game,
-                                    selected = false,
-                                    onToggleSelectingFavouriteGame = { onAddingGameToFavourites(it) },
-                                    modifier = Modifier.height(IntrinsicSize.Min)
-                                )
-                            }
-                        }
-                    }
+            }
+            if (games.loadState.refresh is LoadStateError) {
+                item {
+                    LudiErrorBox(modifier = Modifier.fillMaxWidth())
                 }
-                is Result.Error -> {
-                    item {
-                        LudiErrorBox(modifier = Modifier.fillMaxWidth())
-                    }
+            }
+            if (games.loadState.append is LoadStateLoading) {
+                items(10) { _ ->
+                    GameTile(
+                        game = null,
+                        selected = false,
+                        onToggleSelectingFavouriteGame = {},
+                        modifier = Modifier.height(IntrinsicSize.Min)
+                    )
+                }
+            }
+            if (games.loadState.append is LoadStateError) {
+                item {
+                    LudiErrorBox(modifier = Modifier.fillMaxWidth())
                 }
             }
         }

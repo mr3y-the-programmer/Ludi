@@ -2,6 +2,7 @@ package com.mr3y.ludi.shared.core.paging
 
 import app.cash.paging.PagingSource
 import app.cash.paging.PagingState
+import com.mr3y.ludi.shared.core.CrashReporting
 import com.mr3y.ludi.shared.core.model.Game
 import com.mr3y.ludi.shared.core.network.datasources.internal.RAWGDataSource
 import com.mr3y.ludi.shared.core.network.model.ApiResult
@@ -11,7 +12,8 @@ import com.mr3y.ludi.shared.core.repository.query.buildGamesFullUrl
 
 class RAWGGamesPagingSource(
     private val networkDataSource: RAWGDataSource,
-    private val query: GamesQueryParameters
+    private val query: GamesQueryParameters,
+    private val crashReporting: CrashReporting
 ) : PagingSource<Int, Game>() {
 
     override fun getRefreshKey(state: PagingState<Int, Game>): Int? {
@@ -33,7 +35,11 @@ class RAWGGamesPagingSource(
                 )
             }
             is ApiResult.Error -> {
-                response.throwable?.let { LoadResult.Error(it) } ?: LoadResult.Invalid()
+                if (response.throwable != null) {
+                    crashReporting.recordException(response.throwable, logMessage = "Error occurred while querying RAWG Games with query $query")
+                    return LoadResult.Error(response.throwable)
+                }
+                return LoadResult.Invalid()
             }
         }
     }

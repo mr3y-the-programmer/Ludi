@@ -1,5 +1,6 @@
 package com.mr3y.ludi.shared.ui.presenter.model
 
+import app.cash.paging.PagingData
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSource
 import com.mr3y.ludi.datastore.model.UserFavouriteGame
 import com.mr3y.ludi.datastore.model.UserFavouriteGenre
@@ -7,6 +8,7 @@ import com.mr3y.ludi.shared.core.model.Game
 import com.mr3y.ludi.shared.core.model.GameGenre
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.model.Source
+import kotlinx.coroutines.flow.Flow
 
 data class OnboardingState(
     val allNewsDataSources: List<NewsDataSource>,
@@ -20,10 +22,10 @@ data class OnboardingState(
 )
 
 sealed interface OnboardingGames {
-    val games: Result<List<Game>, Throwable>
+    val games: Flow<PagingData<Game>>
 
-    data class SuggestedGames(override val games: Result<List<Game>, Throwable>) : OnboardingGames
-    data class SearchQueryBasedGames(override val games: Result<List<Game>, Throwable>) : OnboardingGames
+    data class SuggestedGames(override val games: Flow<PagingData<Game>>) : OnboardingGames
+    data class SearchQueryBasedGames(override val games: Flow<PagingData<Game>>) : OnboardingGames
 }
 
 data class NewsDataSource(

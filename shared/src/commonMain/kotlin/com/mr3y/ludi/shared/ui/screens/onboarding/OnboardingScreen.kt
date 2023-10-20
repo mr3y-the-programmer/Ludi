@@ -49,6 +49,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -112,6 +113,7 @@ fun OnboardingScreen(
         pageCount = ::OnboardingPagesCount,
         initialPage = initialPage
     )
+    var refresh by rememberSaveable(Unit) { mutableIntStateOf(0) }
     val refreshState = rememberPullRefreshState(
         refreshing = when (pagerState.currentPage) {
             0 -> onboardingState.isRefreshingGenres
@@ -123,6 +125,7 @@ fun OnboardingScreen(
                 0 -> onRefreshingGenres()
                 1 -> onRefreshingGames()
             }
+            refresh++
         }
     )
     Scaffold(
@@ -224,6 +227,7 @@ fun OnboardingScreen(
                                     favouriteUserGames = onboardingState.favouriteGames,
                                     onAddingGameToFavourites = onAddingGameToFavourites,
                                     onRemovingGameFromFavourites = onRemovingGameFromFavourites,
+                                    refreshSignal = refresh,
                                     verticalArrangement = Arrangement.spacedBy(16.dp),
                                     modifier = Modifier.fillMaxWidth()
                                 )

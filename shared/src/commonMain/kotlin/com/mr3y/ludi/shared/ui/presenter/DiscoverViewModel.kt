@@ -38,27 +38,27 @@ class DiscoverViewModel(
 
     private val refreshing = MutableStateFlow(0)
 
-    private val trendingGames = trendingGamesPager.flow.cachedIn(coroutineScope)
+    private val trendingGames = trendingGamesPager.cachedIn(coroutineScope)
 
-    private val topRatedGames = topRatedGamesPager.flow.cachedIn(coroutineScope)
+    private val topRatedGames = topRatedGamesPager.cachedIn(coroutineScope)
 
-    private val favGenresBasedGames = favGenresBasedGamesPager?.flow?.cachedIn(coroutineScope)
+    private val favGenresBasedGames = favGenresBasedGamesPager?.cachedIn(coroutineScope)
 
-    private val multiplayerGames = multiplayerGamesPager.flow.cachedIn(coroutineScope)
+    private val multiplayerGames = multiplayerGamesPager.cachedIn(coroutineScope)
 
-    private val freeGames = freeGamesPager.flow.cachedIn(coroutineScope)
+    private val freeGames = freeGamesPager.cachedIn(coroutineScope)
 
-    private val storyGames = storyGamesPager.flow.cachedIn(coroutineScope)
+    private val storyGames = storyGamesPager.cachedIn(coroutineScope)
 
-    private val boardGames = boardGamesPager.flow.cachedIn(coroutineScope)
+    private val boardGames = boardGamesPager.cachedIn(coroutineScope)
 
-    private val esportsGames = esportsGamesPager.flow.cachedIn(coroutineScope)
+    private val esportsGames = esportsGamesPager.cachedIn(coroutineScope)
 
-    private val raceGames = raceGamesPager.flow.cachedIn(coroutineScope)
+    private val raceGames = raceGamesPager.cachedIn(coroutineScope)
 
-    private val puzzleGames = puzzleGamesPager.flow.cachedIn(coroutineScope)
+    private val puzzleGames = puzzleGamesPager.cachedIn(coroutineScope)
 
-    private val soundtrackGames = soundtrackGamesPager.flow.cachedIn(coroutineScope)
+    private val soundtrackGames = soundtrackGamesPager.cachedIn(coroutineScope)
 
     internal val Initial = DiscoverState(
         filtersState = InitialFiltersState,
@@ -91,7 +91,7 @@ class DiscoverViewModel(
             Initial.gamesState
         } else {
             DiscoverStateGames.SearchQueryBasedGames(
-                games = searchQueryBasedGamesPager(searchText, filtersState).flow.cachedIn(coroutineScope)
+                games = searchQueryBasedGamesPager(searchText, filtersState).cachedIn(coroutineScope)
             )
         }
     }.map {
