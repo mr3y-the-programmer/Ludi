@@ -91,7 +91,7 @@ class DiscoverViewModel(
             Initial.gamesState
         } else {
             DiscoverStateGames.SearchQueryBasedGames(
-                games = pagingFactory.createPagerForGamesWithQuery(searchText, filtersState).flow.cachedIn(coroutineScope)
+                games = searchQueryBasedGamesPager(searchText, filtersState).flow.cachedIn(coroutineScope)
             )
         }
     }.map {

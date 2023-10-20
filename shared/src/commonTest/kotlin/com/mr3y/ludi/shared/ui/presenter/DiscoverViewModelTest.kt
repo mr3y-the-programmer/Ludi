@@ -57,7 +57,7 @@ class DiscoverViewModelTest {
                 override val soundtrackGamesPager: Pager<Int, Game>
                     get() = TODO("Not yet implemented")
 
-                override fun createPagerForGamesWithQuery(
+                override fun searchQueryBasedGamesPager(
                     searchQuery: String,
                     filters: DiscoverFiltersState
                 ): Pager<Int, Game> {

@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -68,7 +67,6 @@ import com.mr3y.ludi.shared.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.shared.ui.presenter.model.Platform
 import com.mr3y.ludi.shared.ui.presenter.model.Store
 import com.mr3y.ludi.shared.ui.presenter.model.Tag
-import com.mr3y.ludi.shared.ui.presenter.model.TaggedGames
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 object DiscoverScreenTab : Screen, BottomBarTab {
@@ -426,22 +424,6 @@ fun SuggestedGamesPage(
                 showGenre = true
             )
         }
-    }
-}
-
-private fun getLabelFor(taggedGames: TaggedGames): String {
-    return when (taggedGames) {
-        is TaggedGames.TrendingGames -> "Trending"
-        is TaggedGames.TopRatedGames -> "Top rated"
-        is TaggedGames.MultiplayerGames -> "Multiplayer"
-        is TaggedGames.BasedOnFavGenresGames -> "You might also like"
-        is TaggedGames.FreeGames -> "Free to play"
-        is TaggedGames.StoryGames -> "Story based"
-        is TaggedGames.BoardGames -> "Board"
-        is TaggedGames.ESportsGames -> "ESports"
-        is TaggedGames.RaceGames -> "Race"
-        is TaggedGames.PuzzleGames -> "Puzzle"
-        is TaggedGames.SoundtrackGames -> "SoundTrack"
     }
 }
 

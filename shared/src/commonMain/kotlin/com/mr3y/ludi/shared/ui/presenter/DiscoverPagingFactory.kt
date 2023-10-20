@@ -39,7 +39,7 @@ interface DiscoverPagingFactory {
 
     val soundtrackGamesPager: Pager<Int, Game>
 
-    fun createPagerForGamesWithQuery(searchQuery: String, filters: DiscoverFiltersState): Pager<Int, Game>
+    fun searchQueryBasedGamesPager(searchQuery: String, filters: DiscoverFiltersState): Pager<Int, Game>
 }
 
 @Inject
@@ -134,7 +134,7 @@ class DefaultDiscoverPagingFactory(
         )
     }
 
-    override fun createPagerForGamesWithQuery(
+    override fun searchQueryBasedGamesPager(
         searchQuery: String,
         filters: DiscoverFiltersState
     ): Pager<Int, Game> {

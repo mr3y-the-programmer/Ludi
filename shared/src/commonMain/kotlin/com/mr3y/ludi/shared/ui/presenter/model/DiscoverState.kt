@@ -2,7 +2,6 @@ package com.mr3y.ludi.shared.ui.presenter.model
 
 import app.cash.paging.PagingData
 import com.mr3y.ludi.shared.core.model.Game
-import com.mr3y.ludi.shared.core.model.Result
 import kotlinx.coroutines.flow.Flow
 
 data class DiscoverState(
@@ -30,54 +29,6 @@ sealed interface DiscoverStateGames {
     data class SearchQueryBasedGames(
         val games: Flow<PagingData<Game>>
     ) : DiscoverStateGames
-}
-
-sealed interface TaggedGames {
-    val games: Flow<Result<List<Game>, Throwable>>
-
-    data class TrendingGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
-
-    data class TopRatedGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
-
-    data class BasedOnFavGenresGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
-
-    data class MultiplayerGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
-
-    data class FreeGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
-
-    data class StoryGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
-
-    data class BoardGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
-
-    data class ESportsGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
-
-    data class RaceGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
-
-    data class PuzzleGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
-
-    data class SoundtrackGames(
-        override val games: Flow<Result<List<Game>, Throwable>>
-    ) : TaggedGames
 }
 
 data class DiscoverFiltersState(
