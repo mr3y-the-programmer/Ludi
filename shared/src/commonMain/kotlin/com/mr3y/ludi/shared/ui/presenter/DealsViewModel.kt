@@ -3,6 +3,7 @@ package com.mr3y.ludi.shared.ui.presenter
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
+import app.cash.paging.PagingData
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
 import com.mr3y.ludi.shared.core.model.Deal
@@ -21,12 +22,16 @@ import com.mr3y.ludi.shared.ui.presenter.model.DealsState
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawaysFiltersState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flattenConcat
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
@@ -113,7 +118,7 @@ class DealsViewModel(
         val isFiltersShown = updates[11] as Boolean
         DealsState(
             dealsFiltersState = updates[0] as DealsFiltersState,
-            deals = if (isDealsLoading) Initial.deals else (updates[1] as Result<List<Deal>, Throwable>),
+            deals = updates[1] as Flow<PagingData<Deal>>,
             giveawaysFiltersState = (updates[2] as GiveawaysFiltersState),
             giveaways = if (isGiveawaysLoading) {
                 Initial.giveaways
@@ -276,7 +281,7 @@ class DealsViewModel(
             sortingCriteria = GiveawaysSorting.Popularity
         )
         val Initial = DealsState(
-            Result.Loading,
+            emptyFlow(),
             Result.Loading,
             InitialDealsFiltersState,
             InitialGiveawaysFiltersState,

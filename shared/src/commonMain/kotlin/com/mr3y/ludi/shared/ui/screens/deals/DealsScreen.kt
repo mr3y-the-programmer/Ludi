@@ -41,9 +41,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import app.cash.paging.LoadStateError
+import app.cash.paging.LoadStateLoading
+import app.cash.paging.LoadStateNotLoading
+import app.cash.paging.compose.LazyPagingItems
+import app.cash.paging.compose.collectAsLazyPagingItems
+import app.cash.paging.compose.itemContentType
+import app.cash.paging.compose.itemKey
 import cafe.adriel.lyricist.LocalStrings
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
+import com.mr3y.ludi.shared.core.model.Deal
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.di.getScreenModel
 import com.mr3y.ludi.shared.ui.adaptive.LocalWindowSizeClass
@@ -158,6 +166,7 @@ fun DealsScreen(
                     val widthSizeClass = LocalWindowSizeClass.current.widthSizeClass
                     if (widthSizeClass >= WindowWidthSizeClass.Medium) {
                         val gridState = rememberKeyedLazyGridState(input = dealsState.selectedTab)
+                        val deals = dealsState.deals.collectAsLazyPagingItems()
                         LazyVerticalGrid(
                             state = gridState,
                             columns = GridCells.Adaptive(192.dp),
@@ -166,7 +175,7 @@ fun DealsScreen(
                         ) {
                             if (dealsState.selectedTab == 0) {
                                 sectionScaffold(
-                                    result = dealsState.deals
+                                    deals = deals
                                 ) {
                                     Deal(
                                         deal = it,
@@ -196,6 +205,7 @@ fun DealsScreen(
                         }
                     } else {
                         val listState = rememberKeyedLazyListState(input = dealsState.selectedTab)
+                        val deals = dealsState.deals.collectAsLazyPagingItems()
                         LazyColumn(
                             state = listState,
                             flingBehavior = rememberSnapFlingBehavior(listState),
@@ -203,7 +213,7 @@ fun DealsScreen(
                         ) {
                             if (dealsState.selectedTab == 0) {
                                 sectionScaffold(
-                                    result = dealsState.deals
+                                    deals = deals
                                 ) {
                                     Deal(
                                         deal = it,
@@ -360,6 +370,84 @@ fun <T> LazyGridScope.sectionScaffold(
             item {
                 LudiErrorBox(modifier = Modifier.fillMaxWidth())
             }
+        }
+    }
+}
+
+fun LazyListScope.sectionScaffold(
+    deals: LazyPagingItems<Deal>,
+    itemContent: @Composable (Deal?) -> Unit
+) {
+    if (deals.loadState.refresh is LoadStateLoading) {
+        items(10) {
+            itemContent(null)
+        }
+    }
+
+    if (deals.loadState.refresh is LoadStateNotLoading) {
+        items(
+            count = deals.itemCount,
+            key = deals.itemKey { it.dealID },
+            contentType = deals.itemContentType { it }
+        ) { index ->
+            itemContent(deals[index])
+        }
+    }
+
+    if (deals.loadState.refresh is LoadStateError) {
+        item {
+            LudiErrorBox(modifier = Modifier.fillMaxWidth())
+        }
+    }
+
+    if (deals.loadState.append is LoadStateLoading) {
+        items(10) {
+            itemContent(null)
+        }
+    }
+
+    if (deals.loadState.append is LoadStateError) {
+        item {
+            LudiErrorBox(modifier = Modifier.fillMaxWidth())
+        }
+    }
+}
+
+fun LazyGridScope.sectionScaffold(
+    deals: LazyPagingItems<Deal>,
+    itemContent: @Composable (Deal?) -> Unit
+) {
+    if (deals.loadState.refresh is LoadStateLoading) {
+        items(10) {
+            itemContent(null)
+        }
+    }
+
+    if (deals.loadState.refresh is LoadStateNotLoading) {
+        items(
+            count = deals.itemCount,
+            key = deals.itemKey { it.dealID },
+            contentType = deals.itemContentType { it }
+        ) { index ->
+            itemContent(deals[index])
+        }
+    }
+
+    if (deals.loadState.refresh is LoadStateError) {
+        item {
+            LudiErrorBox(modifier = Modifier.fillMaxWidth())
+        }
+    }
+
+    if (deals.loadState.append is LoadStateLoading) {
+        items(10) {
+            itemContent(null)
+        }
+    }
+
+    if (deals.loadState.append is LoadStateError) {
+        item {
+            LudiErrorBox(modifier = Modifier.fillMaxWidth())
         }
     }
 }

@@ -1,14 +1,16 @@
 package com.mr3y.ludi.shared.ui.presenter.model
 
+import app.cash.paging.PagingData
 import com.mr3y.ludi.shared.core.model.Deal
 import com.mr3y.ludi.shared.core.model.GiveawayEntry
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.repository.query.DealsSorting
 import com.mr3y.ludi.shared.core.repository.query.DealsSortingDirection
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysSorting
+import kotlinx.coroutines.flow.Flow
 
 data class DealsState(
-    val deals: Result<List<Deal>, Throwable>,
+    val deals: Flow<PagingData<Deal>>,
     val giveaways: Result<List<GiveawayEntry>, Throwable>,
     val dealsFiltersState: DealsFiltersState,
     val giveawaysFiltersState: GiveawaysFiltersState,
