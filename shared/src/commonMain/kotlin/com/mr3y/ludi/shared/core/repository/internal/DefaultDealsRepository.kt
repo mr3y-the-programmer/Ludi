@@ -1,5 +1,8 @@
 package com.mr3y.ludi.shared.core.repository.internal
 
+import app.cash.paging.Pager
+import app.cash.paging.PagingConfig
+import app.cash.paging.PagingData
 import com.mr3y.ludi.shared.core.CrashReporting
 import com.mr3y.ludi.shared.core.model.Deal
 import com.mr3y.ludi.shared.core.model.GiveawayEntry
@@ -8,16 +11,15 @@ import com.mr3y.ludi.shared.core.model.toCoreErrorResult
 import com.mr3y.ludi.shared.core.network.datasources.internal.CheapSharkDataSource
 import com.mr3y.ludi.shared.core.network.datasources.internal.GamerPowerDataSource
 import com.mr3y.ludi.shared.core.network.model.ApiResult
-import com.mr3y.ludi.shared.core.network.model.CheapSharkDeal
 import com.mr3y.ludi.shared.core.network.model.GamerPowerGiveawayEntry
-import com.mr3y.ludi.shared.core.network.model.toDeal
 import com.mr3y.ludi.shared.core.network.model.toGiveawayEntry
+import com.mr3y.ludi.shared.core.paging.DealsPagingSource
 import com.mr3y.ludi.shared.core.repository.DealsRepository
 import com.mr3y.ludi.shared.core.repository.query.DealsQueryParameters
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysQueryParameters
-import com.mr3y.ludi.shared.core.repository.query.buildDealsFullUrl
 import com.mr3y.ludi.shared.core.repository.query.buildGiveawaysFullUrl
 import com.mr3y.ludi.shared.core.repository.query.isValid
+import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -27,12 +29,14 @@ class DefaultDealsRepository(
     private val crashReporting: CrashReporting
 ) : DealsRepository {
 
-    override suspend fun queryDeals(queryParameters: DealsQueryParameters): Result<List<Deal>, Throwable> {
-        val fullUrl = buildDealsFullUrl(endpointUrl = "$CheapSharkBaseUrl/deals", queryParameters)
-        return when (val result = cheapSharkDataSource.queryLatestDeals(fullUrl)) {
-            is ApiResult.Success -> Result.Success(result.data.map(CheapSharkDeal::toDeal))
-            is ApiResult.Error -> result.toCoreErrorResult().also { reportExceptions(it, "Error occurred while querying deals with query $queryParameters") }
-        }
+    override fun queryDeals(queryParameters: DealsQueryParameters): Flow<PagingData<Deal>> {
+        return Pager(DefaultPagingConfig) {
+            DealsPagingSource(
+                cheapSharkDataSource,
+                queryParameters,
+                crashReporting
+            )
+        }.flow
     }
 
     override suspend fun queryGiveaways(queryParameters: GiveawaysQueryParameters): Result<List<GiveawayEntry>, Throwable> {
@@ -54,7 +58,7 @@ class DefaultDealsRepository(
     }
 
     companion object {
-        private const val CheapSharkBaseUrl = "https://www.cheapshark.com/api/1.0"
+        private val DefaultPagingConfig = PagingConfig(pageSize = 20, initialLoadSize = 20)
         private const val GamerPowerBaseUrl = "https://www.gamerpower.com/api"
     }
 }

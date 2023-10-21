@@ -3,6 +3,8 @@ package com.mr3y.ludi.shared.di
 import cafe.adriel.voyager.core.model.ScreenModel
 import com.mr3y.ludi.shared.ui.navigation.PreferencesType
 import com.mr3y.ludi.shared.ui.presenter.DealsViewModel
+import com.mr3y.ludi.shared.ui.presenter.DefaultDiscoverPagingFactory
+import com.mr3y.ludi.shared.ui.presenter.DiscoverPagingFactory
 import com.mr3y.ludi.shared.ui.presenter.DiscoverViewModel
 import com.mr3y.ludi.shared.ui.presenter.EditPreferencesViewModel
 import com.mr3y.ludi.shared.ui.presenter.NewsViewModel
@@ -34,6 +36,9 @@ interface ScreenModelsComponent {
     @Provides
     @IntoMap
     fun SettingsViewModel.bind(): Pair<KClass<out ScreenModel>, () -> ScreenModel> = this::class to { this }
+
+    @Provides
+    fun DefaultDiscoverPagingFactory.bind(): DiscoverPagingFactory = this
 
     val editPreferencesViewModelFactory: (PreferencesType) -> EditPreferencesViewModel
 }

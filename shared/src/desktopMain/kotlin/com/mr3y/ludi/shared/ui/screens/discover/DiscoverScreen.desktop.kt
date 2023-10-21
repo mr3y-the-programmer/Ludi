@@ -23,7 +23,6 @@ actual fun DiscoverScreen(
         onUnselectingStore = viewModel::removeFromSelectedStores,
         onSelectingTag = viewModel::addToSelectedTags,
         onUnselectingTag = viewModel::removeFromSelectedTags,
-        onReachingBottomOfTheSuggestionsList = viewModel::loadNewSuggestedGames,
         onRefresh = viewModel::refresh,
         onOpenUrl = ::openUrlInBrowser,
         modifier = modifier

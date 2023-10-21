@@ -5,18 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.paging.cachedIn
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
-import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.ui.presenter.model.DiscoverFiltersState
 import com.mr3y.ludi.shared.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.shared.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.shared.ui.presenter.model.Platform
 import com.mr3y.ludi.shared.ui.presenter.model.Store
 import com.mr3y.ludi.shared.ui.presenter.model.Tag
-import com.mr3y.ludi.shared.ui.presenter.model.TaggedGames
-import com.mr3y.ludi.shared.ui.presenter.usecases.GetSearchQueryBasedGamesUseCase
-import com.mr3y.ludi.shared.ui.presenter.usecases.GetSuggestedGamesUseCase
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,17 +29,54 @@ import me.tatarka.inject.annotations.Inject
 @OptIn(FlowPreview::class)
 @Inject
 class DiscoverViewModel(
-    private val getSuggestedGamesUseCase: GetSuggestedGamesUseCase,
-    private val searchQueryBasedGamesUseCase: GetSearchQueryBasedGamesUseCase
-) : ScreenModel {
+    private val pagingFactory: DiscoverPagingFactory
+) : ScreenModel, DiscoverPagingFactory by pagingFactory {
 
     val searchQuery = mutableStateOf("")
 
     private val _filterState = MutableStateFlow(InitialFiltersState)
 
-    private val _triggerLoadingNewSuggestedGames = MutableStateFlow(0)
-
     private val refreshing = MutableStateFlow(0)
+
+    private val trendingGames = trendingGamesPager.cachedIn(coroutineScope)
+
+    private val topRatedGames = topRatedGamesPager.cachedIn(coroutineScope)
+
+    private val favGenresBasedGames = favGenresBasedGamesPager?.cachedIn(coroutineScope)
+
+    private val multiplayerGames = multiplayerGamesPager.cachedIn(coroutineScope)
+
+    private val freeGames = freeGamesPager.cachedIn(coroutineScope)
+
+    private val storyGames = storyGamesPager.cachedIn(coroutineScope)
+
+    private val boardGames = boardGamesPager.cachedIn(coroutineScope)
+
+    private val esportsGames = esportsGamesPager.cachedIn(coroutineScope)
+
+    private val raceGames = raceGamesPager.cachedIn(coroutineScope)
+
+    private val puzzleGames = puzzleGamesPager.cachedIn(coroutineScope)
+
+    private val soundtrackGames = soundtrackGamesPager.cachedIn(coroutineScope)
+
+    internal val Initial = DiscoverState(
+        filtersState = InitialFiltersState,
+        gamesState = DiscoverStateGames.SuggestedGames(
+            trendingGames = trendingGames,
+            topRatedGames = topRatedGames,
+            favGenresBasedGames = favGenresBasedGames,
+            multiplayerGames = multiplayerGames,
+            freeGames = freeGames,
+            storyGames = storyGames,
+            boardGames = boardGames,
+            eSportsGames = esportsGames,
+            raceGames = raceGames,
+            puzzleGames = puzzleGames,
+            soundtrackGames = soundtrackGames
+        ),
+        isRefreshing = true
+    )
 
     private var _internalState by mutableStateOf(Initial)
 
@@ -51,31 +85,26 @@ class DiscoverViewModel(
             .debounce(275)
             .distinctUntilChanged(),
         _filterState,
-        _triggerLoadingNewSuggestedGames,
         refreshing
-    ) { searchText, filtersState, page, _ ->
+    ) { searchText, filtersState, _ ->
         if (searchText.isEmpty() && filtersState == InitialFiltersState) {
-            getSuggestedGamesUseCase(page.coerceAtLeast(0))
+            Initial.gamesState
         } else {
-            searchQueryBasedGamesUseCase(searchText, filtersState)
+            DiscoverStateGames.SearchQueryBasedGames(
+                games = searchQueryBasedGamesPager(searchText, filtersState).cachedIn(coroutineScope)
+            )
         }
     }.map {
         Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = false, gamesState = it) }
     }.launchIn(coroutineScope)
 
-    val discoverState = combine(
-        _filterState,
+    val discoverState =
         snapshotFlow { _internalState }
-    ) { filters, state ->
-        Snapshot.withMutableSnapshot {
-            _internalState = state.copy(filtersState = filters)
-        }
-        _internalState
-    }.stateIn(
-        coroutineScope,
-        SharingStarted.Lazily,
-        _internalState
-    )
+            .stateIn(
+                coroutineScope,
+                SharingStarted.Lazily,
+                _internalState
+            )
 
     fun updateSearchQuery(searchQueryText: String) {
         Snapshot.withMutableSnapshot {
@@ -85,35 +114,36 @@ class DiscoverViewModel(
 
     fun addToSelectedPlatforms(platform: Platform) {
         _filterState.update { it.copy(selectedPlatforms = it.selectedPlatforms + platform) }
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun removeFromSelectedPlatforms(platform: Platform) {
         _filterState.update { it.copy(selectedPlatforms = it.selectedPlatforms - platform) }
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun addToSelectedStores(store: Store) {
         _filterState.update { it.copy(selectedStores = it.selectedStores + store) }
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun removeFromSelectedStores(store: Store) {
         _filterState.update { it.copy(selectedStores = it.selectedStores - store) }
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun addToSelectedTags(tag: Tag) {
         _filterState.update { it.copy(selectedTags = it.selectedTags + tag) }
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun removeFromSelectedTags(tag: Tag) {
         _filterState.update { it.copy(selectedTags = it.selectedTags - tag) }
-    }
-
-    fun loadNewSuggestedGames() {
-        _triggerLoadingNewSuggestedGames.update { it + 1 }
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun refresh() {
         refreshing.update { it + 1 }
-        _triggerLoadingNewSuggestedGames.update { 0 }
         Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = true) }
     }
 
@@ -165,18 +195,6 @@ class DiscoverViewModel(
             ).toSortedSet(compareBy { it.label }),
             selectedTags = emptySet(),
             sortingCriteria = null
-        )
-
-        val Initial = DiscoverState(
-            filtersState = InitialFiltersState,
-            gamesState = DiscoverStateGames.SuggestedGames(
-                taggedGamesList = listOf(
-                    TaggedGames.TrendingGames(Result.Loading),
-                    TaggedGames.TopRatedGames(Result.Loading),
-                    TaggedGames.MultiplayerGames(Result.Loading)
-                )
-            ),
-            isRefreshing = true
         )
     }
 }

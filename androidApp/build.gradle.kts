@@ -158,5 +158,6 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
+    testImplementation(libs.paging.testing)
     testImplementation(libs.androidx.compose.ui.test.junit4)
 }

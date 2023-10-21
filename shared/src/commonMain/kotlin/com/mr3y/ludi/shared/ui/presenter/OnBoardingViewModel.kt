@@ -8,6 +8,7 @@ import androidx.compose.runtime.snapshots.Snapshot
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.paging.cachedIn
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
@@ -40,6 +41,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
@@ -107,26 +109,23 @@ class OnBoardingViewModel(
     ) { searchText, favouriteGenres, _ ->
         if (searchText.isEmpty()) {
             // Retrieve suggested games
-            return@combine gamesRepository.queryGames(
+            val pagingData = gamesRepository.queryGames(
                 GamesQuery(
-                    pageSize = 20,
                     dates = listOf(LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_DATE), LocalDate.now().format(DateTimeFormatter.ISO_DATE)),
                     sortingCriteria = GamesSortingCriteria.DateAddedDescending,
                     genres = favouriteGenres.map { it.id }.takeIf { it.isNotEmpty() }
                 )
-            ).let {
-                OnboardingGames.SuggestedGames(it.onSuccess { page -> page.games })
-            }
+            ).cachedIn(coroutineScope)
+
+            return@combine OnboardingGames.SuggestedGames(games = pagingData)
         }
-        gamesRepository.queryGames(
+        val searchPagingData = gamesRepository.queryGames(
             GamesQuery(
-                pageSize = 20,
                 searchQuery = searchText,
                 sortingCriteria = GamesSortingCriteria.RatingDescending
             )
-        ).let {
-            OnboardingGames.SearchQueryBasedGames(it.onSuccess { page -> page.games })
-        }
+        )
+        OnboardingGames.SearchQueryBasedGames(games = searchPagingData)
     }.map {
         Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGames = false, onboardingGames = it) }
     }.launchIn(coroutineScope)
@@ -226,7 +225,7 @@ class OnBoardingViewModel(
         val InitialOnboardingState = OnboardingState(
             allNewsDataSources = SupportedNewsDataSources,
             followedNewsDataSources = emptyList(),
-            onboardingGames = OnboardingGames.SuggestedGames(Result.Loading),
+            onboardingGames = OnboardingGames.SuggestedGames(games = emptyFlow()),
             isRefreshingGames = true,
             favouriteGames = emptyList(),
             allGamingGenres = Result.Loading,

@@ -9,6 +9,11 @@ import com.mr3y.ludi.shared.core.network.serialization.StringAsLongSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+data class CheapSharkResponse(
+    val totalPageCount: Int,
+    val deals: List<CheapSharkDeal>
+)
+
 @Serializable
 data class CheapSharkDeal(
     val internalName: String,

@@ -1,18 +1,16 @@
 package com.mr3y.ludi.shared.core.repository.query
 
 fun DealsQuery(
-    page: Int? = null,
     searchQuery: String? = null,
     matchTermsExactly: Boolean? = null,
     stores: List<Int>? = null,
     sortingCriteria: DealsSorting? = null,
     sortingDirection: DealsSortingDirection? = null
-) = DealsQueryParameters(searchQuery, matchTermsExactly, page, stores, sortingCriteria, sortingDirection)
+) = DealsQueryParameters(searchQuery, matchTermsExactly, stores, sortingCriteria, sortingDirection)
 
 data class DealsQueryParameters(
     val searchQuery: String?,
     val matchTermsExactly: Boolean?,
-    val page: Int?,
     val stores: List<Int>?,
     val sorting: DealsSorting?,
     val sortingDirection: DealsSortingDirection?
@@ -38,9 +36,6 @@ enum class DealsSortingDirection {
 internal fun buildDealsFullUrl(endpointUrl: String, queryParameters: DealsQueryParameters): String {
     return buildString {
         append("$endpointUrl?")
-        if (queryParameters.page != null) {
-            append("page=${queryParameters.page}&")
-        }
         if (queryParameters.searchQuery != null) {
             append("title=${queryParameters.searchQuery}&")
         }

@@ -29,7 +29,6 @@ actual fun DiscoverScreen(
         onUnselectingStore = viewModel::removeFromSelectedStores,
         onSelectingTag = viewModel::addToSelectedTags,
         onUnselectingTag = viewModel::removeFromSelectedTags,
-        onReachingBottomOfTheSuggestionsList = viewModel::loadNewSuggestedGames,
         onRefresh = viewModel::refresh,
         onOpenUrl = { url ->
             launchChromeCustomTab(context, Uri.parse(url), tabToolbarColor)
