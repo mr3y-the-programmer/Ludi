@@ -14,9 +14,9 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.paging.testing.asSnapshot
 import cafe.adriel.lyricist.LocalStrings
 import com.mr3y.ludi.shared.core.model.GameGenre
-import com.mr3y.ludi.shared.core.model.data
 import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.shared.ui.resources.LudiStrings
@@ -29,6 +29,7 @@ import com.mr3y.ludi.ui.screens.onboarding.FakeOnboardingState
 import com.mr3y.ludi.shared.ui.screens.onboarding.OnboardingScreen
 import com.mr3y.ludi.ui.screens.onboarding.onGenre
 import com.mr3y.ludi.shared.ui.theme.LudiTheme
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -89,7 +90,7 @@ class OnboardingScreenAccessibilityTest : BaseRobolectricTest() {
     }
 
     @Test
-    fun games_page_launches_nodes_have_semantics_for_a11y_services() {
+    fun games_page_launches_nodes_have_semantics_for_a11y_services() = runTest {
         // Setup
         var strings: LudiStrings? by mutableStateOf(null)
         composeTestRule.setContent {
@@ -130,7 +131,7 @@ class OnboardingScreenAccessibilityTest : BaseRobolectricTest() {
             assert(hasPerformImeAction())
         }
 
-        val randomGame = FakeOnboardingGames.games.data!!.random()
+        val randomGame = FakeOnboardingGames.games.asSnapshot().random()
         composeTestRule.onNodeWithStateDescription(strings!!.games_page_game_off_state_desc(randomGame.name)).apply {
             // Ensure the composable is fully visible within the viewport
             onParent().performScrollTo()

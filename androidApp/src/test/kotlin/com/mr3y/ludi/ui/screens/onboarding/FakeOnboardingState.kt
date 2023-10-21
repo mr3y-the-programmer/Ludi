@@ -1,5 +1,9 @@
 package com.mr3y.ludi.ui.screens.onboarding
 
+import androidx.paging.LoadStates
+import app.cash.paging.LoadStateLoading
+import app.cash.paging.LoadStateNotLoading
+import app.cash.paging.PagingData
 import com.mr3y.ludi.shared.core.model.GameGenre
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.model.Source
@@ -17,6 +21,7 @@ import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.shared.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.shared.ui.presenter.model.OnboardingState
+import kotlinx.coroutines.flow.flowOf
 
 val FakeAllGenres = Result.Success(
     setOf(
@@ -1254,7 +1259,23 @@ private val fakeGames = listOfNotNull(
     ).toGame()
 )
 
-val FakeOnboardingGames = OnboardingGames.SuggestedGames(Result.Success(fakeGames))
+val FakeOnboardingGames = OnboardingGames.SuggestedGames(
+    flowOf(
+        PagingData.from(
+            fakeGames,
+            sourceLoadStates = LoadStates(
+                refresh = LoadStateNotLoading(true),
+                prepend = LoadStateNotLoading(true),
+                append = LoadStateLoading
+            ),
+            mediatorLoadStates = LoadStates(
+                refresh = LoadStateNotLoading(true),
+                prepend = LoadStateNotLoading(true),
+                append = LoadStateLoading
+            )
+        )
+    )
+)
 val FakeSelectedGames = listOf(FavouriteGame(id = 3498, title = "Grand Theft Auto V", imageUrl = "https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg", rating = 4.47f))
 
 val FakeNewsDataSources = listOf(

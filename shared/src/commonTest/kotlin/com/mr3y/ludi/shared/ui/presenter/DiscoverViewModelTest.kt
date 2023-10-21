@@ -1,9 +1,7 @@
 package com.mr3y.ludi.shared.ui.presenter
 
-import app.cash.paging.Pager
 import com.mr3y.ludi.shared.MainDispatcherRule
-import com.mr3y.ludi.shared.core.model.Game
-import com.mr3y.ludi.shared.ui.presenter.model.DiscoverFiltersState
+import com.mr3y.ludi.shared.core.repository.fixtures.FakeGamesRepository
 import com.mr3y.ludi.shared.ui.presenter.model.DiscoverStateGames
 import com.mr3y.ludi.shared.ui.presenter.model.Platform
 import com.mr3y.ludi.shared.ui.presenter.model.Store
@@ -33,37 +31,7 @@ class DiscoverViewModelTest {
     @Before
     fun setUp() {
         sut = DiscoverViewModel(
-            pagingFactory = object : DiscoverPagingFactory {
-                override val trendingGamesPager: Pager<Int, Game>
-                    get() = TODO("Not yet implemented")
-                override val topRatedGamesPager: Pager<Int, Game>
-                    get() = TODO("Not yet implemented")
-                override val favGenresBasedGamesPager: Pager<Int, Game>?
-                    get() = TODO("Not yet implemented")
-                override val multiplayerGamesPager: Pager<Int, Game>
-                    get() = TODO("Not yet implemented")
-                override val freeGamesPager: Pager<Int, Game>
-                    get() = TODO("Not yet implemented")
-                override val storyGamesPager: Pager<Int, Game>
-                    get() = TODO("Not yet implemented")
-                override val boardGamesPager: Pager<Int, Game>
-                    get() = TODO("Not yet implemented")
-                override val esportsGamesPager: Pager<Int, Game>
-                    get() = TODO("Not yet implemented")
-                override val raceGamesPager: Pager<Int, Game>
-                    get() = TODO("Not yet implemented")
-                override val puzzleGamesPager: Pager<Int, Game>
-                    get() = TODO("Not yet implemented")
-                override val soundtrackGamesPager: Pager<Int, Game>
-                    get() = TODO("Not yet implemented")
-
-                override fun searchQueryBasedGamesPager(
-                    searchQuery: String,
-                    filters: DiscoverFiltersState
-                ): Pager<Int, Game> {
-                    TODO("Not yet implemented")
-                }
-            }
+            pagingFactory = FakeDiscoverPagingFactory(FakeGamesRepository())
         )
     }
 

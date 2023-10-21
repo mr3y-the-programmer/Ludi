@@ -14,7 +14,7 @@ class DealsPagingSource(
     private val networkDataSource: CheapSharkDataSource,
     private val query: DealsQueryParameters,
     private val crashReporting: CrashReporting
-): PagingSource<Int, Deal>() {
+) : PagingSource<Int, Deal>() {
 
     override fun getRefreshKey(state: PagingState<Int, Deal>): Int? {
         return state.anchorPosition?.let { anchorPosition ->

@@ -1,8 +1,9 @@
 package com.mr3y.ludi.shared.ui.presenter
 
+import app.cash.paging.PagingData
+import com.mr3y.ludi.shared.core.model.Game
 import com.mr3y.ludi.shared.core.model.GameGenre
 import com.mr3y.ludi.shared.core.model.GamesGenresPage
-import com.mr3y.ludi.shared.core.model.GamesPage
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.network.model.DetailedRAWGPlatformInfo
 import com.mr3y.ludi.shared.core.network.model.RAWGGameGenre
@@ -16,6 +17,8 @@ import com.mr3y.ludi.shared.core.network.model.ShallowRAWGStoreInfoWithId
 import com.mr3y.ludi.shared.core.network.model.toGame
 import com.mr3y.ludi.shared.core.repository.GamesRepository
 import com.mr3y.ludi.shared.core.repository.query.GamesQueryParameters
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class FakeGamesRepository : GamesRepository {
 
@@ -1156,15 +1159,8 @@ class FakeGamesRepository : GamesRepository {
         ).toGame()
     )
 
-    override suspend fun queryGames(queryParameters: GamesQueryParameters): Result<GamesPage, Throwable> {
-        return Result.Success(
-            GamesPage(
-                count = 3,
-                nextPageUrl = null,
-                previousPageUrl = null,
-                games = games
-            )
-        )
+    override fun queryGames(queryParameters: GamesQueryParameters): Flow<PagingData<Game>> {
+        return flowOf(PagingData.from(games))
     }
 
     override suspend fun queryGamesGenres(): Result<GamesGenresPage, Throwable> {

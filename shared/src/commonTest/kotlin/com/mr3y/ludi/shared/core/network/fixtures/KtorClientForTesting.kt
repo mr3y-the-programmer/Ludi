@@ -8,7 +8,7 @@ import io.ktor.client.engine.mock.respondOk
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.headersOf
+import io.ktor.http.headers
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.serialization.json.Json
@@ -32,14 +32,19 @@ object KtorClientForTesting {
     }
 }
 
-fun HttpClient.enqueueMockResponse(response: String, status: HttpStatusCode) {
+fun HttpClient.enqueueMockResponse(response: String, status: HttpStatusCode, headers: Set<Pair<String, String>> = emptySet()) {
     (this.engineConfig as? MockEngineConfig)?.apply {
         requestHandlers.clear()
         addHandler { _ ->
             respond(
                 content = response,
                 status = status,
-                headers = headersOf(HttpHeaders.ContentType, listOf("application/json"))
+                headers = headers {
+                    append(HttpHeaders.ContentType, "application/json")
+                    headers.forEach { (name, value) ->
+                        append(name, value)
+                    }
+                }
             )
         }
     }

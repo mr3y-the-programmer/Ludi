@@ -1,5 +1,9 @@
 package com.mr3y.ludi.ui.screens.deals
 
+import androidx.paging.LoadStates
+import app.cash.paging.LoadStateLoading
+import app.cash.paging.LoadStateNotLoading
+import app.cash.paging.PagingData
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.network.model.CheapSharkDeal
 import com.mr3y.ludi.shared.core.network.model.GamerPowerGiveawayEntry
@@ -15,6 +19,7 @@ import com.mr3y.ludi.shared.ui.presenter.model.DealsState
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawaysFiltersState
+import kotlinx.coroutines.flow.flowOf
 
 val FakeInitialDealsFiltersState = DealsFiltersState(
     currentPage = 0,
@@ -172,7 +177,21 @@ val FakeGiveawaysSamples = listOf(
 )
 
 val FakeDealsState = DealsState(
-    Result.Success(FakeDealSamples),
+    flowOf(
+        PagingData.from(
+            FakeDealSamples,
+            sourceLoadStates = LoadStates(
+                refresh = LoadStateNotLoading(true),
+                prepend = LoadStateNotLoading(true),
+                append = LoadStateLoading
+            ),
+            mediatorLoadStates = LoadStates(
+                refresh = LoadStateNotLoading(true),
+                prepend = LoadStateNotLoading(true),
+                append = LoadStateLoading
+            )
+        )
+    ),
     Result.Success(FakeGiveawaysSamples),
     FakeInitialDealsFiltersState,
     FakeInitialGiveawaysFiltersState,

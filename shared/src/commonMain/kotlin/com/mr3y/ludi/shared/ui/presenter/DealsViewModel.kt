@@ -22,7 +22,6 @@ import com.mr3y.ludi.shared.ui.presenter.model.DealsState
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawayPlatform
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawaysFiltersState
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +30,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flattenConcat
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject

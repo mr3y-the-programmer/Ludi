@@ -5,6 +5,7 @@ import com.mr3y.ludi.shared.core.network.fixtures.doCleanup
 import com.mr3y.ludi.shared.core.network.fixtures.enqueueMockResponse
 import com.mr3y.ludi.shared.core.network.model.ApiResult
 import com.mr3y.ludi.shared.core.network.model.CheapSharkDeal
+import com.mr3y.ludi.shared.core.network.model.CheapSharkResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -97,7 +98,7 @@ class CheapSharkDataSourceTest {
                   }
                 ]
             """.trimIndent()
-        client.enqueueMockResponse(serializedResponse, HttpStatusCode.OK)
+        client.enqueueMockResponse(serializedResponse, HttpStatusCode.OK, headers = setOf(Pair("x-total-page-count", "1")))
         val expectedResponse = listOf(
             CheapSharkDeal(
                 "DEUSEXHUMANREVOLUTIONDIRECTORSCUT",
@@ -168,10 +169,10 @@ class CheapSharkDataSourceTest {
         val result = sut.queryLatestDeals("https://www.cheapshark.com/api/1.0/deals")
 
         // then expect the result is success & it is transformed to our model
-        expectThat(result).isA<ApiResult.Success<List<CheapSharkDeal>>>()
-        result as ApiResult.Success<List<CheapSharkDeal>>
-        expectThat(result.data).isA<List<CheapSharkDeal>>()
-        expectThat(result.data).isEqualTo(expectedResponse)
+        expectThat(result).isA<ApiResult.Success<CheapSharkResponse>>()
+        result as ApiResult.Success<CheapSharkResponse>
+        expectThat(result.data.totalPageCount).isEqualTo(1)
+        expectThat(result.data.deals).isEqualTo(expectedResponse)
     }
 
     @Test

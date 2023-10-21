@@ -58,7 +58,7 @@ kotlin {
                 implementation(libs.kotlinx.serialization)
 
                 // Paging
-                implementation(libs.paging.common)
+                api(libs.paging.common)
                 implementation(libs.paging.compose)
 
                 // Datastore

@@ -73,7 +73,6 @@ import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import cafe.adriel.lyricist.LocalStrings
 import com.mr3y.ludi.shared.core.model.Game
-import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.shared.ui.components.AsyncImage
 import com.mr3y.ludi.shared.ui.components.LudiErrorBox

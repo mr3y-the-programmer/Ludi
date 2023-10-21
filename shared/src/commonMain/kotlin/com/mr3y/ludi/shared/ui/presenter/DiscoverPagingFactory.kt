@@ -47,7 +47,6 @@ class DefaultDiscoverPagingFactory(
     private val appState: LudiSharedState
 ) : DiscoverPagingFactory {
 
-
     override val trendingGamesPager: Flow<PagingData<Game>> = gamesRepository.queryGames(
         GamesQuery(
             dates = listOf(
@@ -58,7 +57,6 @@ class DefaultDiscoverPagingFactory(
             sortingCriteria = GamesSortingCriteria.DateUpdatedDescending
         )
     )
-
 
     override val topRatedGamesPager: Flow<PagingData<Game>> = gamesRepository.queryGames(GamesQuery(metaCriticScores = listOf(95, 100)))
 
