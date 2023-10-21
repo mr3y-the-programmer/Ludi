@@ -29,18 +29,3 @@ enum class GiveawaysSorting(val value: String) {
     Popularity("popularity"),
     Date("date")
 }
-
-internal fun GiveawaysQueryParameters.isValid(): Boolean = platforms != null
-
-internal fun buildGiveawaysFullUrl(endpointUrl: String, queryParameters: GiveawaysQueryParameters): String {
-    return buildString {
-        append("$endpointUrl?")
-        if (queryParameters.platforms != null) {
-            append("platform=${queryParameters.platforms.joinToString(separator = ".") { it.value }}&")
-        }
-        if (queryParameters.platforms != null && queryParameters.sorting != null) {
-            append("sort-by=${queryParameters.sorting.value}&")
-        }
-        deleteAt(lastIndex)
-    }
-}

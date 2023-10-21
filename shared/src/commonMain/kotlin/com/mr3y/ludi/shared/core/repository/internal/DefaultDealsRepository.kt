@@ -17,8 +17,6 @@ import com.mr3y.ludi.shared.core.paging.DealsPagingSource
 import com.mr3y.ludi.shared.core.repository.DealsRepository
 import com.mr3y.ludi.shared.core.repository.query.DealsQueryParameters
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysQueryParameters
-import com.mr3y.ludi.shared.core.repository.query.buildGiveawaysFullUrl
-import com.mr3y.ludi.shared.core.repository.query.isValid
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -40,12 +38,7 @@ class DefaultDealsRepository(
     }
 
     override suspend fun queryGiveaways(queryParameters: GiveawaysQueryParameters): Result<List<GiveawayEntry>, Throwable> {
-        val fullUrl = if (queryParameters.isValid()) {
-            buildGiveawaysFullUrl("$GamerPowerBaseUrl/filter", queryParameters)
-        } else {
-            "$GamerPowerBaseUrl/giveaways"
-        }
-        return when (val result = gamerPowerDataSource.queryLatestGiveaways(fullUrl)) {
+        return when (val result = gamerPowerDataSource.queryLatestGiveaways(queryParameters)) {
             is ApiResult.Success -> Result.Success(result.data.map(GamerPowerGiveawayEntry::toGiveawayEntry))
             is ApiResult.Error -> result.toCoreErrorResult().also { reportExceptions(it, "Error occurred while querying giveaways with query $queryParameters") }
         }
@@ -59,6 +52,5 @@ class DefaultDealsRepository(
 
     companion object {
         private val DefaultPagingConfig = PagingConfig(pageSize = 20, initialLoadSize = 20)
-        private const val GamerPowerBaseUrl = "https://www.gamerpower.com/api"
     }
 }
