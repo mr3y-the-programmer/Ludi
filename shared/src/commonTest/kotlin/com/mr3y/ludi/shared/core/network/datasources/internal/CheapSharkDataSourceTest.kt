@@ -6,6 +6,7 @@ import com.mr3y.ludi.shared.core.network.fixtures.enqueueMockResponse
 import com.mr3y.ludi.shared.core.network.model.ApiResult
 import com.mr3y.ludi.shared.core.network.model.CheapSharkDeal
 import com.mr3y.ludi.shared.core.network.model.CheapSharkResponse
+import com.mr3y.ludi.shared.core.repository.query.DealsQuery
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -166,7 +167,7 @@ class CheapSharkDataSourceTest {
         )
 
         // when trying to query latest deals
-        val result = sut.queryLatestDeals("https://www.cheapshark.com/api/1.0/deals")
+        val result = sut.queryLatestDeals(DealsQuery())
 
         // then expect the result is success & it is transformed to our model
         expectThat(result).isA<ApiResult.Success<CheapSharkResponse>>()
@@ -188,7 +189,7 @@ class CheapSharkDataSourceTest {
         client.enqueueMockResponse(mockResponse, HttpStatusCode.NotFound)
 
         // when trying to query the latest deals
-        val result = sut.queryLatestDeals("https://www.cheapshark.com/api/1.0/deals")
+        val result = sut.queryLatestDeals(DealsQuery())
 
         // then expect the result is HttpFailure
         expectThat(result).isA<ApiResult.Error>()

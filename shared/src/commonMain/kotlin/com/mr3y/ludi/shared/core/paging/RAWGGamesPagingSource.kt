@@ -8,7 +8,6 @@ import com.mr3y.ludi.shared.core.network.datasources.internal.RAWGDataSource
 import com.mr3y.ludi.shared.core.network.model.ApiResult
 import com.mr3y.ludi.shared.core.network.model.toGame
 import com.mr3y.ludi.shared.core.repository.query.GamesQueryParameters
-import com.mr3y.ludi.shared.core.repository.query.buildGamesFullUrl
 
 class RAWGGamesPagingSource(
     private val networkDataSource: RAWGDataSource,
@@ -25,8 +24,7 @@ class RAWGGamesPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Game> {
         val pageNum = params.key?.coerceAtLeast(1) ?: 1
-        val url = buildGamesFullUrl(endpointUrl = "https://api.rawg.io/api/games", query)
-        return when (val response = networkDataSource.queryGames("$url&page=$pageNum&page_size=${params.loadSize}")) {
+        return when (val response = networkDataSource.queryGames(query, pageNum, params.loadSize)) {
             is ApiResult.Success -> {
                 LoadResult.Page(
                     data = response.data.results.mapNotNull { it.toGame() },

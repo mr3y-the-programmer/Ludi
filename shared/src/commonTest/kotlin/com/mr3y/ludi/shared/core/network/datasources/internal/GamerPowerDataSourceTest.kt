@@ -6,6 +6,7 @@ import com.mr3y.ludi.shared.core.network.fixtures.enqueueMockResponse
 import com.mr3y.ludi.shared.core.network.model.ApiResult
 import com.mr3y.ludi.shared.core.network.model.GamerPowerGiveawayEntry
 import com.mr3y.ludi.shared.core.network.model.GamerPowerGiveawayEntryStatus
+import com.mr3y.ludi.shared.core.repository.query.GiveawaysQueryParameters
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -146,7 +147,7 @@ class GamerPowerDataSourceTest {
         )
 
         // when trying to query latest giveaways
-        val result = sut.queryLatestGiveaways("https://www.gamerpower.com/api/giveaways")
+        val result = sut.queryLatestGiveaways(GiveawaysQueryParameters(null, null))
 
         // then expect the result is success & it is transformed to our model
         expectThat(result).isA<ApiResult.Success<List<GamerPowerGiveawayEntry>>>()
@@ -167,7 +168,7 @@ class GamerPowerDataSourceTest {
         client.enqueueMockResponse(mockResponse, HttpStatusCode.NotFound)
 
         // when trying to query the latest giveaways
-        val result = sut.queryLatestGiveaways("https://www.gamerpower.com/api/giveaways")
+        val result = sut.queryLatestGiveaways(GiveawaysQueryParameters(null, null))
 
         // then expect the result is HttpFailure
         expectThat(result).isA<ApiResult.Error>()

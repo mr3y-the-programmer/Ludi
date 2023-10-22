@@ -8,7 +8,6 @@ import com.mr3y.ludi.shared.core.network.datasources.internal.CheapSharkDataSour
 import com.mr3y.ludi.shared.core.network.model.ApiResult
 import com.mr3y.ludi.shared.core.network.model.toDeal
 import com.mr3y.ludi.shared.core.repository.query.DealsQueryParameters
-import com.mr3y.ludi.shared.core.repository.query.buildDealsFullUrl
 
 class DealsPagingSource(
     private val networkDataSource: CheapSharkDataSource,
@@ -25,8 +24,7 @@ class DealsPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Deal> {
         val pageNum = params.key?.coerceAtLeast(0) ?: 0
-        val url = buildDealsFullUrl(endpointUrl = "https://www.cheapshark.com/api/1.0/deals", query)
-        return when (val response = networkDataSource.queryLatestDeals("$url&pageNumber=$pageNum&pageSize=${params.loadSize}")) {
+        return when (val response = networkDataSource.queryLatestDeals(query, pageNum, params.loadSize)) {
             is ApiResult.Success -> {
                 LoadResult.Page(
                     data = response.data.deals.map { it.toDeal() },

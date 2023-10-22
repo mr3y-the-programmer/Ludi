@@ -32,27 +32,3 @@ enum class DealsSortingDirection {
     Ascending,
     Descending
 }
-
-internal fun buildDealsFullUrl(endpointUrl: String, queryParameters: DealsQueryParameters): String {
-    return buildString {
-        append("$endpointUrl?")
-        if (queryParameters.searchQuery != null) {
-            append("title=${queryParameters.searchQuery}&")
-        }
-        if (queryParameters.matchTermsExactly != null) {
-            val intBoolean = if (queryParameters.matchTermsExactly) 1 else 0
-            append("exact=$intBoolean&")
-        }
-        if (queryParameters.stores != null) {
-            append("storeID=${queryParameters.stores.joinToString(separator = ",")}&")
-        }
-        if (queryParameters.sorting != null) {
-            append("sortBy=${queryParameters.sorting.value}&")
-        }
-        if (queryParameters.sortingDirection != null) {
-            val intBoolean = if (queryParameters.sortingDirection == DealsSortingDirection.Descending) 1 else 0
-            append("desc=$intBoolean&")
-        }
-        deleteAt(lastIndex)
-    }
-}

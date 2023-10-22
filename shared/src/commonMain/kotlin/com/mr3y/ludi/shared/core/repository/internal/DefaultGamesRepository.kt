@@ -34,7 +34,7 @@ class DefaultGamesRepository(
     }
 
     override suspend fun queryGamesGenres(): Result<GamesGenresPage, Throwable> {
-        return when (val result = rawgDataSource.queryGamesGenres("$RAWGApiBaseUrl/genres?ordering=name")) {
+        return when (val result = rawgDataSource.queryGamesGenres()) {
             is ApiResult.Success -> {
                 Result.Success(result.data.toGamesGenresPage())
             }
@@ -50,6 +50,5 @@ class DefaultGamesRepository(
 
     companion object {
         private val DefaultPagingConfig = PagingConfig(pageSize = 20, initialLoadSize = 20)
-        private const val RAWGApiBaseUrl = "https://api.rawg.io/api"
     }
 }

@@ -7,6 +7,7 @@ import com.mr3y.ludi.shared.core.network.fixtures.doCleanup
 import com.mr3y.ludi.shared.core.network.fixtures.enqueueMockResponse
 import com.mr3y.ludi.shared.core.network.model.ApiResult
 import com.mr3y.ludi.shared.core.network.model.RAWGPage
+import com.mr3y.ludi.shared.core.repository.query.GamesQuery
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -36,7 +37,7 @@ class RAWGDataSourceTest {
         client.enqueueMockResponse(mockedResponses.serializedResponse, HttpStatusCode.OK)
 
         // when trying to query games
-        val result = sut.queryGames("https://api.rawg.io/api/games?page_size=3")
+        val result = sut.queryGames(GamesQuery(), pageSize = 3)
 
         // then expect the result is success & it is transformed to our model
         expectThat(result).isA<ApiResult.Success<RAWGPage>>()
@@ -57,7 +58,7 @@ class RAWGDataSourceTest {
         client.enqueueMockResponse(mockResponse, HttpStatusCode.NotFound)
 
         // when trying to query the latest news
-        val result = sut.queryGames("https://api.rawg.io/api/games?page_size=3")
+        val result = sut.queryGames(GamesQuery(), pageSize = 3)
 
         // then expect the result is HttpFailure
         expectThat(result).isA<ApiResult.Error>()
