@@ -6,6 +6,7 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import okio.Path
 import okio.Path.Companion.toOkioPath
+import java.io.File
 
 @Component
 @Singleton
@@ -14,6 +15,8 @@ abstract class AndroidApplicationComponent(
 ) : SharedApplicationComponent, AndroidCrashReportingComponent {
 
     override val dataStoreParentDir: Path = applicationContext.filesDir.toOkioPath()
+
+    override val okhttpCacheParentDir: File = applicationContext.cacheDir
 
     companion object
 }
