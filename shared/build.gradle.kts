@@ -55,6 +55,8 @@ kotlin {
                 implementation(libs.ktor.core)
                 implementation(libs.ktor.content.negotation)
                 implementation(libs.ktor.kotlinx.serialization)
+                // Okhttp engine
+                implementation(libs.ktor.okhttp)
                 implementation(libs.kotlinx.serialization)
 
                 // Paging
@@ -107,8 +109,7 @@ kotlin {
 
         val desktopAndroidMain by getting {
             dependencies {
-                // Okhttp engine
-                implementation(libs.ktor.okhttp)
+
             }
         }
 
