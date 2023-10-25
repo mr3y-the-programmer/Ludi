@@ -1,0 +1,33 @@
+import com.mr3y.ludi.shared.core.model.MarkupText;
+import com.mr3y.ludi.shared.core.model.Source;
+import com.mr3y.ludi.shared.core.model.Title;
+import java.time.ZonedDateTime;
+
+CREATE TABLE IF NOT EXISTS articleEntity (
+    title TEXT AS Title PRIMARY KEY NOT NULL,
+    description TEXT AS MarkupText,
+    source TEXT AS Source NOT NULL,
+    sourceLinkUrl TEXT NOT NULL,
+    content TEXT AS MarkupText,
+    imageUrl TEXT,
+    author TEXT,
+    publicationDate TEXT AS ZonedDateTime,
+    type TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_type ON articleEntity (type);
+
+queryArticles:
+SELECT * FROM articleEntity WHERE type == :type ORDER BY
+CASE WHEN type == "new_releases" THEN publicationDate END ASC,
+CASE WHEN type == "news" OR type == "reviews" THEN publicationDate END DESC,
+title ASC LIMIT :limit OFFSET :offset;
+
+countArticles:
+SELECT count(*) FROM articleEntity WHERE type == :type;
+
+insertArticle:
+INSERT OR REPLACE INTO articleEntity(title, description, source, sourceLinkUrl, content, imageUrl, author, publicationDate, type) VALUES ?;
+
+deleteArticlesByType:
+DELETE FROM articleEntity WHERE type = :type;

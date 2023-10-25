@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.wire)
     alias(libs.plugins.gradle.buildconfig.plugin)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -58,6 +59,9 @@ kotlin {
                 // Okhttp engine
                 implementation(libs.ktor.okhttp)
                 implementation(libs.kotlinx.serialization)
+
+                // Sqldelight extensions
+                implementation(libs.sqldelight.paging)
 
                 // Paging
                 api(libs.paging.common)
@@ -115,6 +119,8 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
+                // Database driver
+                implementation(libs.sqldelight.android)
                 // lifecycle
                 implementation(libs.androidx.lifecycle.runtime.compose)
                 // Coil
@@ -139,6 +145,8 @@ kotlin {
 
         val desktopMain by getting {
             dependencies {
+                // Database driver
+                implementation(libs.sqldelight.jvm)
                 // Crash reporting
                 implementation(libs.bugsnag)
 
@@ -152,6 +160,15 @@ kotlin {
 
 wire {
     kotlin {
+    }
+}
+
+sqldelight {
+    databases {
+        create("LudiDatabase") {
+            packageName.set("com.mr3y.ludi.shared.core.database")
+            generateAsync.set(true)
+        }
     }
 }
 

@@ -7,6 +7,7 @@ interface SharedApplicationComponent :
     DataStoreComponent,
     LoggingComponent,
     NetworkComponent,
+    SharedDatabaseComponent,
     RepositoriesComponent,
     RESTfulDataSourcesComponent,
     RSSFeedDataSourcesComponent {
