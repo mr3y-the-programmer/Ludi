@@ -155,6 +155,12 @@ kotlin {
                 implementation(libs.compose.imageloader)
             }
         }
+
+        val desktopTest by getting {
+            dependencies {
+                dependsOn(commonTest)
+            }
+        }
     }
 }
 

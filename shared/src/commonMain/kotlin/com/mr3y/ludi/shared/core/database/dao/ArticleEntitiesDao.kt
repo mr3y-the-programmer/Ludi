@@ -10,17 +10,29 @@ import com.mr3y.ludi.shared.core.model.NewReleaseArticle
 import com.mr3y.ludi.shared.core.model.NewsArticle
 import com.mr3y.ludi.shared.core.model.ReviewArticle
 import com.mr3y.ludi.shared.di.DatabaseDispatcher
-import com.mr3y.ludi.shared.di.annotations.Singleton
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
+interface ArticleEntitiesDao {
+    fun queryNewsArticles(): PagingSource<Int, ArticleEntity>
+
+    fun queryReviewArticles(): PagingSource<Int, ArticleEntity>
+
+    fun queryNewReleaseArticles(): PagingSource<Int, ArticleEntity>
+
+    suspend fun updateDatabaseNewsArticles(articles: Set<NewsArticle>)
+
+    suspend fun updateDatabaseReviewArticles(articles: Set<ReviewArticle>)
+
+    suspend fun updateDatabaseNewReleaseArticles(articles: Set<NewReleaseArticle>)
+}
+
 @Inject
-@Singleton
-class ArticleEntitiesDao(
+class DefaultArticleEntitiesDao(
     private val database: LudiDatabase,
     private val dispatcherWrapper: DatabaseDispatcher
-) {
-    fun queryNewsArticles(): PagingSource<Int, ArticleEntity> {
+): ArticleEntitiesDao {
+    override fun queryNewsArticles(): PagingSource<Int, ArticleEntity> {
         return QueryPagingSource(
             countQuery = database.articleQueries.countArticles("news"),
             transacter = database.articleQueries,
@@ -31,7 +43,7 @@ class ArticleEntitiesDao(
         )
     }
 
-    fun queryReviewArticles(): PagingSource<Int, ArticleEntity> {
+    override fun queryReviewArticles(): PagingSource<Int, ArticleEntity> {
         return QueryPagingSource(
             countQuery = database.articleQueries.countArticles("reviews"),
             transacter = database.articleQueries,
@@ -42,7 +54,7 @@ class ArticleEntitiesDao(
         )
     }
 
-    fun queryNewReleaseArticles(): PagingSource<Int, ArticleEntity> {
+    override fun queryNewReleaseArticles(): PagingSource<Int, ArticleEntity> {
         return QueryPagingSource(
             countQuery = database.articleQueries.countArticles("new_releases"),
             transacter = database.articleQueries,
@@ -53,15 +65,15 @@ class ArticleEntitiesDao(
         )
     }
 
-    suspend fun updateDatabaseNewsArticles(articles: Set<NewsArticle>) {
+    override suspend fun updateDatabaseNewsArticles(articles: Set<NewsArticle>) {
         deleteAndInsertArticles(articles, "news", NewsArticle::toArticleEntity)
     }
 
-    suspend fun updateDatabaseReviewArticles(articles: Set<ReviewArticle>) {
+    override suspend fun updateDatabaseReviewArticles(articles: Set<ReviewArticle>) {
         deleteAndInsertArticles(articles, "reviews", ReviewArticle::toArticleEntity)
     }
 
-    suspend fun updateDatabaseNewReleaseArticles(articles: Set<NewReleaseArticle>) {
+    override suspend fun updateDatabaseNewReleaseArticles(articles: Set<NewReleaseArticle>) {
         deleteAndInsertArticles(articles, "new_releases", NewReleaseArticle::toArticleEntity)
     }
 
