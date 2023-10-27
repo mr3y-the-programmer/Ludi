@@ -18,6 +18,7 @@ google-services = "com.google.gms.google-services:_"
 firebase-crashlytics = "com.google.firebase.crashlytics:_"
 gradle-play-publisher = "com.github.triplet.play:_"
 app-versioning = "io.github.reactivecircus.app-versioning:_"
+sqldelight = "app.cash.sqldelight:2.0.0"
 
 [libraries]
 
@@ -54,6 +55,9 @@ datastore-core = "androidx.datastore:datastore-core:_"
 datastore-preferences = "androidx.datastore:datastore-preferences:_"
 datastore-preferences-core = "androidx.datastore:datastore-preferences-core:_"
 okio = "com.squareup.okio:okio:_"
+sqldelight-android = "app.cash.sqldelight:android-driver:2.0.0"
+sqldelight-jvm = "app.cash.sqldelight:sqlite-driver:2.0.0"
+sqldelight-paging = "app.cash.sqldelight:androidx-paging3-extensions:2.0.0"
 kotlin-inject-ksp = "me.tatarka.inject:kotlin-inject-compiler-ksp:_"
 kotlin-inject-runtime = "me.tatarka.inject:kotlin-inject-runtime:_"
 lyricist-core = "cafe.adriel.lyricist:lyricist:_"

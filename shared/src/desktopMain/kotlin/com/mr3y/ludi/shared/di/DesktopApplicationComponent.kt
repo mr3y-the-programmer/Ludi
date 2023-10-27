@@ -10,7 +10,7 @@ import java.io.File
 
 @Component
 @Singleton
-abstract class DesktopApplicationComponent : SharedApplicationComponent, DesktopCrashReportingComponent {
+abstract class DesktopApplicationComponent : SharedApplicationComponent, DesktopCrashReportingComponent, DesktopSqlDriverComponent {
 
     override val dataStoreParentDir: Path = getAppDir().toOkioPath()
 

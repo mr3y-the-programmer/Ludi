@@ -1,15 +1,23 @@
 package com.mr3y.ludi.shared.core.repository
 
+import app.cash.paging.PagingData
 import com.mr3y.ludi.shared.core.model.NewReleaseArticle
 import com.mr3y.ludi.shared.core.model.NewsArticle
-import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.model.ReviewArticle
 import com.mr3y.ludi.shared.core.model.Source
+import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
-    suspend fun getLatestGamingNews(sources: Set<Source>): Result<Set<NewsArticle>, Throwable>
 
-    suspend fun getGamesNewReleases(sources: Set<Source>): Result<Set<NewReleaseArticle>, Throwable>
+    fun queryLatestGamingNews(): Flow<PagingData<NewsArticle>>
 
-    suspend fun getGamesReviews(sources: Set<Source>): Result<Set<ReviewArticle>, Throwable>
+    fun queryGamesNewReleases(): Flow<PagingData<NewReleaseArticle>>
+
+    fun queryGamesReviews(): Flow<PagingData<ReviewArticle>>
+
+    suspend fun updateGamingNews(sources: Set<Source>, forceRefresh: Boolean): Boolean
+
+    suspend fun updateGamesNewReleases(sources: Set<Source>, forceRefresh: Boolean): Boolean
+
+    suspend fun updateGamesReviews(sources: Set<Source>, forceRefresh: Boolean): Boolean
 }

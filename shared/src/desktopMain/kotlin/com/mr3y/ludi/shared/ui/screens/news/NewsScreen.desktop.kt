@@ -18,6 +18,7 @@ actual fun NewsScreen(
         newsState = newsState,
         onTuneClick = onTuneClick,
         onRefresh = viewModel::refresh,
+        onConsumeEvent = viewModel::consumeCurrentEvent,
         onOpenUrl = ::openUrlInBrowser,
         modifier = modifier
     )

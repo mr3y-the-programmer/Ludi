@@ -12,7 +12,7 @@ import java.io.File
 @Singleton
 abstract class AndroidApplicationComponent(
     @get:Provides val applicationContext: Context
-) : SharedApplicationComponent, AndroidCrashReportingComponent {
+) : SharedApplicationComponent, AndroidCrashReportingComponent, AndroidSqlDriverComponent {
 
     override val dataStoreParentDir: Path = applicationContext.filesDir.toOkioPath()
 
