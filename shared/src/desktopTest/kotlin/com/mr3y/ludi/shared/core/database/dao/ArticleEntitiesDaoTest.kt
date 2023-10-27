@@ -17,11 +17,15 @@ import com.mr3y.ludi.shared.core.model.NewsArticle
 import com.mr3y.ludi.shared.core.model.ReviewArticle
 import com.mr3y.ludi.shared.core.network.datasources.internal.RSSFeedSamples
 import com.mr3y.ludi.shared.di.DatabaseDispatcher
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import strikt.api.expectThat
+import strikt.assertions.containsExactlyInAnyOrder
 import strikt.assertions.doesNotContain
 import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
@@ -33,6 +37,8 @@ class ArticleEntitiesDaoTest {
     private lateinit var sut: DefaultArticleEntitiesDao
 
     private val testDispatcher = StandardTestDispatcher()
+
+    private val testScope = TestScope(testDispatcher)
 
     @Before
     fun setUp() {
@@ -82,6 +88,15 @@ class ArticleEntitiesDaoTest {
         )
     }
 
+    @After
+    fun teardown() {
+        testScope.launch {
+            database.articleQueries.deleteArticlesByType("news")
+            database.articleQueries.deleteArticlesByType("reviews")
+            database.articleQueries.deleteArticlesByType("new_releases")
+        }
+    }
+
     private fun <T : Article> testSavingAndQueryingFor(
         type: String,
         samples: List<T>,
@@ -97,12 +112,12 @@ class ArticleEntitiesDaoTest {
 
         // then our table should contain exactly 1 row
         val articles = database.articleQueries.queryArticles(type, limit = 100L, offset = 0L).executeAsList().map { mapper(it) }
-        expectThat(articles).isEqualTo(listOf(samples.first()).sortedBy { it.title.text })
+        expectThat(articles).isEqualTo(listOf(samples.first()))
 
         // And new articles added after-then should replace what already exists in the table
         insertProvider(samples.drop(1).toSet())
         val newArticles = database.articleQueries.queryArticles(type, limit = 100L, offset = 0L).executeAsList().map { mapper(it) }
-        expectThat(newArticles).isEqualTo(samples.drop(1).sortedBy { it.title.text })
+        expectThat(newArticles).containsExactlyInAnyOrder(samples.drop(1))
         expectThat(newArticles).doesNotContain(samples.first())
     }
 }
