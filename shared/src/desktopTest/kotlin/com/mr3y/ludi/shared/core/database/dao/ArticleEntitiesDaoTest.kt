@@ -82,7 +82,7 @@ class ArticleEntitiesDaoTest {
         )
     }
 
-    private fun <T: Article> testSavingAndQueryingFor(
+    private fun <T : Article> testSavingAndQueryingFor(
         type: String,
         samples: List<T>,
         insertProvider: suspend (Set<T>) -> Unit,

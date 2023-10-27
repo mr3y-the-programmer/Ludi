@@ -8,7 +8,7 @@ import java.time.ZonedDateTime
 object TitleColumnAdapter : ColumnAdapter<Title, String> {
 
     override fun encode(value: Title): String {
-        return when(value) {
+        return when (value) {
             is Title.Plain -> "Plain(${value.text})"
             is Title.Markup -> "Markup(${value.text})"
         }

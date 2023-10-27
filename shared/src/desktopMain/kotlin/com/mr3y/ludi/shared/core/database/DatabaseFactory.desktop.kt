@@ -1,3 +1,4 @@
+// ktlint-disable filename
 package com.mr3y.ludi.shared.core.database
 
 import app.cash.sqldelight.async.coroutines.synchronous

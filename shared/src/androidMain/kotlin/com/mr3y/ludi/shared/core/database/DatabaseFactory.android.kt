@@ -1,3 +1,4 @@
+// ktlint-disable filename
 package com.mr3y.ludi.shared.core.database
 
 import android.content.Context

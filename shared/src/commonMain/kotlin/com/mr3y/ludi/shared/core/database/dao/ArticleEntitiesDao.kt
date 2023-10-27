@@ -31,7 +31,7 @@ interface ArticleEntitiesDao {
 class DefaultArticleEntitiesDao(
     private val database: LudiDatabase,
     private val dispatcherWrapper: DatabaseDispatcher
-): ArticleEntitiesDao {
+) : ArticleEntitiesDao {
     override fun queryNewsArticles(): PagingSource<Int, ArticleEntity> {
         return QueryPagingSource(
             countQuery = database.articleQueries.countArticles("news"),
@@ -77,7 +77,7 @@ class DefaultArticleEntitiesDao(
         deleteAndInsertArticles(articles, "new_releases", NewReleaseArticle::toArticleEntity)
     }
 
-    private suspend fun <T: Article> deleteAndInsertArticles(
+    private suspend fun <T : Article> deleteAndInsertArticles(
         articles: Set<T>,
         type: String,
         mapper: (T) -> ArticleEntity

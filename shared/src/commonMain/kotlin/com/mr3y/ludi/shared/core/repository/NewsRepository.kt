@@ -15,7 +15,6 @@ interface NewsRepository {
 
     fun queryGamesReviews(): Flow<PagingData<ReviewArticle>>
 
-
     suspend fun updateGamingNews(sources: Set<Source>, forceRefresh: Boolean): Boolean
 
     suspend fun updateGamesNewReleases(sources: Set<Source>, forceRefresh: Boolean): Boolean

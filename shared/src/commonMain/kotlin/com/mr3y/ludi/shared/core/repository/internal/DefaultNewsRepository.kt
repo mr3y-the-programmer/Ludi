@@ -1,9 +1,9 @@
 package com.mr3y.ludi.shared.core.repository.internal
 
 import androidx.paging.filter
+import androidx.paging.map
 import app.cash.paging.Pager
 import app.cash.paging.PagingConfig
-import androidx.paging.map
 import app.cash.paging.PagingData
 import com.mr3y.ludi.shared.ArticleEntity
 import com.mr3y.ludi.shared.core.Logger
@@ -76,7 +76,7 @@ class DefaultNewsRepository(
                 fetcher = { source -> rssFeedDataSource.fetchNewsFeed(source) }
             ) as Result<Set<NewsArticle>, Throwable>
 
-            when(networkArticlesResult) {
+            when (networkArticlesResult) {
                 is Result.Success -> {
                     articleEntitiesDao.updateDatabaseNewsArticles(networkArticlesResult.data)
                     fetchedNetworkUpdates = true
@@ -95,7 +95,7 @@ class DefaultNewsRepository(
                 fetcher = { source -> rssFeedDataSource.fetchNewReleasesFeed(source) }
             ) as Result<Set<NewReleaseArticle>, Throwable>
 
-            when(networkArticlesResult) {
+            when (networkArticlesResult) {
                 is Result.Success -> {
                     articleEntitiesDao.updateDatabaseNewReleaseArticles(networkArticlesResult.data)
                     fetchedNetworkUpdates = true
@@ -114,7 +114,7 @@ class DefaultNewsRepository(
                 fetcher = { source -> rssFeedDataSource.fetchReviewsFeed(source) }
             ) as Result<Set<ReviewArticle>, Throwable>
 
-            when(networkArticlesResult) {
+            when (networkArticlesResult) {
                 is Result.Success -> {
                     articleEntitiesDao.updateDatabaseReviewArticles(networkArticlesResult.data)
                     fetchedNetworkUpdates = true
