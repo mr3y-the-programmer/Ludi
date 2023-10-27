@@ -20,9 +20,7 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -38,11 +36,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -51,6 +53,13 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import app.cash.paging.LoadStateError
+import app.cash.paging.LoadStateLoading
+import app.cash.paging.LoadStateNotLoading
+import app.cash.paging.compose.LazyPagingItems
+import app.cash.paging.compose.collectAsLazyPagingItems
+import app.cash.paging.compose.itemContentType
+import app.cash.paging.compose.itemKey
 import cafe.adriel.lyricist.LocalStrings
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
@@ -58,7 +67,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mr3y.ludi.shared.core.model.Article
 import com.mr3y.ludi.shared.core.model.NewReleaseArticle
-import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.di.getScreenModel
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.shared.ui.components.LudiErrorBox
@@ -67,6 +75,7 @@ import com.mr3y.ludi.shared.ui.navigation.BottomBarTab
 import com.mr3y.ludi.shared.ui.navigation.PreferencesType
 import com.mr3y.ludi.shared.ui.presenter.NewsViewModel
 import com.mr3y.ludi.shared.ui.presenter.model.NewsState
+import com.mr3y.ludi.shared.ui.presenter.model.NewsStateEvent
 import com.mr3y.ludi.shared.ui.screens.settings.EditPreferencesScreen
 
 object NewsScreenTab : Screen, BottomBarTab {
@@ -101,6 +110,7 @@ fun NewsScreen(
     onTuneClick: () -> Unit,
     onRefresh: () -> Unit,
     onOpenUrl: (url: String) -> Unit,
+    onConsumeEvent: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state = rememberPullRefreshState(
@@ -108,6 +118,18 @@ fun NewsScreen(
         onRefresh = onRefresh
     )
     val strings = LocalStrings.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(newsState.currentEvent) {
+        when (newsState.currentEvent) {
+            is NewsStateEvent.FailedToFetchNetworkResults -> {
+                snackbarHostState.showSnackbar(
+                    message = "Couldn't fetch feed updates from server"
+                )
+                onConsumeEvent()
+            }
+            null -> {}
+        }
+    }
     Scaffold(
         modifier = modifier.pullRefresh(state),
         topBar = {
@@ -140,6 +162,7 @@ fun NewsScreen(
                 )
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         contentWindowInsets = WindowInsets(0.dp)
     ) { contentPadding ->
         Box(
@@ -185,7 +208,7 @@ fun NewsScreen(
                             )
                         }
                         FeedSectionScaffold(
-                            sectionFeedResult = newsState.newsFeed,
+                            sectionFeed = newsState.newsFeed.collectAsLazyPagingItems(),
                             modifier = Modifier.fillMaxWidth(),
                             onEmptySuccessfulResultLabel = strings.news_no_news_to_show
                         ) {
@@ -207,7 +230,7 @@ fun NewsScreen(
                             modifier = headerModifier
                         )
                         FeedSectionScaffold(
-                            sectionFeedResult = newsState.reviewsFeed,
+                            sectionFeed = newsState.reviewsFeed.collectAsLazyPagingItems(),
                             modifier = Modifier.fillMaxWidth(),
                             onEmptySuccessfulResultLabel = strings.news_no_reviews_to_show
                         ) {
@@ -229,22 +252,26 @@ fun NewsScreen(
                             modifier = headerModifier
                         )
                     }
-                    NewReleasesSection(
-                        newReleases = newsState.newReleasesFeed
-                    ) {
-                        NewReleaseTile(
-                            newReleaseArticle = it,
-                            modifier = Modifier
-                                .padding(end = 16.dp)
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min),
-                            onClick = {
-                                if (it != null) {
-                                    onOpenUrl(it.sourceLinkUrl)
+                    item {
+                        NewReleasesSection(
+                            newReleases = newsState.newReleasesFeed.collectAsLazyPagingItems(),
+                            modifier = Modifier.fillMaxWidth(),
+                            onEmptySuccessfulResultLabel = strings.news_no_releases_to_show
+                        ) {
+                            NewReleaseTile(
+                                newReleaseArticle = it,
+                                modifier = Modifier
+                                    .padding(end = 16.dp)
+                                    .fillMaxWidth()
+                                    .height(IntrinsicSize.Min),
+                                onClick = {
+                                    if (it != null) {
+                                        onOpenUrl(it.sourceLinkUrl)
+                                    }
                                 }
-                            }
-                        )
-                        Divider(modifier = Modifier.padding(end = 16.dp))
+                            )
+                            Divider(modifier = Modifier.padding(end = 16.dp))
+                        }
                     }
                 }
             }
@@ -259,32 +286,47 @@ fun NewsScreen(
     }
 }
 
-fun LazyListScope.NewReleasesSection(
-    newReleases: Result<Set<NewReleaseArticle>, Throwable>,
+@Composable
+fun NewReleasesSection(
+    newReleases: LazyPagingItems<NewReleaseArticle>,
+    onEmptySuccessfulResultLabel: String,
+    modifier: Modifier = Modifier,
     itemContent: @Composable (NewReleaseArticle?) -> Unit
 ) {
-    when (newReleases) {
-        is Result.Loading -> {
-            items(10) { _ ->
+    Column(modifier = modifier) {
+        if (newReleases.loadState.refresh is LoadStateLoading) {
+            repeat(10) {
                 itemContent(null)
             }
         }
-        is Result.Success -> {
-            if (newReleases.data.isEmpty()) {
-                item {
-                    val strings = LocalStrings.current
-                    Empty(label = strings.news_no_releases_to_show, modifier = Modifier.fillMaxWidth())
-                }
+
+        if (newReleases.loadState.refresh is LoadStateNotLoading) {
+            if (newReleases.itemSnapshotList.isEmpty()) {
+                Empty(
+                    label = onEmptySuccessfulResultLabel,
+                    modifier = Modifier.fillMaxWidth()
+                )
             } else {
-                items(newReleases.data.toList()) { newReleaseArticle ->
-                    itemContent(newReleaseArticle)
+                repeat(newReleases.itemCount) { index ->
+                    key(index) {
+                        itemContent(newReleases[index])
+                    }
                 }
             }
         }
-        is Result.Error -> {
-            item {
-                LudiErrorBox(modifier = Modifier.fillMaxWidth())
+
+        if (newReleases.loadState.refresh is LoadStateError) {
+            LudiErrorBox(modifier = Modifier.fillMaxWidth())
+        }
+
+        if (newReleases.loadState.append is LoadStateLoading) {
+            repeat(10) {
+                itemContent(null)
             }
+        }
+
+        if (newReleases.loadState.append is LoadStateError) {
+            LudiErrorBox(modifier = Modifier.fillMaxWidth())
         }
     }
 }
@@ -292,7 +334,7 @@ fun LazyListScope.NewReleasesSection(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T : Article> FeedSectionScaffold(
-    sectionFeedResult: Result<Set<T>, Throwable>,
+    sectionFeed: LazyPagingItems<T>,
     onEmptySuccessfulResultLabel: String,
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(16.dp),
@@ -305,32 +347,46 @@ fun <T : Article> FeedSectionScaffold(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement
     ) {
-        when (sectionFeedResult) {
-            is Result.Loading -> {
-                items(10) { _ ->
-                    itemContent(null)
-                }
+        if (sectionFeed.loadState.refresh is LoadStateLoading) {
+            items(10) {
+                itemContent(null)
             }
+        }
 
-            is Result.Success -> {
-                if (sectionFeedResult.data.isEmpty()) {
-                    item {
-                        Empty(
-                            label = onEmptySuccessfulResultLabel,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                } else {
-                    items(sectionFeedResult.data.toList()) { article ->
-                        itemContent(article)
-                    }
-                }
-            }
-
-            is Result.Error -> {
+        if (sectionFeed.loadState.refresh is LoadStateNotLoading) {
+            if (sectionFeed.itemSnapshotList.isEmpty()) {
                 item {
-                    LudiErrorBox(modifier = Modifier.fillMaxWidth())
+                    Empty(
+                        label = onEmptySuccessfulResultLabel,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
+            } else {
+                items(
+                    count = sectionFeed.itemCount,
+                    key = sectionFeed.itemKey { it.sourceLinkUrl },
+                    contentType = sectionFeed.itemContentType { it }
+                ) { index ->
+                    itemContent(sectionFeed[index])
+                }
+            }
+        }
+
+        if (sectionFeed.loadState.refresh is LoadStateError) {
+            item {
+                LudiErrorBox(modifier = Modifier.fillMaxWidth())
+            }
+        }
+
+        if (sectionFeed.loadState.append is LoadStateLoading) {
+            items(10) {
+                itemContent(null)
+            }
+        }
+
+        if (sectionFeed.loadState.append is LoadStateError) {
+            item {
+                LudiErrorBox()
             }
         }
     }

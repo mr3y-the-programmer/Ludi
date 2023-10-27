@@ -27,6 +27,7 @@ actual fun NewsScreen(
         onOpenUrl = { url ->
             launchChromeCustomTab(context, Uri.parse(url), tabToolbarColor)
         },
+        onConsumeEvent = viewModel::consumeCurrentEvent,
         modifier = modifier
     )
 }
