@@ -53,6 +53,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
 import com.mr3y.ludi.shared.core.model.Deal
 import com.mr3y.ludi.shared.core.model.Result
+import com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform
+import com.mr3y.ludi.shared.core.repository.query.GiveawayStore
 import com.mr3y.ludi.shared.di.getScreenModel
 import com.mr3y.ludi.shared.ui.adaptive.LocalWindowSizeClass
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
@@ -61,8 +63,6 @@ import com.mr3y.ludi.shared.ui.navigation.BottomBarTab
 import com.mr3y.ludi.shared.ui.presenter.DealsViewModel
 import com.mr3y.ludi.shared.ui.presenter.model.DealStore
 import com.mr3y.ludi.shared.ui.presenter.model.DealsState
-import com.mr3y.ludi.shared.ui.presenter.model.GiveawayPlatform
-import com.mr3y.ludi.shared.ui.presenter.model.GiveawayStore
 
 object DealsScreenTab : Screen, BottomBarTab {
 

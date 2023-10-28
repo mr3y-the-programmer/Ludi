@@ -14,13 +14,13 @@ import com.mr3y.ludi.shared.core.repository.DealsRepository
 import com.mr3y.ludi.shared.core.repository.query.DealsQuery
 import com.mr3y.ludi.shared.core.repository.query.DealsSorting
 import com.mr3y.ludi.shared.core.repository.query.DealsSortingDirection
+import com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform
+import com.mr3y.ludi.shared.core.repository.query.GiveawayStore
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysQueryParameters
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysSorting
 import com.mr3y.ludi.shared.ui.presenter.model.DealStore
 import com.mr3y.ludi.shared.ui.presenter.model.DealsFiltersState
 import com.mr3y.ludi.shared.ui.presenter.model.DealsState
-import com.mr3y.ludi.shared.ui.presenter.model.GiveawayPlatform
-import com.mr3y.ludi.shared.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawaysFiltersState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -78,7 +78,8 @@ class DealsViewModel(
         isGiveawaysLoading.update { true }
         dealsRepository.queryGiveaways(
             GiveawaysQueryParameters(
-                platforms = giveawayFiltersState.selectedPlatformsAndStores(),
+                platforms = giveawayFiltersState.selectedPlatforms.toList(),
+                stores = giveawayFiltersState.selectedStores.toList(),
                 sorting = giveawayFiltersState.sortingCriteria
             )
         ).also {
@@ -182,66 +183,6 @@ class DealsViewModel(
         showFilters.update { !it }
     }
 
-    private fun GiveawaysFiltersState.selectedPlatformsAndStores(): List<com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform>? {
-        return when {
-            selectedPlatforms.isNotEmpty() && selectedStores.isNotEmpty() -> {
-                var temp = selectedStores.map { store ->
-                    when (store) {
-                        GiveawayStore.Steam -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Steam
-                        GiveawayStore.EpicGames -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.EpicGames
-                        GiveawayStore.Battlenet -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Battlenet
-                        GiveawayStore.Ubisoft -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Ubisoft
-                        GiveawayStore.Itchio -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Itchio
-                        GiveawayStore.Origin -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Origin
-                        GiveawayStore.GOG -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.GOG
-                    }
-                }
-                temp = temp + selectedPlatforms.map { platform ->
-                    when (platform) {
-                        GiveawayPlatform.Android -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Android
-                        GiveawayPlatform.IOS -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.IOS
-                        GiveawayPlatform.Playstation4 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Playstation4
-                        GiveawayPlatform.Playstation5 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Playstation5
-                        GiveawayPlatform.XboxOne -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.XboxOne
-                        GiveawayPlatform.Xbox360 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Xbox360
-                        GiveawayPlatform.XboxSeriesXs -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.XboxSeriesXs
-                        GiveawayPlatform.NintendoSwitch -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.NintendoSwitch
-                        GiveawayPlatform.PC -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.PC
-                    }
-                }
-                return temp
-            }
-            selectedPlatforms.isNotEmpty() -> {
-                selectedPlatforms.map { platform ->
-                    when (platform) {
-                        GiveawayPlatform.Android -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Android
-                        GiveawayPlatform.IOS -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.IOS
-                        GiveawayPlatform.Playstation4 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Playstation4
-                        GiveawayPlatform.Playstation5 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Playstation5
-                        GiveawayPlatform.XboxOne -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.XboxOne
-                        GiveawayPlatform.Xbox360 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Xbox360
-                        GiveawayPlatform.XboxSeriesXs -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.XboxSeriesXs
-                        GiveawayPlatform.NintendoSwitch -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.NintendoSwitch
-                        GiveawayPlatform.PC -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.PC
-                    }
-                }
-            }
-            selectedStores.isNotEmpty() -> {
-                selectedStores.map { store ->
-                    when (store) {
-                        GiveawayStore.Steam -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Steam
-                        GiveawayStore.EpicGames -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.EpicGames
-                        GiveawayStore.Battlenet -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Battlenet
-                        GiveawayStore.Ubisoft -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Ubisoft
-                        GiveawayStore.Itchio -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Itchio
-                        GiveawayStore.Origin -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Origin
-                        GiveawayStore.GOG -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.GOG
-                    }
-                }
-            }
-            else -> null
-        }
-    }
     companion object {
         val InitialDealsFiltersState = DealsFiltersState(
             currentPage = 0,

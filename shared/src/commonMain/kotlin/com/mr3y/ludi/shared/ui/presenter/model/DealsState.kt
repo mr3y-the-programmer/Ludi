@@ -6,6 +6,8 @@ import com.mr3y.ludi.shared.core.model.GiveawayEntry
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.repository.query.DealsSorting
 import com.mr3y.ludi.shared.core.repository.query.DealsSortingDirection
+import com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform
+import com.mr3y.ludi.shared.core.repository.query.GiveawayStore
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysSorting
 import kotlinx.coroutines.flow.Flow
 
@@ -40,25 +42,3 @@ data class GiveawaysFiltersState(
     val selectedStores: Set<GiveawayStore>,
     val sortingCriteria: GiveawaysSorting?
 )
-
-enum class GiveawayPlatform {
-    PC,
-    Playstation4,
-    Playstation5,
-    XboxOne,
-    XboxSeriesXs,
-    Xbox360,
-    Android,
-    IOS,
-    NintendoSwitch
-}
-
-enum class GiveawayStore {
-    Steam,
-    EpicGames,
-    Ubisoft,
-    GOG,
-    Itchio,
-    Origin,
-    Battlenet
-}

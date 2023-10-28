@@ -29,12 +29,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
+import com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform
+import com.mr3y.ludi.shared.core.repository.query.GiveawayStore
 import com.mr3y.ludi.shared.ui.adaptive.LocalWindowSizeClass
 import com.mr3y.ludi.shared.ui.components.LudiFilterChip
 import com.mr3y.ludi.shared.ui.presenter.model.DealStore
 import com.mr3y.ludi.shared.ui.presenter.model.DealsFiltersState
-import com.mr3y.ludi.shared.ui.presenter.model.GiveawayPlatform
-import com.mr3y.ludi.shared.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawaysFiltersState
 
 internal enum class BottomSheetType {

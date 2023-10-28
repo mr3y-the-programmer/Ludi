@@ -3,10 +3,14 @@ package com.mr3y.ludi.shared.core.network.datasources.internal
 import com.mr3y.ludi.shared.core.network.fixtures.KtorClientForTesting
 import com.mr3y.ludi.shared.core.network.fixtures.doCleanup
 import com.mr3y.ludi.shared.core.network.fixtures.enqueueMockResponse
+import com.mr3y.ludi.shared.core.network.fixtures.interceptOutgoingRequest
 import com.mr3y.ludi.shared.core.network.model.ApiResult
 import com.mr3y.ludi.shared.core.network.model.GamerPowerGiveawayEntry
 import com.mr3y.ludi.shared.core.network.model.GamerPowerGiveawayEntryStatus
+import com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform
+import com.mr3y.ludi.shared.core.repository.query.GiveawayStore
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysQueryParameters
+import io.ktor.client.request.HttpRequestData
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -147,7 +151,7 @@ class GamerPowerDataSourceTest {
         )
 
         // when trying to query latest giveaways
-        val result = sut.queryLatestGiveaways(GiveawaysQueryParameters(null, null))
+        val result = sut.queryLatestGiveaways(GiveawaysQueryParameters(null, null, null))
 
         // then expect the result is success & it is transformed to our model
         expectThat(result).isA<ApiResult.Success<List<GamerPowerGiveawayEntry>>>()
@@ -168,12 +172,65 @@ class GamerPowerDataSourceTest {
         client.enqueueMockResponse(mockResponse, HttpStatusCode.NotFound)
 
         // when trying to query the latest giveaways
-        val result = sut.queryLatestGiveaways(GiveawaysQueryParameters(null, null))
+        val result = sut.queryLatestGiveaways(GiveawaysQueryParameters(null, null, null))
 
         // then expect the result is HttpFailure
         expectThat(result).isA<ApiResult.Error>()
         result as ApiResult.Error
         expectThat(result.code).isEqualTo(HttpStatusCode.NotFound.value)
+    }
+
+    @Test
+    fun `Make sure url is parsed as expected`() = runTest(dispatcher) {
+        // Intercept the outgoing request to assert on it later
+        val requestData: HttpRequestData
+        client.interceptOutgoingRequest {
+            requestData = it
+        }
+
+        // When making a call to the API with some query parameters
+        sut.queryLatestGiveaways(
+            GiveawaysQueryParameters(
+                platforms = listOf(GiveawayPlatform.Android, GiveawayPlatform.IOS),
+                stores = listOf(GiveawayStore.Origin),
+                sorting = null
+            )
+        )
+        // then make sure the query parameters are parsed correctly
+        expectThat(requestData.url.toString()).isEqualTo("https://www.gamerpower.com/api/filter?platform=android.ios.origin")
+
+        // When making a call to the API again with some query parameters
+        sut.queryLatestGiveaways(
+            GiveawaysQueryParameters(
+                platforms = listOf(GiveawayPlatform.Android, GiveawayPlatform.IOS),
+                stores = null,
+                sorting = null
+            )
+        )
+        // then make sure the query parameters are parsed correctly
+        expectThat(requestData.url.toString()).isEqualTo("https://www.gamerpower.com/api/filter?platform=android.ios")
+
+        // When making a call to the API again with some query parameters
+        sut.queryLatestGiveaways(
+            GiveawaysQueryParameters(
+                platforms = null,
+                stores = listOf(GiveawayStore.Origin),
+                sorting = null
+            )
+        )
+        // then make sure the query parameters are parsed correctly
+        expectThat(requestData.url.toString()).isEqualTo("https://www.gamerpower.com/api/filter?platform=origin")
+
+        // When making a call to the API again with no query parameters
+        sut.queryLatestGiveaways(
+            GiveawaysQueryParameters(
+                platforms = null,
+                stores = null,
+                sorting = null
+            )
+        )
+        // then make sure the query parameters are parsed correctly
+        expectThat(requestData.url.toString()).isEqualTo("https://www.gamerpower.com/api/giveaways")
     }
 
     @After
