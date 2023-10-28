@@ -475,6 +475,7 @@ fun SearchQueryAndFilterPage(
             ) { index ->
                 GameCard(
                     game = games[index],
+                    lazyListState = null,
                     onOpenUrl = onOpenUrl,
                     showGenre = true,
                     modifier = Modifier
@@ -562,6 +563,7 @@ fun RichInfoGamesSection(
             TrendingGameCard(
                 game = game,
                 isHighlighted = index == highlightedItem,
+                lazyListState = listState,
                 onOpenUrl = onOpenUrl,
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 8.dp)
@@ -570,6 +572,7 @@ fun RichInfoGamesSection(
         } else {
             GameCard(
                 game = game,
+                lazyListState = listState,
                 onOpenUrl = onOpenUrl,
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 8.dp)

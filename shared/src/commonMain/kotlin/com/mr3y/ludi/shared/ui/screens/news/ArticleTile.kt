@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +36,7 @@ import com.mr3y.ludi.shared.core.model.Article
 import com.mr3y.ludi.shared.ui.components.AsyncImage
 import com.mr3y.ludi.shared.ui.components.State
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
+import com.mr3y.ludi.shared.ui.components.rememberParallaxAlignment
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import java.time.Duration
@@ -45,6 +47,7 @@ import kotlin.time.toKotlinDuration
 @Composable
 fun ArticleCardTile(
     article: Article?,
+    lazyListState: LazyListState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -87,6 +90,7 @@ fun ArticleCardTile(
                     .fillMaxWidth()
                     .aspectRatio(3f / 2f),
                 contentDescription = null,
+                alignment = rememberParallaxAlignment(lazyListState, key = article?.sourceLinkUrl),
                 contentScale = if (imageLoaded) ContentScale.Crop else ContentScale.FillBounds
             )
             Column(

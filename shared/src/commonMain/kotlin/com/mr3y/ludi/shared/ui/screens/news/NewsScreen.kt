@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
@@ -211,12 +212,13 @@ fun NewsScreen(
                             sectionFeed = newsState.newsFeed.collectAsLazyPagingItems(),
                             modifier = Modifier.fillMaxWidth(),
                             onEmptySuccessfulResultLabel = strings.news_no_news_to_show
-                        ) {
+                        ) { lazyRowState, article ->
                             ArticleCardTile(
-                                article = it,
+                                article = article,
+                                lazyListState = lazyRowState,
                                 onClick = {
-                                    if (it != null) {
-                                        onOpenUrl(it.sourceLinkUrl)
+                                    if (article != null) {
+                                        onOpenUrl(article.sourceLinkUrl)
                                     }
                                 },
                                 modifier = cardModifier
@@ -233,12 +235,13 @@ fun NewsScreen(
                             sectionFeed = newsState.reviewsFeed.collectAsLazyPagingItems(),
                             modifier = Modifier.fillMaxWidth(),
                             onEmptySuccessfulResultLabel = strings.news_no_reviews_to_show
-                        ) {
+                        ) { lazyRowState, article ->
                             ArticleCardTile(
-                                article = it,
+                                article = article,
+                                lazyListState = lazyRowState,
                                 onClick = {
-                                    if (it != null) {
-                                        onOpenUrl(it.sourceLinkUrl)
+                                    if (article != null) {
+                                        onOpenUrl(article.sourceLinkUrl)
                                     }
                                 },
                                 modifier = cardModifier
@@ -338,7 +341,7 @@ fun <T : Article> FeedSectionScaffold(
     onEmptySuccessfulResultLabel: String,
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(16.dp),
-    itemContent: @Composable (T?) -> Unit
+    itemContent: @Composable (LazyListState, T?) -> Unit
 ) {
     val state = rememberLazyListState()
     LazyRow(
@@ -349,7 +352,7 @@ fun <T : Article> FeedSectionScaffold(
     ) {
         if (sectionFeed.loadState.refresh is LoadStateLoading) {
             items(10) {
-                itemContent(null)
+                itemContent(state, null)
             }
         }
 
@@ -367,7 +370,7 @@ fun <T : Article> FeedSectionScaffold(
                     key = sectionFeed.itemKey { it.sourceLinkUrl },
                     contentType = sectionFeed.itemContentType { it }
                 ) { index ->
-                    itemContent(sectionFeed[index])
+                    itemContent(state, sectionFeed[index])
                 }
             }
         }
@@ -380,7 +383,7 @@ fun <T : Article> FeedSectionScaffold(
 
         if (sectionFeed.loadState.append is LoadStateLoading) {
             items(10) {
-                itemContent(null)
+                itemContent(state, null)
             }
         }
 

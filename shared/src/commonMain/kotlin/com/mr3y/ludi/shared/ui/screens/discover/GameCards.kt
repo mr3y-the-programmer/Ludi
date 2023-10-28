@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -59,6 +60,7 @@ import com.mr3y.ludi.shared.ui.components.AsyncImage
 import com.mr3y.ludi.shared.ui.components.LudiSuggestionChip
 import com.mr3y.ludi.shared.ui.components.State
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
+import com.mr3y.ludi.shared.ui.components.rememberParallaxAlignment
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -66,6 +68,7 @@ import org.jetbrains.compose.resources.painterResource
 fun TrendingGameCard(
     game: Game?,
     isHighlighted: Boolean,
+    lazyListState: LazyListState,
     onOpenUrl: (url: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -152,7 +155,8 @@ fun TrendingGameCard(
                 contentDescription = null,
                 // Set a custom memory cache key to avoid overwriting the displayed image in the cache
                 customMemoryCacheKey = "$imageUrl.palette",
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                alignment = rememberParallaxAlignment(lazyListState, key = game?.id)
             )
             game?.genres?.firstOrNull()?.name?.let {
                 LudiSuggestionChip(
@@ -237,6 +241,7 @@ fun TrendingGameCard(
 @Composable
 fun GameCard(
     game: Game?,
+    lazyListState: LazyListState?,
     onOpenUrl: (url: String) -> Unit,
     modifier: Modifier = Modifier,
     showGenre: Boolean = false
@@ -273,7 +278,12 @@ fun GameCard(
                     .fillMaxSize()
                     .defaultPlaceholder(game == null),
                 contentDescription = null,
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                alignment = if (lazyListState != null) {
+                    rememberParallaxAlignment(lazyListState, key = game?.id)
+                } else {
+                    Alignment.Center
+                }
             )
             if (showGenre) {
                 game?.genres?.firstOrNull()?.name?.let {
