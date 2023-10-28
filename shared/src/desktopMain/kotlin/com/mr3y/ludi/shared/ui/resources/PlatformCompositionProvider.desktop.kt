@@ -13,3 +13,5 @@ actual fun ProvideCompositionLocalValues(content: @Composable () -> Unit) {
         content = content
     )
 }
+
+actual fun isDesktopPlatform() = true

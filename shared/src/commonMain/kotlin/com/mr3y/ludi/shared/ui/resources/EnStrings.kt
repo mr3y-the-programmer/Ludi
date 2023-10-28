@@ -58,6 +58,7 @@ val EnLudiStrings = LudiStrings(
     edit_preferences_page_game_content_description = { "Remove $it from my favourites" },
     edit_preferences_page_genre_on_state_desc = { "Remove $it Genre from my favourites" },
     edit_preferences_page_genre_off_state_desc = { "Add $it Genre to my favourites" },
+    click_to_refresh = "Click to Refresh",
     now = "now",
     news_no_releases_to_show = "No New Releases to show",
     news_no_news_to_show = "No New News to show",

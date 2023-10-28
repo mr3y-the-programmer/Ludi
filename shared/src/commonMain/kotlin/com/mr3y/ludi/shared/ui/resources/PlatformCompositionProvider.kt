@@ -7,3 +7,5 @@ import androidx.compose.runtime.Composable
  */
 @Composable
 expect fun ProvideCompositionLocalValues(content: @Composable () -> Unit)
+
+expect fun isDesktopPlatform(): Boolean

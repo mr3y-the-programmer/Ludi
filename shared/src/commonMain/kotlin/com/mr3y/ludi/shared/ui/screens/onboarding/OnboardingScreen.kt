@@ -208,6 +208,7 @@ fun OnboardingScreen(
                                     selectedGenres = onboardingState.selectedGamingGenres,
                                     onSelectingGenre = onSelectingGenre,
                                     onUnselectingGenre = onUnselectingGenre,
+                                    onRefresh = onRefreshingGenres,
                                     verticalArrangement = Arrangement.spacedBy(16.dp),
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -228,6 +229,7 @@ fun OnboardingScreen(
                                     onAddingGameToFavourites = onAddingGameToFavourites,
                                     onRemovingGameFromFavourites = onRemovingGameFromFavourites,
                                     refreshSignal = refresh,
+                                    onRefresh = onRefreshingGames,
                                     verticalArrangement = Arrangement.spacedBy(16.dp),
                                     modifier = Modifier.fillMaxWidth()
                                 )

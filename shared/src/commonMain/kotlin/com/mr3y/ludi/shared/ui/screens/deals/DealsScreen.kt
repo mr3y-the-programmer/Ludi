@@ -146,6 +146,8 @@ fun DealsScreen(
                     onFilterClicked = onToggleFilters,
                     showSearchBar = dealsState.selectedTab == 0,
                     scrollBehavior = scrollBehavior,
+                    onRefreshDeals = onRefreshDeals,
+                    onRefreshGiveaways = onRefreshGiveaways,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(IntrinsicSize.Min)
