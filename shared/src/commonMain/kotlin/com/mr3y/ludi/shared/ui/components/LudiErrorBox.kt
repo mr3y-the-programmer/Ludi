@@ -30,8 +30,9 @@ fun LudiErrorBox(modifier: Modifier = Modifier) {
             )
             val errorMessage = if (isDesktopPlatform()) {
                 "Unexpected Error happened. try to refresh, and see if the problem persists."
-            } else
+            } else {
                 "Unexpected Error happened. pull to refresh, and see if the problem persists."
+            }
             Text(
                 text = errorMessage,
                 style = MaterialTheme.typography.titleLarge,
