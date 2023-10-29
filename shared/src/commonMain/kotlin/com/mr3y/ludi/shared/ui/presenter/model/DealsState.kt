@@ -42,3 +42,26 @@ data class GiveawaysFiltersState(
     val selectedStores: Set<GiveawayStore>,
     val sortingCriteria: GiveawaysSorting?
 )
+
+sealed interface DealsUiEvents {
+
+    data class AddToSelectedDealsStores(val store: DealStore) : DealsUiEvents
+
+    data class RemoveFromSelectedDealsStores(val store: DealStore) : DealsUiEvents
+
+    data class AddToSelectedGiveawaysStores(val store: GiveawayStore) : DealsUiEvents
+
+    data class RemoveFromSelectedGiveawaysStores(val store: GiveawayStore) : DealsUiEvents
+
+    data class AddToSelectedGiveawaysPlatforms(val platform: GiveawayPlatform) : DealsUiEvents
+
+    data class RemoveFromSelectedGiveawaysPlatforms(val platform: GiveawayPlatform) : DealsUiEvents
+
+    data object RefreshDeals : DealsUiEvents
+
+    data object RefreshGiveaways : DealsUiEvents
+
+    data class SelectTab(val tabIndex: Int) : DealsUiEvents
+
+    data object ToggleShowFilters : DealsUiEvents
+}
