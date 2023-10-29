@@ -52,7 +52,7 @@ class DealsViewModel(
 
     private val moleculeScope = CoroutineScope(coroutineScope.coroutineContext + frameClock())
 
-    val dealsState = moleculeScope.launchMolecule(mode = if(isDesktopPlatform()) RecompositionMode.Immediate else RecompositionMode.ContextClock) {
+    val dealsState = moleculeScope.launchMolecule(mode = if (isDesktopPlatform()) RecompositionMode.Immediate else RecompositionMode.ContextClock) {
         DealsPresenter(
             initialState = Initial,
             searchQueryState = searchQuery,
