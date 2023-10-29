@@ -91,6 +91,9 @@ kotlin {
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.transitions)
 
+                // Molecule
+                implementation(libs.molecule)
+
                 // Annotations
                 implementation(libs.androidx.annotations)
 

@@ -55,6 +55,7 @@ data class LudiStrings(
     val edit_preferences_page_game_content_description: (String) -> String,
     val edit_preferences_page_genre_on_state_desc: (String) -> String,
     val edit_preferences_page_genre_off_state_desc: (String) -> String,
+    val click_to_refresh: String,
     val now: String,
     val news_no_releases_to_show: String,
     val news_no_news_to_show: String,

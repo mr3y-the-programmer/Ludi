@@ -1,140 +1,65 @@
 package com.mr3y.ludi.shared.ui.presenter
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
-import app.cash.paging.PagingData
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.launchMolecule
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
-import com.mr3y.ludi.shared.core.model.Deal
-import com.mr3y.ludi.shared.core.model.GiveawayEntry
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.model.onSuccess
 import com.mr3y.ludi.shared.core.repository.DealsRepository
 import com.mr3y.ludi.shared.core.repository.query.DealsQuery
 import com.mr3y.ludi.shared.core.repository.query.DealsSorting
 import com.mr3y.ludi.shared.core.repository.query.DealsSortingDirection
+import com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform
+import com.mr3y.ludi.shared.core.repository.query.GiveawayStore
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysQueryParameters
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysSorting
 import com.mr3y.ludi.shared.ui.presenter.model.DealStore
 import com.mr3y.ludi.shared.ui.presenter.model.DealsFiltersState
 import com.mr3y.ludi.shared.ui.presenter.model.DealsState
-import com.mr3y.ludi.shared.ui.presenter.model.GiveawayPlatform
-import com.mr3y.ludi.shared.ui.presenter.model.GiveawayStore
+import com.mr3y.ludi.shared.ui.presenter.model.DealsUiEvents
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawaysFiltersState
+import com.mr3y.ludi.shared.ui.resources.isDesktopPlatform
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import kotlin.coroutines.CoroutineContext
 
-@OptIn(FlowPreview::class)
 @Inject
 class DealsViewModel(
     private val dealsRepository: DealsRepository
 ) : ScreenModel {
 
     val searchQuery = mutableStateOf("")
-    private val dealsFilterState = MutableStateFlow(InitialDealsFiltersState)
-    private val isDealsLoading = MutableStateFlow(false)
 
-    private val _previousRefreshDealsValue = MutableStateFlow(0)
-    private val refreshingDeals = MutableStateFlow(0)
+    private val events = MutableSharedFlow<DealsUiEvents>(extraBufferCapacity = 10)
 
-    private val deals = combine(
-        snapshotFlow { searchQuery.value }
-            .debounce(275)
-            .distinctUntilChanged(),
-        dealsFilterState,
-        refreshingDeals
-    ) { searchText, dealsFiltersState, _ ->
-        isDealsLoading.update { true }
-        dealsRepository.queryDeals(
-            DealsQuery(
-                searchQuery = if (searchText.isNotEmpty() && searchText.isNotBlank()) searchText else null,
-                stores = if (dealsFiltersState.selectedStores.isNotEmpty()) dealsFiltersState.selectedStores.map { it.id } else null,
-                sortingCriteria = dealsFiltersState.sortingCriteria,
-                sortingDirection = dealsFiltersState.sortingDirection
-            )
-        ).also {
-            isDealsLoading.update { false }
-            _previousRefreshDealsValue.update { refreshingDeals.value }
-        }
-    }
+    private val moleculeScope = CoroutineScope(coroutineScope.coroutineContext + frameClock())
 
-    private val isGiveawaysLoading = MutableStateFlow(false)
-    private val giveawaysFiltersState = MutableStateFlow(InitialGiveawaysFiltersState)
-    private val _previousRefreshGiveawaysValue = MutableStateFlow(0)
-    private val refreshingGiveaways = MutableStateFlow(0)
-    private val gamerPowerGiveaways = combine(giveawaysFiltersState, refreshingGiveaways) { giveawayFiltersState, _ ->
-        isGiveawaysLoading.update { true }
-        dealsRepository.queryGiveaways(
-            GiveawaysQueryParameters(
-                platforms = giveawayFiltersState.selectedPlatformsAndStores(),
-                sorting = giveawayFiltersState.sortingCriteria
-            )
-        ).also {
-            isGiveawaysLoading.update { false }
-            _previousRefreshGiveawaysValue.update { refreshingGiveaways.value }
-        }
-    }
-
-    private val selectedTab = MutableStateFlow(Initial.selectedTab)
-
-    private val showFilters = MutableStateFlow(Initial.showFilters)
-
-    @Suppress("UNCHECKED_CAST")
-    val dealsState = combine(
-        dealsFilterState,
-        deals,
-        giveawaysFiltersState,
-        gamerPowerGiveaways,
-        isDealsLoading,
-        isGiveawaysLoading,
-        refreshingDeals,
-        _previousRefreshDealsValue,
-        refreshingGiveaways,
-        _previousRefreshGiveawaysValue,
-        selectedTab,
-        showFilters
-    ) { updates ->
-        val isDealsLoading = updates[4] as Boolean
-        val isGiveawaysLoading = updates[5] as Boolean
-        val refreshingDeals = updates[6] as Int
-        val previousRefreshDeals = updates[7] as Int
-        val refreshingGiveaways = updates[8] as Int
-        val previousRefreshGiveaways = updates[9] as Int
-        val selectedTabIndex = updates[10] as Int
-        val isFiltersShown = updates[11] as Boolean
-        DealsState(
-            dealsFiltersState = updates[0] as DealsFiltersState,
-            deals = updates[1] as Flow<PagingData<Deal>>,
-            giveawaysFiltersState = (updates[2] as GiveawaysFiltersState),
-            giveaways = if (isGiveawaysLoading) {
-                Initial.giveaways
-            } else {
-                (updates[3] as Result<List<GiveawayEntry>, Throwable>).onSuccess { giveaways ->
-                    giveaways.filter { giveaway -> giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault())) ?: true }
-                }
-            },
-            isRefreshingDeals = refreshingDeals != previousRefreshDeals,
-            isRefreshingGiveaways = refreshingGiveaways != previousRefreshGiveaways,
-            selectedTab = selectedTabIndex,
-            showFilters = isFiltersShown
+    val dealsState = moleculeScope.launchMolecule(mode = if(isDesktopPlatform()) RecompositionMode.Immediate else RecompositionMode.ContextClock) {
+        DealsPresenter(
+            initialState = Initial,
+            searchQueryState = searchQuery,
+            events = events,
+            dealsRepository = dealsRepository
         )
-    }.stateIn(
-        coroutineScope,
-        SharingStarted.Lazily,
-        Initial
-    )
+    }
 
     fun updateSearchQuery(searchQueryText: String) {
         Snapshot.withMutableSnapshot {
@@ -143,105 +68,45 @@ class DealsViewModel(
     }
 
     fun addToSelectedDealsStores(store: DealStore) {
-        dealsFilterState.update { it.copy(selectedStores = it.selectedStores + store) }
+        events.tryEmit(DealsUiEvents.AddToSelectedDealsStores(store = store))
     }
 
     fun removeFromSelectedDealsStores(store: DealStore) {
-        dealsFilterState.update { it.copy(selectedStores = it.selectedStores - store) }
+        events.tryEmit(DealsUiEvents.RemoveFromSelectedDealsStores(store = store))
     }
 
     fun addToSelectedGiveawaysStores(store: GiveawayStore) {
-        giveawaysFiltersState.update { it.copy(selectedStores = it.selectedStores + store) }
+        events.tryEmit(DealsUiEvents.AddToSelectedGiveawaysStores(store = store))
     }
 
     fun removeFromSelectedGiveawaysStores(store: GiveawayStore) {
-        giveawaysFiltersState.update { it.copy(selectedStores = it.selectedStores - store) }
+        events.tryEmit(DealsUiEvents.RemoveFromSelectedGiveawaysStores(store = store))
     }
 
     fun addToSelectedGiveawaysPlatforms(platform: GiveawayPlatform) {
-        giveawaysFiltersState.update { it.copy(selectedPlatforms = it.selectedPlatforms + platform) }
+        events.tryEmit(DealsUiEvents.AddToSelectedGiveawaysPlatforms(platform = platform))
     }
 
     fun removeFromSelectedGiveawayPlatforms(platform: GiveawayPlatform) {
-        giveawaysFiltersState.update { it.copy(selectedPlatforms = it.selectedPlatforms - platform) }
+        events.tryEmit(DealsUiEvents.RemoveFromSelectedGiveawaysPlatforms(platform = platform))
     }
 
     fun refreshDeals() {
-        refreshingDeals.update { it + 1 }
+        events.tryEmit(DealsUiEvents.RefreshDeals)
     }
 
     fun refreshGiveaways() {
-        refreshingGiveaways.update { it + 1 }
+        events.tryEmit(DealsUiEvents.RefreshGiveaways)
     }
 
     fun selectTab(tabIndex: Int) {
-        selectedTab.update { tabIndex }
+        events.tryEmit(DealsUiEvents.SelectTab(tabIndex))
     }
 
     fun toggleFilters() {
-        showFilters.update { !it }
+        events.tryEmit(DealsUiEvents.ToggleShowFilters)
     }
 
-    private fun GiveawaysFiltersState.selectedPlatformsAndStores(): List<com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform>? {
-        return when {
-            selectedPlatforms.isNotEmpty() && selectedStores.isNotEmpty() -> {
-                var temp = selectedStores.map { store ->
-                    when (store) {
-                        GiveawayStore.Steam -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Steam
-                        GiveawayStore.EpicGames -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.EpicGames
-                        GiveawayStore.Battlenet -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Battlenet
-                        GiveawayStore.Ubisoft -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Ubisoft
-                        GiveawayStore.Itchio -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Itchio
-                        GiveawayStore.Origin -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Origin
-                        GiveawayStore.GOG -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.GOG
-                    }
-                }
-                temp = temp + selectedPlatforms.map { platform ->
-                    when (platform) {
-                        GiveawayPlatform.Android -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Android
-                        GiveawayPlatform.IOS -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.IOS
-                        GiveawayPlatform.Playstation4 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Playstation4
-                        GiveawayPlatform.Playstation5 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Playstation5
-                        GiveawayPlatform.XboxOne -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.XboxOne
-                        GiveawayPlatform.Xbox360 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Xbox360
-                        GiveawayPlatform.XboxSeriesXs -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.XboxSeriesXs
-                        GiveawayPlatform.NintendoSwitch -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.NintendoSwitch
-                        GiveawayPlatform.PC -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.PC
-                    }
-                }
-                return temp
-            }
-            selectedPlatforms.isNotEmpty() -> {
-                selectedPlatforms.map { platform ->
-                    when (platform) {
-                        GiveawayPlatform.Android -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Android
-                        GiveawayPlatform.IOS -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.IOS
-                        GiveawayPlatform.Playstation4 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Playstation4
-                        GiveawayPlatform.Playstation5 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Playstation5
-                        GiveawayPlatform.XboxOne -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.XboxOne
-                        GiveawayPlatform.Xbox360 -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Xbox360
-                        GiveawayPlatform.XboxSeriesXs -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.XboxSeriesXs
-                        GiveawayPlatform.NintendoSwitch -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.NintendoSwitch
-                        GiveawayPlatform.PC -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.PC
-                    }
-                }
-            }
-            selectedStores.isNotEmpty() -> {
-                selectedStores.map { store ->
-                    when (store) {
-                        GiveawayStore.Steam -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Steam
-                        GiveawayStore.EpicGames -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.EpicGames
-                        GiveawayStore.Battlenet -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Battlenet
-                        GiveawayStore.Ubisoft -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Ubisoft
-                        GiveawayStore.Itchio -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Itchio
-                        GiveawayStore.Origin -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.Origin
-                        GiveawayStore.GOG -> com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform.GOG
-                    }
-                }
-            }
-            else -> null
-        }
-    }
     companion object {
         val InitialDealsFiltersState = DealsFiltersState(
             currentPage = 0,
@@ -289,4 +154,100 @@ class DealsViewModel(
             showFilters = false
         )
     }
+}
+
+internal expect fun frameClock(): CoroutineContext
+
+@OptIn(FlowPreview::class)
+@Composable
+internal fun DealsPresenter(
+    initialState: DealsState,
+    searchQueryState: MutableState<String>,
+    events: Flow<DealsUiEvents>,
+    dealsRepository: DealsRepository
+): DealsState {
+    var selectedTab by remember { mutableStateOf(initialState.selectedTab) }
+    var showFilters by remember { mutableStateOf(initialState.showFilters) }
+
+    var isDealsLoading by remember { mutableStateOf(initialState.isRefreshingDeals) }
+    var deals by remember { mutableStateOf(initialState.deals) }
+    var dealsFilterState by remember { mutableStateOf(initialState.dealsFiltersState) }
+    var refreshDeals by remember { mutableStateOf(0) }
+
+    var isGiveawaysLoading by remember { mutableStateOf(initialState.isRefreshingGiveaways) }
+    var giveaways by remember { mutableStateOf(initialState.giveaways) }
+    var giveawaysFilterState by remember { mutableStateOf(initialState.giveawaysFiltersState) }
+    var refreshGiveaways by remember { mutableStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { searchQueryState.value }
+            .debounce(275)
+            .collectLatest { searchText ->
+                isDealsLoading = true
+                deals = dealsRepository.queryDeals(
+                    DealsQuery(
+                        searchQuery = if (searchText.isNotEmpty() && searchText.isNotBlank()) searchText else null,
+                        stores = if (dealsFilterState.selectedStores.isNotEmpty()) dealsFilterState.selectedStores.map { it.id } else null,
+                        sortingCriteria = dealsFilterState.sortingCriteria,
+                        sortingDirection = dealsFilterState.sortingDirection
+                    )
+                )
+                isDealsLoading = false
+            }
+    }
+
+    LaunchedEffect(dealsFilterState, refreshDeals) {
+        isDealsLoading = true
+        deals = dealsRepository.queryDeals(
+            DealsQuery(
+                searchQuery = if (searchQueryState.value.isNotEmpty() && searchQueryState.value.isNotBlank()) searchQueryState.value else null,
+                stores = if (dealsFilterState.selectedStores.isNotEmpty()) dealsFilterState.selectedStores.map { it.id } else null,
+                sortingCriteria = dealsFilterState.sortingCriteria,
+                sortingDirection = dealsFilterState.sortingDirection
+            )
+        )
+        isDealsLoading = false
+    }
+
+    LaunchedEffect(giveawaysFilterState, refreshGiveaways) {
+        isGiveawaysLoading = true
+        giveaways = dealsRepository.queryGiveaways(
+            GiveawaysQueryParameters(
+                platforms = giveawaysFilterState.selectedPlatforms.toList(),
+                stores = giveawaysFilterState.selectedStores.toList(),
+                sorting = giveawaysFilterState.sortingCriteria
+            )
+        ).onSuccess { giveaways ->
+            giveaways.filter { giveaway -> giveaway.endDateTime?.isAfter(ZonedDateTime.now(ZoneId.systemDefault())) ?: true }
+        }
+        isGiveawaysLoading = false
+    }
+
+    LaunchedEffect(Unit) {
+        events.collect { event ->
+            when (event) {
+                is DealsUiEvents.AddToSelectedDealsStores -> dealsFilterState = dealsFilterState.copy(selectedStores = dealsFilterState.selectedStores + event.store)
+                is DealsUiEvents.RemoveFromSelectedDealsStores -> dealsFilterState = dealsFilterState.copy(selectedStores = dealsFilterState.selectedStores - event.store)
+                is DealsUiEvents.AddToSelectedGiveawaysStores -> giveawaysFilterState = giveawaysFilterState.copy(selectedStores = giveawaysFilterState.selectedStores + event.store)
+                is DealsUiEvents.RemoveFromSelectedGiveawaysStores -> giveawaysFilterState = giveawaysFilterState.copy(selectedStores = giveawaysFilterState.selectedStores - event.store)
+                is DealsUiEvents.AddToSelectedGiveawaysPlatforms -> giveawaysFilterState = giveawaysFilterState.copy(selectedPlatforms = giveawaysFilterState.selectedPlatforms + event.platform)
+                is DealsUiEvents.RemoveFromSelectedGiveawaysPlatforms -> giveawaysFilterState = giveawaysFilterState.copy(selectedPlatforms = giveawaysFilterState.selectedPlatforms - event.platform)
+                is DealsUiEvents.RefreshDeals -> refreshDeals++
+                is DealsUiEvents.RefreshGiveaways -> refreshGiveaways++
+                is DealsUiEvents.SelectTab -> selectedTab = event.tabIndex
+                is DealsUiEvents.ToggleShowFilters -> showFilters = !showFilters
+            }
+        }
+    }
+
+    return DealsState(
+        deals = deals,
+        giveaways = giveaways,
+        dealsFiltersState = dealsFilterState,
+        giveawaysFiltersState = giveawaysFilterState,
+        selectedTab = selectedTab,
+        showFilters = showFilters,
+        isRefreshingDeals = isDealsLoading,
+        isRefreshingGiveaways = isGiveawaysLoading
+    )
 }

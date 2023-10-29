@@ -6,6 +6,8 @@ import com.mr3y.ludi.shared.core.model.GiveawayEntry
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.repository.query.DealsSorting
 import com.mr3y.ludi.shared.core.repository.query.DealsSortingDirection
+import com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform
+import com.mr3y.ludi.shared.core.repository.query.GiveawayStore
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysSorting
 import kotlinx.coroutines.flow.Flow
 
@@ -41,24 +43,25 @@ data class GiveawaysFiltersState(
     val sortingCriteria: GiveawaysSorting?
 )
 
-enum class GiveawayPlatform {
-    PC,
-    Playstation4,
-    Playstation5,
-    XboxOne,
-    XboxSeriesXs,
-    Xbox360,
-    Android,
-    IOS,
-    NintendoSwitch
-}
+sealed interface DealsUiEvents {
 
-enum class GiveawayStore {
-    Steam,
-    EpicGames,
-    Ubisoft,
-    GOG,
-    Itchio,
-    Origin,
-    Battlenet
+    data class AddToSelectedDealsStores(val store: DealStore) : DealsUiEvents
+
+    data class RemoveFromSelectedDealsStores(val store: DealStore) : DealsUiEvents
+
+    data class AddToSelectedGiveawaysStores(val store: GiveawayStore) : DealsUiEvents
+
+    data class RemoveFromSelectedGiveawaysStores(val store: GiveawayStore) : DealsUiEvents
+
+    data class AddToSelectedGiveawaysPlatforms(val platform: GiveawayPlatform) : DealsUiEvents
+
+    data class RemoveFromSelectedGiveawaysPlatforms(val platform: GiveawayPlatform) : DealsUiEvents
+
+    data object RefreshDeals : DealsUiEvents
+
+    data object RefreshGiveaways : DealsUiEvents
+
+    data class SelectTab(val tabIndex: Int) : DealsUiEvents
+
+    data object ToggleShowFilters : DealsUiEvents
 }

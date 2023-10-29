@@ -72,11 +72,13 @@ import com.mr3y.ludi.shared.di.getScreenModel
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.shared.ui.components.LudiErrorBox
 import com.mr3y.ludi.shared.ui.components.LudiSectionHeader
+import com.mr3y.ludi.shared.ui.components.RefreshIconButton
 import com.mr3y.ludi.shared.ui.navigation.BottomBarTab
 import com.mr3y.ludi.shared.ui.navigation.PreferencesType
 import com.mr3y.ludi.shared.ui.presenter.NewsViewModel
 import com.mr3y.ludi.shared.ui.presenter.model.NewsState
 import com.mr3y.ludi.shared.ui.presenter.model.NewsStateEvent
+import com.mr3y.ludi.shared.ui.resources.isDesktopPlatform
 import com.mr3y.ludi.shared.ui.screens.settings.EditPreferencesScreen
 
 object NewsScreenTab : Screen, BottomBarTab {
@@ -137,6 +139,10 @@ fun NewsScreen(
             TopAppBar(
                 title = {},
                 actions = {
+                    if (isDesktopPlatform()) {
+                        RefreshIconButton(onClick = onRefresh)
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
                     IconButton(
                         onClick = onTuneClick,
                         modifier = Modifier

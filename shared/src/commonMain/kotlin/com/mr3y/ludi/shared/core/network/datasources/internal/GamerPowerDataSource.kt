@@ -21,10 +21,21 @@ class GamerPowerDataSourceImpl(
 ) : GamerPowerDataSource {
     override suspend fun queryLatestGiveaways(queryParameters: GiveawaysQueryParameters): ApiResult<List<GamerPowerGiveawayEntry>> {
         return try {
-            val endpointUrl = if (queryParameters.platforms != null) "$GamerPowerBaseUrl/filter" else "$GamerPowerBaseUrl/giveaways"
+            val endpointUrl = if (!queryParameters.platforms.isNullOrEmpty() || !queryParameters.stores.isNullOrEmpty()) "$GamerPowerBaseUrl/filter" else "$GamerPowerBaseUrl/giveaways"
             val response = client.get(endpointUrl) {
-                if (queryParameters.platforms != null) {
-                    parameter("platform", queryParameters.platforms.joinToString(separator = ".") { it.value })
+                if (!queryParameters.platforms.isNullOrEmpty() || !queryParameters.stores.isNullOrEmpty()) {
+                    val platformsAndStores = buildString {
+                        if (!queryParameters.platforms.isNullOrEmpty()) {
+                            append(queryParameters.platforms.joinToString(separator = ".") { it.value })
+                        }
+                        if (!queryParameters.platforms.isNullOrEmpty() && !queryParameters.stores.isNullOrEmpty()) {
+                            append('.')
+                        }
+                        if (!queryParameters.stores.isNullOrEmpty()) {
+                            append(queryParameters.stores.joinToString(separator = ".") { it.value })
+                        }
+                    }
+                    parameter("platform", platformsAndStores)
                     parameter("sort-by", queryParameters.sorting?.value)
                 }
             }

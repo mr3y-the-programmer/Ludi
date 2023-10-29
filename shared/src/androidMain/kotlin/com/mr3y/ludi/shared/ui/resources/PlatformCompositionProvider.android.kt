@@ -5,3 +5,5 @@ import androidx.compose.runtime.CompositionLocalProvider
 
 @Composable
 actual fun ProvideCompositionLocalValues(content: @Composable () -> Unit) = CompositionLocalProvider(content = content)
+
+actual fun isDesktopPlatform() = false

@@ -2,6 +2,7 @@ package com.mr3y.ludi.shared.core.repository.query
 
 data class GiveawaysQueryParameters(
     val platforms: List<GiveawayPlatform>?,
+    val stores: List<GiveawayStore>?,
     val sorting: GiveawaysSorting?
 )
 
@@ -14,7 +15,10 @@ enum class GiveawayPlatform(val value: String) {
     Xbox360("xbox-360"),
     Android("android"),
     IOS("ios"),
-    NintendoSwitch("switch"),
+    NintendoSwitch("switch")
+}
+
+enum class GiveawayStore(val value: String) {
     Steam("steam"),
     EpicGames("epic-games-store"),
     Ubisoft("ubisoft"),

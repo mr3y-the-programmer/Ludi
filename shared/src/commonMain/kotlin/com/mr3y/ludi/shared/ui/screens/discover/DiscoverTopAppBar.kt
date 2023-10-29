@@ -1,10 +1,12 @@
 package com.mr3y.ludi.shared.ui.screens.discover
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,12 +38,15 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
+import com.mr3y.ludi.shared.ui.components.RefreshIconButton
+import com.mr3y.ludi.shared.ui.resources.isDesktopPlatform
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun DiscoverTopBar(
     searchQuery: String,
     onSearchQueryValueChanged: (String) -> Unit,
+    onRefresh: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     onTuneClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -93,6 +98,10 @@ fun DiscoverTopBar(
         },
         modifier = modifier,
         actions = {
+            if (isDesktopPlatform()) {
+                RefreshIconButton(onClick = onRefresh)
+                Spacer(modifier = Modifier.width(8.dp))
+            }
             IconButton(
                 onClick = onTuneClicked,
                 modifier = Modifier.requiredSize(48.dp)

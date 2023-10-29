@@ -123,6 +123,10 @@ fun DiscoverScreen(
                 searchQuery = searchQuery,
                 onSearchQueryValueChanged = onUpdatingSearchQueryText,
                 onTuneClicked = { openFilters = !openFilters },
+                onRefresh = {
+                    onRefresh() // notify ViewModel to update state
+                    refresh++
+                },
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .fillMaxWidth(),

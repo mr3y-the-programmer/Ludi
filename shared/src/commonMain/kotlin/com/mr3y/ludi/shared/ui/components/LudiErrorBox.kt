@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
+import com.mr3y.ludi.shared.ui.resources.isDesktopPlatform
 
 @Composable
 fun LudiErrorBox(modifier: Modifier = Modifier) {
@@ -27,8 +28,13 @@ fun LudiErrorBox(modifier: Modifier = Modifier) {
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error
             )
+            val errorMessage = if (isDesktopPlatform()) {
+                "Unexpected Error happened. try to refresh, and see if the problem persists."
+            } else {
+                "Unexpected Error happened. pull to refresh, and see if the problem persists."
+            }
             Text(
-                text = "Unexpected Error happened. pull to refresh, and see if the problem persists.",
+                text = errorMessage,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )

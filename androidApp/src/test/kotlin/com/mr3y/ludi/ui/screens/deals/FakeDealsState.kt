@@ -12,12 +12,12 @@ import com.mr3y.ludi.shared.core.network.model.toDeal
 import com.mr3y.ludi.shared.core.network.model.toGiveawayEntry
 import com.mr3y.ludi.shared.core.repository.query.DealsSorting
 import com.mr3y.ludi.shared.core.repository.query.DealsSortingDirection
+import com.mr3y.ludi.shared.core.repository.query.GiveawayPlatform
+import com.mr3y.ludi.shared.core.repository.query.GiveawayStore
 import com.mr3y.ludi.shared.core.repository.query.GiveawaysSorting
 import com.mr3y.ludi.shared.ui.presenter.model.DealStore
 import com.mr3y.ludi.shared.ui.presenter.model.DealsFiltersState
 import com.mr3y.ludi.shared.ui.presenter.model.DealsState
-import com.mr3y.ludi.shared.ui.presenter.model.GiveawayPlatform
-import com.mr3y.ludi.shared.ui.presenter.model.GiveawayStore
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawaysFiltersState
 import kotlinx.coroutines.flow.flowOf
 

@@ -44,6 +44,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
+import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
+import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -62,11 +64,15 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 data class EditPreferencesScreen(val type: PreferencesType) : Screen {
+    @OptIn(InternalVoyagerApi::class)
     @Composable
     override fun Content() {
         val screenModel = getScreenModel<EditPreferencesViewModel, PreferencesType>(arg1 = type)
         val navigator = LocalNavigator.currentOrThrow
 
+        LifecycleEffect(
+            onDisposed = { navigator.dispose(this) }
+        )
         EditPreferencesScreen(
             onDoneClick = { navigator.pop() },
             viewModel = screenModel

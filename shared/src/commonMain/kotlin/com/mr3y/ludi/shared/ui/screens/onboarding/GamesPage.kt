@@ -76,11 +76,13 @@ import com.mr3y.ludi.shared.core.model.Game
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.shared.ui.components.AsyncImage
 import com.mr3y.ludi.shared.ui.components.LudiErrorBox
+import com.mr3y.ludi.shared.ui.components.RefreshIconButton
 import com.mr3y.ludi.shared.ui.components.placeholder.PlaceholderHighlight
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import com.mr3y.ludi.shared.ui.components.placeholder.fade
 import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.OnboardingGames
+import com.mr3y.ludi.shared.ui.resources.isDesktopPlatform
 import com.mr3y.ludi.shared.ui.theme.rating_star
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -92,6 +94,7 @@ fun SelectingFavouriteGamesPage(
     favouriteUserGames: List<FavouriteGame>,
     onAddingGameToFavourites: (FavouriteGame) -> Unit,
     onRemovingGameFromFavourites: (FavouriteGame) -> Unit,
+    onRefresh: () -> Unit,
     refreshSignal: Int,
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
@@ -127,69 +130,77 @@ fun SelectingFavouriteGamesPage(
             )
         }
 
-        TextField(
-            value = searchQueryText,
-            onValueChange = onUpdatingSearchQueryText,
-            colors = TextFieldDefaults.colors(
-                disabledIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp),
-                disabledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp),
-                errorContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp),
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp)
-            ),
-            leadingIcon = {
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier.clearAndSetSemantics { }
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Filled.Search),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxHeight()
-                    )
-                }
-            },
-            trailingIcon = if (searchQueryText.isNotEmpty()) {
-                {
+        Row(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                value = searchQueryText,
+                onValueChange = onUpdatingSearchQueryText,
+                colors = TextFieldDefaults.colors(
+                    disabledIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    errorIndicatorColor = Color.Transparent,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp),
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp),
+                    errorContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp),
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp)
+                ),
+                leadingIcon = {
                     IconButton(
-                        onClick = { onUpdatingSearchQueryText("") },
-                        modifier = Modifier.clearAndSetSemantics {
-                            contentDescription = strings.games_page_clear_search_query_desc
-                            onClick {
-                                onUpdatingSearchQueryText("")
-                                true
-                            }
-                        }
+                        onClick = { },
+                        modifier = Modifier.clearAndSetSemantics { }
                     ) {
                         Icon(
-                            painter = rememberVectorPainter(image = Icons.Filled.Close),
+                            painter = rememberVectorPainter(image = Icons.Filled.Search),
                             contentDescription = null,
                             modifier = Modifier.fillMaxHeight()
                         )
                     }
-                }
-            } else {
-                null
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { softwareKeyboard?.hide() }),
-            modifier = Modifier
-                .clip(RoundedCornerShape(50))
-                .align(Alignment.CenterHorizontally)
-                .shadow(elevation = 8.dp, shape = RoundedCornerShape(50))
-                .semantics {
-                    focused = true
-                    contentDescription = strings.games_page_search_field_desc
-                    imeAction = ImeAction.Done
-                    performImeAction {
-                        softwareKeyboard?.hide() ?: return@performImeAction false
-                        true
+                },
+                trailingIcon = if (searchQueryText.isNotEmpty()) {
+                    {
+                        IconButton(
+                            onClick = { onUpdatingSearchQueryText("") },
+                            modifier = Modifier.clearAndSetSemantics {
+                                contentDescription = strings.games_page_clear_search_query_desc
+                                onClick {
+                                    onUpdatingSearchQueryText("")
+                                    true
+                                }
+                            }
+                        ) {
+                            Icon(
+                                painter = rememberVectorPainter(image = Icons.Filled.Close),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxHeight()
+                            )
+                        }
                     }
-                }
-        )
+                } else {
+                    null
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { softwareKeyboard?.hide() }),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(50))
+                    .semantics {
+                        focused = true
+                        contentDescription = strings.games_page_search_field_desc
+                        imeAction = ImeAction.Done
+                        performImeAction {
+                            softwareKeyboard?.hide() ?: return@performImeAction false
+                            true
+                        }
+                    }
+            )
+            if (isDesktopPlatform()) {
+                Spacer(modifier = Modifier.width(16.dp))
+                RefreshIconButton(onClick = onRefresh)
+            }
+        }
         AnimatedNoInternetBanner(modifier = Modifier.padding(vertical = 8.dp))
         Text(
             text = strings.games_page_suggestions_label,

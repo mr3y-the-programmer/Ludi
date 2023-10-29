@@ -45,6 +45,8 @@ import com.mr3y.ludi.shared.core.model.GameGenre
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
 import com.mr3y.ludi.shared.ui.components.LudiErrorBox
+import com.mr3y.ludi.shared.ui.components.RefreshIconButton
+import com.mr3y.ludi.shared.ui.resources.isDesktopPlatform
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -53,6 +55,7 @@ fun GenresPage(
     selectedGenres: Set<GameGenre>,
     onSelectingGenre: (GameGenre) -> Unit,
     onUnselectingGenre: (GameGenre) -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start
@@ -170,6 +173,12 @@ fun GenresPage(
             is Result.Error -> {
                 LudiErrorBox(modifier = Modifier.fillMaxWidth())
             }
+        }
+        if (allGenres !is Result.Loading && isDesktopPlatform()) {
+            RefreshIconButton(
+                onClick = onRefresh,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
         }
     }
 }
