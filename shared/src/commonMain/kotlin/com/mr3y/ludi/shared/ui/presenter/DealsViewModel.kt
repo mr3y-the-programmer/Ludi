@@ -28,6 +28,7 @@ import com.mr3y.ludi.shared.ui.presenter.model.DealsFiltersState
 import com.mr3y.ludi.shared.ui.presenter.model.DealsState
 import com.mr3y.ludi.shared.ui.presenter.model.DealsUiEvents
 import com.mr3y.ludi.shared.ui.presenter.model.GiveawaysFiltersState
+import com.mr3y.ludi.shared.ui.resources.isDesktopPlatform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -51,7 +52,7 @@ class DealsViewModel(
 
     private val moleculeScope = CoroutineScope(coroutineScope.coroutineContext + frameClock())
 
-    val dealsState = moleculeScope.launchMolecule(mode = RecompositionMode.ContextClock) {
+    val dealsState = moleculeScope.launchMolecule(mode = if(isDesktopPlatform()) RecompositionMode.Immediate else RecompositionMode.ContextClock) {
         DealsPresenter(
             initialState = Initial,
             searchQueryState = searchQuery,
