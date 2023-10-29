@@ -231,6 +231,17 @@ class GamerPowerDataSourceTest {
         )
         // then make sure the query parameters are parsed correctly
         expectThat(requestData.url.toString()).isEqualTo("https://www.gamerpower.com/api/giveaways")
+
+        // When making a call to the API again with empty platforms & stores query parameters
+        sut.queryLatestGiveaways(
+            GiveawaysQueryParameters(
+                platforms = listOf(),
+                stores = listOf(),
+                sorting = null
+            )
+        )
+        // then make sure the query parameters are parsed correctly
+        expectThat(requestData.url.toString()).isEqualTo("https://www.gamerpower.com/api/giveaways")
     }
 
     @After
