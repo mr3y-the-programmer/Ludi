@@ -19,6 +19,8 @@ firebase-crashlytics = "com.google.firebase.crashlytics:_"
 gradle-play-publisher = "com.github.triplet.play:_"
 app-versioning = "io.github.reactivecircus.app-versioning:_"
 sqldelight = "app.cash.sqldelight:2.0.0"
+ludi-common = { id = "ludi.common", version = "unspecified" }
+ludi-android-common = { id = "ludi.android.common", version = "unspecified" }
 
 [libraries]
 
@@ -79,3 +81,8 @@ robolectric = "org.robolectric:robolectric:_"
 test-parameter-injector = "com.google.testparameterinjector:test-parameter-injector:_"
 kotlinx-coroutines-test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:_"
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:_"
+
+# Convention plugins dependencies
+android-gradlePlugin = "com.android.tools.build:gradle:8.1.2"
+ktlint-gradlePlugin = "org.jlleitschuh.gradle:ktlint-gradle:11.6.1"
+spotless-gradlePlugin = "com.diffplug.spotless:spotless-plugin-gradle:6.21.0"

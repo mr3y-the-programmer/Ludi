@@ -8,8 +8,8 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("org.jetbrains.compose")
-    alias(libs.plugins.ktlint.plugin)
-    alias(libs.plugins.spotless.plugin)
+    alias(libs.plugins.ludi.common)
+    alias(libs.plugins.ludi.android.common)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.google.services)
     alias(libs.plugins.gradle.play.publisher)
@@ -30,14 +30,11 @@ android {
         }
     }
     namespace = "com.mr3y.ludi"
-    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.mr3y.ludi"
-        minSdk = 26
         targetSdk = 33
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -53,21 +50,8 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
     kotlinOptions {
         jvmTarget = "17"
-    }
-
-    buildFeatures {
-        compose = true
-        aidl = false
-        buildConfig = false
-        renderScript = false
-        shaders = false
     }
 
     composeOptions {
@@ -109,18 +93,6 @@ play {
 appVersioning {
     overrideVersionCode { _, _, _ ->
         Instant.now().epochSecond.toInt()
-    }
-}
-
-spotless {
-    format("misc") {
-        // define the files to apply `misc` to
-        target(listOf("**/*.gradle", "*.md", ".gitignore"))
-
-        // define the steps to apply to those files
-        trimTrailingWhitespace()
-        indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
-        endWithNewline()
     }
 }
 

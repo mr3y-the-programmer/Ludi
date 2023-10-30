@@ -8,8 +8,8 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     id("org.jetbrains.compose")
-    alias(libs.plugins.ktlint.plugin)
-    alias(libs.plugins.spotless.plugin)
+    alias(libs.plugins.ludi.common)
+    alias(libs.plugins.ludi.android.common)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.wire)
@@ -181,41 +181,9 @@ sqldelight {
     }
 }
 
-spotless {
-    format("misc") {
-        // define the files to apply `misc` to
-        target(listOf("**/*.gradle", "*.md", ".gitignore"))
-
-        // define the steps to apply to those files
-        trimTrailingWhitespace()
-        indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
-        endWithNewline()
-    }
-}
-
 android {
-    compileSdk = 34
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    defaultConfig {
-        minSdk = 26
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildFeatures {
-        compose = true
-        aidl = false
-        buildConfig = false
-        renderScript = false
-        shaders = false
-    }
 
     composeOptions {
         kotlinCompilerExtensionVersion = versionFor(AndroidX.Compose.compiler)
@@ -254,14 +222,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
 
 tasks.named("runKtlintFormatOverCommonMainSourceSet").configure {
     dependsOn("kspCommonMainKotlinMetadata")
-}
-
-ktlint {
-    filter {
-        exclude {
-            it.file.path.contains("build")
-        }
-    }
 }
 
 kotlin.sourceSets.commonMain {
