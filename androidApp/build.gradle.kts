@@ -5,9 +5,9 @@ import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("org.jetbrains.compose")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.ludi.common)
     alias(libs.plugins.ludi.android.common)
     alias(libs.plugins.firebase.crashlytics)
