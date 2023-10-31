@@ -2,6 +2,7 @@ package com.mr3y.ludi.gradle
 
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.TestExtension
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -22,6 +23,12 @@ class AndroidConventionPlugin : Plugin<Project> {
                 pluginManager.hasPlugin("com.android.application") -> {
                     val androidAppExtension = extensions.getByType<BaseAppModuleExtension>()
                     androidAppExtension.apply {
+                        applyCommonAndroidConvention()
+                    }
+                }
+                pluginManager.hasPlugin("com.android.test") -> {
+                    val androidTestExtension = extensions.getByType<TestExtension>()
+                    androidTestExtension.apply {
                         applyCommonAndroidConvention()
                     }
                 }

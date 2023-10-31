@@ -48,6 +48,18 @@ android {
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+        create("benchmark") {
+            initWith(buildTypes.getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true
+            matchingFallbacks += listOf("release")
+            proguardFiles("benchmark-rules.pro")
+            applicationIdSuffix = ".benchmark"
+            // Disable uploading mapping files for the benchmark build type
+            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+                mappingFileUploadEnabled = false
+            }
+        }
     }
 
     kotlinOptions {
@@ -104,6 +116,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.splash.screen)
+    implementation(libs.profiler.installer)
 
     implementation(project(":shared"))
 
