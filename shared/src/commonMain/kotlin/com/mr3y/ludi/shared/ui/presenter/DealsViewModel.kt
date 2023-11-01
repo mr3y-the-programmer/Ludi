@@ -164,7 +164,7 @@ internal fun DealsPresenter(
     searchQueryState: MutableState<String>,
     events: Flow<DealsUiEvents>,
     dealsRepository: DealsRepository,
-    pagingDataCachingScope: CoroutineScope,
+    pagingDataCachingScope: CoroutineScope
 ): DealsState {
     var selectedTab by remember { mutableStateOf(initialState.selectedTab) }
     var showFilters by remember { mutableStateOf(initialState.showFilters) }
