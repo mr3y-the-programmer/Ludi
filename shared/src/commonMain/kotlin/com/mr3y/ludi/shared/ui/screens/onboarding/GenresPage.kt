@@ -108,6 +108,7 @@ fun GenresPage(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     allGenres.data.forEach { genre ->
+                        val isSelected = genre.id in selectedGenres.map { it.id }
                         Row(
                             modifier = Modifier
                                 .padding(vertical = 8.dp)
@@ -118,16 +119,16 @@ fun GenresPage(
                                 )
                                 .clip(RoundedCornerShape(8.dp))
                                 .conditionalBackground(
-                                    predicate = genre in selectedGenres,
+                                    predicate = isSelected,
                                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                                 )
                                 .selectable(
-                                    selected = genre in selectedGenres,
+                                    selected = isSelected,
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = null,
                                     role = Role.Checkbox,
                                     onClick = {
-                                        if (genre in selectedGenres) {
+                                        if (isSelected) {
                                             onUnselectingGenre(genre)
                                         } else {
                                             onSelectingGenre(genre)
@@ -137,9 +138,9 @@ fun GenresPage(
                                 .animateContentSize()
                                 .padding(8.dp)
                                 .clearAndSetSemantics {
-                                    val stateDesc = if (genre in selectedGenres) strings.genres_page_genre_on_state_desc(genre.name) else strings.genres_page_genre_off_state_desc(genre.name)
+                                    val stateDesc = if (isSelected) strings.genres_page_genre_on_state_desc(genre.name) else strings.genres_page_genre_off_state_desc(genre.name)
                                     stateDescription = stateDesc
-                                    selected = genre in selectedGenres
+                                    selected = isSelected
                                     role = Role.Checkbox
                                 },
                             verticalAlignment = Alignment.CenterVertically,
@@ -157,7 +158,7 @@ fun GenresPage(
                                 modifier = Modifier.width(IntrinsicSize.Min),
                                 textAlign = TextAlign.Center
                             )
-                            if (genre in selectedGenres) {
+                            if (isSelected) {
                                 Icon(
                                     imageVector = Icons.Filled.Check,
                                     contentDescription = null,

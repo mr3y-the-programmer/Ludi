@@ -239,7 +239,7 @@ fun SelectingFavouriteGamesPage(
                     contentType = games.itemContentType { it }
                 ) { index ->
                     val game = games[index]
-                    val isFavGame = game?.let { FavouriteGame(it.id, it.name, it.imageUrl, it.rating) } in favouriteUserGames
+                    val isFavGame = game?.id in favouriteUserGames.map { it.id }
                     if (!isFavGame) {
                         GameTile(
                             game = game,

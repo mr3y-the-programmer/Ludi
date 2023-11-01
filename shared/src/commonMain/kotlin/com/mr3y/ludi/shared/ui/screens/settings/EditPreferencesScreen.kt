@@ -318,13 +318,14 @@ fun GenresList(
             val genres = state.allGenres.data
             val strings = LocalStrings.current
             genres.forEachIndexed { index, gameGenre ->
+                val isSelected = gameGenre.id in state.favouriteGenres.map { it.id }
                 Row(
                     modifier = modifier
                         .fillMaxWidth()
                         .selectable(
-                            gameGenre in state.favouriteGenres,
+                            isSelected,
                             onClick = {
-                                if (gameGenre in state.favouriteGenres) {
+                                if (isSelected) {
                                     onRemovingGenreFromFavourites(gameGenre)
                                 } else {
                                     onAddingGenreToFavourites(gameGenre)
@@ -334,12 +335,12 @@ fun GenresList(
                         .padding(8.dp)
                         .clearAndSetSemantics {
                             stateDescription =
-                                if (gameGenre in state.favouriteGenres) {
+                                if (isSelected) {
                                     strings.edit_preferences_page_genre_on_state_desc(gameGenre.name)
                                 } else {
                                     strings.edit_preferences_page_genre_off_state_desc(gameGenre.name)
                                 }
-                            selected = gameGenre in state.favouriteGenres
+                            selected = isSelected
                         },
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -351,7 +352,7 @@ fun GenresList(
                         style = MaterialTheme.typography.titleLarge
                     )
                     Checkbox(
-                        checked = gameGenre in state.favouriteGenres,
+                        checked = isSelected,
                         onCheckedChange = null
                     )
                 }

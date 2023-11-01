@@ -42,7 +42,7 @@ class DefaultProtoDataStoreMutator(
 
     override suspend fun addGameToFavourites(game: UserFavouriteGame) {
         favGamesStore.updateData {
-            if (game !in it.favGame) {
+            if (game.id !in it.favGame.map { fGame -> fGame.id }) {
                 it.copy(favGame = it.favGame + game)
             } else {
                 it
@@ -52,7 +52,7 @@ class DefaultProtoDataStoreMutator(
 
     override suspend fun removeGameFromFavourites(game: UserFavouriteGame) {
         favGamesStore.updateData {
-            it.copy(favGame = it.favGame - game)
+            it.copy(favGame = it.favGame - it.favGame.filter { it.id == game.id }.toSet())
         }
     }
 
@@ -68,7 +68,7 @@ class DefaultProtoDataStoreMutator(
 
     override suspend fun removeGenreFromFavourites(genre: UserFavouriteGenre) {
         favGenresStore.updateData {
-            it.copy(favGenre = it.favGenre - genre)
+            it.copy(favGenre = it.favGenre - it.favGenre.filter { it.id == genre.id }.toSet())
         }
     }
 }
