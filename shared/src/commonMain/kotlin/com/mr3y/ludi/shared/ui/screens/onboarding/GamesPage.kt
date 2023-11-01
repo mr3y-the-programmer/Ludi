@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -61,6 +62,7 @@ import androidx.compose.ui.semantics.performImeAction
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -218,7 +220,8 @@ fun SelectingFavouriteGamesPage(
             rows = StaggeredGridCells.Adaptive(minSize = 64.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(236.dp),
+                .height(236.dp)
+                .testTag("onboarding:games:suggestedGames"),
             horizontalItemSpacing = 8.dp,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -267,7 +270,7 @@ fun SelectingFavouriteGamesPage(
             }
             if (games.loadState.append is LoadStateError) {
                 item {
-                    LudiErrorBox(modifier = Modifier.fillMaxWidth())
+                    LudiErrorBox()
                 }
             }
         }
@@ -380,6 +383,7 @@ private fun GameTileScaffold(
                     strings.games_page_game_off_state_desc(title ?: "")
                 }
                 this.selected = selected
+                testTag = if (id == null) "onboarding:games:gameLoading" else "onboarding:games:gameContent"
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = MaterialTheme.shapes.small

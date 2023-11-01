@@ -1,5 +1,6 @@
 package com.mr3y.ludi.shared
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -30,7 +31,9 @@ fun App(
                 LocalWindowSizeClass provides calculateWindowSizeClass()
             ) {
                 if (showOnboardingScreen) {
-                    Navigator(screen = OnboardingScreen)
+                    Box(modifier = modifier.fillMaxSize()) {
+                        Navigator(screen = OnboardingScreen)
+                    }
                 } else {
                     HomeScreen(modifier = modifier.fillMaxSize())
                 }
