@@ -6,6 +6,7 @@ import java.util.Properties
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.baseline.profile)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.ludi.common)
@@ -51,14 +52,7 @@ android {
         create("benchmark") {
             initWith(buildTypes.getByName("release"))
             signingConfig = signingConfigs.getByName("debug")
-            isMinifyEnabled = true
             matchingFallbacks += listOf("release")
-            proguardFiles("benchmark-rules.pro")
-            applicationIdSuffix = ".benchmark"
-            // Disable uploading mapping files for the benchmark build type
-            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
-                mappingFileUploadEnabled = false
-            }
         }
     }
 
@@ -108,6 +102,12 @@ appVersioning {
     }
 }
 
+baselineProfile {
+    automaticGenerationDuringBuild = true
+    saveInSrc = true
+    mergeIntoMain = true
+}
+
 dependencies {
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
@@ -117,6 +117,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.splash.screen)
     implementation(libs.profiler.installer)
+    baselineProfile(project(":benchmark"))
 
     implementation(project(":shared"))
 

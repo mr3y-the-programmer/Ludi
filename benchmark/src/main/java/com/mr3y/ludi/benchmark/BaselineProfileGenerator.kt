@@ -19,7 +19,7 @@ class BaselineProfileGenerator {
 
     @Test
     fun generate() = baselineProfileRule.collect(
-        packageName = "com.mr3y.ludi.benchmark",
+        packageName = "com.mr3y.ludi",
         stableIterations = 2,
         maxIterations = 10,
         profileBlock = {
