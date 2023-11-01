@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.snapshots.Snapshot
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import cafe.adriel.voyager.core.model.ScreenModel
@@ -62,9 +61,7 @@ class DealsViewModel(
     }
 
     fun updateSearchQuery(searchQueryText: String) {
-        Snapshot.withMutableSnapshot {
-            searchQuery.value = searchQueryText
-        }
+        searchQuery.value = searchQueryText
     }
 
     fun addToSelectedDealsStores(store: DealStore) {

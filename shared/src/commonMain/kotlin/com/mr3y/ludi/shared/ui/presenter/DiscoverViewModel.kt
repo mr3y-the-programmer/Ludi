@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.snapshots.Snapshot
 import androidx.paging.cachedIn
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
@@ -95,7 +94,7 @@ class DiscoverViewModel(
             )
         }
     }.map {
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = false, gamesState = it) }
+        _internalState = _internalState.copy(isRefreshing = false, gamesState = it)
     }.launchIn(coroutineScope)
 
     val discoverState =
@@ -107,44 +106,42 @@ class DiscoverViewModel(
             )
 
     fun updateSearchQuery(searchQueryText: String) {
-        Snapshot.withMutableSnapshot {
-            searchQuery.value = searchQueryText
-        }
+        searchQuery.value = searchQueryText
     }
 
     fun addToSelectedPlatforms(platform: Platform) {
         _filterState.update { it.copy(selectedPlatforms = it.selectedPlatforms + platform) }
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
+        _internalState = _internalState.copy(filtersState = _filterState.value)
     }
 
     fun removeFromSelectedPlatforms(platform: Platform) {
         _filterState.update { it.copy(selectedPlatforms = it.selectedPlatforms - platform) }
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
+        _internalState = _internalState.copy(filtersState = _filterState.value)
     }
 
     fun addToSelectedStores(store: Store) {
         _filterState.update { it.copy(selectedStores = it.selectedStores + store) }
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
+        _internalState = _internalState.copy(filtersState = _filterState.value)
     }
 
     fun removeFromSelectedStores(store: Store) {
         _filterState.update { it.copy(selectedStores = it.selectedStores - store) }
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
+        _internalState = _internalState.copy(filtersState = _filterState.value)
     }
 
     fun addToSelectedTags(tag: Tag) {
         _filterState.update { it.copy(selectedTags = it.selectedTags + tag) }
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
+        _internalState = _internalState.copy(filtersState = _filterState.value)
     }
 
     fun removeFromSelectedTags(tag: Tag) {
         _filterState.update { it.copy(selectedTags = it.selectedTags - tag) }
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
+        _internalState = _internalState.copy(filtersState = _filterState.value)
     }
 
     fun refresh() {
         refreshing.update { it + 1 }
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = true) }
+        _internalState = _internalState.copy(isRefreshing = true)
     }
 
     companion object {

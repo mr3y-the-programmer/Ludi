@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.snapshots.Snapshot
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -127,7 +126,7 @@ class OnBoardingViewModel(
         )
         OnboardingGames.SearchQueryBasedGames(games = searchPagingData)
     }.map {
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGames = false, onboardingGames = it) }
+        _internalState = _internalState.copy(isRefreshingGames = false, onboardingGames = it)
     }.launchIn(coroutineScope)
 
     private val refreshingGenres = MutableStateFlow(0)
@@ -137,7 +136,7 @@ class OnBoardingViewModel(
         .mapLatest {
             gamesRepository.queryGamesGenres().onSuccess { page -> page.genres }
         }.map {
-            Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGenres = false, allGamingGenres = it) }
+            _internalState = _internalState.copy(isRefreshingGenres = false, allGamingGenres = it)
         }.launchIn(coroutineScope)
 
     val onboardingState: StateFlow<OnboardingState> = combine(
@@ -146,13 +145,11 @@ class OnBoardingViewModel(
         userFavGenres,
         snapshotFlow { _internalState }
     ) { followedNewsSources, favouriteGames, favouriteGenres, state ->
-        Snapshot.withMutableSnapshot {
-            _internalState = state.copy(
-                followedNewsDataSources = followedNewsSources,
-                favouriteGames = favouriteGames,
-                selectedGamingGenres = favouriteGenres.toSet()
-            )
-        }
+        _internalState = state.copy(
+            followedNewsDataSources = followedNewsSources,
+            favouriteGames = favouriteGames,
+            selectedGamingGenres = favouriteGenres.toSet()
+        )
         _internalState
     }
         .stateIn(
@@ -174,9 +171,7 @@ class OnBoardingViewModel(
     }
 
     fun updateSearchQuery(searchQueryText: String) {
-        Snapshot.withMutableSnapshot {
-            searchQuery.value = searchQueryText
-        }
+        searchQuery.value = searchQueryText
     }
 
     fun addGameToFavourites(game: FavouriteGame) {
@@ -205,12 +200,12 @@ class OnBoardingViewModel(
 
     fun refreshGames() {
         refreshingGames.update { it + 1 }
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGames = true) }
+        _internalState = _internalState.copy(isRefreshingGames = true)
     }
 
     fun refreshGenres() {
         refreshingGenres.update { it + 1 }
-        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshingGenres = true) }
+        _internalState = _internalState.copy(isRefreshingGenres = true)
     }
 
     fun completeOnboarding() {
