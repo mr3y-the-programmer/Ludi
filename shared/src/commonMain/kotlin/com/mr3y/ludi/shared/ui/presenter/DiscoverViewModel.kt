@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.paging.cachedIn
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
@@ -94,7 +95,7 @@ class DiscoverViewModel(
             )
         }
     }.map {
-        _internalState = _internalState.copy(isRefreshing = false, gamesState = it)
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = false, gamesState = it) }
     }.launchIn(coroutineScope)
 
     val discoverState =
@@ -106,42 +107,46 @@ class DiscoverViewModel(
             )
 
     fun updateSearchQuery(searchQueryText: String) {
-        searchQuery.value = searchQueryText
+        // Snapshot.withMutableSnapshot seems to be redundant in this class but, we are observing the snapshot state
+        // using `snapshotFlow { }` which doesn't get notified of updates when we are in tests, and hence causing the assertions to fail.
+        Snapshot.withMutableSnapshot {
+            searchQuery.value = searchQueryText
+        }
     }
 
     fun addToSelectedPlatforms(platform: Platform) {
         _filterState.update { it.copy(selectedPlatforms = it.selectedPlatforms + platform) }
-        _internalState = _internalState.copy(filtersState = _filterState.value)
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun removeFromSelectedPlatforms(platform: Platform) {
         _filterState.update { it.copy(selectedPlatforms = it.selectedPlatforms - platform) }
-        _internalState = _internalState.copy(filtersState = _filterState.value)
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun addToSelectedStores(store: Store) {
         _filterState.update { it.copy(selectedStores = it.selectedStores + store) }
-        _internalState = _internalState.copy(filtersState = _filterState.value)
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun removeFromSelectedStores(store: Store) {
         _filterState.update { it.copy(selectedStores = it.selectedStores - store) }
-        _internalState = _internalState.copy(filtersState = _filterState.value)
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun addToSelectedTags(tag: Tag) {
         _filterState.update { it.copy(selectedTags = it.selectedTags + tag) }
-        _internalState = _internalState.copy(filtersState = _filterState.value)
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun removeFromSelectedTags(tag: Tag) {
         _filterState.update { it.copy(selectedTags = it.selectedTags - tag) }
-        _internalState = _internalState.copy(filtersState = _filterState.value)
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(filtersState = _filterState.value) }
     }
 
     fun refresh() {
         refreshing.update { it + 1 }
-        _internalState = _internalState.copy(isRefreshing = true)
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = true) }
     }
 
     companion object {
