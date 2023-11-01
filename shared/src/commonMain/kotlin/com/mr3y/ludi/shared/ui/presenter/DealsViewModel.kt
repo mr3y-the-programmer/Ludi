@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.paging.cachedIn
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import cafe.adriel.voyager.core.model.ScreenModel
@@ -56,7 +57,8 @@ class DealsViewModel(
             initialState = Initial,
             searchQueryState = searchQuery,
             events = events,
-            dealsRepository = dealsRepository
+            dealsRepository = dealsRepository,
+            pagingDataCachingScope = coroutineScope
         )
     }
 
@@ -161,7 +163,8 @@ internal fun DealsPresenter(
     initialState: DealsState,
     searchQueryState: MutableState<String>,
     events: Flow<DealsUiEvents>,
-    dealsRepository: DealsRepository
+    dealsRepository: DealsRepository,
+    pagingDataCachingScope: CoroutineScope,
 ): DealsState {
     var selectedTab by remember { mutableStateOf(initialState.selectedTab) }
     var showFilters by remember { mutableStateOf(initialState.showFilters) }
@@ -238,7 +241,7 @@ internal fun DealsPresenter(
     }
 
     return DealsState(
-        deals = deals,
+        deals = deals.cachedIn(pagingDataCachingScope),
         giveaways = giveaways,
         dealsFiltersState = dealsFilterState,
         giveawaysFiltersState = giveawaysFilterState,
