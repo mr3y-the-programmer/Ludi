@@ -7,7 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
@@ -29,6 +33,7 @@ class MainActivity : ComponentActivity(), HostActivityComponentOwner {
         HostActivityComponent::class.create(this, AndroidApplicationComponent.from(this))
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -75,7 +80,10 @@ class MainActivity : ComponentActivity(), HostActivityComponentOwner {
                         }
                     },
                     useDynamicColor = userPreferences!!.useDynamicColor,
-                    showOnboardingScreen = userPreferences!!.showOnBoardingScreen
+                    showOnboardingScreen = userPreferences!!.showOnBoardingScreen,
+                    modifier = Modifier.semantics {
+                        testTagsAsResourceId = true
+                    }
                 )
             }
         }

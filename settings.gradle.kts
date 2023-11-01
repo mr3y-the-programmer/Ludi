@@ -34,3 +34,4 @@ rootProject.name = "Ludi"
 include(":androidApp")
 include(":shared")
 include(":desktopApp")
+include(":benchmark")

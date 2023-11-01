@@ -6,6 +6,7 @@ import java.util.Properties
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.baseline.profile)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.ludi.common)
@@ -47,6 +48,11 @@ android {
             isDebuggable = false
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        create("benchmark") {
+            initWith(buildTypes.getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
         }
     }
 
@@ -96,6 +102,12 @@ appVersioning {
     }
 }
 
+baselineProfile {
+    automaticGenerationDuringBuild = true
+    saveInSrc = true
+    mergeIntoMain = true
+}
+
 dependencies {
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
@@ -104,6 +116,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.splash.screen)
+    implementation(libs.profiler.installer)
+    baselineProfile(project(":benchmark"))
 
     implementation(project(":shared"))
 

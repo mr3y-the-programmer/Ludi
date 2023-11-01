@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -36,6 +37,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -92,7 +94,7 @@ fun GenresPage(
         when (allGenres) {
             is Result.Loading -> {
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("onboarding:genres:loadingWheel"),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
@@ -104,6 +106,7 @@ fun GenresPage(
                         .fillMaxWidth()
                         .semantics {
                             isTraversalGroup = true
+                            testTag = "onboarding:genres:content"
                         },
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {

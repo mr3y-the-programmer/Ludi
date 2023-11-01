@@ -62,6 +62,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
@@ -348,6 +349,7 @@ fun AnimatedExtendedFab(
                 OnboardingFABState.Continue -> strings.on_boarding_fab_state_continue_state_desc
                 OnboardingFABState.Finish -> strings.on_boarding_fab_state_finish_state_desc
             }
+            testTag = "onboarding:fab"
         },
         shape = RoundedCornerShape(50),
         containerColor = MaterialTheme.colorScheme.primary
