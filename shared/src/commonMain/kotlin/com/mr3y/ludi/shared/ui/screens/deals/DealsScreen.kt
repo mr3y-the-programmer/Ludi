@@ -34,7 +34,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -104,6 +106,7 @@ fun DealsScreen(
     onSelectingGiveawayPlatform: (GiveawayPlatform) -> Unit,
     onUnselectingGiveawayPlatform: (GiveawayPlatform) -> Unit,
     onRefreshDeals: () -> Unit,
+    onRefreshDealsFinished: () -> Unit,
     onRefreshGiveaways: () -> Unit,
     onSelectTab: (index: Int) -> Unit,
     onOpenUrl: (url: String) -> Unit
@@ -111,6 +114,7 @@ fun DealsScreen(
     val topBarScrollState = rememberKeyedTopAppBarState(input = dealsState.selectedTab)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topBarScrollState)
     val sheetType = if (dealsState.selectedTab == 0) BottomSheetType.Deals else BottomSheetType.Giveaways
+    var refreshDeals by rememberSaveable(Unit) { mutableIntStateOf(0) }
     var showFilters by rememberSaveable(Unit) { mutableStateOf(false) }
     val strings = LocalStrings.current
     Column(
@@ -135,7 +139,10 @@ fun DealsScreen(
             refreshing = if (dealsState.selectedTab == 0) dealsState.isRefreshingDeals else dealsState.isRefreshingGiveaways,
             onRefresh = {
                 when (dealsState.selectedTab) {
-                    0 -> onRefreshDeals()
+                    0 -> {
+                        onRefreshDeals()
+                        refreshDeals++
+                    }
                     1 -> onRefreshGiveaways()
                 }
             }
@@ -148,7 +155,10 @@ fun DealsScreen(
                     onFilterClicked = { showFilters = !showFilters },
                     showSearchBar = dealsState.selectedTab == 0,
                     scrollBehavior = scrollBehavior,
-                    onRefreshDeals = onRefreshDeals,
+                    onRefreshDeals = {
+                        onRefreshDeals()
+                        refreshDeals++
+                    },
                     onRefreshGiveaways = onRefreshGiveaways,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -171,6 +181,12 @@ fun DealsScreen(
                     if (widthSizeClass >= WindowWidthSizeClass.Medium) {
                         val gridState = rememberKeyedLazyGridState(input = dealsState.selectedTab)
                         val deals = dealsState.deals.collectAsLazyPagingItems()
+                        LaunchedEffect(refreshDeals) {
+                            if (refreshDeals > 0) {
+                                deals.refresh()
+                                onRefreshDealsFinished()
+                            }
+                        }
                         LazyVerticalGrid(
                             state = gridState,
                             columns = GridCells.Adaptive(192.dp),
@@ -210,6 +226,12 @@ fun DealsScreen(
                     } else {
                         val listState = rememberKeyedLazyListState(input = dealsState.selectedTab)
                         val deals = dealsState.deals.collectAsLazyPagingItems()
+                        LaunchedEffect(refreshDeals) {
+                            if (refreshDeals > 0) {
+                                deals.refresh()
+                                onRefreshDealsFinished()
+                            }
+                        }
                         LazyColumn(
                             state = listState,
                             flingBehavior = rememberSnapFlingBehavior(listState),

@@ -94,6 +94,10 @@ class DealsViewModel(
         events.tryEmit(DealsUiEvents.RefreshDeals)
     }
 
+    fun refreshDealsComplete() {
+        events.tryEmit(DealsUiEvents.RefreshDealsComplete)
+    }
+
     fun refreshGiveaways() {
         events.tryEmit(DealsUiEvents.RefreshGiveaways)
     }
@@ -166,7 +170,6 @@ internal fun DealsPresenter(
     var isDealsLoading by remember { mutableStateOf(initialState.isRefreshingDeals) }
     var deals by remember { mutableStateOf(initialState.deals) }
     var dealsFilterState by remember { mutableStateOf(initialState.dealsFiltersState) }
-    var refreshDeals by remember { mutableStateOf(0) }
 
     var isGiveawaysLoading by remember { mutableStateOf(initialState.isRefreshingGiveaways) }
     var giveaways by remember { mutableStateOf(initialState.giveaways) }
@@ -190,7 +193,7 @@ internal fun DealsPresenter(
             }
     }
 
-    LaunchedEffect(dealsFilterState, refreshDeals) {
+    LaunchedEffect(dealsFilterState) {
         isDealsLoading = true
         deals = dealsRepository.queryDeals(
             DealsQuery(
@@ -226,7 +229,8 @@ internal fun DealsPresenter(
                 is DealsUiEvents.RemoveFromSelectedGiveawaysStores -> giveawaysFilterState = giveawaysFilterState.copy(selectedStores = giveawaysFilterState.selectedStores - event.store)
                 is DealsUiEvents.AddToSelectedGiveawaysPlatforms -> giveawaysFilterState = giveawaysFilterState.copy(selectedPlatforms = giveawaysFilterState.selectedPlatforms + event.platform)
                 is DealsUiEvents.RemoveFromSelectedGiveawaysPlatforms -> giveawaysFilterState = giveawaysFilterState.copy(selectedPlatforms = giveawaysFilterState.selectedPlatforms - event.platform)
-                is DealsUiEvents.RefreshDeals -> refreshDeals++
+                is DealsUiEvents.RefreshDeals -> isDealsLoading = true
+                is DealsUiEvents.RefreshDealsComplete -> isDealsLoading = false
                 is DealsUiEvents.RefreshGiveaways -> refreshGiveaways++
                 is DealsUiEvents.SelectTab -> selectedTab = event.tabIndex
             }

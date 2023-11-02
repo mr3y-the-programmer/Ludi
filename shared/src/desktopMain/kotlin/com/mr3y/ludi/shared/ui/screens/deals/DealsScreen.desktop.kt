@@ -25,6 +25,7 @@ actual fun DealsScreen(
         onSelectingGiveawayPlatform = viewModel::addToSelectedGiveawaysPlatforms,
         onUnselectingGiveawayPlatform = viewModel::removeFromSelectedGiveawayPlatforms,
         onRefreshDeals = viewModel::refreshDeals,
+        onRefreshDealsFinished = viewModel::refreshDealsComplete,
         onRefreshGiveaways = viewModel::refreshGiveaways,
         onSelectTab = viewModel::selectTab,
         onOpenUrl = ::openUrlInBrowser

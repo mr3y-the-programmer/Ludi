@@ -58,6 +58,8 @@ sealed interface DealsUiEvents {
 
     data object RefreshDeals : DealsUiEvents
 
+    data object RefreshDealsComplete : DealsUiEvents
+
     data object RefreshGiveaways : DealsUiEvents
 
     data class SelectTab(val tabIndex: Int) : DealsUiEvents
