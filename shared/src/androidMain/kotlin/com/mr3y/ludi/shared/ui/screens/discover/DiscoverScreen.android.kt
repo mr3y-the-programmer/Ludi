@@ -30,6 +30,7 @@ actual fun DiscoverScreen(
         onSelectingTag = viewModel::addToSelectedTags,
         onUnselectingTag = viewModel::removeFromSelectedTags,
         onRefresh = viewModel::refresh,
+        onRefreshFinished = viewModel::refreshComplete,
         onOpenUrl = { url ->
             launchChromeCustomTab(context, Uri.parse(url), tabToolbarColor)
         },

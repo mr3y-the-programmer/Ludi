@@ -36,8 +36,6 @@ class DiscoverViewModel(
 
     private val _filterState = MutableStateFlow(InitialFiltersState)
 
-    private val refreshing = MutableStateFlow(0)
-
     private val trendingGames = trendingGamesPager.cachedIn(screenModelScope)
 
     private val topRatedGames = topRatedGamesPager.cachedIn(screenModelScope)
@@ -84,9 +82,8 @@ class DiscoverViewModel(
         snapshotFlow { searchQuery.value }
             .debounce(275)
             .distinctUntilChanged(),
-        _filterState,
-        refreshing
-    ) { searchText, filtersState, _ ->
+        _filterState
+    ) { searchText, filtersState ->
         if (searchText.isEmpty() && filtersState == InitialFiltersState) {
             Initial.gamesState
         } else {
@@ -145,8 +142,11 @@ class DiscoverViewModel(
     }
 
     fun refresh() {
-        refreshing.update { it + 1 }
         Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = true) }
+    }
+
+    fun refreshComplete() {
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = false) }
     }
 
     companion object {
