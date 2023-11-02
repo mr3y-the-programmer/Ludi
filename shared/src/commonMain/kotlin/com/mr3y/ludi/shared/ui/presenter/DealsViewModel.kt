@@ -12,7 +12,7 @@ import androidx.paging.cachedIn
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.model.onSuccess
 import com.mr3y.ludi.shared.core.repository.DealsRepository
@@ -50,7 +50,7 @@ class DealsViewModel(
 
     private val events = MutableSharedFlow<DealsUiEvents>(extraBufferCapacity = 10)
 
-    private val moleculeScope = CoroutineScope(coroutineScope.coroutineContext + frameClock())
+    private val moleculeScope = CoroutineScope(screenModelScope.coroutineContext + frameClock())
 
     val dealsState = moleculeScope.launchMolecule(mode = if (isDesktopPlatform()) RecompositionMode.Immediate else RecompositionMode.ContextClock) {
         DealsPresenter(
@@ -58,7 +58,7 @@ class DealsViewModel(
             searchQueryState = searchQuery,
             events = events,
             dealsRepository = dealsRepository,
-            pagingDataCachingScope = coroutineScope
+            pagingDataCachingScope = screenModelScope
         )
     }
 
@@ -164,7 +164,7 @@ internal fun DealsPresenter(
     searchQueryState: MutableState<String>,
     events: Flow<DealsUiEvents>,
     dealsRepository: DealsRepository,
-    pagingDataCachingScope: CoroutineScope,
+    pagingDataCachingScope: CoroutineScope
 ): DealsState {
     var selectedTab by remember { mutableStateOf(initialState.selectedTab) }
     var showFilters by remember { mutableStateOf(initialState.showFilters) }

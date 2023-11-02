@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.mr3y.ludi.shared.ui.datastore.PreferencesKeys.DynamicColorKey
 import com.mr3y.ludi.shared.ui.datastore.PreferencesKeys.SelectedThemeKey
 import com.mr3y.ludi.shared.ui.presenter.model.SettingsState
@@ -36,13 +36,13 @@ class SettingsViewModel(
                 isUsingDynamicColor = isUsingDynamicColor
             )
         }.stateIn(
-            coroutineScope,
+            screenModelScope,
             SharingStarted.Lazily,
             Initial
         )
 
     fun setAppTheme(theme: Theme) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             userPreferences.edit { mutablePreferences ->
                 mutablePreferences[SelectedThemeKey] = theme.name
             }
@@ -50,7 +50,7 @@ class SettingsViewModel(
     }
 
     fun enableUsingDynamicColor(enabled: Boolean) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             userPreferences.edit { mutablePreferences ->
                 mutablePreferences[DynamicColorKey] = enabled
             }
