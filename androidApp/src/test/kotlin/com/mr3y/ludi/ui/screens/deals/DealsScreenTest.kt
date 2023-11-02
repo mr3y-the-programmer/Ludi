@@ -50,6 +50,7 @@ class DealsScreenTest : BaseRobolectricTest() {
                         onSelectingGiveawayPlatform = {},
                         onUnselectingGiveawayPlatform = {},
                         onRefreshDeals = {},
+                        onRefreshDealsFinished = {},
                         onRefreshGiveaways = {},
                         onSelectTab = { selectedTab = it },
                         onOpenUrl = {},
