@@ -101,6 +101,7 @@ fun DiscoverScreen(
     onSelectingTag: (Tag) -> Unit,
     onUnselectingTag: (Tag) -> Unit,
     onRefresh: () -> Unit,
+    onRefreshFinished: () -> Unit,
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -148,7 +149,8 @@ fun DiscoverScreen(
                         SuggestedGamesPage(
                             suggestedGames = discoverState.gamesState,
                             onOpenUrl = onOpenUrl,
-                            refreshSignal = refresh
+                            refreshSignal = refresh,
+                            onRefreshFinished = onRefreshFinished
                         )
                     }
                     else -> {
@@ -157,7 +159,8 @@ fun DiscoverScreen(
                         SearchQueryAndFilterPage(
                             searchResultsGames = discoverState.gamesState,
                             onOpenUrl = onOpenUrl,
-                            refreshSignal = refresh
+                            refreshSignal = refresh,
+                            onRefreshFinished = onRefreshFinished
                         )
                     }
                 }
@@ -190,6 +193,7 @@ fun SuggestedGamesPage(
     suggestedGames: DiscoverStateGames.SuggestedGames,
     onOpenUrl: (url: String) -> Unit,
     refreshSignal: Int,
+    onRefreshFinished: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -208,6 +212,7 @@ fun SuggestedGamesPage(
                 games = suggestedGames.trendingGames.collectAsLazyPagingItems(),
                 onOpenUrl = onOpenUrl,
                 refreshSignal = refreshSignal,
+                onRefreshFinished = onRefreshFinished,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
@@ -229,6 +234,7 @@ fun SuggestedGamesPage(
                 games = suggestedGames.topRatedGames.collectAsLazyPagingItems(),
                 onOpenUrl = onOpenUrl,
                 refreshSignal = refreshSignal,
+                onRefreshFinished = onRefreshFinished,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
@@ -250,6 +256,7 @@ fun SuggestedGamesPage(
                 games = suggestedGames.multiplayerGames.collectAsLazyPagingItems(),
                 onOpenUrl = onOpenUrl,
                 refreshSignal = refreshSignal,
+                onRefreshFinished = onRefreshFinished,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
@@ -272,6 +279,7 @@ fun SuggestedGamesPage(
                     games = suggestedGames.favGenresBasedGames.collectAsLazyPagingItems(),
                     onOpenUrl = onOpenUrl,
                     refreshSignal = refreshSignal,
+                    onRefreshFinished = onRefreshFinished,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surface)
@@ -294,6 +302,7 @@ fun SuggestedGamesPage(
                 games = suggestedGames.freeGames.collectAsLazyPagingItems(),
                 onOpenUrl = onOpenUrl,
                 refreshSignal = refreshSignal,
+                onRefreshFinished = onRefreshFinished,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
@@ -315,6 +324,7 @@ fun SuggestedGamesPage(
                 games = suggestedGames.storyGames.collectAsLazyPagingItems(),
                 onOpenUrl = onOpenUrl,
                 refreshSignal = refreshSignal,
+                onRefreshFinished = onRefreshFinished,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
@@ -336,6 +346,7 @@ fun SuggestedGamesPage(
                 games = suggestedGames.boardGames.collectAsLazyPagingItems(),
                 onOpenUrl = onOpenUrl,
                 refreshSignal = refreshSignal,
+                onRefreshFinished = onRefreshFinished,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
@@ -357,6 +368,7 @@ fun SuggestedGamesPage(
                 games = suggestedGames.eSportsGames.collectAsLazyPagingItems(),
                 onOpenUrl = onOpenUrl,
                 refreshSignal = refreshSignal,
+                onRefreshFinished = onRefreshFinished,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
@@ -378,6 +390,7 @@ fun SuggestedGamesPage(
                 games = suggestedGames.raceGames.collectAsLazyPagingItems(),
                 onOpenUrl = onOpenUrl,
                 refreshSignal = refreshSignal,
+                onRefreshFinished = onRefreshFinished,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
@@ -399,6 +412,7 @@ fun SuggestedGamesPage(
                 games = suggestedGames.puzzleGames.collectAsLazyPagingItems(),
                 onOpenUrl = onOpenUrl,
                 refreshSignal = refreshSignal,
+                onRefreshFinished = onRefreshFinished,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
@@ -420,6 +434,7 @@ fun SuggestedGamesPage(
                 games = suggestedGames.soundtrackGames.collectAsLazyPagingItems(),
                 onOpenUrl = onOpenUrl,
                 refreshSignal = refreshSignal,
+                onRefreshFinished = onRefreshFinished,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
@@ -436,12 +451,14 @@ fun SearchQueryAndFilterPage(
     searchResultsGames: DiscoverStateGames.SearchQueryBasedGames,
     onOpenUrl: (url: String) -> Unit,
     refreshSignal: Int,
+    onRefreshFinished: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val games = searchResultsGames.games.collectAsLazyPagingItems()
     LaunchedEffect(refreshSignal) {
         if (refreshSignal > 0) {
             games.refresh()
+            onRefreshFinished()
         }
     }
     SideEffect {
@@ -532,6 +549,7 @@ fun RichInfoGamesSection(
     isTrendingGame: Boolean,
     onOpenUrl: (url: String) -> Unit,
     refreshSignal: Int,
+    onRefreshFinished: () -> Unit,
     modifier: Modifier = Modifier,
     showGenre: Boolean = false
 ) {
@@ -551,6 +569,7 @@ fun RichInfoGamesSection(
     LaunchedEffect(refreshSignal) {
         if (refreshSignal > 0) {
             games.refresh()
+            onRefreshFinished()
         }
     }
     SideEffect {

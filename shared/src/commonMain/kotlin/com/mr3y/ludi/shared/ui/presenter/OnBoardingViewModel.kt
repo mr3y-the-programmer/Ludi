@@ -9,7 +9,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.paging.cachedIn
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.datastore.model.UserFavouriteGames
 import com.mr3y.ludi.datastore.model.UserFavouriteGenres
@@ -114,7 +114,7 @@ class OnBoardingViewModel(
                     sortingCriteria = GamesSortingCriteria.DateAddedDescending,
                     genres = favouriteGenres.map { it.id }.takeIf { it.isNotEmpty() }
                 )
-            ).cachedIn(coroutineScope)
+            ).cachedIn(screenModelScope)
 
             return@combine OnboardingGames.SuggestedGames(games = pagingData)
         }
@@ -127,7 +127,7 @@ class OnBoardingViewModel(
         OnboardingGames.SearchQueryBasedGames(games = searchPagingData)
     }.map {
         _internalState = _internalState.copy(isRefreshingGames = false, onboardingGames = it)
-    }.launchIn(coroutineScope)
+    }.launchIn(screenModelScope)
 
     private val refreshingGenres = MutableStateFlow(0)
 
@@ -137,7 +137,7 @@ class OnBoardingViewModel(
             gamesRepository.queryGamesGenres().onSuccess { page -> page.genres }
         }.map {
             _internalState = _internalState.copy(isRefreshingGenres = false, allGamingGenres = it)
-        }.launchIn(coroutineScope)
+        }.launchIn(screenModelScope)
 
     val onboardingState: StateFlow<OnboardingState> = combine(
         userFollowedNewsSources,
@@ -153,19 +153,19 @@ class OnBoardingViewModel(
         _internalState
     }
         .stateIn(
-            coroutineScope,
+            screenModelScope,
             SharingStarted.Lazily,
             _internalState
         )
 
     fun unFollowNewsDataSource(source: NewsDataSource) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.unFollowNewsDataSource(source.toFollowedNewsDataSource())
         }
     }
 
     fun followNewsDataSource(source: NewsDataSource) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.followNewsDataSource(source.toFollowedNewsDataSource())
         }
     }
@@ -175,25 +175,25 @@ class OnBoardingViewModel(
     }
 
     fun addGameToFavourites(game: FavouriteGame) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.addGameToFavourites(game.toUserFavouriteGame())
         }
     }
 
     fun removeGameFromFavourites(game: FavouriteGame) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.removeGameFromFavourites(game.toUserFavouriteGame())
         }
     }
 
     fun selectGenre(genre: GameGenre) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.addGenreToFavourites(genre.toUserFavouriteGenre())
         }
     }
 
     fun unselectGenre(genre: GameGenre) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.removeGenreFromFavourites(genre.toUserFavouriteGenre())
         }
     }
@@ -209,7 +209,7 @@ class OnBoardingViewModel(
     }
 
     fun completeOnboarding() {
-        coroutineScope.launch {
+        screenModelScope.launch {
             userPreferences.edit { mutablePreferences ->
                 mutablePreferences[PreferencesKeys.OnBoardingScreenKey] = false
             }

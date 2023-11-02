@@ -24,6 +24,7 @@ actual fun DiscoverScreen(
         onSelectingTag = viewModel::addToSelectedTags,
         onUnselectingTag = viewModel::removeFromSelectedTags,
         onRefresh = viewModel::refresh,
+        onRefreshFinished = viewModel::refreshComplete,
         onOpenUrl = ::openUrlInBrowser,
         modifier = modifier
     )

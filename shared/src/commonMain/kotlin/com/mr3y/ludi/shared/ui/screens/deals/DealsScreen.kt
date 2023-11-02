@@ -34,8 +34,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -102,14 +106,16 @@ fun DealsScreen(
     onSelectingGiveawayPlatform: (GiveawayPlatform) -> Unit,
     onUnselectingGiveawayPlatform: (GiveawayPlatform) -> Unit,
     onRefreshDeals: () -> Unit,
+    onRefreshDealsFinished: () -> Unit,
     onRefreshGiveaways: () -> Unit,
     onSelectTab: (index: Int) -> Unit,
-    onToggleFilters: () -> Unit,
     onOpenUrl: (url: String) -> Unit
 ) {
     val topBarScrollState = rememberKeyedTopAppBarState(input = dealsState.selectedTab)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topBarScrollState)
     val sheetType = if (dealsState.selectedTab == 0) BottomSheetType.Deals else BottomSheetType.Giveaways
+    var refreshDeals by rememberSaveable(Unit) { mutableIntStateOf(0) }
+    var showFilters by rememberSaveable(Unit) { mutableStateOf(false) }
     val strings = LocalStrings.current
     Column(
         modifier = modifier.background(color = MaterialTheme.colorScheme.background)
@@ -133,7 +139,10 @@ fun DealsScreen(
             refreshing = if (dealsState.selectedTab == 0) dealsState.isRefreshingDeals else dealsState.isRefreshingGiveaways,
             onRefresh = {
                 when (dealsState.selectedTab) {
-                    0 -> onRefreshDeals()
+                    0 -> {
+                        onRefreshDeals()
+                        refreshDeals++
+                    }
                     1 -> onRefreshGiveaways()
                 }
             }
@@ -143,10 +152,13 @@ fun DealsScreen(
                 SearchFilterBar(
                     searchQuery = searchQuery,
                     onSearchQueryValueChanged = onUpdateSearchQuery,
-                    onFilterClicked = onToggleFilters,
+                    onFilterClicked = { showFilters = !showFilters },
                     showSearchBar = dealsState.selectedTab == 0,
                     scrollBehavior = scrollBehavior,
-                    onRefreshDeals = onRefreshDeals,
+                    onRefreshDeals = {
+                        onRefreshDeals()
+                        refreshDeals++
+                    },
                     onRefreshGiveaways = onRefreshGiveaways,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -169,6 +181,12 @@ fun DealsScreen(
                     if (widthSizeClass >= WindowWidthSizeClass.Medium) {
                         val gridState = rememberKeyedLazyGridState(input = dealsState.selectedTab)
                         val deals = dealsState.deals.collectAsLazyPagingItems()
+                        LaunchedEffect(refreshDeals) {
+                            if (refreshDeals > 0) {
+                                deals.refresh()
+                                onRefreshDealsFinished()
+                            }
+                        }
                         LazyVerticalGrid(
                             state = gridState,
                             columns = GridCells.Adaptive(192.dp),
@@ -208,6 +226,12 @@ fun DealsScreen(
                     } else {
                         val listState = rememberKeyedLazyListState(input = dealsState.selectedTab)
                         val deals = dealsState.deals.collectAsLazyPagingItems()
+                        LaunchedEffect(refreshDeals) {
+                            if (refreshDeals > 0) {
+                                deals.refresh()
+                                onRefreshDealsFinished()
+                            }
+                        }
                         LazyColumn(
                             state = listState,
                             flingBehavior = rememberSnapFlingBehavior(listState),
@@ -261,13 +285,13 @@ fun DealsScreen(
             }
         }
     }
-    if (dealsState.showFilters) {
+    if (showFilters) {
         Filters(
             dealsFiltersState = dealsState.dealsFiltersState,
             giveawaysFiltersState = dealsState.giveawaysFiltersState,
             type = sheetType,
-            onDismissRequest = onToggleFilters,
-            onCloseClicked = onToggleFilters,
+            onDismissRequest = { showFilters = !showFilters },
+            onCloseClicked = { showFilters = !showFilters },
             onSelectingGiveawayPlatform = onSelectingGiveawayPlatform,
             onUnselectingGiveawayPlatform = onUnselectingGiveawayPlatform,
             onSelectingDealStore = onSelectingDealStore,

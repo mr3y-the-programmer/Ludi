@@ -12,7 +12,7 @@ import androidx.paging.cachedIn
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.model.onSuccess
 import com.mr3y.ludi.shared.core.repository.DealsRepository
@@ -50,7 +50,7 @@ class DealsViewModel(
 
     private val events = MutableSharedFlow<DealsUiEvents>(extraBufferCapacity = 10)
 
-    private val moleculeScope = CoroutineScope(coroutineScope.coroutineContext + frameClock())
+    private val moleculeScope = CoroutineScope(screenModelScope.coroutineContext + frameClock())
 
     val dealsState = moleculeScope.launchMolecule(mode = if (isDesktopPlatform()) RecompositionMode.Immediate else RecompositionMode.ContextClock) {
         DealsPresenter(
@@ -58,7 +58,7 @@ class DealsViewModel(
             searchQueryState = searchQuery,
             events = events,
             dealsRepository = dealsRepository,
-            pagingDataCachingScope = coroutineScope
+            pagingDataCachingScope = screenModelScope
         )
     }
 
@@ -94,16 +94,16 @@ class DealsViewModel(
         events.tryEmit(DealsUiEvents.RefreshDeals)
     }
 
+    fun refreshDealsComplete() {
+        events.tryEmit(DealsUiEvents.RefreshDealsComplete)
+    }
+
     fun refreshGiveaways() {
         events.tryEmit(DealsUiEvents.RefreshGiveaways)
     }
 
     fun selectTab(tabIndex: Int) {
         events.tryEmit(DealsUiEvents.SelectTab(tabIndex))
-    }
-
-    fun toggleFilters() {
-        events.tryEmit(DealsUiEvents.ToggleShowFilters)
     }
 
     companion object {
@@ -149,8 +149,7 @@ class DealsViewModel(
             InitialGiveawaysFiltersState,
             isRefreshingDeals = true,
             isRefreshingGiveaways = true,
-            selectedTab = 0,
-            showFilters = false
+            selectedTab = 0
         )
     }
 }
@@ -167,12 +166,10 @@ internal fun DealsPresenter(
     pagingDataCachingScope: CoroutineScope
 ): DealsState {
     var selectedTab by remember { mutableStateOf(initialState.selectedTab) }
-    var showFilters by remember { mutableStateOf(initialState.showFilters) }
 
     var isDealsLoading by remember { mutableStateOf(initialState.isRefreshingDeals) }
     var deals by remember { mutableStateOf(initialState.deals) }
     var dealsFilterState by remember { mutableStateOf(initialState.dealsFiltersState) }
-    var refreshDeals by remember { mutableStateOf(0) }
 
     var isGiveawaysLoading by remember { mutableStateOf(initialState.isRefreshingGiveaways) }
     var giveaways by remember { mutableStateOf(initialState.giveaways) }
@@ -196,7 +193,7 @@ internal fun DealsPresenter(
             }
     }
 
-    LaunchedEffect(dealsFilterState, refreshDeals) {
+    LaunchedEffect(dealsFilterState) {
         isDealsLoading = true
         deals = dealsRepository.queryDeals(
             DealsQuery(
@@ -232,10 +229,10 @@ internal fun DealsPresenter(
                 is DealsUiEvents.RemoveFromSelectedGiveawaysStores -> giveawaysFilterState = giveawaysFilterState.copy(selectedStores = giveawaysFilterState.selectedStores - event.store)
                 is DealsUiEvents.AddToSelectedGiveawaysPlatforms -> giveawaysFilterState = giveawaysFilterState.copy(selectedPlatforms = giveawaysFilterState.selectedPlatforms + event.platform)
                 is DealsUiEvents.RemoveFromSelectedGiveawaysPlatforms -> giveawaysFilterState = giveawaysFilterState.copy(selectedPlatforms = giveawaysFilterState.selectedPlatforms - event.platform)
-                is DealsUiEvents.RefreshDeals -> refreshDeals++
+                is DealsUiEvents.RefreshDeals -> isDealsLoading = true
+                is DealsUiEvents.RefreshDealsComplete -> isDealsLoading = false
                 is DealsUiEvents.RefreshGiveaways -> refreshGiveaways++
                 is DealsUiEvents.SelectTab -> selectedTab = event.tabIndex
-                is DealsUiEvents.ToggleShowFilters -> showFilters = !showFilters
             }
         }
     }
@@ -246,7 +243,6 @@ internal fun DealsPresenter(
         dealsFiltersState = dealsFilterState,
         giveawaysFiltersState = giveawaysFilterState,
         selectedTab = selectedTab,
-        showFilters = showFilters,
         isRefreshingDeals = isDealsLoading,
         isRefreshingGiveaways = isGiveawaysLoading
     )

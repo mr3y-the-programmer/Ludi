@@ -7,7 +7,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.paging.cachedIn
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.mr3y.ludi.shared.ui.presenter.model.DiscoverFiltersState
 import com.mr3y.ludi.shared.ui.presenter.model.DiscoverState
 import com.mr3y.ludi.shared.ui.presenter.model.DiscoverStateGames
@@ -36,29 +36,27 @@ class DiscoverViewModel(
 
     private val _filterState = MutableStateFlow(InitialFiltersState)
 
-    private val refreshing = MutableStateFlow(0)
+    private val trendingGames = trendingGamesPager.cachedIn(screenModelScope)
 
-    private val trendingGames = trendingGamesPager.cachedIn(coroutineScope)
+    private val topRatedGames = topRatedGamesPager.cachedIn(screenModelScope)
 
-    private val topRatedGames = topRatedGamesPager.cachedIn(coroutineScope)
+    private val favGenresBasedGames = favGenresBasedGamesPager?.cachedIn(screenModelScope)
 
-    private val favGenresBasedGames = favGenresBasedGamesPager?.cachedIn(coroutineScope)
+    private val multiplayerGames = multiplayerGamesPager.cachedIn(screenModelScope)
 
-    private val multiplayerGames = multiplayerGamesPager.cachedIn(coroutineScope)
+    private val freeGames = freeGamesPager.cachedIn(screenModelScope)
 
-    private val freeGames = freeGamesPager.cachedIn(coroutineScope)
+    private val storyGames = storyGamesPager.cachedIn(screenModelScope)
 
-    private val storyGames = storyGamesPager.cachedIn(coroutineScope)
+    private val boardGames = boardGamesPager.cachedIn(screenModelScope)
 
-    private val boardGames = boardGamesPager.cachedIn(coroutineScope)
+    private val esportsGames = esportsGamesPager.cachedIn(screenModelScope)
 
-    private val esportsGames = esportsGamesPager.cachedIn(coroutineScope)
+    private val raceGames = raceGamesPager.cachedIn(screenModelScope)
 
-    private val raceGames = raceGamesPager.cachedIn(coroutineScope)
+    private val puzzleGames = puzzleGamesPager.cachedIn(screenModelScope)
 
-    private val puzzleGames = puzzleGamesPager.cachedIn(coroutineScope)
-
-    private val soundtrackGames = soundtrackGamesPager.cachedIn(coroutineScope)
+    private val soundtrackGames = soundtrackGamesPager.cachedIn(screenModelScope)
 
     internal val Initial = DiscoverState(
         filtersState = InitialFiltersState,
@@ -84,24 +82,23 @@ class DiscoverViewModel(
         snapshotFlow { searchQuery.value }
             .debounce(275)
             .distinctUntilChanged(),
-        _filterState,
-        refreshing
-    ) { searchText, filtersState, _ ->
+        _filterState
+    ) { searchText, filtersState ->
         if (searchText.isEmpty() && filtersState == InitialFiltersState) {
             Initial.gamesState
         } else {
             DiscoverStateGames.SearchQueryBasedGames(
-                games = searchQueryBasedGamesPager(searchText, filtersState).cachedIn(coroutineScope)
+                games = searchQueryBasedGamesPager(searchText, filtersState).cachedIn(screenModelScope)
             )
         }
     }.map {
         Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = false, gamesState = it) }
-    }.launchIn(coroutineScope)
+    }.launchIn(screenModelScope)
 
     val discoverState =
         snapshotFlow { _internalState }
             .stateIn(
-                coroutineScope,
+                screenModelScope,
                 SharingStarted.Lazily,
                 _internalState
             )
@@ -145,8 +142,11 @@ class DiscoverViewModel(
     }
 
     fun refresh() {
-        refreshing.update { it + 1 }
         Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = true) }
+    }
+
+    fun refreshComplete() {
+        Snapshot.withMutableSnapshot { _internalState = _internalState.copy(isRefreshing = false) }
     }
 
     companion object {

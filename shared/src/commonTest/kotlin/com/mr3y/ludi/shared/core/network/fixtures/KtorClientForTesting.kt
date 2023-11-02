@@ -23,7 +23,6 @@ object KtorClientForTesting {
 
     fun getInstance(dispatcher: CoroutineDispatcher): HttpClient {
         val engine = MockEngine.create {
-            this.dispatcher = dispatcher
             requestHandlers.add {
                 respondOk()
             }

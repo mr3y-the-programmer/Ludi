@@ -3,7 +3,7 @@ package com.mr3y.ludi.shared.ui.presenter
 import androidx.datastore.core.DataStore
 import androidx.paging.cachedIn
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.shared.core.model.Source
 import com.mr3y.ludi.shared.core.repository.NewsRepository
@@ -42,24 +42,24 @@ class NewsViewModel(
 
     private val refreshing = MutableStateFlow(0)
 
-    private val newsArticlesFeed = newsRepository.queryLatestGamingNews().cachedIn(coroutineScope)
+    private val newsArticlesFeed = newsRepository.queryLatestGamingNews().cachedIn(screenModelScope)
 
-    private val reviewArticlesFeed = newsRepository.queryGamesReviews().cachedIn(coroutineScope)
+    private val reviewArticlesFeed = newsRepository.queryGamesReviews().cachedIn(screenModelScope)
 
-    private val newReleaseArticlesFeed = newsRepository.queryGamesNewReleases().cachedIn(coroutineScope)
+    private val newReleaseArticlesFeed = newsRepository.queryGamesNewReleases().cachedIn(screenModelScope)
 
     private val _internalState = MutableStateFlow(InitialNewsState)
 
     val feedResults = combine(followedNewsDataSources, refreshing) { sources, refreshSignal ->
         _internalState.update { it.copy(isRefreshing = true) }
         val shouldForceRefresh = refreshSignal != 0 || throttler.allowRefreshingData()
-        val isNewsResultFromNetwork = coroutineScope.async {
+        val isNewsResultFromNetwork = screenModelScope.async {
             newsRepository.updateGamingNews(sources, forceRefresh = shouldForceRefresh)
         }
-        val isReviewsResultFromNetwork = coroutineScope.async {
+        val isReviewsResultFromNetwork = screenModelScope.async {
             newsRepository.updateGamesReviews(sources, forceRefresh = shouldForceRefresh)
         }
-        val isNewReleasesResultFromNetwork = coroutineScope.async {
+        val isNewReleasesResultFromNetwork = screenModelScope.async {
             newsRepository.updateGamesNewReleases(sources, forceRefresh = shouldForceRefresh)
         }
         val (isNewsFromNetwork, isReviewsFromNetwork, isNewReleasesFromNetwork) = listOf(
@@ -84,7 +84,7 @@ class NewsViewModel(
                 }
             )
         }
-    }.launchIn(coroutineScope)
+    }.launchIn(screenModelScope)
 
     val newsState: StateFlow<NewsState> = _internalState
 

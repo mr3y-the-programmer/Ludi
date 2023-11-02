@@ -1,7 +1,7 @@
 package com.mr3y.ludi.shared.ui.presenter
 
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.mr3y.ludi.datastore.model.FollowedNewsDataSources
 import com.mr3y.ludi.datastore.model.UserFavouriteGames
 import com.mr3y.ludi.datastore.model.UserFavouriteGenres
@@ -91,37 +91,37 @@ class EditPreferencesViewModel(
             PreferencesType.Games -> EditPreferencesState.FavouriteGames(games)
         }
     }.stateIn(
-        coroutineScope,
+        screenModelScope,
         SharingStarted.Lazily,
         InitialState
     )
 
     fun unFollowNewsDataSource(source: NewsDataSource) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.unFollowNewsDataSource(source.toFollowedNewsDataSource())
         }
     }
 
     fun followNewsDataSource(source: NewsDataSource) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.followNewsDataSource(source.toFollowedNewsDataSource())
         }
     }
 
     fun removeGameFromFavourites(game: FavouriteGame) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.removeGameFromFavourites(game.toUserFavouriteGame())
         }
     }
 
     fun addToSelectedGenres(genre: GameGenre) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.addGenreToFavourites(genre.toUserFavouriteGenre())
         }
     }
 
     fun removeFromSelectedGenres(genre: GameGenre) {
-        coroutineScope.launch {
+        screenModelScope.launch {
             protoDataStore.removeGenreFromFavourites(genre.toUserFavouriteGenre())
         }
     }
