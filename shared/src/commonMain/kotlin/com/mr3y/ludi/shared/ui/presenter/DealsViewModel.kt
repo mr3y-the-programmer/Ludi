@@ -102,10 +102,6 @@ class DealsViewModel(
         events.tryEmit(DealsUiEvents.SelectTab(tabIndex))
     }
 
-    fun toggleFilters() {
-        events.tryEmit(DealsUiEvents.ToggleShowFilters)
-    }
-
     companion object {
         val InitialDealsFiltersState = DealsFiltersState(
             currentPage = 0,
@@ -149,8 +145,7 @@ class DealsViewModel(
             InitialGiveawaysFiltersState,
             isRefreshingDeals = true,
             isRefreshingGiveaways = true,
-            selectedTab = 0,
-            showFilters = false
+            selectedTab = 0
         )
     }
 }
@@ -167,7 +162,6 @@ internal fun DealsPresenter(
     pagingDataCachingScope: CoroutineScope
 ): DealsState {
     var selectedTab by remember { mutableStateOf(initialState.selectedTab) }
-    var showFilters by remember { mutableStateOf(initialState.showFilters) }
 
     var isDealsLoading by remember { mutableStateOf(initialState.isRefreshingDeals) }
     var deals by remember { mutableStateOf(initialState.deals) }
@@ -235,7 +229,6 @@ internal fun DealsPresenter(
                 is DealsUiEvents.RefreshDeals -> refreshDeals++
                 is DealsUiEvents.RefreshGiveaways -> refreshGiveaways++
                 is DealsUiEvents.SelectTab -> selectedTab = event.tabIndex
-                is DealsUiEvents.ToggleShowFilters -> showFilters = !showFilters
             }
         }
     }
@@ -246,7 +239,6 @@ internal fun DealsPresenter(
         dealsFiltersState = dealsFilterState,
         giveawaysFiltersState = giveawaysFilterState,
         selectedTab = selectedTab,
-        showFilters = showFilters,
         isRefreshingDeals = isDealsLoading,
         isRefreshingGiveaways = isGiveawaysLoading
     )

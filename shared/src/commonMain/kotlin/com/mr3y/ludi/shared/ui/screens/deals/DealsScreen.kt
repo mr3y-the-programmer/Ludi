@@ -35,7 +35,9 @@ import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -104,12 +106,12 @@ fun DealsScreen(
     onRefreshDeals: () -> Unit,
     onRefreshGiveaways: () -> Unit,
     onSelectTab: (index: Int) -> Unit,
-    onToggleFilters: () -> Unit,
     onOpenUrl: (url: String) -> Unit
 ) {
     val topBarScrollState = rememberKeyedTopAppBarState(input = dealsState.selectedTab)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topBarScrollState)
     val sheetType = if (dealsState.selectedTab == 0) BottomSheetType.Deals else BottomSheetType.Giveaways
+    var showFilters by rememberSaveable(Unit) { mutableStateOf(false) }
     val strings = LocalStrings.current
     Column(
         modifier = modifier.background(color = MaterialTheme.colorScheme.background)
@@ -143,7 +145,7 @@ fun DealsScreen(
                 SearchFilterBar(
                     searchQuery = searchQuery,
                     onSearchQueryValueChanged = onUpdateSearchQuery,
-                    onFilterClicked = onToggleFilters,
+                    onFilterClicked = { showFilters = !showFilters },
                     showSearchBar = dealsState.selectedTab == 0,
                     scrollBehavior = scrollBehavior,
                     onRefreshDeals = onRefreshDeals,
@@ -261,13 +263,13 @@ fun DealsScreen(
             }
         }
     }
-    if (dealsState.showFilters) {
+    if (showFilters) {
         Filters(
             dealsFiltersState = dealsState.dealsFiltersState,
             giveawaysFiltersState = dealsState.giveawaysFiltersState,
             type = sheetType,
-            onDismissRequest = onToggleFilters,
-            onCloseClicked = onToggleFilters,
+            onDismissRequest = { showFilters = !showFilters },
+            onCloseClicked = { showFilters = !showFilters },
             onSelectingGiveawayPlatform = onSelectingGiveawayPlatform,
             onUnselectingGiveawayPlatform = onUnselectingGiveawayPlatform,
             onSelectingDealStore = onSelectingDealStore,

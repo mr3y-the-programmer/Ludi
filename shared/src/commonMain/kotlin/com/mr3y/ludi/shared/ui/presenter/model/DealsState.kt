@@ -17,7 +17,6 @@ data class DealsState(
     val dealsFiltersState: DealsFiltersState,
     val giveawaysFiltersState: GiveawaysFiltersState,
     val selectedTab: Int,
-    val showFilters: Boolean,
     val isRefreshingDeals: Boolean,
     val isRefreshingGiveaways: Boolean
 )
@@ -62,6 +61,4 @@ sealed interface DealsUiEvents {
     data object RefreshGiveaways : DealsUiEvents
 
     data class SelectTab(val tabIndex: Int) : DealsUiEvents
-
-    data object ToggleShowFilters : DealsUiEvents
 }

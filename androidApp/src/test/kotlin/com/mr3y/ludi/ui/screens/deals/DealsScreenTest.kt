@@ -35,13 +35,12 @@ class DealsScreenTest : BaseRobolectricTest() {
         val restorationTester = StateRestorationTester(composeTestRule)
         var strings: LudiStrings? by mutableStateOf(null)
         var selectedTab by mutableStateOf(0)
-        var showFilters by mutableStateOf(false)
         restorationTester.setContent {
             LudiTheme {
                 CompositionLocalProvider(LocalWindowSizeClass provides calculateWindowSizeClass()) {
                     strings = LocalStrings.current
                     DealsScreen(
-                        dealsState = FakeDealsState.copy(selectedTab = selectedTab, showFilters = showFilters),
+                        dealsState = FakeDealsState.copy(selectedTab = selectedTab),
                         searchQuery = "",
                         onUpdateSearchQuery = {},
                         onSelectingDealStore = {},
@@ -53,7 +52,6 @@ class DealsScreenTest : BaseRobolectricTest() {
                         onRefreshDeals = {},
                         onRefreshGiveaways = {},
                         onSelectTab = { selectedTab = it },
-                        onToggleFilters = { showFilters = !showFilters },
                         onOpenUrl = {},
                     )
                 }
