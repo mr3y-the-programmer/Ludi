@@ -14,6 +14,8 @@
     public *** w(...);
 }
 
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+
 -keepclasseswithmembernames class com.mr3y.ludi.datastore.model.** { *; }
 
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation

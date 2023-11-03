@@ -28,6 +28,8 @@
     public *** w(...);
 }
 
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+
 -keepclasseswithmembernames class com.mr3y.ludi.datastore.model.** { *; }
 
 # TODO: remove these rules once https://github.com/square/retrofit/issues/3751 is solved.
