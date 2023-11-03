@@ -40,11 +40,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Add Play console release notes for beta track
-        run: |
-          mkdir -p ~/androidApp/src/main/play/release-notes/en-US
-          echo "${{ steps.build_changelog.outputs.changelog }}" >> ~/androidApp/src/main/play/release-notes/en-US/beta.txt
-
       - name: Configure Keystore
         shell: bash
         run: |
