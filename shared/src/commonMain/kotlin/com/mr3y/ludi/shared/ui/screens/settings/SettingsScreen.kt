@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -37,7 +38,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -47,6 +47,10 @@ import androidx.compose.ui.semantics.selectableGroup
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.UrlAnnotation
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -283,7 +287,7 @@ fun SettingsScreen(
                     },
                     dismissButton = null,
                     title = {
-                        Text(text = "Credits")
+                        Text(text = "Credits", style = MaterialTheme.typography.titleLarge)
                     },
                     text = {
                         Column(
@@ -294,34 +298,22 @@ fun SettingsScreen(
                                     isTraversalGroup = true
                                 }
                         ) {
-                            CreditedText(
-                                preUrlText = "Games data is provided by ",
+                            HyperlinkText(
+                                fullText = "Games data is provided by RAWG API",
                                 url = "https://rawg.io/apidocs",
                                 urlText = "RAWG API",
                                 onOpenUrl = onOpenUrl
                             )
-                            CreditedText(
-                                preUrlText = "Deals are provided by ",
+                            HyperlinkText(
+                                fullText = "Deals are provided by CheapShark API",
                                 url = "https://apidocs.cheapshark.com/",
                                 urlText = "CheapShark API",
                                 onOpenUrl = onOpenUrl
                             )
-                            CreditedText(
-                                preUrlText = "Giveaways are provided by ",
+                            HyperlinkText(
+                                fullText = "Giveaways are provided by GamerPower API",
                                 url = "https://www.gamerpower.com/api-read",
                                 urlText = "GamerPower API",
-                                onOpenUrl = onOpenUrl
-                            )
-                            CreditedText(
-                                preUrlText = "Store listing Screenshots is made using ",
-                                url = "https://theapplaunchpad.com/",
-                                urlText = "AppLaunchPad",
-                                onOpenUrl = onOpenUrl
-                            )
-                            CreditedText(
-                                preUrlText = "Store feature graphic is made using ",
-                                url = "https://hotpot.ai/",
-                                urlText = "Hotpot.ai",
                                 onOpenUrl = onOpenUrl
                             )
                         }
@@ -352,41 +344,46 @@ fun SettingsScreen(
 
 expect fun isDynamicColorEnabled(): Boolean
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
-fun CreditedText(
-    preUrlText: String,
+fun HyperlinkText(
+    fullText: String,
     url: String,
     urlText: String,
     onOpenUrl: (url: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .clearAndSetSemantics {
-                contentDescription = "$preUrlText$urlText"
-            }
-    ) {
-        Text(
-            text = preUrlText,
-            color = MaterialTheme.colorScheme.onSurface
+    val annotatedString = buildAnnotatedString {
+        append(fullText)
+        val startIndex = fullText.indexOf(urlText)
+        val endIndex = startIndex + urlText.length
+        addUrlAnnotation(
+            UrlAnnotation(url),
+            start = startIndex,
+            end = endIndex
         )
-        Text(
-            text = urlText,
-            fontWeight = FontWeight.Bold,
-            textDecoration = TextDecoration.Underline,
-            color = Color.Blue,
-            modifier = Modifier.clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClickLabel = null,
-                onClick = {
-                    onOpenUrl(url)
-                }
+        addStyle(
+            SpanStyle(
+                color = MaterialTheme.colorScheme.tertiary,
+                textDecoration = TextDecoration.Underline,
+                fontWeight = FontWeight.Bold
             ),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            start = startIndex,
+            end = endIndex
         )
     }
+    ClickableText(
+        text = annotatedString,
+        onClick = { index ->
+            annotatedString.getUrlAnnotations(index, index).firstOrNull()?.let {
+                onOpenUrl(it.item.url)
+            }
+        },
+        style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier
+    )
 }
 
 @Composable
