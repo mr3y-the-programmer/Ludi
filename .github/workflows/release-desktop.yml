@@ -46,5 +46,6 @@ jobs:
 
       - uses: ncipollo/release-action@v1
         with:
+          name: ${{ matrix.os }}-${{ github.ref_name }}-release
           artifacts: "./desktopApp/build/compose/binaries/main/*/*.*"
           generateReleaseNotes: true
