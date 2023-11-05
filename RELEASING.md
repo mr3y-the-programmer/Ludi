@@ -2,4 +2,5 @@
 2. 
    - Add new git tag locally `git tag <tagname>` & push it to remote origin `git push origin <tagname>`.
    - Add the same tag suffixed with '-desktop' & push it to remote as the previous step.
+
 That's it.
