@@ -1,11 +1,7 @@
 This is a big release with many exciting new features & improvements 🎉
 
-    - First of all, Ludi is now a multiplatform app supporting (Android + desktop)
+    - Ludi is now a multiplatform app supporting (Android + desktop)
       navigate to https://github.com/mr3y-the-programmer/Ludi/releases and download
       the desktop app based on your desktop operating system (Linux, Windows or MacOS).
-    - RSS feed articles are now persisted offline, so you can browse & read what
-      you might have missed even when internet connectivity goes off.
-    - Scroll & Browse games & new deal offers near infinitely
-      without being limited to just the first set of results.
-    - Added nice parallax effect when you're scrolling between items horizontally.
-    - Fixed bugs & made small performance improvements.
+    - RSS feed articles are now persisted offline, so you can read them even if you're offline.
+    - Added nice parallax effect.
