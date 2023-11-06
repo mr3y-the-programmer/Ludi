@@ -6,6 +6,9 @@ on:
       - main
     tags-ignore:
       - 'v*'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
   pull_request:
 
 concurrency:
