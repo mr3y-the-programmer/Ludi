@@ -12,7 +12,7 @@ kotlin {
         withJava()
     }
     sourceSets {
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(compose.desktop.common)
