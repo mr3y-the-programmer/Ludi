@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         applicationId = "com.mr3y.ludi"
-        targetSdk = 33
+        targetSdk = 34
 
         vectorDrawables {
             useSupportLibrary = true
