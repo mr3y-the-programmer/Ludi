@@ -3,7 +3,7 @@
 [plugins]
 
 gradle-buildconfig-plugin = "com.github.gmazzo.buildconfig:4.1.2"
-android-application = "com.android.application:8.1.2"
+android-application = "com.android.application:8.1.3"
 ##                                         ⬆ :8.2.0-alpha01"
 ##                                         ⬆ :8.2.0-alpha02"
 ##                                         ⬆ :8.2.0-alpha03"
@@ -39,7 +39,7 @@ android-application = "com.android.application:8.1.2"
 ##                                         ⬆ :8.3.0-alpha09"
 ##                                         ⬆ :8.3.0-alpha10"
 ##                                         ⬆ :8.3.0-alpha11"
-android-library = "com.android.library:8.1.2"
+android-library = "com.android.library:8.1.3"
 ##                                 ⬆ :8.2.0-alpha01"
 ##                                 ⬆ :8.2.0-alpha02"
 ##                                 ⬆ :8.2.0-alpha03"
@@ -228,6 +228,6 @@ kotlinx-coroutines-test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3"
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0"
 
 # Convention plugins dependencies
-android-gradlePlugin = "com.android.tools.build:gradle:8.1.2"
+android-gradlePlugin = "com.android.tools.build:gradle:8.1.3"
 ktlint-gradlePlugin = "org.jlleitschuh.gradle:ktlint-gradle:11.6.1"
 spotless-gradlePlugin = "com.diffplug.spotless:spotless-plugin-gradle:6.22.0"
