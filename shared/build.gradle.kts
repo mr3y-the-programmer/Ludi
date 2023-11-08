@@ -1,4 +1,4 @@
-//import com.github.gmazzo.gradle.plugins.BuildConfigSourceSet
+import com.github.gmazzo.gradle.plugins.BuildConfigSourceSet
 import de.fayard.refreshVersions.core.versionFor
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import java.io.FileInputStream
@@ -13,7 +13,7 @@ plugins {
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.wire)
-//    alias(libs.plugins.gradle.buildconfig.plugin)
+    alias(libs.plugins.gradle.buildconfig.plugin)
     alias(libs.plugins.sqldelight)
 }
 
@@ -192,18 +192,18 @@ android {
     namespace = "com.mr3y.ludi.shared"
 }
 
-//buildConfig {
-//    packageName("com.mr3y.ludi.shared")
-//    sourceSets.named<BuildConfigSourceSet>("desktopMain") {
-//        val value = getValueOfKey("BUGSNAG_API_KEY")
-//        buildConfigField("String", "BUGSNAG_API_KEY", "\"$value\"")
-//    }
-//     CommonMain
-//    sourceSets.named<BuildConfigSourceSet>("main") {
-//        val value = getValueOfKey("RAWG_API_KEY")
-//        buildConfigField("String", "RAWG_API_KEY", "\"$value\"")
-//    }
-//}
+buildConfig {
+    packageName("com.mr3y.ludi.shared")
+    sourceSets.named<BuildConfigSourceSet>("desktopMain") {
+        val value = getValueOfKey("BUGSNAG_API_KEY")
+        buildConfigField("String", "BUGSNAG_API_KEY", "\"$value\"")
+    }
+    // CommonMain
+    sourceSets.named<BuildConfigSourceSet>("main") {
+        val value = getValueOfKey("RAWG_API_KEY")
+        buildConfigField("String", "RAWG_API_KEY", "\"$value\"")
+    }
+}
 
 fun getValueOfKey(key: String) =
     if (System.getenv("CI").toBoolean()) {
