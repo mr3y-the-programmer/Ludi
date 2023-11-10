@@ -1,0 +1,42 @@
+CREATE VIRTUAL TABLE IF NOT EXISTS articleEntitySearch USING FTS5(
+    title TEXT NOT NULL,
+    description TEXT,
+    source TEXT NOT NULL,
+    sourceLinkUrl TEXT NOT NULL UNINDEXED,
+    content TEXT,
+    author TEXT,
+    type TEXT NOT NULL UNINDEXED,
+    tokenize = 'porter unicode61'
+);
+
+CREATE TRIGGER IF NOT EXISTS
+articleEntitySearch_BEFORE_DELETE
+BEFORE DELETE ON articleEntity BEGIN DELETE FROM articleEntitySearch
+WHERE sourceLinkUrl = old.sourceLinkUrl;
+END;
+
+CREATE TRIGGER IF NOT EXISTS
+articleEntitySearch_AFTER_INSERT
+AFTER INSERT ON articleEntity
+BEGIN INSERT OR REPLACE INTO articleEntitySearch(title, description, source, sourceLinkUrl, content, author, type) VALUES (new.title, new.description, new.source, new.sourceLinkUrl, new.content, new.author, new.type);
+END;
+
+countSearchResults:
+SELECT count(*) FROM articleEntitySearch WHERE articleEntitySearch MATCH :searchQuery AND type == :type;
+
+search:
+SELECT
+  articleEntitySearch.title,
+  articleEntitySearch.description,
+  articleEntitySearch.source,
+  articleEntitySearch.content,
+  articleEntitySearch.author,
+  articleEntity.sourceLinkUrl,
+  articleEntity.imageUrl,
+  articleEntity.publicationDate,
+  articleEntity.type
+FROM articleEntitySearch
+INNER JOIN articleEntity ON articleEntity.sourceLinkUrl == articleEntitySearch.sourceLinkUrl
+WHERE articleEntitySearch MATCH :searchQuery AND articleEntity.type == :type
+ORDER BY publicationDate DESC
+LIMIT :limit OFFSET :offset;
