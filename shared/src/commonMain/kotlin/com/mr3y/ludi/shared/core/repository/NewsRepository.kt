@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
 
-    fun queryLatestGamingNews(): Flow<PagingData<NewsArticle>>
+    fun queryLatestGamingNews(searchQuery: String?): Flow<PagingData<NewsArticle>>
 
     fun queryGamesNewReleases(): Flow<PagingData<NewReleaseArticle>>
 
-    fun queryGamesReviews(): Flow<PagingData<ReviewArticle>>
+    fun queryGamesReviews(searchQuery: String?): Flow<PagingData<ReviewArticle>>
 
     suspend fun updateGamingNews(sources: Set<Source>, forceRefresh: Boolean): Boolean
 

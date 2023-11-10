@@ -36,9 +36,9 @@ class DefaultNewsRepository(
     private val logger: Logger
 ) : NewsRepository {
 
-    override fun queryLatestGamingNews(): Flow<PagingData<NewsArticle>> {
+    override fun queryLatestGamingNews(searchQuery: String?): Flow<PagingData<NewsArticle>> {
         return Pager(DefaultPagingConfig) {
-            articleEntitiesDao.queryNewsArticles()
+            articleEntitiesDao.queryNewsArticles(searchQuery)
         }
             .flow
             .map { pagingData ->
@@ -58,9 +58,9 @@ class DefaultNewsRepository(
             }
     }
 
-    override fun queryGamesReviews(): Flow<PagingData<ReviewArticle>> {
+    override fun queryGamesReviews(searchQuery: String?): Flow<PagingData<ReviewArticle>> {
         return Pager(DefaultPagingConfig) {
-            articleEntitiesDao.queryReviewArticles()
+            articleEntitiesDao.queryReviewArticles(searchQuery)
         }
             .flow
             .map { pagingData ->

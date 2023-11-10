@@ -22,6 +22,8 @@ actual fun NewsScreen(
     val tabToolbarColor = MaterialTheme.colorScheme.chromeCustomTabToolbarColor
     NewsScreen(
         newsState = newsState,
+        searchQuery = viewModel.searchQuery.value,
+        onSearchQueryValueChanged = viewModel::updateSearchQuery,
         onTuneClick = onTuneClick,
         onRefresh = viewModel::refresh,
         onOpenUrl = { url ->

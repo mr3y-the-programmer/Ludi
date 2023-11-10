@@ -23,8 +23,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.outlined.Upcoming
@@ -40,6 +44,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -47,12 +53,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.focused
+import androidx.compose.ui.semantics.imeAction
+import androidx.compose.ui.semantics.performImeAction
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateError
 import app.cash.paging.LoadStateLoading
@@ -106,10 +119,14 @@ object NewsScreenTab : Screen, BottomBarTab {
 @Composable
 expect fun NewsScreen(onTuneClick: () -> Unit, modifier: Modifier = Modifier, viewModel: NewsViewModel)
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 fun NewsScreen(
     newsState: NewsState,
+    searchQuery: String,
+    onSearchQueryValueChanged: (String) -> Unit,
     onTuneClick: () -> Unit,
     onRefresh: () -> Unit,
     onOpenUrl: (url: String) -> Unit,
@@ -137,7 +154,49 @@ fun NewsScreen(
         modifier = modifier.pullRefresh(state),
         topBar = {
             TopAppBar(
-                title = {},
+                title = {
+                    val contentDesc = strings.news_page_search_bar_content_description
+                    val softwareKeyboard = LocalSoftwareKeyboardController.current
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = onSearchQueryValueChanged,
+                        shape = RoundedCornerShape(50),
+                        placeholder = {
+                            Text(text = strings.news_page_search_bar_placeholder)
+                        },
+                        colors = TextFieldDefaults.colors(
+                            disabledIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            errorIndicatorColor = Color.Transparent
+                        ),
+                        leadingIcon = {
+                            IconButton(
+                                onClick = { /*TODO*/ },
+                                modifier = Modifier.clearAndSetSemantics { }
+                            ) {
+                                Icon(
+                                    painter = rememberVectorPainter(image = Icons.Filled.Search),
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxHeight()
+                                )
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(onSearch = { softwareKeyboard?.hide() }),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clearAndSetSemantics {
+                                focused = true
+                                contentDescription = contentDesc
+                                imeAction = ImeAction.Search
+                                performImeAction {
+                                    softwareKeyboard?.hide() ?: return@performImeAction false
+                                    true
+                                }
+                            }
+                    )
+                },
                 actions = {
                     if (isDesktopPlatform()) {
                         RefreshIconButton(onClick = onRefresh)
@@ -163,7 +222,7 @@ fun NewsScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(vertical = 8.dp),
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 )
