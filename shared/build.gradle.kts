@@ -31,7 +31,7 @@ kotlin {
     }
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    targetHierarchy.custom {
+    applyHierarchyTemplate {
         common {
             // A shared sourceSet for (Jvm + Android) common implementations/dependencies such as Okhttp
             group("desktopAndroid") {
@@ -43,7 +43,7 @@ kotlin {
 
     sourceSets {
         @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 // Logging
                 implementation(libs.kermit)
@@ -102,7 +102,7 @@ kotlin {
                 implementation(libs.lyricist.processor)
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(libs.junit)
                 implementation(libs.strikt)
@@ -120,7 +120,7 @@ kotlin {
             }
         }
 
-        val androidMain by getting {
+        androidMain {
             dependencies {
                 // Database driver
                 implementation(libs.sqldelight.android)
@@ -163,7 +163,7 @@ kotlin {
 
         val desktopTest by getting {
             dependencies {
-                dependsOn(commonTest)
+                dependsOn(commonTest.get())
             }
         }
     }
