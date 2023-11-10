@@ -16,6 +16,8 @@ actual fun NewsScreen(
     val newsState by viewModel.newsState.collectAsState()
     NewsScreen(
         newsState = newsState,
+        searchQuery = viewModel.searchQuery.value,
+        onSearchQueryValueChanged = viewModel::updateSearchQuery,
         onTuneClick = onTuneClick,
         onRefresh = viewModel::refresh,
         onConsumeEvent = viewModel::consumeCurrentEvent,

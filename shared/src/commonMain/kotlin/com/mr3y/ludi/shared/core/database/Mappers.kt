@@ -4,6 +4,8 @@ import com.mr3y.ludi.shared.ArticleEntity
 import com.mr3y.ludi.shared.core.model.NewReleaseArticle
 import com.mr3y.ludi.shared.core.model.NewsArticle
 import com.mr3y.ludi.shared.core.model.ReviewArticle
+import com.mr3y.ludi.shared.core.model.Source
+import java.time.ZonedDateTime
 
 fun NewsArticle.toArticleEntity(): ArticleEntity {
     return ArticleEntity(
@@ -80,5 +82,29 @@ fun ArticleEntity.toNewReleaseArticle(): NewReleaseArticle {
         source = source,
         sourceLinkUrl = sourceLinkUrl,
         releaseDate = publicationDate!!
+    )
+}
+
+fun mapToArticleEntity(
+    title: String,
+    description: String?,
+    source: String,
+    content: String?,
+    author: String?,
+    sourceLinkUrl: String,
+    imageUrl: String?,
+    publicationDate: ZonedDateTime?,
+    type: String
+): ArticleEntity {
+    return ArticleEntity(
+        title = TitleColumnAdapter.decode(title),
+        description = description?.let { MarkupTextColumnAdapter.decode(it) },
+        source = Source.valueOf(source),
+        content = content?.let { MarkupTextColumnAdapter.decode(it) },
+        author = author,
+        sourceLinkUrl = sourceLinkUrl,
+        imageUrl = imageUrl,
+        publicationDate = publicationDate,
+        type = type
     )
 }

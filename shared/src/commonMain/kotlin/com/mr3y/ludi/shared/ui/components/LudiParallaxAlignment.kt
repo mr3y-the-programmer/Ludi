@@ -25,7 +25,7 @@ fun rememberParallaxAlignment(
                 // Read the LazyListState layout info
                 val layoutInfo = lazyListState.layoutInfo
                 // Find the layout info of this item
-                val itemInfo = layoutInfo.visibleItemsInfo.first { it.key == key }
+                val itemInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.key == key } ?: return@ParallaxAlignment 0f
 
                 val adjustedOffset = itemInfo.offset - layoutInfo.viewportStartOffset
                 (adjustedOffset / itemInfo.size.toFloat()).coerceIn(-1f, 1f)
