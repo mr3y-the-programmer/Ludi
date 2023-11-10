@@ -119,7 +119,9 @@ object NewsScreenTab : Screen, BottomBarTab {
 @Composable
 expect fun NewsScreen(onTuneClick: () -> Unit, modifier: Modifier = Modifier, viewModel: NewsViewModel)
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterialApi::class,
     ExperimentalComposeUiApi::class
 )
 @Composable

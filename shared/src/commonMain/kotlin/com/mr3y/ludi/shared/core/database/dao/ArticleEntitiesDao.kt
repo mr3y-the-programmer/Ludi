@@ -35,10 +35,11 @@ class DefaultArticleEntitiesDao(
 ) : ArticleEntitiesDao {
     override fun queryNewsArticles(searchQuery: String?): PagingSource<Int, ArticleEntity> {
         return QueryPagingSource(
-            countQuery = if (!searchQuery.isNullOrBlank())
+            countQuery = if (!searchQuery.isNullOrBlank()) {
                 database.articleSearchFTSQueries.countSearchResults(searchQuery.wildcardMatch().sanitize(), "news")
-            else
-                database.articleQueries.countArticles("news"),
+            } else {
+                database.articleQueries.countArticles("news")
+            },
             transacter = if (!searchQuery.isNullOrBlank()) database.articleSearchFTSQueries else database.articleQueries,
             context = dispatcherWrapper.dispatcher,
             queryProvider = { limit, offset ->
@@ -53,10 +54,11 @@ class DefaultArticleEntitiesDao(
 
     override fun queryReviewArticles(searchQuery: String?): PagingSource<Int, ArticleEntity> {
         return QueryPagingSource(
-            countQuery = if (!searchQuery.isNullOrBlank())
+            countQuery = if (!searchQuery.isNullOrBlank()) {
                 database.articleSearchFTSQueries.countSearchResults(searchQuery.wildcardMatch().sanitize(), "reviews")
-            else
-                database.articleQueries.countArticles("reviews"),
+            } else {
+                database.articleQueries.countArticles("reviews")
+            },
             transacter = if (!searchQuery.isNullOrBlank()) database.articleSearchFTSQueries else database.articleQueries,
             context = dispatcherWrapper.dispatcher,
             queryProvider = { limit, offset ->
