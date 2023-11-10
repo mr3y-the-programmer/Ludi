@@ -4,6 +4,7 @@ import app.cash.paging.PagingSource
 import app.cash.sqldelight.paging3.QueryPagingSource
 import com.mr3y.ludi.shared.ArticleEntity
 import com.mr3y.ludi.shared.core.database.LudiDatabase
+import com.mr3y.ludi.shared.core.database.mapToArticleEntity
 import com.mr3y.ludi.shared.core.database.toArticleEntity
 import com.mr3y.ludi.shared.core.model.Article
 import com.mr3y.ludi.shared.core.model.NewReleaseArticle
@@ -14,9 +15,9 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 interface ArticleEntitiesDao {
-    fun queryNewsArticles(): PagingSource<Int, ArticleEntity>
+    fun queryNewsArticles(searchQuery: String? = null): PagingSource<Int, ArticleEntity>
 
-    fun queryReviewArticles(): PagingSource<Int, ArticleEntity>
+    fun queryReviewArticles(searchQuery: String? = null): PagingSource<Int, ArticleEntity>
 
     fun queryNewReleaseArticles(): PagingSource<Int, ArticleEntity>
 
@@ -32,24 +33,38 @@ class DefaultArticleEntitiesDao(
     private val database: LudiDatabase,
     private val dispatcherWrapper: DatabaseDispatcher
 ) : ArticleEntitiesDao {
-    override fun queryNewsArticles(): PagingSource<Int, ArticleEntity> {
+    override fun queryNewsArticles(searchQuery: String?): PagingSource<Int, ArticleEntity> {
         return QueryPagingSource(
-            countQuery = database.articleQueries.countArticles("news"),
-            transacter = database.articleQueries,
+            countQuery = if (!searchQuery.isNullOrBlank())
+                database.articleSearchFTSQueries.countSearchResults(searchQuery.wildcardMatch().sanitize(), "news")
+            else
+                database.articleQueries.countArticles("news"),
+            transacter = if (!searchQuery.isNullOrBlank()) database.articleSearchFTSQueries else database.articleQueries,
             context = dispatcherWrapper.dispatcher,
             queryProvider = { limit, offset ->
-                database.articleQueries.queryArticles("news", limit, offset)
+                if (!searchQuery.isNullOrBlank()) {
+                    database.articleSearchFTSQueries.search(searchQuery.wildcardMatch().sanitize(), "news", limit, offset, ::mapToArticleEntity)
+                } else {
+                    database.articleQueries.queryArticles("news", limit, offset)
+                }
             }
         )
     }
 
-    override fun queryReviewArticles(): PagingSource<Int, ArticleEntity> {
+    override fun queryReviewArticles(searchQuery: String?): PagingSource<Int, ArticleEntity> {
         return QueryPagingSource(
-            countQuery = database.articleQueries.countArticles("reviews"),
-            transacter = database.articleQueries,
+            countQuery = if (!searchQuery.isNullOrBlank())
+                database.articleSearchFTSQueries.countSearchResults(searchQuery.wildcardMatch().sanitize(), "reviews")
+            else
+                database.articleQueries.countArticles("reviews"),
+            transacter = if (!searchQuery.isNullOrBlank()) database.articleSearchFTSQueries else database.articleQueries,
             context = dispatcherWrapper.dispatcher,
             queryProvider = { limit, offset ->
-                database.articleQueries.queryArticles("reviews", limit, offset)
+                if (!searchQuery.isNullOrBlank()) {
+                    database.articleSearchFTSQueries.search(searchQuery.wildcardMatch().sanitize(), "reviews", limit, offset, ::mapToArticleEntity)
+                } else {
+                    database.articleQueries.queryArticles("reviews", limit, offset)
+                }
             }
         )
     }
@@ -89,4 +104,8 @@ class DefaultArticleEntitiesDao(
             }
         }
     }
+
+    private fun String.wildcardMatch() = "*$this*"
+
+    private fun String.sanitize() = "\"$this\""
 }
