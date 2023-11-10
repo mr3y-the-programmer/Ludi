@@ -124,6 +124,8 @@ kotlin {
             dependencies {
                 // Database driver
                 implementation(libs.sqldelight.android)
+                // Unbundled sqlite
+                implementation(libs.sqlite.android)
                 // lifecycle
                 implementation(libs.androidx.lifecycle.runtime.compose)
                 // Coil
@@ -177,6 +179,8 @@ sqldelight {
         create("LudiDatabase") {
             packageName.set("com.mr3y.ludi.shared.core.database")
             generateAsync.set(true)
+            schemaOutputDirectory.set(file("src/commonMain/sqldelight/databases"))
+            verifyMigrations.set(true)
         }
     }
 }

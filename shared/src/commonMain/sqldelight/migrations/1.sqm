@@ -1,0 +1,24 @@
+CREATE VIRTUAL TABLE IF NOT EXISTS articleEntitySearch USING FTS5(
+    title TEXT NOT NULL,
+    description TEXT,
+    source TEXT NOT NULL,
+    sourceLinkUrl TEXT NOT NULL UNINDEXED,
+    content TEXT,
+    author TEXT,
+    type TEXT NOT NULL UNINDEXED,
+    tokenize="trigram"
+);
+
+INSERT INTO articleEntitySearch SELECT title, description, source, sourceLinkUrl, content, author, type FROM articleEntity;
+
+CREATE TRIGGER IF NOT EXISTS
+articleEntitySearch_BEFORE_DELETE
+BEFORE DELETE ON articleEntity BEGIN DELETE FROM articleEntitySearch
+WHERE sourceLinkUrl = old.sourceLinkUrl;
+END;
+
+CREATE TRIGGER IF NOT EXISTS
+articleEntitySearch_AFTER_INSERT
+AFTER INSERT ON articleEntity
+BEGIN INSERT OR REPLACE INTO articleEntitySearch(title, description, source, sourceLinkUrl, content, author, type) VALUES (new.title, new.description, new.source, new.sourceLinkUrl, new.content, new.author, new.type);
+END;

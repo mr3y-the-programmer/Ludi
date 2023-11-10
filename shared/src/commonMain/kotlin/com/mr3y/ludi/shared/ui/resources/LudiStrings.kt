@@ -30,6 +30,8 @@ data class LudiStrings(
     val discover_page_filters_sheet_close_content_description: String,
     val filter_chip_on_state_desc: (String) -> String,
     val filter_chip_off_state_desc: (String) -> String,
+    val news_page_search_bar_placeholder: String,
+    val news_page_search_bar_content_description: String,
     val news_page_filter_icon_content_description: String,
     val news_page_article_content_description: (title: String, author: String, source: String) -> String,
     val news_page_new_release_content_description: (name: String, date: String) -> String,
