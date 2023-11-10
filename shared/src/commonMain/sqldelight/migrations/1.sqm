@@ -6,7 +6,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS articleEntitySearch USING FTS5(
     content TEXT,
     author TEXT,
     type TEXT NOT NULL UNINDEXED,
-    tokenize = 'porter unicode61'
+    tokenize="trigram"
 );
 
 INSERT INTO articleEntitySearch SELECT title, description, source, sourceLinkUrl, content, author, type FROM articleEntity;

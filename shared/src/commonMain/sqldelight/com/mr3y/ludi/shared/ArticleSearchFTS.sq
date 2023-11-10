@@ -6,7 +6,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS articleEntitySearch USING FTS5(
     content TEXT,
     author TEXT,
     type TEXT NOT NULL UNINDEXED,
-    tokenize = 'porter unicode61'
+    tokenize="trigram"
 );
 
 CREATE TRIGGER IF NOT EXISTS
@@ -38,5 +38,5 @@ SELECT
 FROM articleEntitySearch
 INNER JOIN articleEntity ON articleEntity.sourceLinkUrl == articleEntitySearch.sourceLinkUrl
 WHERE articleEntitySearch MATCH :searchQuery AND articleEntity.type == :type
-ORDER BY publicationDate DESC
+ORDER BY bm25(articleEntitySearch) DESC
 LIMIT :limit OFFSET :offset;
