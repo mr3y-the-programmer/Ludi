@@ -64,7 +64,7 @@ kotlin {
                 implementation(libs.sqldelight.paging)
 
                 // Paging
-                api(libs.paging.common)
+                implementation(libs.paging.common)
                 implementation(libs.paging.compose)
 
                 // Datastore
@@ -85,7 +85,7 @@ kotlin {
                 // Palette
                 implementation(libs.kmpalette.core)
                 // Material3 WindowSizeClass
-                api(libs.material3.windowsizeclass)
+                implementation(libs.material3.windowsizeclass)
 
                 // Navigation
                 implementation(libs.voyager.navigator)
@@ -122,6 +122,7 @@ kotlin {
 
         androidMain {
             dependencies {
+                api(libs.androidx.activity.compose)
                 // Database driver
                 implementation(libs.sqldelight.android)
                 // Unbundled sqlite
@@ -145,6 +146,17 @@ kotlin {
                 implementation(libs.strikt)
                 implementation(libs.turbine)
                 implementation(libs.kotlinx.coroutines.test)
+            }
+        }
+
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(libs.guava)
+                implementation(libs.junit)
+                implementation(libs.robolectric)
+                implementation(libs.androidx.test.core)
+                implementation(libs.paging.testing)
+                implementation(libs.androidx.compose.ui.test.junit4)
             }
         }
 
@@ -191,6 +203,12 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = versionFor(AndroidX.Compose.compiler)
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
     }
 
     namespace = "com.mr3y.ludi.shared"

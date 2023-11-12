@@ -1,4 +1,4 @@
-package com.mr3y.ludi.ui.screens
+package com.mr3y.ludi.shared.ui.screens
 
 import android.content.Context
 import androidx.compose.ui.semantics.Role

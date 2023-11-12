@@ -1,4 +1,4 @@
-package com.mr3y.ludi.ui.screens
+package com.mr3y.ludi.shared.ui.screens
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import org.junit.Before

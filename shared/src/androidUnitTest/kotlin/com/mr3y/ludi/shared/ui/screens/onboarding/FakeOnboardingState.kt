@@ -1,4 +1,4 @@
-package com.mr3y.ludi.ui.screens.onboarding
+package com.mr3y.ludi.shared.ui.screens.onboarding
 
 import androidx.paging.LoadStates
 import app.cash.paging.LoadStateLoading

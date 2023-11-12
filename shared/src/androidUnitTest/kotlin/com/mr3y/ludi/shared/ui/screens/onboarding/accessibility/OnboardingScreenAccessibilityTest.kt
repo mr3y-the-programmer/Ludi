@@ -1,4 +1,4 @@
-package com.mr3y.ludi.ui.screens.onboarding.accessibility
+package com.mr3y.ludi.shared.ui.screens.onboarding.accessibility
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,14 +20,14 @@ import com.mr3y.ludi.shared.core.model.GameGenre
 import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.shared.ui.resources.LudiStrings
-import com.mr3y.ludi.ui.screens.BaseRobolectricTest
-import com.mr3y.ludi.ui.screens.onNodeWithStateDescription
-import com.mr3y.ludi.ui.screens.onboarding.FakeAllGenres
-import com.mr3y.ludi.ui.screens.onboarding.FakeNewsDataSources
-import com.mr3y.ludi.ui.screens.onboarding.FakeOnboardingGames
-import com.mr3y.ludi.ui.screens.onboarding.FakeOnboardingState
+import com.mr3y.ludi.shared.ui.screens.BaseRobolectricTest
+import com.mr3y.ludi.shared.ui.screens.onNodeWithStateDescription
+import com.mr3y.ludi.shared.ui.screens.onboarding.FakeAllGenres
+import com.mr3y.ludi.shared.ui.screens.onboarding.FakeNewsDataSources
+import com.mr3y.ludi.shared.ui.screens.onboarding.FakeOnboardingGames
+import com.mr3y.ludi.shared.ui.screens.onboarding.FakeOnboardingState
 import com.mr3y.ludi.shared.ui.screens.onboarding.OnboardingScreen
-import com.mr3y.ludi.ui.screens.onboarding.onGenre
+import com.mr3y.ludi.shared.ui.screens.onboarding.onGenre
 import com.mr3y.ludi.shared.ui.theme.LudiTheme
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

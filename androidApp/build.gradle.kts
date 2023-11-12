@@ -102,7 +102,6 @@ dependencies {
     implementation(libs.views.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.activity.compose)
     implementation(libs.splash.screen)
 
     implementation(project(":shared"))
@@ -120,16 +119,7 @@ dependencies {
     implementation(compose.runtime)
     implementation(compose.foundation)
     implementation(libs.accompanist.system.ui.controller)
-    implementation(libs.voyager.navigator)
 
     // Tooling
     debugImplementation(compose.uiTooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    // Local tests: jUnit, coroutines, Android runner
-    testImplementation(libs.junit)
-    testImplementation(libs.robolectric)
-    testImplementation(libs.androidx.test.core)
-    testImplementation(libs.paging.testing)
-    testImplementation(libs.androidx.compose.ui.test.junit4)
 }

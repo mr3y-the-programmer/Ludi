@@ -1,4 +1,4 @@
-package com.mr3y.ludi.ui.screens.deals
+package com.mr3y.ludi.shared.ui.screens.deals
 
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -19,8 +19,7 @@ import androidx.compose.ui.test.performClick
 import cafe.adriel.lyricist.LocalStrings
 import com.mr3y.ludi.shared.ui.adaptive.LocalWindowSizeClass
 import com.mr3y.ludi.shared.ui.resources.LudiStrings
-import com.mr3y.ludi.shared.ui.screens.deals.DealsScreen
-import com.mr3y.ludi.ui.screens.BaseRobolectricTest
+import com.mr3y.ludi.shared.ui.screens.BaseRobolectricTest
 import com.mr3y.ludi.shared.ui.theme.LudiTheme
 import org.junit.Test
 import org.junit.runner.RunWith

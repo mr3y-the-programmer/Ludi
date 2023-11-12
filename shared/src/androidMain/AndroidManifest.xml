@@ -3,4 +3,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!--Required for robolectric tests, otherwise tests fail with RuntimeException("Unable to resolve activity"),
+         see https://github.com/robolectric/robolectric/pull/4736 for details-->
+    <application>
+        <activity android:name="androidx.activity.ComponentActivity" android:exported="true" />
+    </application>
 </manifest>

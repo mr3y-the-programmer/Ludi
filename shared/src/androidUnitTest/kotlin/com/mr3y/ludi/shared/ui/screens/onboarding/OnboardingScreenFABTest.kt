@@ -1,4 +1,4 @@
-package com.mr3y.ludi.ui.screens.onboarding
+package com.mr3y.ludi.shared.ui.screens.onboarding
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,10 +12,9 @@ import com.mr3y.ludi.shared.core.model.GameGenre
 import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.shared.ui.resources.LudiStrings
-import com.mr3y.ludi.ui.screens.BaseRobolectricTest
-import com.mr3y.ludi.ui.screens.onNodeWithStateDescription
+import com.mr3y.ludi.shared.ui.screens.BaseRobolectricTest
+import com.mr3y.ludi.shared.ui.screens.onNodeWithStateDescription
 import com.mr3y.ludi.shared.ui.theme.LudiTheme
-import com.mr3y.ludi.shared.ui.screens.onboarding.OnboardingScreen
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner

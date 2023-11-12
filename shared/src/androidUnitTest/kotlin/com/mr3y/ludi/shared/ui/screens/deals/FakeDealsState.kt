@@ -1,4 +1,4 @@
-package com.mr3y.ludi.ui.screens.deals
+package com.mr3y.ludi.shared.ui.screens.deals
 
 import androidx.paging.LoadStates
 import app.cash.paging.LoadStateLoading
