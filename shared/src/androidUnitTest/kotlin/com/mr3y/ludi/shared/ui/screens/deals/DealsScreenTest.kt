@@ -52,7 +52,7 @@ class DealsScreenTest : BaseRobolectricTest() {
                         onRefreshDealsFinished = {},
                         onRefreshGiveaways = {},
                         onSelectTab = { selectedTab = it },
-                        onOpenUrl = {},
+                        onOpenUrl = {}
                     )
                 }
             }
