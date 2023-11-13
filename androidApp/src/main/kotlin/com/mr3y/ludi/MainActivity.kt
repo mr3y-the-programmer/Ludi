@@ -9,6 +9,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -17,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.mr3y.ludi.shared.App
+import com.mr3y.ludi.shared.UserPreferences
 import com.mr3y.ludi.shared.di.AndroidApplicationComponent
 import com.mr3y.ludi.shared.di.HostActivityComponent
 import com.mr3y.ludi.shared.di.HostActivityComponentOwner
@@ -47,7 +49,7 @@ class MainActivity : ComponentActivity(), HostActivityComponentOwner {
 
         setContent {
             val userPreferences by appState.preferences.collectAsStateWithLifecycle(minActiveState = Lifecycle.State.CREATED)
-            val useDarkIcons = !isSystemInDarkTheme()
+            val useDarkIcons = shouldUseDarkIcons(userPreferences)
 
             DisposableEffect(useDarkIcons) {
                 goEdgeToEdge(isDarkTheme = { !useDarkIcons })
@@ -95,6 +97,19 @@ class MainActivity : ComponentActivity(), HostActivityComponentOwner {
                 detectDarkMode = isDarkTheme
             )
         )
+    }
+
+    @Composable
+    private fun shouldUseDarkIcons(prefs: UserPreferences?): Boolean {
+        if (prefs == null) {
+            return !isSystemInDarkTheme()
+        }
+
+        return when(prefs.theme) {
+            Theme.Light -> true
+            Theme.Dark -> false
+            Theme.SystemDefault -> !isSystemInDarkTheme()
+        }
     }
 }
 
