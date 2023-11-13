@@ -118,7 +118,6 @@ dependencies {
     implementation(compose.preview)
     implementation(compose.runtime)
     implementation(compose.foundation)
-    implementation(libs.accompanist.system.ui.controller)
 
     // Tooling
     debugImplementation(compose.uiTooling)
