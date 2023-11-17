@@ -6,7 +6,12 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.mr3y.ludi.shared.ui.navigation.PreferencesType
+import com.mr3y.ludi.shared.ui.presenter.DealsViewModel
+import com.mr3y.ludi.shared.ui.presenter.DiscoverViewModel
 import com.mr3y.ludi.shared.ui.presenter.EditPreferencesViewModel
+import com.mr3y.ludi.shared.ui.presenter.NewsViewModel
+import com.mr3y.ludi.shared.ui.presenter.OnBoardingViewModel
+import com.mr3y.ludi.shared.ui.presenter.SettingsViewModel
 
 /**
  * Provide a [ScreenModel] getting from kotlin-inject graph.
@@ -19,14 +24,29 @@ actual inline fun <reified T : ScreenModel> Screen.getScreenModel(
 ): T {
     val hostActivityComponent = (LocalContext.current as HostActivityComponentOwner).hostActivityComponent
     return rememberScreenModel(tag) {
-        val screenModels = hostActivityComponent.screenModels
-        val model = screenModels[T::class]?.invoke()
-            ?: error(
-                "${T::class} not found in kotlin-inject graph.\nPlease, check if you have a Multibinding " +
-                    "declaration to your ScreenModel using @IntoMap with " +
-                    "key ${T::class.qualifiedName}::class)"
-            )
-        model as T
+        when {
+            T::class.java.isAssignableFrom(OnBoardingViewModel::class.java) -> {
+                OnboardingFeatureComponent::class.create(hostActivityComponent).bind as T
+            }
+            T::class.java.isAssignableFrom(DiscoverViewModel::class.java) -> {
+                DiscoverFeatureComponent::class.create(hostActivityComponent).bind as T
+            }
+            T::class.java.isAssignableFrom(NewsViewModel::class.java) -> {
+                NewsFeatureComponent::class.create(hostActivityComponent).bind as T
+            }
+            T::class.java.isAssignableFrom(DealsViewModel::class.java) -> {
+                DealsFeatureComponent::class.create(hostActivityComponent).bind as T
+            }
+            T::class.java.isAssignableFrom(SettingsViewModel::class.java) -> {
+                SettingsFeatureComponent::class.create(hostActivityComponent).bind as T
+            }
+            else -> {
+                error(
+                    "${T::class} not found in kotlin-inject graph.\nPlease, check if you have declared a Feature Component " +
+                        "for your ScreenModel & its required dependencies"
+                )
+            }
+        }
     }
 }
 
