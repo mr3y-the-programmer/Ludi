@@ -36,6 +36,7 @@ It is a playground for demonstrating the use of modern tech stack(KMP, compose m
 - Search for a specific game or Filter games by store, tag or platform.
 - RSS news reader for your favorite gaming websites.
 - Offline support/Caching for RSS feed articles. 
+- Full-text search for RSS feed articles.
 - Get Updated with the latest deals on games prices & giveaways.
 - Adaptive layout design for (Mobile, tablet or Desktop).
 - Dark Theme.
