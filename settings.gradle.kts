@@ -21,6 +21,17 @@ buildscript {
 plugins {
     id("de.fayard.refreshVersions")
 }
+
+refreshVersions {
+    rejectVersionIf {
+        // Recent versions of ktlint gradle plugin changed the default
+        // code convention style which affects nearly all files in the codebase,
+        // so, for now we are rejecting updates, as we are fine with the current style.
+        val blacklist = listOf("org.jlleitschuh.gradle.ktlint")
+        candidate.stabilityLevel.isLessStableThan(current.stabilityLevel) || moduleId.group in blacklist || candidate.value.endsWith("-jre")
+    }
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
