@@ -36,7 +36,7 @@ class DefaultArticleEntitiesDao(
     override fun queryNewsArticles(searchQuery: String?): PagingSource<Int, ArticleEntity> {
         return QueryPagingSource(
             countQuery = if (!searchQuery.isNullOrBlank()) {
-                database.articleSearchFTSQueries.countSearchResults(searchQuery.wildcardMatch().sanitize(), "news")
+                database.articleSearchFTSQueries.countSearchResults(searchQuery.sanitize(), "news")
             } else {
                 database.articleQueries.countArticles("news")
             },
@@ -44,7 +44,7 @@ class DefaultArticleEntitiesDao(
             context = dispatcherWrapper.dispatcher,
             queryProvider = { limit, offset ->
                 if (!searchQuery.isNullOrBlank()) {
-                    database.articleSearchFTSQueries.search(searchQuery.wildcardMatch().sanitize(), "news", limit, offset, ::mapToArticleEntity)
+                    database.articleSearchFTSQueries.search(searchQuery.sanitize(), "news", limit, offset, ::mapToArticleEntity)
                 } else {
                     database.articleQueries.queryArticles("news", limit, offset)
                 }
@@ -55,7 +55,7 @@ class DefaultArticleEntitiesDao(
     override fun queryReviewArticles(searchQuery: String?): PagingSource<Int, ArticleEntity> {
         return QueryPagingSource(
             countQuery = if (!searchQuery.isNullOrBlank()) {
-                database.articleSearchFTSQueries.countSearchResults(searchQuery.wildcardMatch().sanitize(), "reviews")
+                database.articleSearchFTSQueries.countSearchResults(searchQuery.sanitize(), "reviews")
             } else {
                 database.articleQueries.countArticles("reviews")
             },
@@ -63,7 +63,7 @@ class DefaultArticleEntitiesDao(
             context = dispatcherWrapper.dispatcher,
             queryProvider = { limit, offset ->
                 if (!searchQuery.isNullOrBlank()) {
-                    database.articleSearchFTSQueries.search(searchQuery.wildcardMatch().sanitize(), "reviews", limit, offset, ::mapToArticleEntity)
+                    database.articleSearchFTSQueries.search(searchQuery.sanitize(), "reviews", limit, offset, ::mapToArticleEntity)
                 } else {
                     database.articleQueries.queryArticles("reviews", limit, offset)
                 }
@@ -106,8 +106,6 @@ class DefaultArticleEntitiesDao(
             }
         }
     }
-
-    private fun String.wildcardMatch() = "*$this*"
 
     private fun String.sanitize() = "\"$this\""
 }
