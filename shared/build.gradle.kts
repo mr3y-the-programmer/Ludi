@@ -91,6 +91,9 @@ kotlin {
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.transitions)
 
+                // ViewModel
+                implementation(libs.voyager.screenmodel)
+
                 // Molecule
                 implementation(libs.molecule)
 

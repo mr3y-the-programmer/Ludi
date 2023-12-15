@@ -24,9 +24,9 @@ plugins {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        maven { url = URI.create("https://jitpack.io") }
         google()
         mavenCentral()
+        maven { url = URI.create("https://jitpack.io") }
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
