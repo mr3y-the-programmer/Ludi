@@ -12,20 +12,17 @@ class AndroidConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
-            when {
-                pluginManager.hasPlugin("com.android.library") -> {
-                    val androidLibExtension = extensions.getByType<LibraryExtension>()
-                    androidLibExtension.apply {
-                        applyCommonAndroidConvention()
-                    }
+            pluginManager.withPlugin("com.android.library") {
+                val androidLibExtension = extensions.getByType<LibraryExtension>()
+                androidLibExtension.apply {
+                    applyCommonAndroidConvention()
                 }
-                pluginManager.hasPlugin("com.android.application") -> {
-                    val androidAppExtension = extensions.getByType<BaseAppModuleExtension>()
-                    androidAppExtension.apply {
-                        applyCommonAndroidConvention()
-                    }
+            }
+            pluginManager.withPlugin("com.android.application") {
+                val androidAppExtension = extensions.getByType<BaseAppModuleExtension>()
+                androidAppExtension.apply {
+                    applyCommonAndroidConvention()
                 }
-                else -> {}
             }
         }
     }
