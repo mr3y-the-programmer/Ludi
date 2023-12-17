@@ -1,3 +1,2 @@
-- Support Full-text search for RSS feed articles.
-- Fix wrong status bar icons color on some edge cases.
+- Fix Full-text search not working sometimes on Android.
 - Fix bugs & Improve performance.
