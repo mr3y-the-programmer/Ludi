@@ -1,5 +1,5 @@
 # Ludi
-[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Build Status](https://img.shields.io/github/actions/workflow/status/mr3y-the-programmer/Ludi/build.yml?branch=main&label=Desktop%2FAndroid%20Build&logo=Android&logoColor=black)](https://github.com/mr3y-the-programmer/Ludi/actions/workflows/build.yml) 
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Build Status](https://img.shields.io/github/actions/workflow/status/mr3y-the-programmer/Ludi/build.yml?branch=main&label=Desktop%2FAndroid%20Build&logo=Android&logoColor=black)](https://github.com/mr3y-the-programmer/Ludi/actions/workflows/build.yml) ![https://androidweekly.net/issues/issue-600/badge)(https://androidweekly.net/issues/issue-600](https://androidweekly.net/issues/issue-600/badge)
 ![mar32](https://github.com/mr3y-the-programmer/Ludi/assets/26522145/93ae21de-7bb1-4851-9263-c8a9ca0ad801)
 
 Ludi is a Kotlin multiplatform app(Android + Desktop) For browsing & discovering new games, Checking daily updated price discounts & giveaways on games, and RSS gaming news feed reader from your favorite gaming news websites, All in one single app. 
