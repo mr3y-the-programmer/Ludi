@@ -94,7 +94,7 @@ strikt = "io.strikt:strikt-core:0.34.1"
 turbine = "app.cash.turbine:turbine:1.0.0"
 robolectric = "org.robolectric:robolectric:4.11.1"
 guava = "com.google.guava:guava:33.0.0-android"
-test-parameter-injector = "com.google.testparameterinjector:test-parameter-injector:1.14"
+test-parameter-injector = "com.google.testparameterinjector:test-parameter-injector:1.15"
 kotlinx-coroutines-test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3"
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
 
