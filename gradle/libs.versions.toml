@@ -2,7 +2,7 @@
 
 [plugins]
 
-gradle-buildconfig-plugin = "com.github.gmazzo.buildconfig:4.2.0"
+gradle-buildconfig-plugin = "com.github.gmazzo.buildconfig:5.3.5"
 android-application = "com.android.application:8.2.1"
 android-library = "com.android.library:8.2.1"
 kotlin-android = "org.jetbrains.kotlin.android:1.9.21"

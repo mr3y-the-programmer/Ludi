@@ -1,4 +1,4 @@
-import com.github.gmazzo.gradle.plugins.BuildConfigSourceSet
+import com.github.gmazzo.buildconfig.BuildConfigSourceSet
 import de.fayard.refreshVersions.core.versionFor
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import java.io.FileInputStream
