@@ -15,7 +15,7 @@ pluginManagement {
 buildscript {
     // Workaround for: https://github.com/Splitties/refreshVersions/issues/707
     dependencies {
-        classpath("com.squareup.okio:okio:3.6.0")
+        classpath("com.squareup.okio:okio:3.7.0")
     }
 }
 plugins {
