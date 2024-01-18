@@ -39,7 +39,7 @@ java {
 compose.desktop {
     sourceSets["main"].resources.srcDirs("src/jvmMain/resources")
     application {
-        mainClass = "MainKt"
+        mainClass = "com.mr3y.ludi.desktop.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
