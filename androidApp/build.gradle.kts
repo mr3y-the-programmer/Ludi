@@ -81,8 +81,11 @@ android {
 }
 
 play {
-    if (rootProject.file("play_config.json").exists()) {
-        serviceAccountCredentials.set(rootProject.file("play_config.json"))
+    val isConfigFileAvailable = rootProject.file("play_config.json").exists()
+    if (isConfigFileAvailable || System.getenv("CI").toBoolean()) {
+        if (isConfigFileAvailable) {
+            serviceAccountCredentials.set(rootProject.file("play_config.json"))
+        }
         defaultToAppBundles.set(true)
         track.set("beta")
     } else {
