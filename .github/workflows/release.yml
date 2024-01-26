@@ -56,6 +56,8 @@ jobs:
 
       - name: Build & Publish Release (.aab) bundle to Play console
         run: ./gradlew bundleRelease publishReleaseBundle
+        env:
+          ANDROID_PUBLISHER_CREDENTIALS: ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}
 
       - name: Build release APK
         run: ./gradlew assembleRelease --stacktrace
