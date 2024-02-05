@@ -3,8 +3,8 @@
 [plugins]
 
 gradle-buildconfig-plugin = "com.github.gmazzo.buildconfig:5.3.5"
-android-application = "com.android.application:8.2.1"
-android-library = "com.android.library:8.2.1"
+android-application = "com.android.application:8.2.2"
+android-library = "com.android.library:8.2.2"
 kotlin-android = "org.jetbrains.kotlin.android:1.9.22"
 kotlin-jvm = "org.jetbrains.kotlin.jvm:1.9.22"
 kotlin-multiplatform = "org.jetbrains.kotlin.multiplatform:1.9.22"
@@ -99,6 +99,6 @@ kotlinx-coroutines-test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3"
 kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
 
 # Convention plugins dependencies
-android-gradlePlugin = "com.android.tools.build:gradle:8.2.1"
+android-gradlePlugin = "com.android.tools.build:gradle:8.2.2"
 ktlint-gradlePlugin = "org.jlleitschuh.gradle:ktlint-gradle:11.6.1"
 spotless-gradlePlugin = "com.diffplug.spotless:spotless-plugin-gradle:6.24.0"
