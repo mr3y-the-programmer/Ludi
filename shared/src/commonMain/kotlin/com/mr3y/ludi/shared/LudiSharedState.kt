@@ -7,6 +7,7 @@ import com.mr3y.ludi.datastore.model.UserFavouriteGenres
 import com.mr3y.ludi.shared.di.ApplicationScope
 import com.mr3y.ludi.shared.di.annotations.Singleton
 import com.mr3y.ludi.shared.ui.datastore.PreferencesKeys
+import com.mr3y.ludi.shared.ui.datastore.UserFavoriteGenresDataStore
 import com.mr3y.ludi.shared.ui.presenter.model.Theme
 import com.mr3y.ludi.shared.ui.theme.isDynamicColorSupported
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,14 +25,14 @@ import me.tatarka.inject.annotations.Inject
 @Singleton
 class LudiSharedState(
     private val userPreferences: DataStore<Preferences>,
-    private val favGenresStore: DataStore<UserFavouriteGenres>,
+    private val favGenresStore: UserFavoriteGenresDataStore,
     private val appScope: ApplicationScope
 ) {
 
     var userFavouriteGenresIds: List<Int>? = null
         private set
 
-    private val userFavGenres = favGenresStore.data
+    private val userFavGenres = favGenresStore.value.data
         .catch {
             emit(UserFavouriteGenres())
         }
