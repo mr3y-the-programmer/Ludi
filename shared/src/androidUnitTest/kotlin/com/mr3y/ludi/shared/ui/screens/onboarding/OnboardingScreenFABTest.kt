@@ -65,10 +65,6 @@ class OnboardingScreenFABTest : BaseRobolectricTest() {
     }
 
     @Test
-    @Ignore("This robolectric test started to fail with \"java.lang.NoClassDefFoundError: androidx/compose/ui/platform/LocalSoftwareKeyboardController\" " +
-            "after upgrading to compose multiplatform 1.5.12, I need to investigate this more to understand the root " +
-            "cause, and why it happens only with LocalSoftwareKeyboardController." +
-            "Similar issues: https://github.com/robolectric/robolectric/issues/8688")
     fun games_page_fab_state_survives_config_changes() {
         // setup
         val restorationTester = StateRestorationTester(composeTestRule)
