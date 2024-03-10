@@ -57,6 +57,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.focused
 import androidx.compose.ui.semantics.imeAction
 import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.onImeAction
 import androidx.compose.ui.semantics.performImeAction
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -189,9 +190,8 @@ fun SelectingFavouriteGamesPage(
                     .semantics {
                         focused = true
                         contentDescription = strings.games_page_search_field_desc
-                        imeAction = ImeAction.Done
-                        performImeAction {
-                            softwareKeyboard?.hide() ?: return@performImeAction false
+                        onImeAction(imeActionType = ImeAction.Done) {
+                            softwareKeyboard?.hide() ?: return@onImeAction false
                             true
                         }
                     }

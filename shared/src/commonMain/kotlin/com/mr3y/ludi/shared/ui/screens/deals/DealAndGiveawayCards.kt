@@ -39,6 +39,7 @@ import com.mr3y.ludi.shared.ui.components.AsyncImage
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import java.time.Duration
@@ -214,8 +215,8 @@ private fun OfferScaffold(
         ) {
             AsyncImage(
                 url = thumbnailUrl,
-                placeholder = painterResource("placeholder.xml"),
-                error = painterResource("placeholder.xml"),
+                placeholder = painterResource(DrawableResource("placeholder.xml")),
+                error = painterResource(DrawableResource("placeholder.xml")),
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.5f),

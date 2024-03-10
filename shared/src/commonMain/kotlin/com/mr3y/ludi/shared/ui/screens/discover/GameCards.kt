@@ -61,6 +61,7 @@ import com.mr3y.ludi.shared.ui.components.LudiSuggestionChip
 import com.mr3y.ludi.shared.ui.components.State
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import com.mr3y.ludi.shared.ui.components.rememberParallaxAlignment
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -356,7 +357,7 @@ fun GameCard(
                             ?.distinct()?.forEach { iconResName ->
                                 if (iconResName != null) {
                                     Icon(
-                                        painter = painterResource(res = iconResName),
+                                        painter = painterResource(DrawableResource(iconResName)),
                                         contentDescription = null,
                                         tint = contentColorFor(MaterialTheme.colorScheme.primaryContainer),
                                         modifier = Modifier.size(24.dp)

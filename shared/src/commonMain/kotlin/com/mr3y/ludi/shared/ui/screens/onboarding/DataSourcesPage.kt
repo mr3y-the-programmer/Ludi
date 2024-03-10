@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -122,7 +123,7 @@ fun NewsSourceTile(
         ) {
             Icon(
                 modifier = Modifier.size(64.dp),
-                painter = painterResource(newsDataSource.iconResName),
+                painter = painterResource(DrawableResource(newsDataSource.iconResName)),
                 contentDescription = null,
                 tint = Color.Unspecified // instruct Icon to not override android:fillColor specified in the vector drawable
             )

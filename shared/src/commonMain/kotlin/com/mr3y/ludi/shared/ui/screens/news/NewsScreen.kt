@@ -63,6 +63,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.focused
 import androidx.compose.ui.semantics.imeAction
+import androidx.compose.ui.semantics.onImeAction
 import androidx.compose.ui.semantics.performImeAction
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
@@ -191,9 +192,8 @@ fun NewsScreen(
                             .clearAndSetSemantics {
                                 focused = true
                                 contentDescription = contentDesc
-                                imeAction = ImeAction.Search
-                                performImeAction {
-                                    softwareKeyboard?.hide() ?: return@performImeAction false
+                                onImeAction(imeActionType = ImeAction.Search) {
+                                    softwareKeyboard?.hide() ?: return@onImeAction false
                                     true
                                 }
                             }

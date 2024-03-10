@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.focused
 import androidx.compose.ui.semantics.imeAction
+import androidx.compose.ui.semantics.onImeAction
 import androidx.compose.ui.semantics.performImeAction
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
@@ -88,9 +89,8 @@ fun DiscoverTopBar(
                     .clearAndSetSemantics {
                         focused = true
                         contentDescription = strings.discover_page_search_field_content_description
-                        imeAction = ImeAction.Search
-                        performImeAction {
-                            softwareKeyboard?.hide() ?: return@performImeAction false
+                        onImeAction(imeActionType = ImeAction.Search) {
+                            softwareKeyboard?.hide() ?: return@onImeAction false
                             true
                         }
                     }
