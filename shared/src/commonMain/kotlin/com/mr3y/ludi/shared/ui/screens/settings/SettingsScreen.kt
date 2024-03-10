@@ -19,10 +19,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -180,7 +181,7 @@ fun SettingsScreen(
                     }
                 }
             }
-            Divider()
+            HorizontalDivider()
             if (isDynamicColorSupported()) {
                 val isEnabled = isDynamicColorEnabled()
                 Row(
@@ -239,23 +240,23 @@ fun SettingsScreen(
                             }
                     )
                 }
-                Divider()
+                HorizontalDivider()
             }
             Preference(
                 label = "Followed News Data Sources",
                 onClick = onFollowedNewsDataSourcesClick
             )
-            Divider()
+            HorizontalDivider()
             Preference(
                 label = "Favourite Games",
                 onClick = onFavouriteGamesClick
             )
-            Divider()
+            HorizontalDivider()
             Preference(
                 label = "Favourite Genres",
                 onClick = onFavouriteGenresClick
             )
-            Divider()
+            HorizontalDivider()
             var isDialogOpened by rememberSaveable(Unit) { mutableStateOf(false) }
             SettingsTitle(
                 text = "Credits",
@@ -320,7 +321,7 @@ fun SettingsScreen(
                     }
                 )
             }
-            Divider()
+            HorizontalDivider()
             SettingsTitle(
                 text = "Privacy Policy",
                 modifier = Modifier
@@ -410,7 +411,7 @@ fun Preference(
     ) {
         SettingsTitle(text = label, modifier = Modifier.weight(1f))
         Icon(
-            imageVector = Icons.Filled.ArrowForward,
+            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier
