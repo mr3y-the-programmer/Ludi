@@ -27,7 +27,6 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -35,7 +34,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.focused
-import androidx.compose.ui.semantics.imeAction
 import androidx.compose.ui.semantics.onImeAction
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
@@ -44,7 +42,7 @@ import cafe.adriel.lyricist.LocalStrings
 import com.mr3y.ludi.shared.ui.components.RefreshIconButton
 import com.mr3y.ludi.shared.ui.resources.isDesktopPlatform
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchFilterBar(
     searchQuery: String,
@@ -81,7 +79,7 @@ fun SearchFilterBar(
                     ),
                     leadingIcon = {
                         IconButton(
-                            onClick = { /*TODO*/ },
+                            onClick = { },
                             modifier = Modifier.clearAndSetSemantics { }
                         ) {
                             Icon(

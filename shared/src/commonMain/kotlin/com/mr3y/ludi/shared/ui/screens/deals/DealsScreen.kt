@@ -162,7 +162,6 @@ fun DealsScreen(
                     onRefreshGiveaways = onRefreshGiveaways,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             },

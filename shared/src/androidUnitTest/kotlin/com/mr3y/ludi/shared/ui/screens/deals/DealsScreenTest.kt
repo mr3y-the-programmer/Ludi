@@ -21,7 +21,6 @@ import com.mr3y.ludi.shared.ui.adaptive.LocalWindowSizeClass
 import com.mr3y.ludi.shared.ui.resources.LudiStrings
 import com.mr3y.ludi.shared.ui.screens.BaseRobolectricTest
 import com.mr3y.ludi.shared.ui.theme.LudiTheme
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -31,7 +30,6 @@ class DealsScreenTest : BaseRobolectricTest() {
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @Test
-    @Ignore("java.lang.IllegalArgumentException: maxWidth(-48) must be >= than minWidth(0)")
     fun deals_launches_state_is_saved_and_survives_config_changes() {
         val restorationTester = StateRestorationTester(composeTestRule)
         var strings: LudiStrings? by mutableStateOf(null)
