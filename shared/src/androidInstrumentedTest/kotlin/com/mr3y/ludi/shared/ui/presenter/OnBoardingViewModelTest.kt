@@ -38,7 +38,7 @@ class OnBoardingViewModelTest {
     val mainDispatcherRule = MainDispatcherRule(StandardTestDispatcher(testDispatcher.scheduler))
 
     private val userPreferences: DataStore<Preferences> = PreferenceDataStoreFactory.create(
-        scope = testScope,
+        scope = testScope.backgroundScope,
         produceFile = { tempFolder.newFile("user_preferences_test.preferences_pb") }
     )
 

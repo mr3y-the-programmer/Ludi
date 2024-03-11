@@ -44,19 +44,19 @@ class DefaultProtoDataStoreMutatorTest {
         storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FollowedNewsDataSourceSerializer, producePath = { tempFolder.newFolder().toOkioPath().resolve("datastore").resolve("followed_news_sources.pb") }),
         corruptionHandler = null,
         migrations = emptyList(),
-        scope = testScope
+        scope = testScope.backgroundScope
     )
     private val favGamesStore: DataStore<UserFavouriteGames> = DataStoreFactory.create(
         storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FavouriteGamesSerializer, producePath = { tempFolder.newFolder().toOkioPath().resolve("datastore").resolve("fav_games.pb") }),
         corruptionHandler = null,
         migrations = emptyList(),
-        scope = testScope
+        scope = testScope.backgroundScope
     )
     private val favGenresStore: DataStore<UserFavouriteGenres> = DataStoreFactory.create(
         storage = OkioStorage(fileSystem = FileSystem.SYSTEM, serializer = FavouriteGenresSerializer, producePath = { tempFolder.newFolder().toOkioPath().resolve("datastore").resolve("fav_genres.pb") }),
         corruptionHandler = null,
         migrations = emptyList(),
-        scope = testScope
+        scope = testScope.backgroundScope
     )
 
     private lateinit var sut: DefaultProtoDataStoreMutator
