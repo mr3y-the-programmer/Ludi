@@ -30,7 +30,6 @@ import com.mr3y.ludi.shared.ui.screens.onboarding.OnboardingScreen
 import com.mr3y.ludi.shared.ui.screens.onboarding.onGenre
 import com.mr3y.ludi.shared.ui.theme.LudiTheme
 import kotlinx.coroutines.test.runTest
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner

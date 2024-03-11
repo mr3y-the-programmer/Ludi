@@ -58,7 +58,6 @@ import androidx.compose.ui.semantics.focused
 import androidx.compose.ui.semantics.imeAction
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.onImeAction
-import androidx.compose.ui.semantics.performImeAction
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
