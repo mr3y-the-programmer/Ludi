@@ -9,13 +9,13 @@ pluginManagement {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
     plugins {
-        id("de.fayard.refreshVersions") version "0.60.3"
+        id("de.fayard.refreshVersions") version "0.60.5"
     }
 }
 buildscript {
     // Workaround for: https://github.com/Splitties/refreshVersions/issues/707
     dependencies {
-        classpath("com.squareup.okio:okio:3.7.0")
+        classpath("com.squareup.okio:okio:3.8.0")
     }
 }
 plugins {
@@ -27,8 +27,8 @@ refreshVersions {
         // Recent versions of ktlint gradle plugin changed the default
         // code convention style which affects nearly all files in the codebase,
         // so, for now we are rejecting updates, as we are fine with the current style.
-        val blacklist = listOf("org.jlleitschuh.gradle.ktlint")
-        candidate.stabilityLevel.isLessStableThan(current.stabilityLevel) || moduleId.group in blacklist || candidate.value.endsWith("-jre")
+        val blacklist = listOf("org.jlleitschuh.gradle.ktlint", "io.github.qdsfdhvh")
+        candidate.stabilityLevel.isLessStableThan(current.stabilityLevel) || moduleId.group in blacklist || candidate.value.endsWith("-jre") || candidate.value.endsWith("-1.8.20")
     }
 }
 

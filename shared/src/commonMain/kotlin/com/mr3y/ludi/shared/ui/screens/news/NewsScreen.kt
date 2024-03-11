@@ -28,6 +28,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.Tune
@@ -35,7 +36,7 @@ import androidx.compose.material.icons.outlined.Upcoming
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,6 +64,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.focused
 import androidx.compose.ui.semantics.imeAction
+import androidx.compose.ui.semantics.onImeAction
 import androidx.compose.ui.semantics.performImeAction
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
@@ -191,9 +193,8 @@ fun NewsScreen(
                             .clearAndSetSemantics {
                                 focused = true
                                 contentDescription = contentDesc
-                                imeAction = ImeAction.Search
-                                performImeAction {
-                                    softwareKeyboard?.hide() ?: return@performImeAction false
+                                onImeAction(imeActionType = ImeAction.Search) {
+                                    softwareKeyboard?.hide() ?: return@onImeAction false
                                     true
                                 }
                             }
@@ -263,7 +264,7 @@ fun NewsScreen(
                             modifier = headerModifier
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.TrendingUp,
+                                imageVector = Icons.AutoMirrored.Filled.TrendingUp,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier
@@ -340,7 +341,7 @@ fun NewsScreen(
                                     }
                                 }
                             )
-                            Divider(modifier = Modifier.padding(end = 16.dp))
+                            HorizontalDivider(modifier = Modifier.padding(end = 16.dp))
                         }
                     }
                 }

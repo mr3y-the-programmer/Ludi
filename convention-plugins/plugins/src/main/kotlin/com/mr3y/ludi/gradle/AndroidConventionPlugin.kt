@@ -27,7 +27,7 @@ class AndroidConventionPlugin : Plugin<Project> {
         }
     }
 
-    private fun CommonExtension<*, *, *, *, *>.applyCommonAndroidConvention() {
+    private fun CommonExtension<*, *, *, *, *, *>.applyCommonAndroidConvention() {
         compileSdk = 34
 
         defaultConfig {

@@ -1,5 +1,6 @@
 package com.mr3y.ludi.shared.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -74,7 +75,7 @@ fun LudiSuggestionChip(
         onClick = { },
         modifier = modifier.wrapContentHeight().height(32.dp),
         shape = RoundedCornerShape(8.dp),
-        border = SuggestionChipDefaults.suggestionChipBorder(borderWidth = 0.dp, borderColor = Color.Transparent),
+        border = BorderStroke(0.dp, Color.Transparent),
         colors = SuggestionChipDefaults.suggestionChipColors(
             labelColor = labelColor,
             containerColor = containerColor

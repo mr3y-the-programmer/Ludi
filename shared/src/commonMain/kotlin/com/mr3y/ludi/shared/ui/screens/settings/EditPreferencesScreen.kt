@@ -17,7 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,6 +59,7 @@ import com.mr3y.ludi.shared.ui.presenter.EditPreferencesViewModel
 import com.mr3y.ludi.shared.ui.presenter.model.EditPreferencesState
 import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -223,7 +224,7 @@ fun NewsSourcesList(
             ) {
                 Icon(
                     modifier = Modifier.size(64.dp),
-                    painter = painterResource(res = source.iconResName),
+                    painter = painterResource(DrawableResource(source.iconResName)),
                     contentDescription = null,
                     tint = Color.Unspecified // instruct Icon to not override android:fillColor specified in the vector drawable
                 )
@@ -240,7 +241,7 @@ fun NewsSourcesList(
             )
         }
         if (index != state.allNewsDataSources.lastIndex) {
-            Divider()
+            HorizontalDivider()
         }
     }
 }
@@ -292,7 +293,7 @@ fun GamesList(
             )
         }
         if (index != state.favouriteGames.lastIndex) {
-            Divider()
+            HorizontalDivider()
         }
     }
 }
@@ -356,7 +357,7 @@ fun GenresList(
                     )
                 }
                 if (index != genres.size - 1) {
-                    Divider()
+                    HorizontalDivider()
                 }
             }
         }

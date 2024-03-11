@@ -37,6 +37,7 @@ import com.mr3y.ludi.shared.ui.components.AsyncImage
 import com.mr3y.ludi.shared.ui.components.State
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import com.mr3y.ludi.shared.ui.components.rememberParallaxAlignment
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import java.time.Duration
@@ -79,8 +80,8 @@ fun ArticleCardTile(
             var imageLoaded by remember { mutableStateOf(false) }
             AsyncImage(
                 url = article?.imageUrl,
-                placeholder = painterResource("placeholder.xml"),
-                error = painterResource("placeholder.xml"),
+                placeholder = painterResource(DrawableResource("placeholder.xml")),
+                error = painterResource(DrawableResource("placeholder.xml")),
                 onState = { state ->
                     if (state is State.Success) {
                         imageLoaded = true

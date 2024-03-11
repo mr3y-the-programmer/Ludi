@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -84,7 +85,7 @@ fun NewsSourcesPage(
                     onToggleSelection = onToggleNewsSourceTile
                 )
                 if (index != allNewsDataSources.lastIndex) {
-                    Divider(modifier = Modifier.padding(horizontal = 8.dp))
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
                 }
             }
         }
@@ -122,7 +123,7 @@ fun NewsSourceTile(
         ) {
             Icon(
                 modifier = Modifier.size(64.dp),
-                painter = painterResource(newsDataSource.iconResName),
+                painter = painterResource(DrawableResource(newsDataSource.iconResName)),
                 contentDescription = null,
                 tint = Color.Unspecified // instruct Icon to not override android:fillColor specified in the vector drawable
             )
