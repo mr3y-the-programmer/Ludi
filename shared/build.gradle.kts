@@ -211,10 +211,6 @@ android {
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = versionFor(AndroidX.Compose.compiler)
-    }
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true

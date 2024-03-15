@@ -54,10 +54,6 @@ android {
         jvmTarget = "17"
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = versionFor(AndroidX.Compose.compiler)
-    }
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
