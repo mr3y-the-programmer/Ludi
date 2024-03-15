@@ -39,6 +39,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url = URI.create("https://jitpack.io") }
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
 rootProject.name = "Ludi"
