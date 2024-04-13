@@ -132,7 +132,7 @@ class DealsViewModel(
                 DealStore(35, "DreamGame")
             ).sortedBy { it.label }.toSet(),
             selectedStores = emptySet(),
-            sortingCriteria = DealsSorting.Recent,
+            sortingCriteria = DealsSorting.DealRating,
             sortingDirection = DealsSortingDirection.Descending
         )
         val InitialGiveawaysFiltersState = GiveawaysFiltersState(
