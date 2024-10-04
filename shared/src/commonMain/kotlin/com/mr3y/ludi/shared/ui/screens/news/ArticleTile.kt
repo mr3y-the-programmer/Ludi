@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
+import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import com.mr3y.ludi.shared.core.model.Article
@@ -46,6 +47,7 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import kotlin.time.toKotlinDuration
 
+@OptIn(ExperimentalRichTextApi::class)
 @Composable
 fun ArticleCardTile(
     article: Article?,
