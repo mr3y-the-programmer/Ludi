@@ -21,11 +21,11 @@ import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.shared.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.shared.ui.presenter.model.OnboardingState
+import kotlinx.coroutines.flow.flowOf
+import ludi.shared.generated.resources.Res
 import ludi.shared.generated.resources.game_spot_logo
 import ludi.shared.generated.resources.giant_bomb_logo
 import ludi.shared.generated.resources.ign_logo
-import kotlinx.coroutines.flow.flowOf
-import ludi.shared.generated.resources.Res
 
 val FakeAllGenres = Result.Success(
     setOf(

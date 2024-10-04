@@ -41,8 +41,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import ludi.shared.generated.resources.Res
 import ludi.shared.generated.resources.placeholder
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import java.time.Duration
 import java.time.ZonedDateTime

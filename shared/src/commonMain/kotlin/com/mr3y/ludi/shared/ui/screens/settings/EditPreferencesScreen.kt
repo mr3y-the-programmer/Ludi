@@ -59,8 +59,6 @@ import com.mr3y.ludi.shared.ui.presenter.EditPreferencesViewModel
 import com.mr3y.ludi.shared.ui.presenter.model.EditPreferencesState
 import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 data class EditPreferencesScreen(val type: PreferencesType) : Screen {

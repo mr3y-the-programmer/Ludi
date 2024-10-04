@@ -40,8 +40,6 @@ import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import com.mr3y.ludi.shared.ui.components.rememberParallaxAlignment
 import ludi.shared.generated.resources.Res
 import ludi.shared.generated.resources.placeholder
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import java.time.Duration
 import java.time.ZonedDateTime
