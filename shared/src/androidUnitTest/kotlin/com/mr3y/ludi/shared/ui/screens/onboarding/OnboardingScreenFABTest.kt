@@ -1,9 +1,11 @@
 package com.mr3y.ludi.shared.ui.screens.onboarding
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.performClick
@@ -15,6 +17,8 @@ import com.mr3y.ludi.shared.ui.resources.LudiStrings
 import com.mr3y.ludi.shared.ui.screens.BaseRobolectricTest
 import com.mr3y.ludi.shared.ui.screens.onNodeWithStateDescription
 import com.mr3y.ludi.shared.ui.theme.LudiTheme
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.PreviewContextConfigurationEffect
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -102,6 +106,7 @@ class OnboardingScreenFABTest : BaseRobolectricTest() {
         composeTestRule.onNodeWithStateDescription(strings!!.on_boarding_fab_state_continue_state_desc).assertIsDisplayed()
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     @Test
     fun dataSources_page_fab_state_survives_config_changes() {
         // setup
@@ -109,6 +114,11 @@ class OnboardingScreenFABTest : BaseRobolectricTest() {
         var strings: LudiStrings? by mutableStateOf(null)
         val selectedDataSources = mutableStateOf(emptyList<NewsDataSource>())
         restorationTester.setContent {
+            // A workaround for this issue: https://github.com/robolectric/robolectric/issues/8461
+            // and this issue: https://youtrack.jetbrains.com/issue/CMP-6612/Support-non-compose-UI-tests-with-resources
+            CompositionLocalProvider(LocalInspectionMode provides true) {
+                PreviewContextConfigurationEffect()
+            }
             val selectedSources = rememberSaveable(Unit) { selectedDataSources }
 
             LudiTheme {

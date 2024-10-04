@@ -168,6 +168,7 @@ kotlin {
 
         val androidUnitTest by getting {
             dependencies {
+                implementation(compose.components.resources)
                 implementation(libs.guava)
                 implementation(libs.junit)
                 implementation(libs.robolectric)
@@ -212,6 +213,11 @@ sqldelight {
             verifyMigrations.set(true)
         }
     }
+}
+
+compose.resources {
+    publicResClass = true
+    generateResClass = always
 }
 
 android {

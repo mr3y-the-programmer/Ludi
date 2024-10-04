@@ -181,7 +181,6 @@ fun EditPreferencesScreen(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NewsSourcesList(
     state: EditPreferencesState.FollowedNewsDataSources,
