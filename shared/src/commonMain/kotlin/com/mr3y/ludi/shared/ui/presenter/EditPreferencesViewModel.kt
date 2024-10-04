@@ -43,7 +43,7 @@ class EditPreferencesViewModel(
         }
         .map {
             it.newsDataSource.map { followedDataSource ->
-                NewsDataSource(name = followedDataSource.name, type = Source.valueOf(followedDataSource.type), iconResName = mapTypeToIconRes(Source.valueOf(followedDataSource.type)))
+                NewsDataSource(name = followedDataSource.name, type = Source.valueOf(followedDataSource.type), icon = mapTypeToIconRes(Source.valueOf(followedDataSource.type)))
             }
         }
 

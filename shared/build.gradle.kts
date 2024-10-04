@@ -1,6 +1,8 @@
 import com.github.gmazzo.buildconfig.BuildConfigSourceSet
 import de.fayard.refreshVersions.core.versionFor
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -8,6 +10,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ludi.common)
     alias(libs.plugins.ludi.android.common)
     alias(libs.plugins.kotlin.ksp)
@@ -20,22 +23,26 @@ plugins {
 kotlin {
     targets.configureEach {
         compilations.configureEach {
-            compilerOptions.configure {
-                freeCompilerArgs.add("-Xexpect-actual-classes")
+            compileTaskProvider.configure {
+                compilerOptions {
+                    freeCompilerArgs.add("-Xexpect-actual-classes")
+                }
             }
         }
     }
     androidTarget {
         compilations.configureEach {
-            kotlinOptions {
-                jvmTarget = "17"
+            compileTaskProvider.configure {
+                compilerOptions {
+                    jvmTarget = JvmTarget.JVM_17
+                }
             }
         }
     }
 
-    jvm("desktop") {
-        jvmToolchain(17)
-    }
+    jvm("desktop")
+
+    jvmToolchain(17)
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     applyHierarchyTemplate {
@@ -161,6 +168,7 @@ kotlin {
 
         val androidUnitTest by getting {
             dependencies {
+                implementation(compose.components.resources)
                 implementation(libs.guava)
                 implementation(libs.junit)
                 implementation(libs.robolectric)
@@ -185,7 +193,7 @@ kotlin {
 
         val desktopTest by getting {
             dependencies {
-                dependsOn(commonTest.get())
+
             }
         }
     }
@@ -207,13 +215,14 @@ sqldelight {
     }
 }
 
+compose.resources {
+    publicResClass = true
+    generateResClass = always
+}
+
 android {
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
-    }
 
     testOptions {
         unitTests {
@@ -246,7 +255,7 @@ fun getValueOfKey(key: String) =
         properties.getProperty(key)
     }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
+tasks.withType<KotlinCompilationTask<*>>().all {
     if (name != "kspCommonMainKotlinMetadata") {
         dependsOn("kspCommonMainKotlinMetadata")
     }

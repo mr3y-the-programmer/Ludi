@@ -21,7 +21,11 @@ import com.mr3y.ludi.shared.ui.presenter.model.FavouriteGame
 import com.mr3y.ludi.shared.ui.presenter.model.NewsDataSource
 import com.mr3y.ludi.shared.ui.presenter.model.OnboardingGames
 import com.mr3y.ludi.shared.ui.presenter.model.OnboardingState
+import ludi.shared.generated.resources.game_spot_logo
+import ludi.shared.generated.resources.giant_bomb_logo
+import ludi.shared.generated.resources.ign_logo
 import kotlinx.coroutines.flow.flowOf
+import ludi.shared.generated.resources.Res
 
 val FakeAllGenres = Result.Success(
     setOf(
@@ -1279,9 +1283,9 @@ val FakeOnboardingGames = OnboardingGames.SuggestedGames(
 val FakeSelectedGames = listOf(FavouriteGame(id = 3498, title = "Grand Theft Auto V", imageUrl = "https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg", rating = 4.47f))
 
 val FakeNewsDataSources = listOf(
-    NewsDataSource("Game spot", "game_spot_logo.xml", Source.GameSpot),
-    NewsDataSource("Giant bomb", "giant_bomb_logo.xml", Source.GiantBomb),
-    NewsDataSource("IGN", "ign_logo.xml", Source.IGN)
+    NewsDataSource("Game spot", Res.drawable.game_spot_logo, Source.GameSpot),
+    NewsDataSource("Giant bomb", Res.drawable.giant_bomb_logo, Source.GiantBomb),
+    NewsDataSource("IGN", Res.drawable.ign_logo, Source.IGN)
 )
 
 val FakeOnboardingState = OnboardingState(

@@ -49,13 +49,16 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.UrlAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
 import cafe.adriel.voyager.core.screen.Screen
@@ -345,7 +348,6 @@ fun SettingsScreen(
 
 expect fun isDynamicColorEnabled(): Boolean
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun HyperlinkText(
     fullText: String,
@@ -356,30 +358,27 @@ fun HyperlinkText(
 ) {
     val annotatedString = buildAnnotatedString {
         append(fullText)
-        val startIndex = fullText.indexOf(urlText)
-        val endIndex = startIndex + urlText.length
-        addUrlAnnotation(
-            UrlAnnotation(url),
-            start = startIndex,
-            end = endIndex
-        )
-        addStyle(
-            SpanStyle(
-                color = MaterialTheme.colorScheme.tertiary,
-                textDecoration = TextDecoration.Underline,
-                fontWeight = FontWeight.Bold
-            ),
-            start = startIndex,
-            end = endIndex
-        )
+        append(" ")
+        withLink(
+            LinkAnnotation.Url(
+                url = url,
+                styles = TextLinkStyles(
+                    style = SpanStyle(
+                        color = MaterialTheme.colorScheme.tertiary,
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.Bold
+                    )
+                ),
+                linkInteractionListener = {
+                    onOpenUrl((it as LinkAnnotation.Url).url)
+                }
+            )
+        ) {
+            append(urlText)
+        }
     }
-    ClickableText(
+    Text(
         text = annotatedString,
-        onClick = { index ->
-            annotatedString.getUrlAnnotations(index, index).firstOrNull()?.let {
-                onOpenUrl(it.item.url)
-            }
-        },
         style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onSurface),
         maxLines = 2,
         overflow = TextOverflow.Ellipsis,
