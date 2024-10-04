@@ -39,6 +39,8 @@ import com.mr3y.ludi.shared.ui.components.AsyncImage
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import ludi.shared.generated.resources.Res
+import ludi.shared.generated.resources.placeholder
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -182,7 +184,6 @@ internal fun durationBetween(start: ZonedDateTime, end: ZonedDateTime): Triple<S
     return Triple(days, hours, minutes)
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun OfferScaffold(
     thumbnailUrl: String?,
@@ -215,8 +216,8 @@ private fun OfferScaffold(
         ) {
             AsyncImage(
                 url = thumbnailUrl,
-                placeholder = painterResource(DrawableResource("placeholder.xml")),
-                error = painterResource(DrawableResource("placeholder.xml")),
+                placeholder = painterResource(Res.drawable.placeholder),
+                error = painterResource(Res.drawable.placeholder),
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.5f),

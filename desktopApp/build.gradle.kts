@@ -1,16 +1,18 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ludi.common)
 }
 
 kotlin {
     jvm {
-        jvmToolchain(17)
         withJava()
     }
+    jvmToolchain(17)
     sourceSets {
         jvmMain {
             dependencies {
@@ -26,8 +28,8 @@ dependencies {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "17"
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 

@@ -37,6 +37,8 @@ import com.mr3y.ludi.shared.ui.components.AsyncImage
 import com.mr3y.ludi.shared.ui.components.State
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import com.mr3y.ludi.shared.ui.components.rememberParallaxAlignment
+import ludi.shared.generated.resources.Res
+import ludi.shared.generated.resources.placeholder
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -44,7 +46,6 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import kotlin.time.toKotlinDuration
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ArticleCardTile(
     article: Article?,
@@ -80,8 +81,8 @@ fun ArticleCardTile(
             var imageLoaded by remember { mutableStateOf(false) }
             AsyncImage(
                 url = article?.imageUrl,
-                placeholder = painterResource(DrawableResource("placeholder.xml")),
-                error = painterResource(DrawableResource("placeholder.xml")),
+                placeholder = painterResource(Res.drawable.placeholder),
+                error = painterResource(Res.drawable.placeholder),
                 onState = { state ->
                     if (state is State.Success) {
                         imageLoaded = true

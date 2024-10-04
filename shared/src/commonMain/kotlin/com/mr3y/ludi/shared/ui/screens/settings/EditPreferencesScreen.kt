@@ -224,7 +224,7 @@ fun NewsSourcesList(
             ) {
                 Icon(
                     modifier = Modifier.size(64.dp),
-                    painter = painterResource(DrawableResource(source.iconResName)),
+                    painter = painterResource(source.icon),
                     contentDescription = null,
                     tint = Color.Unspecified // instruct Icon to not override android:fillColor specified in the vector drawable
                 )

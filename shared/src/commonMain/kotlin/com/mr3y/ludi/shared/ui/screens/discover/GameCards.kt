@@ -61,8 +61,15 @@ import com.mr3y.ludi.shared.ui.components.LudiSuggestionChip
 import com.mr3y.ludi.shared.ui.components.State
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import com.mr3y.ludi.shared.ui.components.rememberParallaxAlignment
+import ludi.shared.generated.resources.Res
+import ludi.shared.generated.resources.android
+import ludi.shared.generated.resources.ios
+import ludi.shared.generated.resources.linux
+import ludi.shared.generated.resources.nintendo_switch
+import ludi.shared.generated.resources.pc
+import ludi.shared.generated.resources.playstation
+import ludi.shared.generated.resources.xbox
 import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -238,7 +245,7 @@ fun TrendingGameCard(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GameCard(
     game: Game?,
@@ -353,11 +360,11 @@ fun GameCard(
                             alignment = Alignment.CenterVertically
                         )
                     ) {
-                        game.platformsInfo?.map { it.name.mapPlatformNameToIconResName() }
-                            ?.distinct()?.forEach { iconResName ->
-                                if (iconResName != null) {
+                        game.platformsInfo?.map { it.name.mapPlatformNameToIconRes() }
+                            ?.distinct()?.forEach { iconRes ->
+                                if (iconRes != null) {
                                     Icon(
-                                        painter = painterResource(DrawableResource(iconResName)),
+                                        painter = painterResource(iconRes),
                                         contentDescription = null,
                                         tint = contentColorFor(MaterialTheme.colorScheme.primaryContainer),
                                         modifier = Modifier.size(24.dp)
@@ -382,15 +389,15 @@ private fun Color.contrastAgainst(background: Color): Float {
 
 private const val MinContrastRatio = 3f
 
-private fun String.mapPlatformNameToIconResName(): String? {
+private fun String.mapPlatformNameToIconRes(): DrawableResource? {
     return when {
-        contains("playstation", ignoreCase = true) -> "playstation.xml"
-        contains("pc", ignoreCase = true) -> "pc.xml"
-        contains("xbox", ignoreCase = true) -> "xbox.xml"
-        contains("Nintendo Switch", ignoreCase = true) -> "nintendo_switch.xml"
-        contains("ios", ignoreCase = true) -> "ios.xml"
-        contains("android", ignoreCase = true) -> "android.xml"
-        contains("linux", ignoreCase = true) -> "linux.xml"
+        contains("playstation", ignoreCase = true) -> Res.drawable.playstation
+        contains("pc", ignoreCase = true) -> Res.drawable.pc
+        contains("xbox", ignoreCase = true) -> Res.drawable.xbox
+        contains("Nintendo Switch", ignoreCase = true) -> Res.drawable.nintendo_switch
+        contains("ios", ignoreCase = true) -> Res.drawable.ios
+        contains("android", ignoreCase = true) -> Res.drawable.android
+        contains("linux", ignoreCase = true) -> Res.drawable.linux
         else -> null
     }
 }

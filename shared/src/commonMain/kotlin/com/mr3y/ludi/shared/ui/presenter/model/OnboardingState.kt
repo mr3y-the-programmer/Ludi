@@ -9,6 +9,7 @@ import com.mr3y.ludi.shared.core.model.GameGenre
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.core.model.Source
 import kotlinx.coroutines.flow.Flow
+import org.jetbrains.compose.resources.DrawableResource
 
 data class OnboardingState(
     val allNewsDataSources: List<NewsDataSource>,
@@ -30,7 +31,7 @@ sealed interface OnboardingGames {
 
 data class NewsDataSource(
     val name: String,
-    val iconResName: String,
+    val icon: DrawableResource,
     val type: Source
 )
 

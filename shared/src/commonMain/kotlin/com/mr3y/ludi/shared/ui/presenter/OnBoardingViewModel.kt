@@ -67,7 +67,7 @@ class OnBoardingViewModel(
         .map {
             it.newsDataSource.map { followedDataSource ->
                 val type = Source.valueOf(followedDataSource.type)
-                NewsDataSource(name = followedDataSource.name, type = type, iconResName = mapTypeToIconRes(type))
+                NewsDataSource(name = followedDataSource.name, type = type, icon = mapTypeToIconRes(type))
             }
         }
 
