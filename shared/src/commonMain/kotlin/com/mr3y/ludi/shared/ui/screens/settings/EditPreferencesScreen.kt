@@ -84,7 +84,7 @@ data class EditPreferencesScreen(val type: PreferencesType) : Screen {
 fun EditPreferencesScreen(
     onDoneClick: () -> Unit,
     viewModel: EditPreferencesViewModel,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val editPreferencesState by viewModel.editPreferencesState.collectAsStateWithLifecycle()
     EditPreferencesScreen(
