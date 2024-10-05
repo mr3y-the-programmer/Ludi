@@ -13,7 +13,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +34,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -65,6 +63,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.lyricist.LocalStrings
 import cafe.adriel.voyager.core.screen.Screen
 import com.mr3y.ludi.shared.core.model.GameGenre
@@ -86,12 +85,30 @@ object OnboardingScreen : Screen {
 }
 
 @Composable
-expect fun OnboardingScreen(
+fun OnboardingScreen(
     modifier: Modifier = Modifier,
     viewModel: OnBoardingViewModel
-)
+) {
+    val onboardingState by viewModel.onboardingState.collectAsStateWithLifecycle()
+    OnboardingScreen(
+        modifier = modifier,
+        searchQuery = viewModel.searchQuery.value,
+        onboardingState = onboardingState,
+        onSkipButtonClicked = viewModel::completeOnboarding,
+        onFinishButtonClicked = viewModel::completeOnboarding,
+        onSelectingNewsDataSource = viewModel::followNewsDataSource,
+        onUnselectNewsDataSource = viewModel::unFollowNewsDataSource,
+        onUpdatingSearchQueryText = viewModel::updateSearchQuery,
+        onAddingGameToFavourites = viewModel::addGameToFavourites,
+        onRemovingGameFromFavourites = viewModel::removeGameFromFavourites,
+        onRefreshingGames = viewModel::refreshGames,
+        onSelectingGenre = viewModel::selectGenre,
+        onUnselectingGenre = viewModel::unselectGenre,
+        onRefreshingGenres = viewModel::refreshGenres
+    )
+}
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OnboardingScreen(
     onboardingState: OnboardingState,

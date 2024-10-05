@@ -105,6 +105,9 @@ kotlin {
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.transitions)
 
+                // lifecycle
+                implementation(libs.androidx.lifecycle.runtime.compose)
+
                 // ViewModel
                 implementation(libs.voyager.screenmodel)
 
@@ -144,8 +147,6 @@ kotlin {
                 implementation(libs.sqldelight.android)
                 // Unbundled sqlite
                 implementation(libs.sqlite.android)
-                // lifecycle
-                implementation(libs.androidx.lifecycle.runtime.compose)
                 // Coil
                 implementation(libs.coil)
                 implementation(libs.androidx.core.ktx)

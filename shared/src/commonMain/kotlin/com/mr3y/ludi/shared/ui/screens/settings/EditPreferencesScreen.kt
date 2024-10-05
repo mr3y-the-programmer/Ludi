@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +43,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.lyricist.LocalStrings
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
@@ -79,7 +81,23 @@ data class EditPreferencesScreen(val type: PreferencesType) : Screen {
 }
 
 @Composable
-expect fun EditPreferencesScreen(onDoneClick: () -> Unit, modifier: Modifier = Modifier, viewModel: EditPreferencesViewModel)
+fun EditPreferencesScreen(
+    onDoneClick: () -> Unit,
+    viewModel: EditPreferencesViewModel,
+    modifier: Modifier = Modifier,
+) {
+    val editPreferencesState by viewModel.editPreferencesState.collectAsStateWithLifecycle()
+    EditPreferencesScreen(
+        editPreferencesState,
+        onDoneClick = onDoneClick,
+        onFollowingNewsDataSource = viewModel::followNewsDataSource,
+        onUnfollowingNewsDataSource = viewModel::unFollowNewsDataSource,
+        onRemovingGameFromFavourites = viewModel::removeGameFromFavourites,
+        onAddingGenreToFavourites = viewModel::addToSelectedGenres,
+        onRemovingGenreFromFavourites = viewModel::removeFromSelectedGenres,
+        modifier = modifier
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
