@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
 import com.mr3y.ludi.shared.core.model.Deal
 import com.mr3y.ludi.shared.core.model.GiveawayEntry
-import com.mr3y.ludi.shared.ui.components.AsyncImage
+import com.mr3y.ludi.shared.ui.components.LudiAsyncImage
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -212,7 +212,7 @@ private fun OfferScaffold(
                 .defaultPlaceholder(isVisible = title == null),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AsyncImage(
+            LudiAsyncImage(
                 url = thumbnailUrl,
                 placeholder = painterResource(Res.drawable.placeholder),
                 error = painterResource(Res.drawable.placeholder),

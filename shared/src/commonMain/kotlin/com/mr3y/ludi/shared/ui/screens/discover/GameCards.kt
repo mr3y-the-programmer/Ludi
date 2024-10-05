@@ -54,11 +54,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
+import coil3.compose.AsyncImagePainter
+import coil3.toBitmap
 import com.kmpalette.rememberDominantColorState
 import com.mr3y.ludi.shared.core.model.Game
-import com.mr3y.ludi.shared.ui.components.AsyncImage
+import com.mr3y.ludi.shared.ui.components.LudiAsyncImage
 import com.mr3y.ludi.shared.ui.components.LudiSuggestionChip
-import com.mr3y.ludi.shared.ui.components.State
+import com.mr3y.ludi.shared.ui.components.asImageBitmap
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import com.mr3y.ludi.shared.ui.components.rememberParallaxAlignment
 import ludi.shared.generated.resources.Res
@@ -147,12 +149,12 @@ fun TrendingGameCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             val imageUrl = game?.screenshots?.firstOrNull()?.imageUrl ?: game?.imageUrl
-            AsyncImage(
+            LudiAsyncImage(
                 url = imageUrl,
                 onState = { state ->
                     when (state) {
-                        is State.Success -> {
-                            bitmap = state.result.bitmap
+                        is AsyncImagePainter.State.Success -> {
+                            bitmap = state.result.image.toBitmap().asImageBitmap()
                         }
                         else -> {}
                     }
@@ -196,7 +198,7 @@ fun TrendingGameCard(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AsyncImage(
+                    LudiAsyncImage(
                         url = game.imageUrl,
                         modifier = Modifier
                             .width(48.dp)
@@ -280,7 +282,7 @@ fun GameCard(
             }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
+            LudiAsyncImage(
                 url = game?.imageUrl,
                 modifier = Modifier
                     .fillMaxSize()
