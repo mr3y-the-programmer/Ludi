@@ -23,6 +23,7 @@ fun LudiAsyncImage(
     contentScale: ContentScale = ContentScale.Fit,
     alignment: Alignment = Alignment.Center,
     customMemoryCacheKey: String? = null,
+    allowBitmapHardware: Boolean = true,
     filterQuality: FilterQuality = FilterQuality.Low
 ) {
     val context = LocalPlatformContext.current
@@ -30,6 +31,7 @@ fun LudiAsyncImage(
         model = ImageRequest.Builder(context)
             .data(url)
             .memoryCacheKey(customMemoryCacheKey)
+            .platformSpecificConfig(allowBitmapHardware)
             .build(),
         contentDescription = contentDescription,
         transform = { state ->
@@ -46,5 +48,7 @@ fun LudiAsyncImage(
         modifier = modifier
     )
 }
+
+expect fun ImageRequest.Builder.platformSpecificConfig(allowHardware: Boolean): ImageRequest.Builder
 
 expect fun Bitmap.asImageBitmap(): ImageBitmap

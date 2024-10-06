@@ -165,6 +165,7 @@ fun TrendingGameCard(
                 contentDescription = null,
                 // Set a custom memory cache key to avoid overwriting the displayed image in the cache
                 customMemoryCacheKey = "$imageUrl.palette",
+                allowBitmapHardware = false,
                 contentScale = ContentScale.Crop,
                 alignment = rememberParallaxAlignment(lazyListState, key = game?.id)
             )
