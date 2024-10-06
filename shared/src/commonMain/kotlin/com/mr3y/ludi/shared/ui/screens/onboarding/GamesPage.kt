@@ -55,7 +55,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.focused
-import androidx.compose.ui.semantics.imeAction
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.onImeAction
 import androidx.compose.ui.semantics.selected
@@ -74,7 +73,7 @@ import app.cash.paging.compose.itemKey
 import cafe.adriel.lyricist.LocalStrings
 import com.mr3y.ludi.shared.core.model.Game
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
-import com.mr3y.ludi.shared.ui.components.AsyncImage
+import com.mr3y.ludi.shared.ui.components.LudiAsyncImage
 import com.mr3y.ludi.shared.ui.components.LudiErrorBox
 import com.mr3y.ludi.shared.ui.components.RefreshIconButton
 import com.mr3y.ludi.shared.ui.components.placeholder.PlaceholderHighlight
@@ -391,7 +390,7 @@ private fun GameTileScaffold(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
+            LudiAsyncImage(
                 url = imageUrl,
                 modifier = Modifier
                     .padding(4.dp)

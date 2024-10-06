@@ -30,12 +30,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.LocalStrings
+import coil3.compose.AsyncImagePainter
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import com.mr3y.ludi.shared.core.model.Article
-import com.mr3y.ludi.shared.ui.components.AsyncImage
-import com.mr3y.ludi.shared.ui.components.State
+import com.mr3y.ludi.shared.ui.components.LudiAsyncImage
 import com.mr3y.ludi.shared.ui.components.placeholder.defaultPlaceholder
 import com.mr3y.ludi.shared.ui.components.rememberParallaxAlignment
 import ludi.shared.generated.resources.Res
@@ -79,12 +79,12 @@ fun ArticleCardTile(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             var imageLoaded by remember { mutableStateOf(false) }
-            AsyncImage(
+            LudiAsyncImage(
                 url = article?.imageUrl,
                 placeholder = painterResource(Res.drawable.placeholder),
                 error = painterResource(Res.drawable.placeholder),
                 onState = { state ->
-                    if (state is State.Success) {
+                    if (state is AsyncImagePainter.State.Success) {
                         imageLoaded = true
                     }
                 },

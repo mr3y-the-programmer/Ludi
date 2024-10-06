@@ -54,7 +54,7 @@ import com.mr3y.ludi.shared.core.model.GameGenre
 import com.mr3y.ludi.shared.core.model.Result
 import com.mr3y.ludi.shared.di.getScreenModel
 import com.mr3y.ludi.shared.ui.components.AnimatedNoInternetBanner
-import com.mr3y.ludi.shared.ui.components.AsyncImage
+import com.mr3y.ludi.shared.ui.components.LudiAsyncImage
 import com.mr3y.ludi.shared.ui.components.LudiErrorBox
 import com.mr3y.ludi.shared.ui.navigation.PreferencesType
 import com.mr3y.ludi.shared.ui.presenter.EditPreferencesViewModel
@@ -289,7 +289,7 @@ fun GamesList(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                AsyncImage(
+                LudiAsyncImage(
                     url = favouriteGame.imageUrl,
                     modifier = Modifier.size(64.dp),
                     contentDescription = null,

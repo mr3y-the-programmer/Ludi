@@ -54,7 +54,7 @@ Or from [github releases](https://github.com/mr3y-the-programmer/Ludi/releases)
 
 [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform) for building shared UI.
 
-[Coil](https://github.com/coil-kt/coil), [compose-imageloader](https://github.com/qdsfdhvh/compose-imageloader) for fetching & displaying images.
+[Coil 3](https://github.com/coil-kt/coil) for fetching & displaying images.
 
 [kmpalette](https://github.com/jordond/kmpalette) for generating color palettes from images.
 

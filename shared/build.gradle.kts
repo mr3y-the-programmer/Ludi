@@ -96,6 +96,10 @@ kotlin {
                 implementation(compose.compiler.auto)
                 implementation(compose.runtime)
                 implementation(libs.compose.richeditor)
+                // Coil
+                implementation(libs.coil)
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network.ktor)
                 // Palette
                 implementation(libs.kmpalette.core)
                 // Material3 WindowSizeClass
@@ -147,8 +151,6 @@ kotlin {
                 implementation(libs.sqldelight.android)
                 // Unbundled sqlite
                 implementation(libs.sqlite.android)
-                // Coil
-                implementation(libs.coil)
                 implementation(libs.androidx.core.ktx)
                 // Chrome custom tabs
                 implementation(libs.androidx.browser)
@@ -188,7 +190,7 @@ kotlin {
 
                 // UI
                 implementation(compose.desktop.common)
-                implementation(libs.compose.imageloader)
+                implementation(libs.kotlinx.coroutines.swing)
             }
         }
 
