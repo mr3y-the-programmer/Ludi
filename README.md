@@ -89,7 +89,6 @@ Or from [github releases](https://github.com/mr3y-the-programmer/Ludi/releases)
 See [CONTRIBUTING.md](https://github.com/mr3y-the-programmer/Ludi/blob/main/CONTRIBUTING.md).
 
 ## Todo
-- [ ] Update android target SDK to 34 & try in-app predictive back gesture.
 - [ ] Write Screenshot tests.
 - [ ] Maybe split the shared module into multiple features/modules.
 ## Credits
