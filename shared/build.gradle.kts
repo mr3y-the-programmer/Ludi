@@ -93,7 +93,6 @@ kotlin {
                 implementation(compose.materialIconsExtended)
                 implementation(compose.components.resources)
                 implementation(compose.foundation)
-                implementation(compose.compiler.auto)
                 implementation(compose.runtime)
                 implementation(libs.compose.richeditor)
                 // Coil
