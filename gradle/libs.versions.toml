@@ -28,7 +28,7 @@ ludi-android-common = { id = "ludi.android.common", version = "unspecified" }
 androidx-core-ktx = "androidx.core:core-ktx:1.13.1"
 androidx-activity-compose = "androidx.activity:activity-compose:1.9.2"
 androidx-compose-ui-test-junit4 = "androidx.compose.ui:ui-test-junit4:1.7.3"
-material3-windowsizeclass = "org.jetbrains.compose.material3:material3-window-size-class:1.7.0"
+material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.5.0"
 androidx-browser = "androidx.browser:browser:1.8.0"
 kmpalette-core = "com.kmpalette:kmpalette-core:3.1.0"
 views-material = "com.google.android.material:material:1.12.0"

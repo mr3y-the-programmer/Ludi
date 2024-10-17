@@ -229,6 +229,7 @@ object SegmentedTabRowDefaults {
 }
 
 @Immutable
+@ConsistentCopyVisibility
 data class SegmentedTabRowColors internal constructor(
     private val selectedContainerColor: Color,
     private val selectedContentColor: Color,
