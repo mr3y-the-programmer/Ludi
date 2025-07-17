@@ -1,2 +1,1 @@
-- Fix Full-text search not working sometimes on Android.
-- Fix bugs & Improve performance.
+- Internal changes to support latest android versions.
