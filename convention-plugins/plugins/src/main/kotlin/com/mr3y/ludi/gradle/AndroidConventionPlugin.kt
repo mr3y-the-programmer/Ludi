@@ -28,7 +28,7 @@ class AndroidConventionPlugin : Plugin<Project> {
     }
 
     private fun CommonExtension<*, *, *, *, *, *>.applyCommonAndroidConvention() {
-        compileSdk = 34
+        compileSdk = 36
 
         defaultConfig {
             minSdk = 26
